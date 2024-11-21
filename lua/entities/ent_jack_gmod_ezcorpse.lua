@@ -30,6 +30,11 @@ if SERVER then
 		Ragdoll:SetAngles(Ply:GetAngles())
 		Ragdoll:Spawn()
 		Ragdoll:Activate()
+		for k, v in pairs(Ply:GetMaterials()) do
+			local Matty = Ply:GetSubMaterial(k - 1)
+			Ragdoll:SetSubMaterial(k - 1, Matty)
+		end
+		Ragdoll:SetColor(Ply:GetColor())
 		----------------------Kycea contribution Begin----------------------
 		timer.Simple(0, function()
 			if IsValid(Ragdoll) then
@@ -48,8 +53,8 @@ if SERVER then
 		if (Ply.EZarmor and Ply.EZarmor.items) and IsValid(Ragdoll) then
 			Ragdoll.EZarmorP = {}
 			local Parachute = false
-			for k, v in pairs(Ply.EZarmor.items) do
-				local ArmorInfo = JMod.ArmorTable[v.name]
+			for k, armorData in pairs(Ply.EZarmor.items) do
+				local ArmorInfo = JMod.ArmorTable[armorData.name]
 				if not ArmorInfo.plymdl then
 					local Index = Ragdoll:LookupBone(ArmorInfo.bon)
 					local Pos, Ang = Ragdoll:GetBonePosition(Index)
@@ -70,10 +75,14 @@ if SERVER then
 						ArmorPiece:SetCollisionGroup(COLLISION_GROUP_INTERACTIVE_DEBRIS)
 						ArmorPiece:Spawn()
 						ArmorPiece:Activate()
+						ArmorPiece.Durability = armorData.dur
+						if ArmorInfo.chrg then
+							ArmorPiece.ArmorCharges = table.FullCopy(armorData.chrg)
+						end
 
-						Ragdoll.EZarmorP[v.name] = ArmorPiece
+						Ragdoll.EZarmorP[armorData.name] = ArmorPiece
 						if ArmorInfo.eff and ArmorInfo.eff.parachute then
-							Parachute = v.name
+							Parachute = armorData.name
 							local BonePhys = Ragdoll:GetPhysicsObjectNum(Index)
 							ArmorPiece:GetPhysicsObject():ApplyForceCenter(Vector(0, 0, -100))
 						end

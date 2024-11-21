@@ -126,7 +126,7 @@ net.Receive("JMod_ArmorColor", function(ln, ply)
 	
 	local Equip = tobool(net.ReadBit())
 
-	if Equip and JMod.VisCheck(ply:GetShootPos(), Armor, ply) then
+	if Equip then--and JMod.VisCheck(ply:GetShootPos(), Armor, ply) then
 		JMod.Hint(ply, "armor weight")
 		JMod.EZ_Equip_Armor(ply, Armor)
 	end

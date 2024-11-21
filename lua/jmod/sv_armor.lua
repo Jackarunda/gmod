@@ -549,7 +549,7 @@ function JMod.EZ_Equip_Armor(ply, nameOrEnt)
 		NewArmorName = nameOrEnt.ArmorName
 		NewArmorSpecs = JMod.ArmorTable[NewArmorName]
 		NewArmorID = nameOrEnt.EZID
-		NewArmorDurability = nameOrEnt.ArmorDurability or NewArmorSpecs.dur
+		NewArmorDurability = nameOrEnt.Durability or NewArmorSpecs.dur
 		NewArmorColor = nameOrEnt:GetColor()
 		NewArmorCharges = nameOrEnt.ArmorCharges
 		nameOrEnt:Remove()
