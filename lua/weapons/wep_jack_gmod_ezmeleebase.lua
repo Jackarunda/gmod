@@ -402,7 +402,7 @@ function SWEP:GetViewModelPosition(pos, ang)
 	elseif (self:GetSwinging()) then
 		Downness = Lerp(FT * 2, Downness, self.SwingVisualLowerAmount)
 	else
-		Downness = Lerp(FT * 2, Downness, 0)
+		Downness = Lerp(FT * 2, Downness, -2)
 	end
 
 	ang:RotateAroundAxis(ang:Right(), -Downness * 5)
