@@ -194,7 +194,7 @@ function JMod.CountResourcesInRange(pos, range, sourceEnt, cache)
 	--debugoverlay.Cross(pos, 10, 2, Color(255, 255, 255), true)
 
 	for k, obj in pairs(ents.FindInSphere(pos, range or 150)) do
-		if obj.GetEZsupplies and JMod.VisCheck(pos, obj, sourceEnt) then
+		if obj.GetEZsupplies then
 			local Supplies = obj:GetEZsupplies()
 			for k, v in pairs(Supplies) do
 				if k ~= "generic" then 
@@ -202,7 +202,7 @@ function JMod.CountResourcesInRange(pos, range, sourceEnt, cache)
 				end
 			end
 		end 
-		if obj.JModInv and JMod.VisCheck(pos, obj, sourceEnt) then
+		if obj.JModInv then
 			local Supplies = obj.JModInv.EZresources or {}
 			for k, v in pairs(Supplies) do
 				if k ~= "generic" then 
