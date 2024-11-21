@@ -102,24 +102,26 @@ end)
 
 net.Receive("JMod_ArmorColor", function(ln, ply)
 	if not (IsValid(ply) and ply:Alive()) then return end
-	local Armor = net.ReadEntity()
-	if not IsValid(Armor) or not Armor.ArmorName then return end
-	if JMod.ArmorTable[Armor.ArmorName].clrForced then return end
-	if (ply:GetPos():Distance(Armor:GetPos()) > 150) then return end
+	local ArmorEnt = net.ReadEntity()
+	if not IsValid(ArmorEnt) or not ArmorEnt.ArmorName then return end
+	if JMod.ArmorTable[ArmorEnt.ArmorName].clrForced then return end
+	if (ply:GetPos():Distance(ArmorEnt:GetPos()) > 150) then return end
 
 	local AutoColor = net.ReadBool()
 	local Col = net.ReadColor()
 	Col.r = math.max(Col.r, 50)
 	Col.g = math.max(Col.g, 50)
 	Col.b = math.max(Col.b, 50)
-	Armor:SetColor(Color(Col.r, Col.g, Col.b))
+	ArmorEnt:SetColor(Color(Col.r, Col.g, Col.b))
 
 	if AutoColor == true then
 		timer.Simple(0.1, function()
-			if not(IsValid(Armor) and IsValid(ply) and ply:Alive()) then return end
+			if not(IsValid(ArmorEnt) and IsValid(ply) and ply:Alive()) then return end
 			net.Start("JMod_ArmorColor")
-			net.WriteEntity(Armor)
-			net.WriteBool(true)
+				net.WriteEntity(ArmorEnt)
+				net.WriteBool(true)
+				net.WriteFloat(ArmorEnt.Durability)
+				net.WriteFloat(ArmorEnt.Specs.dur)
 			net.Send(ply)
 		end)
 	end
@@ -128,7 +130,7 @@ net.Receive("JMod_ArmorColor", function(ln, ply)
 
 	if Equip then--and JMod.VisCheck(ply:GetShootPos(), Armor, ply) then
 		JMod.Hint(ply, "armor weight")
-		JMod.EZ_Equip_Armor(ply, Armor)
+		JMod.EZ_Equip_Armor(ply, ArmorEnt)
 	end
 end)
 

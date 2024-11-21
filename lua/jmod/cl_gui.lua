@@ -344,6 +344,7 @@ end)
 
 net.Receive("JMod_ArmorColor", function()
 	local Ent, UpdateColor, NextColorCheck = net.ReadEntity(), net.ReadBool(), 0
+	local Durability, MaxDurability = net.ReadFloat(), net.ReadFloat()
 
 	if UpdateColor == true then
 		input.SetCursorPos(OldMouseX, OldMouseY)
@@ -351,7 +352,7 @@ net.Receive("JMod_ArmorColor", function()
 
 	if not IsValid(Ent) then return end
 	local Frame = vgui.Create("DFrame")
-	Frame:SetSize(200, 300)
+	Frame:SetSize(200, 320)
 	Frame:SetPos(ScrW() * .4 - 200, ScrH() * .5)
 	Frame:SetDraggable(true)
 	Frame:ShowCloseButton(true)
@@ -359,7 +360,7 @@ net.Receive("JMod_ArmorColor", function()
 	Frame:MakePopup()
 	local Picker
 
-	function Frame:Paint()
+	function Frame:Paint(w, h)
 		BlurBackground(self)
 		local Time = CurTime()
 
@@ -372,17 +373,24 @@ net.Receive("JMod_ArmorColor", function()
 
 			NextColorCheck = Time + .25
 			net.Start("JMod_ArmorColor")
-			net.WriteEntity(Ent)
-			net.WriteBool(false)
-			local Col = Picker:GetColor()
-			net.WriteColor(Color(Col.r, Col.g, Col.b))
-			net.WriteBit(false)
+				net.WriteEntity(Ent)
+				net.WriteBool(false)
+				local Col = Picker:GetColor()
+				net.WriteColor(Color(Col.r, Col.g, Col.b))
+				net.WriteBit(false)
 			net.SendToServer()
 		end
+
+		surface.SetDrawColor(0, 0, 0, 100)
+		surface.DrawRect(5, 25, 190, 18)
+		local DR, DG, DB = JMod.GoodBadColor(Durability / MaxDurability, false)
+		surface.SetDrawColor(DR, DG, DB, 100)
+		surface.DrawRect(5, 25, 190 * (Durability / MaxDurability), 18)
+		draw.SimpleText("Durability: " .. math.Round(Durability, 2), "DermaDefault", 100, 34, Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 	end
 
 	Picker = vgui.Create("DColorMixer", Frame)
-	Picker:SetPos(5, 25)
+	Picker:SetPos(5, 45)
 	Picker:SetSize(190, 215)
 	Picker:SetAlphaBar(false)
 	Picker:SetWangs(false)
@@ -390,7 +398,7 @@ net.Receive("JMod_ArmorColor", function()
 	Picker:SetColor(Ent:GetColor())
 
 	local Butt = vgui.Create("DButton", Frame)
-	Butt:SetPos(5, 245)
+	Butt:SetPos(5, 265)
 	Butt:SetSize(95, 50)
 	Butt:SetText("EQUIP")
 
@@ -406,7 +414,7 @@ net.Receive("JMod_ArmorColor", function()
 	end
 
 	local ButtWhat = vgui.Create("DButton", Frame)
-	ButtWhat:SetPos(100, 245)
+	ButtWhat:SetPos(100, 265)
 	ButtWhat:SetSize(95, 50)
 	ButtWhat:SetText("AUTO-COLOR")
 
@@ -668,11 +676,9 @@ local function StandardSelectionMenu(typ, displayString, data, entity, enableFun
 		local WidthModifier = 200
 		MotherFrame:SetWide(W + WidthModifier)
 		MotherFrame:SetX(MotherFrame:GetX() - WidthModifier / 2)
-		--TabPanelX = W * .25 + 10
-		--TabPanelW = W * .75 - 20
 		local SidePanel = vgui.Create("DPanel", MotherFrame)
-		SidePanel:Dock(RIGHT)
-		SidePanel:DockMargin(0, 0, 0, 0)
+		SidePanel:Dock(LEFT)
+		SidePanel:DockMargin(0, 0, 5, 0)
 		SidePanel:SetSize(200, H)
 		function SidePanel:Paint(w, h)
 			surface.SetDrawColor(0, 0, 0, 50)
@@ -680,6 +686,9 @@ local function StandardSelectionMenu(typ, displayString, data, entity, enableFun
 		end
 		MotherFrame.SidePanel = SidePanel
 		sidePanelFunc(SidePanel)
+		--TabPanelX = W * .25
+		--TabPanelW = W * .75 - 20
+		TabPanel:Dock(RIGHT)
 	end
 
 	TabPanel:SetPos(TabPanelX, 30)
@@ -805,7 +814,7 @@ net.Receive("JMod_EZtoolbox", function()
 			ent.EZpreview = {Box = {mins = Min, maxs = Max}, SizeScale = info.sizeScale and info.sizeScale, SpawnAngles = Ang and Ang}
 		end
 	end, 
-	function(parent)
+	function(parent) -- side panel func
 		local W, H, Myself = parent:GetWide(), parent:GetTall(), LocalPlayer()
 
 		local ResourceScroller = vgui.Create("DScrollPanel", parent)
