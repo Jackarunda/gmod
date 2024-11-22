@@ -24,7 +24,7 @@ if SERVER then
 		local Ply = self.DeadPlayer
 		local Ragdoll = ents.Create("prop_ragdoll")
 		Ragdoll:SetModel(Ply:GetModel())
-		Ragdoll:SetSkin(self.DeadPlayer:GetSkin())
+		Ragdoll:SetSkin(Ply:GetSkin())
 		Ragdoll:SetBodyGroups(self.BodyGroupValues)
 		Ragdoll:SetPos(Ply:GetPos())
 		Ragdoll:SetAngles(Ply:GetAngles())
@@ -34,7 +34,7 @@ if SERVER then
 			local Matty = Ply:GetSubMaterial(k - 1)
 			Ragdoll:SetSubMaterial(k - 1, Matty)
 		end
-		Ragdoll:SetColor(Ply:GetColor())
+		--Ragdoll:SetColor(Ply:GetColor())
 		----------------------Kycea contribution Begin----------------------
 		timer.Simple(0, function()
 			if IsValid(Ragdoll) then
@@ -91,6 +91,11 @@ if SERVER then
 						if Weld then
 							Weld:Activate()
 						end
+					end
+				else
+					local ArmorPiece = JMod.RemoveArmorByID(Ply, k)
+					if IsValid(ArmorPiece) then
+						ArmorPiece:SetPos(Ragdoll:GetPos())
 					end
 				end
 			end

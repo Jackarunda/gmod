@@ -970,6 +970,10 @@ hook.Add("PlayerDeath", "JMOD_SERVER_PLAYERDEATH", function(ply, inflictor, atta
 	if ShouldJModCorpse then
 		local PlyRagdoll = ply:GetRagdollEntity()
 		if IsValid(PlyRagdoll) then
+			if ply.EZoriginalPlayerModel then
+				JMod.SetPlayerModel(ply, ply.EZoriginalPlayerModel)
+				PlyRagdoll:SetModel(ply.EZoriginalPlayerModel)
+			end
 			local BodyGroupValues = ""
 			for i = 1, PlyRagdoll:GetNumBodyGroups() do
 				BodyGroupValues = BodyGroupValues .. tostring(PlyRagdoll:GetBodygroup(i - 1))

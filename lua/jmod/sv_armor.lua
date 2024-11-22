@@ -455,8 +455,6 @@ function JMod.RemoveArmorByID(ply, ID, broken)
 	local Ent -- This is for if we can stow stuff in the armor when it's unequpped
 
 	if broken then
-		hook.Run("JMod_ArmorRemoved", ply, Info, Specs)
-
 		if Specs.eff and Specs.eff.explosive then
 			local FireAmt = (Info.chrg and Info.chrg.fuel and math.random(2, 4)) or 0
 			JMod.EnergeticsCookoff(ply:GetPos(), game.GetWorld(), 1, 1, 0, FireAmt)
@@ -502,6 +500,10 @@ function JMod.RemoveArmorByID(ply, ID, broken)
 			end)
 		end
 	end
+
+	hook.Run("JMod_ArmorRemoved", ply, Info, Specs, Ent, broken)
+
+	return Ent
 end
 
 local function GetArmorBySlot(currentArmorItems, slot)
