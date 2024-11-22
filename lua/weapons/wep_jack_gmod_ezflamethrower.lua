@@ -226,11 +226,11 @@ function SWEP:GetNozzle()
 	end
 
 	if SERVER then
-		debugoverlay.Cross(FirePos, 10, 2, Color(0, 89, 255), true)
-		debugoverlay.Line(FirePos, FirePos + FireAng:Forward() * 5000, 2, Color(0, 89, 255), false)
+		--debugoverlay.Cross(FirePos, 10, 2, Color(0, 89, 255), true)
+		--debugoverlay.Line(FirePos, FirePos + FireAng:Forward() * 5000, 2, Color(0, 89, 255), false)
 	else
-		debugoverlay.Cross(FirePos, 10, 2, Color(255, 251, 0), true)
-		debugoverlay.Line(FirePos, FirePos + FireAng:Forward() * 5000, 2, Color(255, 251, 0), false)
+		--debugoverlay.Cross(FirePos, 10, 2, Color(255, 251, 0), true)
+		--debugoverlay.Line(FirePos, FirePos + FireAng:Forward() * 5000, 2, Color(255, 251, 0), false)
 	end
 
 	return FirePos, FireAng

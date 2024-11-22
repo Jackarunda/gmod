@@ -166,11 +166,11 @@ end
 
 function JMod.VisCheck(pos, target, sourceEnt)
 	local filter = {}
-	pos = pos or (IsValid(sourceEnt) and sourceEnt:LocalToWorld(sourceEnt:OBBCenter()))
 
-	if sourceEnt then
+	if IsValid(sourceEnt) then
+		pos = pos or sourceEnt:LocalToWorld(sourceEnt:OBBCenter())
 		table.insert(filter, sourceEnt)
-		if sourceEnt.GetOwner and IsValid(sourceEnt:GetOwner()) then table.insert(filter, sourceEnt:GetOwner()) end
+		if IsValid(sourceEnt:GetOwner()) then table.insert(filter, sourceEnt:GetOwner()) end
 	end
 
 	if target and target.GetPos then

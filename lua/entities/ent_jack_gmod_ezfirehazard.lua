@@ -10,7 +10,7 @@ ENT.Burnin = true
 ENT.FireSounds = {Sound("snds_jack_gmod/fire1.ogg"), Sound("snds_jack_gmod/fire2.ogg")}
 ENT.FireEffect = "eff_jack_gmod_heavyfire"
 ENT.MaxIntensity = 20
-ENT.FireRange = 150
+ENT.FireRange = 250
 
 local ThinkRate = 6 --Hz
 
@@ -33,7 +33,6 @@ if SERVER then
 		self:SetNotSolid(true)
 
 		local Time = CurTime()
-		self.NextFizz = 0
 		self.Intensity = self.Intensity or math.random(self.MaxIntensity * .5, self.MaxIntensity)
 		self.Power = self.Intensity / self.MaxIntensity
 		self.Range = self.FireRange * self.Power
@@ -54,14 +53,6 @@ if SERVER then
 				util.Decal("Scorch", Tr.HitPos + Tr.HitNormal, Tr.HitPos - Tr.HitNormal, self)
 			end
 		end
-	end
-
-	local function Inflictor(ent)
-		if not IsValid(ent) then return game.GetWorld() end
-		local Infl = ent:GetDTEntity(0)
-		if IsValid(Infl) then return Infl end
-
-		return ent
 	end
 
 	local DamageBlacklist = {
@@ -104,9 +95,7 @@ if SERVER then
 		if ent:IsPlayer() then return true end
 		if ent:IsNPC() then return true end
 		if ent:IsNextBot() then return true end
-		local PhysicsMat = ent:GetMaterialType()
-
-		if FlammableMaterials[PhysicsMat] then
+		if FlammableMaterials[ent:GetMaterialType()] then
 			return true
 		end
 		return false
@@ -114,23 +103,7 @@ if SERVER then
 
 	function ENT:Think()
 		local Time, Pos, Dir = CurTime(), self:GetPos(), self:GetForward()
-		local Water = self:WaterLevel()
-		local Fraction = self.Intensity / (self.MaxIntensity * 1.5)
-
-		if self.HighVisuals then
-			if self.NextFizz < Time then
-				self.NextFizz = Time + .5
-
-				if (self.Burnin) and (Water < 1) and ((math.random(1, 3) == 1) or self.HighVisuals) then
-					local Zap = EffectData()
-					Zap:SetOrigin(Pos)
-					Zap:SetScale(2.5 * Fraction)
-					Zap:SetStart(self:GetVelocity())
-					util.Effect(self.FireEffect, Zap, true, true)
-				end--]]
-			end
-		end
-
+		
 		if self.Burnin then 
 			if self.NextSound < Time then
 				self.NextSound = Time + math.Rand(.9, 1.1)
@@ -142,7 +115,9 @@ if SERVER then
 
 			if self.NextDamage < Time then
 				self.NextDamage = Time + 0.5
-				local Par, Att, Infl = self:GetParent(), JMod.GetEZowner(self), Inflictor(self)
+				local Fraction = self.Intensity / (self.MaxIntensity * 1.5)
+				local Par, Att, Infl = self:GetParent(), JMod.GetEZowner(self), self
+				local Water = self:WaterLevel()
 
 				if not IsValid(Att) then
 					Att = Infl
@@ -155,9 +130,19 @@ if SERVER then
 						return
 					end
 				elseif Water > 0 then
-					self:SetPos(util.TraceLine({start = Pos, endpos = Pos + Vector(0, 0, 10), filter = self}).HitPos)
+					local FireTracy = util.TraceLine({start = Pos, endpos = Pos + Vector(0, 0, 10), filter = self})
+					self:SetPos(FireTracy.HitPos)
+
+					if IsValid(FireTracy.Entity) then
+						self:SetParent(FireTracy.Entity)
+					end
 				else
-					self:SetPos(util.TraceLine({start = Pos, endpos = Pos - Vector(0, 0, 30), filter = self}).HitPos)
+					local FireTracy = util.TraceLine({start = Pos + Vector(0, 0, 10), endpos = Pos + Vector(0, 0, -30), filter = self})
+					self:SetPos(FireTracy.HitPos)
+
+					if IsValid(FireTracy.Entity) then
+						self:SetParent(FireTracy.Entity)
+					end
 				end
 
 				local FireNearby = false
@@ -200,11 +185,11 @@ if SERVER then
 								break
 							end
 						end
-					elseif v.JModHighlyFlammableFunc and JMod.VisCheck(self, v, self) then
+					elseif v.JModHighlyFlammableFunc and JMod.VisCheck(Pos, v, self) then
 						JMod.SetEZowner(v, self.EZowner)
 						local Func = v[v.JModHighlyFlammableFunc]
 						Func(v)
-					elseif not DamageBlacklist[v:GetClass()] and IsValid(v:GetPhysicsObject()) and JMod.VisCheck(self, v, self) then
+					elseif not DamageBlacklist[v:GetClass()] and IsValid(v:GetPhysicsObject()) and JMod.VisCheck(Pos, v, self) then
 						local DistanceFactor = math.max( 1 - ( Pos:Distance( TheirPos ) / self.Range ), 0 ) ^ 1.5
 						FireDam:SetDamage(self.Power * DistanceFactor)
 						v:TakeDamageInfo(FireDam)
@@ -228,11 +213,20 @@ if SERVER then
 				end
 
 				self.Intensity = math.Clamp(self.Intensity - math.Rand(0.2, 1), 0, self.MaxIntensity * 1.5)
+
+				if (Water < 1) and ((math.random(1, 3) == 1) or self.HighVisuals) then
+					local Zap = EffectData()
+					Zap:SetOrigin(Pos)
+					Zap:SetScale(2.5 * Fraction)
+					Zap:SetStart(self:GetVelocity())
+					util.Effect(self.FireEffect, Zap, true, true)
+				end
 			end
 		end
 
 		if (self.NextEnvThink < Time) then
 			self.NextEnvThink = Time + 5
+			local Water = self:WaterLevel()
 			local Pos = self:GetPos()
 			local Tr = util.QuickTrace(Pos, Vector(0, 0, 9e9), self)
 			if not (Tr.HitSky) then
@@ -271,13 +265,13 @@ if SERVER then
 
 		return true
 	end
+
 elseif CLIENT then
 	function ENT:Initialize()
 		self.HighVisuals = self:GetHighVisuals()
 
 		self.CastLight = (self.HighVisuals and (math.random(1, 5) == 1)) and JMod.Config.QoL.NiceFire
 		self.Size = self.FireRange
-		
 		self.NextFizz = 0
 		self.Offset = Vector(0, 0, 0)
 		self.SizeX = 1

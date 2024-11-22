@@ -69,6 +69,27 @@ if SERVER then
 		self.EZID = self.EZID or JMod.GenerateGUID()
 	end
 
+	--[[function ENT:TryLoadResource(typ, amt)
+		if (amt <= 0) then return 0 end
+		if self.ArmorCharges then
+			for k, v in pairs(self.ArmorCharges) do
+				if typ == v.typ then
+					local CurAmt = v.amt or 0
+					local Take = math.min(amt, v.max - CurAmt)
+
+					if Take > 0 then
+						v.amt = CurAmt + Take
+						amt = amt - Take
+
+						return Take
+					end
+				end
+			end
+		end
+
+		return 0
+	end--]]
+
 	function ENT:PhysicsCollide(data, physobj)
 		if data.DeltaTime > 0.2 then
 			if data.Speed > 25 then
