@@ -880,7 +880,32 @@ net.Receive("JMod_EZworkbench", function()
 		net.WriteEntity(ent)
 		net.WriteString(name)
 		net.SendToServer()
-	end, nil, Multiplier)
+	end, 
+	function(parent) -- side panel func
+		local W, H, Myself = parent:GetWide(), parent:GetTall(), LocalPlayer()
+
+		local ResourceScroller = vgui.Create("DScrollPanel", parent)
+		ResourceScroller:SetSize(W - 20, H - 20)
+		ResourceScroller:SetPos(10, 10)
+		ResourceScroller:Dock(FILL)
+		ResourceScroller:DockMargin(0, 0, 0, 0)
+		ResourceScroller:SetPaintBackground(false)
+		ResourceScroller.VerticalScrollbar = true
+		ResourceScroller.HorizontalScrollbar = false
+
+		for k, v in pairs(LocallyAvailableResources) do
+			local ResourcePanel = vgui.Create("DPanel", ResourceScroller)
+			ResourcePanel:SetSize(W - 20, 40)
+			ResourcePanel:Dock(TOP)
+			ResourcePanel:DockMargin(0, 0, 0, 5)
+			function ResourcePanel:Paint(w, h)
+				surface.SetDrawColor(0, 0, 0, 50)
+				surface.DrawRect(0, 0, w, h)
+				JMod.StandardResourceDisplay(k, v, nil, w * .55, h * .5, 30, false, "JMod-Stencil-XS")
+			end
+			ResourcePanel:SetTooltip(k .. " x" .. v)
+		end
+	end, Multiplier)
 end)
 
 net.Receive("JMod_EZtimeBomb", function()
