@@ -70,7 +70,7 @@ function JMod.FragSplosion(shooter, origin, fragNum, fragDmg, fragMaxDist, attac
 				if DamageToDeal >= 1 then
 					-- Convert the distance from source hammer units to meters
 					local DistanceConversion = math.Round(Tr.StartPos:Distance(Tr.HitPos) / 52.493, 2)
-					print("Damage to deal: " .. DamageToDeal, "Meters: " .. DistanceConversion, "Target: " .. tostring(Tr.Entity))
+					--print("Damage to deal: " .. DamageToDeal, "Meters: " .. DistanceConversion, "Target: " .. tostring(Tr.Entity))
 					ShrapnelDamageInfo:SetDamage(DamageToDeal)
 					ShrapnelDamageInfo:SetDamagePosition(Tr.HitPos)
 					ShrapnelDamageInfo:SetDamageForce(Dir * DamageToDeal * .2)
