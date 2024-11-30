@@ -258,7 +258,7 @@ if SERVER then
 						Phys:ApplyForceOffset(self:GetUp() * self.ThrustPower, self:GetPos() + self:GetUp() * 10)
 					end
 				end
-				self.FuelLeft = self.FuelLeft - 1.75
+				self.FuelLeft = self.FuelLeft - 2
 				--jprint(1 / self.FuelLeft)
 				---
 				local Eff = EffectData()
