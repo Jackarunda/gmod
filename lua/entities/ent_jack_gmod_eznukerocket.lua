@@ -5,7 +5,7 @@ ENT.Author = "Jackarunda"
 ENT.Category = "JMod - EZ Explosives"
 ENT.Information = "glhfggwpezpznore"
 ENT.PrintName = "EZ Nuclear Rocket"
-ENT.Spawnable = true -- temporary, until we fix the textures and drawfunc
+ENT.Spawnable = true
 ENT.AdminOnly = true
 ---
 ENT.JModPreferredCarryAngles = Angle(0, 90, 0)
@@ -365,6 +365,18 @@ if SERVER then
 
 		return true
 	end
+
+	function ENT:PostEntityPaste(ply, ent, createdEntities)
+		if not(ent:GetPersistent()) and (ent.AdminOnly and ent.AdminOnly == true) and (JMod.IsAdmin(ply)) then
+			JMod.SetEZowner(self, ply)
+			if self.EZlaunchableWeaponArmedTime then
+				self.EZlaunchableWeaponArmedTime = self.EZlaunchableWeaponArmedTime - CurTime()
+			end
+		else
+			SafeRemoveEntity(ent)
+		end
+	end
+
 elseif CLIENT then
 	function ENT:Initialize()
 		self.Mdl = ClientsideModel("models/jmod/explosives/bombs/bomb_nukekab.mdl")

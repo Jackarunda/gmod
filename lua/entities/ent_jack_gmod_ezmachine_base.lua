@@ -629,7 +629,7 @@ if(SERVER)then
 	-- Entity save/dupe functionality
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
-		if (ent.AdminOnly and ent.AdminOnly == true) and (not(JMod.IsAdmin(ply)) and not(ent:GetPersistent())) then
+		if not(ent:GetPersistent()) and (ent.AdminOnly and ent.AdminOnly == true) and (not(JMod.IsAdmin(ply)) and not(ent:GetPersistent())) then
 			SafeRemoveEntity(ent)
 		else
 			if IsValid(ply) then
