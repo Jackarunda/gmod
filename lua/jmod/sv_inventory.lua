@@ -103,14 +103,10 @@ function JMod.UpdateInv(invEnt, noplace, transfer)
 		local TrPos = util.QuickTrace(EntPos, RandomPos, {invEnt}).HitPos
 		if (Capacity > 0) and JMod.IsEntContained(iteminfo.ent, invEnt) and (iteminfo.ent:EntIndex() ~= -1) then
 			local Vol, Mass = JMod.GetItemVolumeWeight(iteminfo.ent)
-			if (Vol ~= nil) and IsActiveItemAllowed(iteminfo.ent) then
-				if (Capacity >= (jmodinvfinal.volume + Vol)) then
-					jmodinvfinal.weight = jmodinvfinal.weight + Mass
-					jmodinvfinal.volume = jmodinvfinal.volume + math.Round(Vol, 2)
-				else
-					local Removed = JMod.RemoveFromInventory(invEnt, iteminfo.ent, not(noplace) and TrPos, true, transfer)
-					table.insert(RemovedItems, Removed)
-				end
+			if (Vol ~= nil) and IsActiveItemAllowed(iteminfo.ent) and (Capacity >= (jmodinvfinal.volume + Vol)) then
+				jmodinvfinal.weight = jmodinvfinal.weight + Mass
+				jmodinvfinal.volume = jmodinvfinal.volume + math.Round(Vol, 2)
+				iteminfo.vol = Vol
 			else
 				local Removed = JMod.RemoveFromInventory(invEnt, iteminfo.ent, not(noplace) and TrPos, true, transfer)
 				table.insert(RemovedItems, Removed)
@@ -224,7 +220,7 @@ function JMod.AddToInventory(invEnt, target, noUpdate)
 		--if invEnt:GetPersistent() then
 		--	target:SetPersistent(true)
 		--end
-		table.insert(jmodinv.items, {name = target.PrintName or target:GetModel(), ent = target})
+		table.insert(jmodinv.items, {name = target.PrintName or target:GetModel(), ent = target, vol = JMod.GetItemVolumeWeight(target)})
 
 		local Children = target:GetChildren()
 		if Children then
@@ -301,7 +297,7 @@ function JMod.RemoveFromInventory(invEnt, target, pos, noUpdate, transfer)
 				target.EZoldNoBoneFollow = nil
 			end
 			target:SetParent(nil)
-			target:SetPos(pos or Vector(0, 0 ,0))
+			target:SetPos(pos or invEnt:GetPos())
 			local Phys = target:GetPhysicsObject()
 			timer.Simple(0, function()
 				if IsValid(Phys) then
@@ -568,24 +564,36 @@ function JMod.EZ_Open_Inventory(ply)
 	net.Send(ply)
 end
 
-concommand.Add("jmod_ez_quicknade", function(ply, cmd, args)
-	if not (IsValid(ply) and ply:Alive()) then return end
-	if (ply.EZnextQuickNadeTime or 0) > CurTime() then return end
+function JMod.EZ_QuickNade(ply, cmd, args)
+	if not (IsValid(ply) and ply:Alive()) then return false end
+	if (ply.EZnextQuickNadeTime or 0) > CurTime() then return false end
 	ply.EZnextQuickNadeTime = CurTime() + 1
+
 	for k, tbl in ipairs(ply.JModInv.items) do
-		local Item = tbl.ent
-		if IsValid(Item) and Item.EZinvPrime or Item.EZinvThrowable then
-			local item = JMod.RemoveFromInventory(ply, Item, ply:GetShootPos() + ply:GetAimVector() * 10)
-			if item then
-				item:Use(ply, ply, USE_ON)
-				timer.Simple(0.1, function()
-					if IsValid(item) and item.GetState and item.Prime and (item:GetState() == JMod.EZ_STATE_OFF) then item:Prime() end
-				end)
-				sound.Play("snd_jack_clothunequip.ogg", ply:GetShootPos(), 60, math.random(90, 110))
-				return
-			end
+		local Nade = tbl.ent
+
+		if IsValid(Nade) and Nade.EZinvPrime or Nade.EZinvThrowable then
+			local SafetyTr = util.QuickTrace(ply:GetShootPos(), ply:GetAimVector() * 50, {ply, Nade})
+			local Nade = JMod.RemoveFromInventory(ply, Nade, SafetyTr.HitPos + SafetyTr.HitNormal * 5)
+
+			timer.Simple(0.01, function()
+				if IsValid(Nade) and IsValid(ply) and ply:Alive() then
+					Nade:Use(ply, ply, USE_ON)
+					timer.Simple(0.01, function()
+						if IsValid(Nade) and not(Nade.AlreadyPickedUp) and Nade.GetState and Nade.Prime and (Nade:GetState() == JMod.EZ_STATE_OFF) then Nade:Prime() end
+					end)
+				end
+			end)
+
+			sound.Play("snd_jack_clothunequip.ogg", ply:GetShootPos(), 60, math.random(90, 110))
+
+			return true
 		end
 	end
+end
+
+concommand.Add("jmod_ez_quicknade", function(ply, cmd, args)
+	JMod.EZ_QuickNade(ply, cmd, args)
 end, nil, "Quick throw first grenade in JMod inventory")
 
 concommand.Add("jmod_debug_stow", function(ply, cmd, args) 

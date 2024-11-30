@@ -1500,7 +1500,7 @@ local function CreateInvButton(parent, itemTable, x, y, w, h, scrollFrame, invEn
 		--draw.SimpleText(itemTable.name, "DermaDefault", Buttalony:GetWide() / 2, 40, TextColors.ButtonText, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 	end
 
-	local HelpStr = itemTable.name
+	local HelpStr = itemTable.name..":\n"..(itemTable.vol or "N/A").." Volume"
 	
 	Buttalony:SetTooltip(HelpStr)
 	

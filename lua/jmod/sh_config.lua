@@ -2947,7 +2947,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 	-- This is to make sure the ammo types are saved on config reload
 	JMod.LoadAmmoTable(JMod.AmmoTable)
 
-	print("JMOD: updating recipies...")
+	print("JMOD: updating recipes...")
 	for k, v in ents.Iterator() do
 		if(IsValid(v) and v.UpdateConfig)then
 			v:UpdateConfig()
