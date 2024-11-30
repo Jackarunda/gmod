@@ -19,24 +19,7 @@ if SERVER then
 		local SelfPos, Owner, SelfVel = self:LocalToWorld(self:OBBCenter()), self.EZowner or self, self:GetPhysicsObject():GetVelocity()
 		JMod.Sploom(Owner, SelfPos, 10, 50)
 
-		local FireSpeed = .35
-		for i = 1, 25 do
-			local FireVec = (self:GetVelocity() / 500 + VectorRand() * .3 + Vector(0, 0, .3)):GetNormalized()
-			local Owner = JMod.GetEZowner(self)
-			timer.Simple(i / 30, function()
-				FireVec.z = FireVec.z / 2
-				local Flame = ents.Create("ent_jack_gmod_eznapalm")
-				Flame.Creator = self
-				Flame:SetPos(SelfPos + Vector(0, 0, 10))
-				Flame:SetAngles(FireVec:Angle())
-				JMod.SetEZowner(Flame, JMod.GetEZowner(self))
-				Flame.InitialVel = FireVec
-				Flame.SpeedMul = FireSpeed
-				Flame.HighVisuals = math.random(1, 5) == 1
-				Flame:Spawn()
-				Flame:Activate()
-			end)
-		end
+		JMod.FireSplosion(SelfPos + Vector(0, 0, 10), SelfVel*.5, 25, 1, .5, true, self)
 
 		self:Remove()
 	end

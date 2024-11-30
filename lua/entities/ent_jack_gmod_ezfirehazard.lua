@@ -207,7 +207,7 @@ if SERVER then
 					self:SetHighVisuals(true)
 				end
 
-				if vFireInstalled and (math.random(1, 100) == 1) then
+				if vFireInstalled  then
 					CreateVFireBall(math.random(20, 30), math.random(10, 20), self:GetPos(), VectorRand() * math.random(200, 400), JMod.GetEZowner(self))
 					self:Remove()
 				end
