@@ -3047,18 +3047,18 @@ end
 
 hook.Add("PersistenceSave", "JMOD_SaveDepositConfig", function(persistenceString)
 	if not persistenceString then return end
-	JMod.SaveDepositConfig("Persistant" .. persistenceString)
+	JMod.SaveDepositConfig("Persistant_" .. persistenceString)
 end)
 
 hook.Add("PersistenceLoad", "JMOD_LoadDepositConfig", function(persistenceString)
 	if not persistenceString then return end
-	local Info = JMod.LoadDepositConfig("Persistant" .. persistenceString)
+	local Info = JMod.LoadDepositConfig("Persistant_" .. persistenceString)
 
 	if type(Info) == "string" then
 		print(Info)
 		return
 	else
-		if SERVER and GetConVar("sv_cheats"):GetBool() == true then
+		if SERVER then
 			JMod.NaturalResourceTable = Info
 			net.Start("JMod_NaturalResources")
 				net.WriteBool(false)
