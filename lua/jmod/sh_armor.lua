@@ -346,7 +346,7 @@ JMod.ArmorTable = {
 			ang = Angle(100, 0, 90)
 		}
 	},
-	["Glasses"] = {
+	/*["Glasses"] = {
 		PrintName = "Glasses",
 		mdl = "models/jmod/glasses_classic.mdl", -- csgo misc?
 		slots = {
@@ -372,7 +372,7 @@ JMod.ArmorTable = {
 			pos = Vector(1.5, -2.5, .1),
 			ang = Angle(100, 0, 90)
 		}--]]
-	},
+	},*/
 	["Light-Helmet"] = {
 		PrintName = "Helmet-Light",
 		mdl = "models/player/helmet_achhc_black/achhc_black.mdl", -- tarkov
