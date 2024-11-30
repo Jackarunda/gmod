@@ -199,6 +199,7 @@ if SERVER then
 	function ENT:OnPostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
 		ent.NextUseTime = Time + math.Rand(0, 3)
+		ent.NextLogicThink = Time + math.Rand(0, 3)
 	end
 
 elseif CLIENT then
