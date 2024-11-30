@@ -554,7 +554,7 @@ hook.Add("JMod_ConsumeNutrients", "DarkRP_EnergyCompat", function(ply, amt)
 end)
 
 function JMod.GetPlayerStrength(ply)
-	if not(IsValid(ply) and ply:IsPlayer() and ply:Alive()) then return 0 end
+	if not(IsValid(ply) and ply:IsPlayer() and ply:Alive()) then return 1 end
 	local PlyHealth = ply:Health()
 	local PlyMaxHealth = ply:GetMaxHealth()
 

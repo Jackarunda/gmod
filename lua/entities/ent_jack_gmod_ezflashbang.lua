@@ -9,7 +9,7 @@ ENT.JModPreferredCarryAngles = Angle(0, 140, 0)
 ENT.Model = "models/jmod/explosives/grenades/flashbang/flashbang.mdl"
 --ENT.ModelScale=1.5
 ENT.SpoonScale = 2
-ENT.PinBodygroup = nil
+ENT.PinBodygroup = {1, 1}
 ENT.SpoonBodygroup = {2, 1}
 ENT.DetDelay = 2
 

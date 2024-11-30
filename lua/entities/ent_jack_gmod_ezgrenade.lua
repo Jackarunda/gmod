@@ -10,17 +10,17 @@ ENT.Spawnable = false
 ENT.Model = "models/weapons/w_grenade.mdl"
 ENT.Material = nil
 ENT.ModelScale = nil
-ENT.HardThrowStr = 500
-ENT.SoftThrowStr = 250
+ENT.HardThrowStr = 600
+ENT.SoftThrowStr = 300
 ENT.Mass = 10
 ENT.ImpactSound = "Grenade.ImpactHard"
 ENT.SpoonEnt = "ent_jack_spoon"
 ENT.SpoonModel = nil
 ENT.SpoonScale = nil
 ENT.SpoonSound = nil
-ENT.PinBodygroup = {1, 1} -- Body group to change to when we unpin the grenade
-ENT.SpoonBodygroup = {2, 1} -- Body group to change to when we release the spoon
-ENT.DetDelay = nil -- Delay before detonation
+ENT.PinBodygroup = nil--{1, 1} -- Body group to change to when we unpin the grenade
+ENT.SpoonBodygroup = nil--{2, 1} -- Body group to change to when we release the spoon
+ENT.DetDelay = 3 -- Delay before detonation
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.JModEZstorable = true
 ENT.EZinvPrime = true
@@ -244,6 +244,7 @@ if SERVER then
 	function ENT:Detonate()
 		if self.Exploded then return end
 		self.Exploded = true
+		JMod.Sploom(self.EZowner, self:GetPos(), 0)
 		self:Remove()
 	end
 end
