@@ -1098,7 +1098,7 @@ function JMod.DepleteArmorChemicalCharge(ply, amt)
 				armorData.chrg.chemicals = math.max(armorData.chrg.chemicals - SubtractAmt, 0)
 
 				if armorData.chrg.chemicals <= ArmorInfo.chrg.chemicals * .25 then
-					JMod.EZarmorWarning(ply, "armor's chemical charge is almost depleted!")
+					JMod.EZarmorWarning(ply, (ArmorInfo.PrintName or armorData.name).."'s chemical charge is almost depleted!")
 				end
 
 				break
