@@ -222,7 +222,7 @@ if SERVER then
 	}
 	function ENT:PostEntityPaste(ply)
 		local Type = self:GetResourceType()
-		if not(JMod.IsAdmin(ply)) and table.HasValue(RestrictedMaterials, Type) then
+		if not(JMod.IsAdmin(ply)) and table.HasValue(RestrictedMaterials, Type) and not game.SinglePlayer() then
 			self:SetEZsupplies(Type, 0, self)
 			self:ApplySupplyType(self.EZsupplies)
 		end

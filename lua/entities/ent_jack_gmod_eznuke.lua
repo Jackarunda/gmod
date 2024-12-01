@@ -191,7 +191,7 @@ if SERVER then
 	end
 
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
-		if (ent.AdminOnly and ent.AdminOnly == true) and (JMod.IsAdmin(ply)) then
+		if (ent.AdminOnly and ent.AdminOnly == true) and (JMod.IsAdmin(ply)) and not game.SinglePlayer() then
 			JMod.SetEZowner(self, ply)
 			if self.EZdroppableBombArmedTime then
 				self.EZdroppableBombArmedTime = self.EZdroppableBombArmedTime - CurTime()
