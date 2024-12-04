@@ -390,8 +390,12 @@ net.Receive("JMod_ItemInventory", function(len, ply)
 			return false 
 		end
 		if CanSeeNonPlyInv and JMod.IsEntContained(target, invEnt) then
-			JMod.AddToInventory(ply, target)
-			sound.Play((InvSound) or ("snd_jack_clothequip.ogg"), Tr.HitPos, 60, math.random(90, 110))
+			local Added = JMod.AddToInventory(ply, target)
+			if Added then
+				sound.Play((InvSound) or ("snd_jack_clothequip.ogg"), Tr.HitPos, 60, math.random(90, 110))
+			else
+				ply:PrintMessage(HUD_PRINTCENTER, "Cannot take")
+			end
 		end
 	elseif command == "stow" then
 		if not(IsValid(target)) then 
@@ -400,8 +404,12 @@ net.Receive("JMod_ItemInventory", function(len, ply)
 			return false 
 		end
 		if CanSeeNonPlyInv and JMod.IsEntContained(target, ply) then
-			JMod.AddToInventory(invEnt, target)
-			sound.Play((InvSound) or ("snd_jack_clothequip.ogg"), Tr.HitPos, 60, math.random(90, 110))
+			local Added = JMod.AddToInventory(invEnt, target)
+			if Added then 
+				sound.Play((InvSound) or ("snd_jack_clothequip.ogg"), Tr.HitPos, 60, math.random(90, 110)) 
+			else
+				ply:PrintMessage(HUD_PRINTCENTER, "Cannot stow")
+			end
 		end
 	elseif command == "drop" then
 		if NonPlyInv and not(CanSeeNonPlyInv) then return end
@@ -452,18 +460,26 @@ net.Receive("JMod_ItemInventory", function(len, ply)
 		else
 			JMod.RemoveFromInventory(invEnt, {resourceType, amt}, nil, false)
 		end
-		JMod.AddToInventory(ply, {resourceType, amt})
-		sound.Play("snd_jack_clothequip.ogg", Tr.HitPos, 60, math.random(90, 110)) --"snds_jack_gmod/equip"..math.random(1, 5)..".ogg"
+		local Added = JMod.AddToInventory(ply, {resourceType, amt})
+		if Added then
+			sound.Play("snd_jack_clothequip.ogg", Tr.HitPos, 60, math.random(90, 110)) --"snds_jack_gmod/equip"..math.random(1, 5)..".ogg"
+		else
+			ply:PrintMessage(HUD_PRINTCENTER, "Cannot take")
+		end
 	elseif command == "stow_res" then
 		if not(CanSeeNonPlyInv) then return end
 		local amt = math.Clamp(desiredAmt, 0, ply.JModInv.EZresources[resourceType] or 0)
-		if not JMod.AddToInventory(invEnt, {resourceType, amt}) then
+		local Added = JMod.AddToInventory(invEnt, {resourceType, amt})
+		if not Added then
 			if invEnt.EZconsumes and table.HasValue(invEnt.EZconsumes, resourceType) then
 				amt = invEnt:TryLoadResource(resourceType, amt)
+			else
+				ply:PrintMessage(HUD_PRINTCENTER, "Could not stow or load resource")
 			end
+		else
+			sound.Play(InvSound, Tr.HitPos, 60, math.random(90, 110))
+			JMod.RemoveFromInventory(ply, {resourceType, amt}, nil, false)
 		end
-		JMod.RemoveFromInventory(ply, {resourceType, amt}, nil, false)
-		sound.Play(InvSound, Tr.HitPos, 60, math.random(90, 110))
 	elseif command == "full" then
 		JMod.Hint(ply,"hint item inventory full")
 	elseif command == "missing" then
