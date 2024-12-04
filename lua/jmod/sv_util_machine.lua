@@ -105,25 +105,27 @@ function JMod.CreateResourceConnection(machine, ent, resType, plugPos, dist, new
 	local PluginPos = ent.EZpowerSocket or plugPos or ent:OBBCenter()
 	if not IsValid(newCable) then
 		local DistanceBetween = (machine:GetPos() - ent:LocalToWorld(PluginPos)):Length()
-		if (DistanceBetween > dist) then return false end
+		if (DistanceBetween > (dist + 50)) then return false end
 	end
 	--
+	local MachineID = machine:EntIndex()
+
 	machine.EZconnections = machine.EZconnections or {}
+	ent.EZconnections = ent.EZconnections or {}
+
 	local AlreadyConnected = false
 	local EntID = ent:EntIndex()
 	for entID, cable in pairs(machine.EZconnections) do
-		if entID == EntID then
+		if entID == EntID and IsValid(cable) then
 			AlreadyConnected = true
-
+			newCable = cable
 			break
 		end
 	end
-	if AlreadyConnected then return false end
+	--if AlreadyConnected then return false end
 	
-	ent.EZconnections = ent.EZconnections or {}
-	local MachineIndex = machine:EntIndex()
 	for entID, cable in pairs(ent.EZconnections) do
-		if (EntID == MachineIndex) then
+		if (EntID == MachineID) then
 			if IsValid(cable) then
 				cable:Remove()
 			end
@@ -134,26 +136,35 @@ function JMod.CreateResourceConnection(machine, ent, resType, plugPos, dist, new
 	if not IsValid(newCable) then
 		newCable = constraint.Rope(machine, ent, 0, 0, machine.EZpowerSocket or Vector(0, 0, 0), PluginPos, dist + 20, 10, 100, 2, "cable/cable2")
 	end
-	ent.EZconnections[MachineIndex] = newCable
+	ent.EZconnections[MachineID] = newCable
 	machine.EZconnections[EntID] = newCable
 
 	return true
 end
 
-function JMod.RemoveResourceConnection(machine, connection)
+function JMod.RemoveResourceConnection(machine, connection, removeCable)
 	if not IsValid(machine) then return end
+	removeCable = removeCable or true
 	-- Check if connection is a entity first
 	if type(connection) == "Entity" and IsValid(connection) then
 		-- Check if it is connected
 		connection = connection:EntIndex()
 	end
+
 	if not(machine.EZconnections[connection]) then return end
+
 	local ConnectedEnt = Entity(connection)
 	local Cable = machine.EZconnections[connection]
-	if IsValid(Cable) then
+
+	if removeCable and IsValid(Cable) then
 		Cable:Remove()
 	end
+
 	machine.EZconnections[connection] = nil
+
+	if IsValid(ConnectedEnt) and ConnectedEnt.EZconnections then
+		ConnectedEnt.EZconnections[machine:EntIndex()] = nil
+	end
 end
 
 function JMod.ConnectionValid(machine, otherMachine)

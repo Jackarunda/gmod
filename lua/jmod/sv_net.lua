@@ -187,7 +187,7 @@ net.Receive("JMod_ModifyConnections", function(ln, ply)
 	if not IsValid(Ent) then return end
 	local Ent2 = net.ReadEntity()
 	--print(Action, Ent, Ent2)
-	if (JMod.GetEZowner(Ent) ~= ply) then return end
+	if (JMod.GetEZowner(Ent) ~= ply) or (ply:GetPos():Distance(Ent:GetPos()) > 500) then return end
 
 	if Action == "connect" then
 		JMod.StartResourceConnection(Ent, ply)

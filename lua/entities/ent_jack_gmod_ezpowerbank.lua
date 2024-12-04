@@ -35,7 +35,7 @@ if SERVER then
 
 	function ENT:CustomInit()
 		self.NextUseTime = 0
-		self.EZconnections = {}
+		--self.EZconnections = {}
 		self.EZupgradable = false
 		self.EZcolorable = false
 		self.PowerFlow = 0
