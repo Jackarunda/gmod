@@ -29,9 +29,10 @@ function JMod.FragSplosion(shooter, origin, fragNum, fragDmg, fragMaxDist, attac
 		disperseTime = 1
 	end
 
+	local firer = (IsValid(shooter) and shooter) or game.GetWorld()
 	ShrapnelDamageInfo = DamageInfo()
 	ShrapnelDamageInfo:SetAttacker(attacker)
-	ShrapnelDamageInfo:SetInflictor(shooter)
+	ShrapnelDamageInfo:SetInflictor(firer)
 	ShrapnelDamageInfo:SetDamageType(DMG_BUCKSHOT)
 
 	for i = 1, fragNum do
@@ -64,7 +65,6 @@ function JMod.FragSplosion(shooter, origin, fragNum, fragDmg, fragMaxDist, attac
 					DmgMul = math.Round(1 / fragDmg, 4)
 				end
 
-				local firer = (IsValid(shooter) and shooter) or game.GetWorld()
 				local DistFactor = (-Tr.Fraction + 1.1)^2.5
 				local DamageToDeal = math.min(math.Round(fragDmg * DmgMul * DistFactor, 2), fragDmg * DmgMul)
 				if DamageToDeal >= 1 then
@@ -188,7 +188,7 @@ function JMod.WreckBuildings(blaster, pos, power, range, ignoreVisChecks)
 
 				if proceed then
 					if mass <= myDestroyThreshold then
-						if (DistFrac >= .9) and string.find(physObj:GetMaterial(), "metal") then
+						if (mass * 2 >= myDestroyThreshold) and (DistFrac >= .9) and string.find(physObj:GetMaterial(), "metal") then
 							timer.Simple(.1, function()
 								JMod.FragSplosion(blaster, propPos, mass * 10, 100, maxRange * 100, game.GetWorld(), (propPos - pos):GetNormalized(), DistFrac)
 							end)
