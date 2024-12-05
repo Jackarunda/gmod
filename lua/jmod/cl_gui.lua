@@ -839,32 +839,8 @@ net.Receive("JMod_EZtoolbox", function()
 			ResourcePanel:SetTooltip(k .. " x" .. v)
 		end
 	end)
-
-	--[[local W, H, Myself = MotherFrame:GetWide(), MotherFrame:GetTall(), LocalPlayer()
-	MotherFrame:SetTall(550)
-
-	local ToolPanel = vgui.Create("DPanel", MotherFrame)
-	ToolPanel:SetPos(10, 495)
-	ToolPanel:SetSize(W - 20, 45)
-	function ToolPanel:Paint(w, h)
-		surface.SetDrawColor(0, 0, 0, 50)
-		surface.DrawRect(0, 0, w, h)
-	end
-
-	local PickButton = vgui.Create("DButton", ToolPanel)
-	PickButton:SetPos(5, 5)
-	PickButton:SetSize(100, 35)
-	PickButton:SetText("")
-	function PickButton:Paint(x, y)
-		local Hovr = self:IsHovered()
-		local Col = (Hovr and 80) or 20
-		surface.SetDrawColor(0, 0, 0, Col)
-		surface.DrawRect(0, 0, x, y)
-		draw.SimpleText("PICKAXE", "DermaDefault", x * 0.5, y * 0.5, Color(255, 255, 255, Col * 2), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-	end--]]
 end)
 
--- no side display for now
 net.Receive("JMod_EZworkbench", function()
 	local Bench = net.ReadEntity()
 	local Buildables = net.ReadTable()
