@@ -1,12 +1,35 @@
 
 function JMod.FragSplosion(shooter, origin, fragNum, fragDmg, fragMaxDist, attacker, direction, spread, zReduction, doEffect)
 	-- fragmentation/shrapnel simulation
-	shooter = shooter or game.GetWorld()
+	shooter = (IsValid(shooter) and shooter) or game.GetWorld()
 	zReduction = zReduction or 2
 	doEffect = true
 
+	local ShrapnelDamageInfo = nil
+	local PreSetupDamageInfo = false
+	if type(fragDmg) ~= "number" then
+		ShrapnelDamageInfo = fragDmg
+		fragDmg = ShrapnelDamageInfo:GetDamage()
+		PreSetupDamageInfo = true
+		if IsValid(shooter) then
+			ShrapnelDamageInfo:SetInflictor(shooter)
+		end
+		if IsValid(attacker) then
+			ShrapnelDamageInfo:SetAttacker(attacker)
+		end
+	else
+		ShrapnelDamageInfo = DamageInfo()
+		ShrapnelDamageInfo:SetAttacker(attacker)
+		ShrapnelDamageInfo:SetInflictor(shooter)
+		ShrapnelDamageInfo:SetDamageType(DMG_BUCKSHOT)
+	end
+
 	if not JMod.Config.Explosives.FragExplosions then
-		util.BlastDamage(shooter, attacker, origin, fragMaxDist * .25, fragDmg)
+		if PreSetupDamageInfo then
+			util.BlastDamageInfo(ShrapnelDamageInfo, origin, fragMaxDist * .30)
+		else
+			util.BlastDamage(shooter, attacker, origin, fragMaxDist * .30, fragDmg)
+		end
 
 		return
 	end
@@ -20,7 +43,7 @@ function JMod.FragSplosion(shooter, origin, fragNum, fragDmg, fragMaxDist, attac
 		end
 	end
 
-	local Spred = Vector(0, 0, 0)
+	local Dir = Vector(0, 0, 0)
 	local BulletsFired, MaxBullets, disperseTime = 0, fragNum / 10, .5
 
 	if fragNum >= 12000 then
@@ -28,12 +51,6 @@ function JMod.FragSplosion(shooter, origin, fragNum, fragDmg, fragMaxDist, attac
 	elseif fragNum >= 6000 then
 		disperseTime = 1
 	end
-
-	local firer = (IsValid(shooter) and shooter) or game.GetWorld()
-	ShrapnelDamageInfo = DamageInfo()
-	ShrapnelDamageInfo:SetAttacker(attacker)
-	ShrapnelDamageInfo:SetInflictor(firer)
-	ShrapnelDamageInfo:SetDamageType(DMG_BUCKSHOT)
 
 	for i = 1, fragNum do
 		timer.Simple((i / fragNum) * disperseTime, function()
@@ -73,7 +90,7 @@ function JMod.FragSplosion(shooter, origin, fragNum, fragDmg, fragMaxDist, attac
 					--print("Damage to deal: " .. DamageToDeal, "Meters: " .. DistanceConversion, "Target: " .. tostring(Tr.Entity))
 					ShrapnelDamageInfo:SetDamage(DamageToDeal)
 					ShrapnelDamageInfo:SetDamagePosition(Tr.HitPos)
-					ShrapnelDamageInfo:SetDamageForce(Dir * DamageToDeal * .2)
+					ShrapnelDamageInfo:SetDamageForce(Dir * DamageToDeal * .5)
 					Tr.Entity:DispatchTraceAttack(ShrapnelDamageInfo, Tr, Dir)
 				end
 
@@ -204,6 +221,9 @@ function JMod.WreckBuildings(blaster, pos, power, range, ignoreVisChecks)
 				end
 			end
 		end
+		--if prop:GetClass() == "npc_strider" then
+			--prop:Fire("break")
+		--end
 	end
 end
 
@@ -227,7 +247,7 @@ function JMod.BlastDoors(blaster, pos, power, range, ignoreVisChecks)
 	end
 end
 
-function JMod.FireSplosion(pos, vel, amt, spreadMult, speed, quickTrace, blaster)
+function JMod.FireSplosion(pos, vel, amt, spreadMult, speed, quickTrace, blaster, attacker)
 	if not(pos) then return end
 	if not(amt) or (amt < 1) then return end
 	vel = vel or Vector(0, 0, 0)
@@ -235,7 +255,7 @@ function JMod.FireSplosion(pos, vel, amt, spreadMult, speed, quickTrace, blaster
 	amt = math.Round(amt)
 	spreadMult = spreadMult or 1
 
-	local attacker = JMod.GetEZowner(blaster)
+	local attacker = (IsValid(attacker) and attacker) or JMod.GetEZowner(blaster)
 
 	for i = 1, amt do
 		local DoNapalm = true
@@ -550,5 +570,5 @@ function JMod.EnergeticsCookoff(pos, attacker, powerMult, numExplo, numBullet, n
 			})
 		end)
 	end
-	--JMod.FireSplosion()
+	JMod.FireSplosion(pos, Vector(0, 0, 0), numFire, powerMult, 1, true, nil, attacker)
 end
