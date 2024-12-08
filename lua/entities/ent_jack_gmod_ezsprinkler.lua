@@ -302,7 +302,7 @@ if(SERVER)then
 		if not (EntPos.z <= (SelfPos.z + 64)) then return false end
 		local TargetAngle = self:WorldToLocal(EntPos):Angle().y
 		if (TargetAngle < (360 - self.Rotation.Max)) then return false end
-		if JMod.ClearLoS(self, ent, false, 34) then return true end
+		if JMod.VisCheck(SelfPos + self:GetUp() * 64, ent:LocalToWorld(ent:OBBCenter()) + Vector(0, 0, 10), self) then return true end
 	end
 
 	local EntsToRemove = {["ent_jack_gmod_eznapalm"] = true, ["ent_jack_gmod_ezfirehazard"] = true}
