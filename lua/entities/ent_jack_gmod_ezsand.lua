@@ -73,7 +73,7 @@ if SERVER then
 		end
 		local WeldTr = util.QuickTrace(self:GetPos(), Vector(0, 0, -12), self)
 		if WeldTr.Hit and (WeldTr.Entity ~= NULL) then
-			self.FreezeWeld = constraint.Weld(self, WeldTr.Entity, 0, 0, 1000, false, false)
+			self.FreezeWeld = constraint.Weld(self, WeldTr.Entity, 0, 0, 2000, false, false)
 		end
 		self:GetPhysicsObject():SetMass(500)
 		self:GetPhysicsObject():Sleep()
@@ -92,6 +92,24 @@ if SERVER then
 		self.Gefrozen = false
 		self:DrawShadow(true)
 	end
+
+	hook.Add("OnPlayerPhysicsDrop", "JackarundaEZSand", function(ply, ent)
+		if IsValid(ent) and (ent:GetClass() == "ent_jack_gmod_ezsand") then
+			ent:GetSchmovin()
+		end
+	end)
+
+	hook.Add("PhysgunDrop", "JackarundaEZSand", function(ply, ent)
+		if IsValid(ent) and (ent:GetClass() == "ent_jack_gmod_ezsand") then
+			ent:GetSchmovin()
+		end
+	end)
+
+	hook.Add("GravGunOnDropped", "JackarundaEZSand", function(ply, ent)
+		if IsValid(ent) and (ent:GetClass() == "ent_jack_gmod_ezsand") then
+			ent:GetSchmovin()
+		end
+	end)
 
 	function ENT:CustomUse()
 		if (self.Gefrozen) then
