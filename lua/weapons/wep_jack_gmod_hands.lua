@@ -197,7 +197,8 @@ function SWEP:ApplyForce()
 		end
 
 		vec:Normalize()
-		local avec, velo = vec * len^1.5, phys:GetVelocity() - self.Owner:GetVelocity()
+		local plyVel = self.Owner:GetVelocity()
+		local avec, velo = vec * len^1.5, phys:GetVelocity() - (plyVel * 2)
 		local Force = (avec - velo / 2) * mul
 		local ForceNormal = Force:GetNormalized()
 		local ForceMagnitude = Force:Length()
@@ -244,16 +245,7 @@ function SWEP:SetCarrying(ent, bone, pos, dist)
 		else
 			self.CarryPos = nil
 		end
-		--[[hook.Add("EntityTakeDamage", "CancelDamageFromCarryEnt"..tostring(self.CarryEnt:EntIndex()), function(target, dmginfo)
-			if (target == self.Owner) and (dmginfo:GetInflictor() == self.CarryEnt) and (dmginfo:GetDamageType() == DMG_CRUSH) then
-				return true
-			end
-		end)--]]
 	else
-		--[[if IsValid(self.CarryEnt) then
-			local Index = self.CarryEnt:EntIndex()
-			hook.Remove("EntityTakeDamage", "CancelDamageFromCarryEnt"..tostring(Index))
-		end--]]
 		self.CarryEnt = nil
 		self.CarryBone = nil
 		self.CarryPos = nil
