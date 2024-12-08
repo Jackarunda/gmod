@@ -173,7 +173,7 @@ function JMod.VisCheck(pos, target, sourceEnt)
 		if IsValid(sourceEnt:GetOwner()) then table.insert(filter, sourceEnt:GetOwner()) end
 	end
 
-	if target and target.GetPos then
+	if IsValid(target) and target.GetPos then
 		if target:GetNoDraw() then return false end
 		table.insert(filter, target)
 		target = target:LocalToWorld(target:OBBCenter())
