@@ -125,13 +125,13 @@ function SWEP:OnHit(swingProgress, tr)
 			tr.Entity.EZcorpseEntity:Bury()
 		end
 	elseif tr.Entity:IsWorld() and (table.HasValue(DirtTypes, util.GetSurfaceData(tr.SurfaceProps).material)) then
-		local Message = JMod.EZprogressTask(self, tr.HitPos, self.Owner, "mining", JMod.GetPlayerStrength(self.Owner) ^ .5)
+		local Message = JMod.EZprogressTask(self, tr.HitPos, self.Owner, "mining", JMod.GetPlayerStrength(self.Owner) ^ 1.5)
 
 		if Message then
 			if (tr.MatType == MAT_SAND) or (tr.MatType == MAT_DIRT) then
 				self:SetResourceType(JMod.EZ_RESOURCE_TYPES.SAND)
 				self:SetTaskProgress(100)
-				JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.SAND, math.random(5, 10), self:WorldToLocal(tr.HitPos + Vector(0, 0, 8)), Angle(0, 0, 0), self:WorldToLocal(tr.HitPos), 200)
+				JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.SAND, math.random(10, 33), self:WorldToLocal(tr.HitPos + Vector(0, 0, 8)), Angle(0, 0, 0), self:WorldToLocal(tr.HitPos), 200)
 				--sound.Play("physics/concrete/boulder_impact_hard" .. math.random(1, 3) .. ".wav", tr.HitPos + VectorRand(), 75, math.random(50, 70))
 			else
 				self:Msg(Message)
