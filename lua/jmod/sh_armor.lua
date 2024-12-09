@@ -1075,7 +1075,7 @@ function JMod.GetArmorBiologicalResistance(ply, typ)
 			if not armorData.tgl then
 				local ArmorInfo = JMod.ArmorTable[armorData.name]
 
-				if not (ArmorInfo.chrg and ArmorInfo.chrg.chemicals and armorData.chrg.chemicals <= 0) then
+				if ArmorInfo.def and (ArmorInfo.chrg and ArmorInfo.chrg.chemicals and armorData.chrg.chemicals >= 0) then
 					skinResist = skinResist + (ArmorInfo.def[typ] or 0) * ((ArmorInfo.slots.chest or 0) + (ArmorInfo.slots.abdomen or 0)) / 2
 					inhaleResist = inhaleResist + (ArmorInfo.def[typ] or 0) * (ArmorInfo.slots.mouthnose or 0)
 					eyeProtect = eyeProtect + (ArmorInfo.def[typ] or 0) * (ArmorInfo.slots.eyes or 0)
