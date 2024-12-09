@@ -1740,7 +1740,9 @@ local JModInventoryMenu = function(PlyModel, itemTable)
 		PlyModel = Ply:GetModel()
 	end--]]
 	local weight = (Ply.EZarmor) and (Ply.EZarmor.totalWeight) or 0
-	Ply.JModInv = itemTable
+	if itemTable then
+		Ply.JModInv = itemTable
+	end
 
 	if IsValid(CurrentSelectionMenu) then return end
 
@@ -1933,6 +1935,14 @@ local JModInventoryMenu = function(PlyModel, itemTable)
 
 	return motherFrame
 end
+
+list.Set("DesktopWindows", "JMod Inventory Button", {
+	title = "JMod Inventory",
+	icon = JModIcon..".png",
+	init = function( icon, window )
+		LocalPlayer():ConCommand("jmod_ez_inv")
+	end
+})
 
 net.Receive("JMod_ItemInventory", function(len, sender) -- for when we pick up stuff with JMOD HANDS
 	local invEnt = net.ReadEntity()
