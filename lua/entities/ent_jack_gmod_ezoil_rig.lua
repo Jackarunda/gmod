@@ -135,7 +135,7 @@ if SERVER then
 	function ENT:Use(activator)
 		local State = self:GetState()
 		local OldOwner = JMod.GetEZowner(self)
-		local alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
+		local alt = JMod.IsAltUsing(activator)
 		JMod.SetEZowner(self, activator, true)
 
 		if State == STATE_BROKEN then

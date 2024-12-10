@@ -139,7 +139,7 @@ if SERVER then
 		local State = self:GetState()
 		--if State < 0 then return end
 		self.LastTouchedTime = CurTime()
-		local Alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
+		local Alt = JMod.IsAltUsing(activator)
 
 		if State == STATE_NORMAL then
 			if Alt then

@@ -108,7 +108,7 @@ if(SERVER)then
 				return
 			end
 
-			local Alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
+			local Alt = JMod.IsAltUsing(activator)
 
 			if State > 0 then
 				if Alt then

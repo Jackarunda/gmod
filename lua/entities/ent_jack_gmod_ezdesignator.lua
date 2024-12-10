@@ -64,7 +64,7 @@ if SERVER then
 	end
 
 	function ENT:Use(activator)
-		if activator:KeyDown(JMod.Config.General.AltFunctionKey) then
+		if JMod.IsAltUsing(activator) then
 			activator:PickupObject(self)
 		elseif not activator:HasWeapon("wep_jack_gmod_ezdesignator") then
 			activator:Give("wep_jack_gmod_ezdesignator")

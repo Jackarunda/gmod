@@ -46,7 +46,7 @@ if SERVER then
 		if self.NextUseTime > CurTime() then return end
 		local State = self:GetState()
 		local OldOwner = JMod.GetEZowner(self)
-		local alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
+		local alt = JMod.IsAltUsing(activator)
 		JMod.SetEZowner(self, activator, true)
 		if State == STATE_BROKEN then
 			JMod.Hint(activator, "destroyed", self)

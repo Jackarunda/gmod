@@ -507,7 +507,7 @@ hook.Add("KeyPress", "JMOD_KEYPRESS", function(ply, key)
 		end
 	end
 
-	if IsFirstTimePredicted() and key == IN_JUMP and ply:KeyDown(JMod.Config.General.AltFunctionKey) and IsParaOpen then
+	if IsFirstTimePredicted() and key == IN_JUMP and JMod.IsAltUsing(ply) and IsParaOpen then
 		DetachChute(ply)
 	end
 end)

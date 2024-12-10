@@ -109,7 +109,7 @@ if SERVER then
 	function ENT:Use(activator)
 		local State = self:GetState()
 		if State == STATE_BURNT then return end
-		local Alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
+		local Alt = JMod.IsAltUsing(activator)
 
 		if State == STATE_OFF then
 			if Alt then

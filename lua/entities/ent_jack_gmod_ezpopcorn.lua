@@ -47,7 +47,7 @@ if SERVER then
 
 	function ENT:Use(ply)
 		local Time = CurTime()
-		local Alt = ply:KeyDown(JMod.Config.General.AltFunctionKey)
+		local Alt = JMod.IsAltUsing(ply)
 
 		if Alt then
 			if JMod.ConsumeNutrients(ply, 1) then

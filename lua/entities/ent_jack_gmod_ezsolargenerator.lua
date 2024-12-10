@@ -91,7 +91,7 @@ if(SERVER)then
 		self.NextUse = Time + 1
 		local State = self:GetState()
 		local OldOwner = JMod.GetEZowner(self)
-		local Alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
+		local Alt = JMod.IsAltUsing(activator)
 		JMod.SetEZowner(self,activator)
 		JMod.Colorify(self)
 		if(IsValid(self.EZowner) and (OldOwner ~= self.EZowner))then

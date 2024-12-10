@@ -302,7 +302,7 @@ if(SERVER)then
 	--[[ END GNOME CODE ]]--
 
 	function ENT:Use(activator)
-		local Alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
+		local Alt = JMod.IsAltUsing(activator)
 		if Alt and (self.Growth >= 66) then
 			self:ProduceResource(false)
 			self:Remove()

@@ -41,12 +41,12 @@ if SERVER then
 		JMod.SetEZowner(self, Dude)
 		JMod.Hint(Dude, self.ClassName)
 		local Time = CurTime()
-		if self.ShiftAltUse and Dude:KeyDown(JMod.Config.General.AltFunctionKey) and Dude:KeyDown(IN_SPEED) then return self:ShiftAltUse(Dude, tobool(onOff)) end
+		if self.ShiftAltUse and JMod.IsAltUsing(Dude) and Dude:KeyDown(IN_SPEED) then return self:ShiftAltUse(Dude, tobool(onOff)) end
 
 		if tobool(onOff) then
 			local State = self:GetState()
 			if State < 0 then return end
-			local Alt = Dude:KeyDown(JMod.Config.General.AltFunctionKey)
+			local Alt = JMod.IsAltUsing(Dude)
 
 			if State == JMod.EZ_STATE_OFF and Alt then
 				self:Prime()

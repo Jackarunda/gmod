@@ -103,7 +103,7 @@ if(SERVER)then
 	end
 
 	function ENT:Use(activator)
-		local Alt = activator and activator:KeyDown(JMod.Config.General.AltFunctionKey)
+		local Alt = activator and JMod.IsAltUsing(activator)
 		local State = self:GetState()
 		if not IsValid(JMod.GetEZowner(self)) then 
 			JMod.SetEZowner(self, activator)

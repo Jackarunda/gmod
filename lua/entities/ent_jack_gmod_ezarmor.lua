@@ -116,7 +116,7 @@ if SERVER then
 	end
 
 	function ENT:Use(activator)
-		local Alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
+		local Alt = JMod.IsAltUsing(activator)
 
 		if Alt then
 			if activator.JackyArmor and (#table.GetKeys(activator.JackyArmor) > 0) then return end

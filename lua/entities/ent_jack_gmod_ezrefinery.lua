@@ -87,7 +87,7 @@ if(SERVER)then
 	function ENT:Use(activator)
 		local State = self:GetState()
 		local OldOwner = JMod.GetEZowner(self)
-		local Alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
+		local Alt = JMod.IsAltUsing(activator)
 		JMod.SetEZowner(self, activator)
 		if(IsValid(self.EZowner))then
 			if(OldOwner ~= self.EZowner)then -- if owner changed then reset team color

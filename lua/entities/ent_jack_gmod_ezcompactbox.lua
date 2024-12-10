@@ -225,7 +225,7 @@ if SERVER then
 		local Time = CurTime()
 		JMod.Hint(activator, "unpackage")
 
-		if activator:KeyDown(JMod.Config.General.AltFunctionKey) then
+		if JMod.IsAltUsing(activator) then
 			self:Unpackage()
 		else
 			if self:GetSizeScale() <= 2 then

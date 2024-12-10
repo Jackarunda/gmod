@@ -60,7 +60,7 @@ if SERVER then
 
 	function ENT:Use(ply)
 		local Time = CurTime()
-		local Alt = ply:KeyDown(JMod.Config.General.AltFunctionKey)
+		local Alt = JMod.IsAltUsing(ply)
 		local State = self:GetState()
 
 		if State == STATE_NORMAL then

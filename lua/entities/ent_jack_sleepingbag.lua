@@ -132,7 +132,7 @@ if SERVER then
 
 	function ENT:Use(ply)
 		if not (ply:IsPlayer()) then return end
-		local Alt = ply:KeyDown(JMod.Config.General.AltFunctionKey)
+		local Alt = JMod.IsAltUsing(ply)
 		if not IsValid(self.Pod) then self:CreatePod() end
 		if (Alt) then
 			if (self.State == STATE_UNROLLED) then

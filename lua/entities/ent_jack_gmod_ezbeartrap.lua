@@ -143,7 +143,7 @@ if SERVER then
 		local State, Time = self:GetState(), CurTime()
 		if State < 0 then return end
 		self.AutoArm = false
-		local Alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
+		local Alt = JMod.IsAltUsing(activator)
 
 		if State == STATE_CLOSED then
 

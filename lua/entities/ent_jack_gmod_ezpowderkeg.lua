@@ -92,7 +92,7 @@ if SERVER then
 		local Dude = activator or activatorAgain
 		JMod.SetEZowner(self, Dude)
 
-		if Dude:KeyDown(JMod.Config.General.AltFunctionKey) then
+		if JMod.IsAltUsing(Dude) then
 			self.Pouring = not self.Pouring
 
 			if self.Pouring then

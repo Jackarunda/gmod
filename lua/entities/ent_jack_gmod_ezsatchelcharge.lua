@@ -74,7 +74,7 @@ if SERVER then
 		if tobool(onOff) then
 			local State = self:GetState()
 			if State < 0 then return end
-			local Alt = Dude:KeyDown(JMod.Config.General.AltFunctionKey)
+			local Alt = JMod.IsAltUsing(Dude)
 
 			if State == JMod.EZ_STATE_OFF and Alt then
 				self:Prime()
@@ -148,18 +148,19 @@ elseif CLIENT then
 
 	function ENT:Draw()
 		self:DrawModel()
-		local State = self:GetState()
-		local pos = self:GetPos() + self:GetUp() * 2.8 + self:GetRight() * -2.6 + self:GetForward() * -3
+		--[[local State = self:GetState()
+		local pos = self:GetPos() + self:GetUp() * 3.5 + self:GetRight() * -2.5 + self:GetForward() * -4.5
+		local ViewDir = (LocalPlayer():GetShootPos() - pos):GetNormalized()
 
 		if State == JMod.EZ_STATE_ARMING then
 			render.SetMaterial(GlowSprite)
-			render.DrawSprite(pos, 10, 10, Color(255, 0, 0))
-			render.DrawSprite(pos, 5, 5, Color(255, 255, 255))
+			render.DrawSprite(pos + ViewDir, 10, 10, Color(255, 0, 0))
+			render.DrawSprite(pos + ViewDir, 5, 5, Color(255, 255, 255))
 		elseif State == JMod.EZ_STATE_ARMED then
 			render.SetMaterial(GlowSprite)
-			render.DrawSprite(pos, 5, 5, Color(255, 100, 0))
-			render.DrawSprite(pos, 2, 2, Color(255, 255, 255))
-		end
+			render.DrawSprite(pos + ViewDir, 5, 5, Color(255, 100, 0))
+			render.DrawSprite(pos + ViewDir, 2, 2, Color(255, 255, 255))
+		end--]]
 	end
 
 	language.Add("ent_jack_gmod_ezsatchelcharge", "EZ Satchel Charge")

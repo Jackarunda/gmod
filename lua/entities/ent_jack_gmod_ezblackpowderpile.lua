@@ -65,7 +65,7 @@ if SERVER then
 		local Dude = activator or activatorAgain
 		JMod.SetEZowner(self, Dude)
 
-		if Dude:KeyDown(JMod.Config.General.AltFunctionKey) then
+		if JMod.IsAltUsing(Dude) then
 			self:Arm()
 		else
 			if math.random(1, 2) == 2 then

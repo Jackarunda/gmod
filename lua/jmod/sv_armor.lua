@@ -248,6 +248,7 @@ local function LocationalDmgHandling(ply, hitgroup, dmg)
 
 		for slot, relevance in pairs(RelevantSlots) do
 			local ProtectionForThisSlot, Busted = GetProtectionFromSlot(ply, slot, dmg, DmgAmt, relevance, true, false)
+			--print("[JMod] Protection for " .. slot .. ": " .. ProtectionForThisSlot)
 			Protection = Protection + ProtectionForThisSlot
 			ArmorPieceBroke = ArmorPieceBroke or Busted
 		end

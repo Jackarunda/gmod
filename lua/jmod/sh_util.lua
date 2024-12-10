@@ -468,3 +468,9 @@ function JMod.GetHoliday()
 	end
 	return CachedHoliday
 end
+
+function JMod.IsAltUsing(ply)
+	if ply.EZaltUse ~= nil then return ply.EZaltUse end
+	if ply.KeyDown then return JMod.IsAltUsing(ply) end
+	return false
+end

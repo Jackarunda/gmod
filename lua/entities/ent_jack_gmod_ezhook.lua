@@ -128,7 +128,7 @@ if SERVER then
 		if tobool(onOff) then
 			local State = self:GetState()
 			if State < 0 then return end
-			local Alt = Dude:KeyDown(JMod.Config.General.AltFunctionKey)
+			local Alt = JMod.IsAltUsing(Dude)
 			self:SetBodygroup(1, 1)
 
 			if State == STATE_UNHOOKED then

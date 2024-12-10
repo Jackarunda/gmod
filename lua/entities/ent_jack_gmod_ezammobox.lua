@@ -88,7 +88,7 @@ if SERVER then
 
 	-- stub
 	function ENT:Use(activator)
-		local Alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
+		local Alt = JMod.IsAltUsing(activator)
 
 		if Alt then
 			activator:PickupObject(self)

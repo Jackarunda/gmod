@@ -264,7 +264,11 @@ if SERVER then
 
 	function ENT:Use(activator)
 		JMod.Hint(activator, "rocket pod")
-		self:LaunchRocket(#self.Rockets, false)
+		if JMod.IsAltUsing(activator) then
+			self:LaunchRocket(#self.Rockets, true, activator)
+		else
+			self:LaunchRocket(#self.Rockets, false)
+		end
 	end
 
 	function ENT:PreEntityCopy()

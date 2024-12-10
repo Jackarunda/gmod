@@ -51,7 +51,7 @@ if SERVER then
 
 		self.EZowner = activator
 
-		if activator:KeyDown(JMod.Config.General.AltFunctionKey) then
+		if JMod.IsAltUsing(activator) then
 			self:EmitSound("snds_jack_gmod/plunger.ogg")
 			self:SetFired(true)
 

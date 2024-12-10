@@ -96,7 +96,7 @@ if SERVER then
 		local State = self:GetState()
 		if State == STATE_BURNT then return end
 		local Dude = activator or activatorAgain
-		local Alt = Dude:KeyDown(JMod.Config.General.AltFunctionKey)
+		local Alt = JMod.IsAltUsing(Dude)
 		JMod.SetEZowner(self, Dude)
 		local Time = CurTime()
 
@@ -213,6 +213,47 @@ if SERVER then
 	end)
 	--
 elseif CLIENT then
+	local GlowstickSlots = {
+		[1] = {
+			mdl = "models/jmod/props/glowstick.mdl",
+			mat = "models/jmod/props/jlowstick_on",
+			scl = 1,
+			bon = "ValveBiped.Bip01_Spine4",
+			pos = Vector(-12, -10, -3),
+			ang = Angle(-70, 0, 90)
+		},
+		[2] = {
+			mdl = "models/holograms/hq_torus_thin.mdl",
+			mat = "models/debug/debugwhite",
+			fb = true,
+			scl = 1,
+			bon = "ValveBiped.Bip01_Spine4",
+			col = Color(200, 50, 50),
+			pos = Vector(-4, 4, 1),
+			ang = Angle(90, 20, 0)
+		},
+		[3] = {
+			mdl = "models/holograms/hq_torus_thin.mdl",
+			mat = "models/debug/debugwhite",
+			fb = true,
+			scl = .6,
+			bon = "ValveBiped.Bip01_R_Hand",
+			col = Color(50, 200, 50),
+			pos = Vector(0, 0, 0),
+			ang = Angle(60, 0, 0)
+		},
+		[4] = {
+			mdl = "models/holograms/hq_torus_thin.mdl",
+			mat = "models/debug/debugwhite",
+			fb = true,
+			scl = .6,
+			bon = "ValveBiped.Bip01_L_Hand",
+			col = Color(50, 50, 200),
+			pos = Vector(0, 0, 0),
+			ang = Angle(130, 0, 0)
+		}
+	}
+
 	function ENT:Initialize()
 		self.AttachedToPlayer = false
 	end
