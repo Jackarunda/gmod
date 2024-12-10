@@ -2056,6 +2056,12 @@ net.Receive("JMod_Inventory", function()
 	JModInventoryMenu(net.ReadString(), net.ReadTable())
 end)
 
+local MachineStatus = {
+	[-1] = {"BROKEN", "icon16/bullet_red.png"},
+	[0] = {"OFFLINE", "icon16/bullet_black.png"},
+	[1] = {"ONLINE", "icon16/bullet_green.png"},
+}
+
 net.Receive("JMod_ModifyConnections", function()
 	local Ent = net.ReadEntity()
 	local Connections = net.ReadTable()
@@ -2074,13 +2080,23 @@ net.Receive("JMod_ModifyConnections", function()
 	List:SetMultiSelect(false)
 	List:AddColumn("Machine")
 	List:AddColumn("EntID")
+	List:AddColumn("Status")
 
 	for _, connection in ipairs(Connections) do
 		local Line = List:AddLine(connection.DisplayName, connection.Index)
-		--local DisconnectIcon = vgui.Create("DImage", Line)
-		--DisconnectIcon:SetImage("icon16/disconnect.png")
-		--DisconnectIcon:SetSize(16, 16)
-		--DisconnectIcon:Dock(RIGHT)
+		local Machine = Entity(connection.Index)
+		if IsValid(Machine) then
+			local StatusIcon = vgui.Create("DImage", Line)
+			if Machine.GetState then
+				local State = Machine:GetState()
+				StatusIcon:SetImage(MachineStatus[State][2])
+				Line:SetColumnText(3, MachineStatus[State][1])
+			else
+				StatusIcon:SetImage("icon16/bullet_black.png")
+			end
+			StatusIcon:SetSize(16, 16)
+			StatusIcon:Dock(RIGHT)
+		end
 	end
 
 	local ButtonOptions = {
@@ -2098,8 +2114,8 @@ net.Receive("JMod_ModifyConnections", function()
 		DropDown:SetX(List:GetX() + List:GetWide() - DropDown:GetWide() - 8)
 		DropDown:SetY(List:GetY() + 15 + (rowIndex * 17))
 		for k, v in ipairs(ButtonOptions) do
-			if (v.Func ~= "connect") and (v.Func ~= "disconnect_all") then
-				DropDown:AddOption(v.Text, function()
+			if (v.Func ~= "connect") and (v.Func ~= "disconnect_all") and not (((v.Func == "toggle") or (v.Func == "produce")) and List:GetLine(rowIndex):GetValue(3) == "BROKEN") then
+				local Option =DropDown:AddOption(v.Text, function()
 					net.Start("JMod_ModifyConnections")
 						net.WriteEntity(Ent)
 						net.WriteString(v.Func)
@@ -2107,9 +2123,14 @@ net.Receive("JMod_ModifyConnections", function()
 					net.SendToServer()
 					Frame:Close()
 				end)
+				Option:SetIcon(v.Icon)
 			end
 		end
 	end
+
+	--[[List.Paint = function(x, y)
+		draw.RoundedBox(0, 0, 0, x:GetWide(), x:GetTall(), Color(10, 10, 10, 100))
+	end--]]
 
 	for k, v in ipairs(ButtonOptions) do
 		if (v.Func ~= "disconnect") and (v.Func ~= "toggle") then
@@ -2161,6 +2182,9 @@ net.Receive("JMod_ModifyConnections", function()
 			Icon:SetImage(v.Icon)
 			Icon:SetSize(16, 16)
 			Icon:Dock(RIGHT)
+			--[[SelectButton.Paint = function(x, y)
+				draw.RoundedBox(0, 0, 0, x:GetWide(), x:GetTall(), Color(10, 10, 10, 100))
+			end--]]
 		end
 	end
 end)
