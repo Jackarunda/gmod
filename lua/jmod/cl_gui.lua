@@ -1963,7 +1963,7 @@ net.Receive("JMod_ItemInventory", function(len, sender) -- for when we pick up s
 	if command == "open_menu" then
 		if IsValid(CurrentSelectionMenu) then return end
 		local frame = vgui.Create("DFrame")
-		frame:SetSize(210, 312)
+		frame:SetSize(210, 315)
 		frame:SetTitle((invEnt.PrintName or invEnt:GetClass() or "Player"))
 		frame:Center()
 		frame:MakePopup()
@@ -1982,7 +1982,7 @@ net.Receive("JMod_ItemInventory", function(len, sender) -- for when we pick up s
 
 		function frame:UpdateItemInventory(invEnt, newInv)
 			local scrollPanel = vgui.Create("DScrollPanel", self)
-			scrollPanel:SetSize(200, 370)
+			scrollPanel:SetSize(200, 270)
 			scrollPanel:SetPos(5, 30)
 			
 			local ShownItems = 0
