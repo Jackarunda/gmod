@@ -471,6 +471,6 @@ end
 
 function JMod.IsAltUsing(ply)
 	if ply.EZaltUse ~= nil then return ply.EZaltUse end
-	if ply.KeyDown then return JMod.IsAltUsing(ply) end
+	if ply.KeyDown then return ply:KeyDown(JMod.Config.General.AltFunctionKey) end
 	return false
 end
