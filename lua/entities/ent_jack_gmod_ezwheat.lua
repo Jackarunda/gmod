@@ -17,6 +17,8 @@ ENT.StaticPerfSpecs = {
 	MaxWater = 100,
 	MaxDurability = 100
 }
+--
+ENT.NextCutTime = 0
 
 function ENT:CustomSetupDataTables()
 	-- we will indicate status through other means
@@ -41,6 +43,8 @@ if(SERVER)then
 		if (self.Mutated) then return end
 		self.Mutated = true
 		self.EZconsumes = {JMod.EZ_RESOURCE_TYPES.PROPELLANT}
+		self:SetTrigger(true)
+		self:UseTriggerBounds(true, 0)
 	end
 
 	function ENT:Destroy(dmginfo)
@@ -83,7 +87,7 @@ if(SERVER)then
 		if (data.Speed > 20) and (data.DeltaTime > 0.2) then
 			self:EmitSound("snds_jack_gmod/ez_foliage/grass_brush_" .. math.random(1, 7) .. ".ogg", 65, math.random(90, 110), .5)
 		end
-		if (self.Mutated) and (data.Speed > 30) and (data.DeltaTime > 0.2) and IsValid(data.HitEntity) and (data.HitEntity:IsPlayer()) then
+		--[[if (self.Mutated) and (data.Speed > 30) and (data.DeltaTime > 0.2) and IsValid(data.HitEntity) and (data.HitEntity:IsPlayer()) then
 			local PlyToCut = data.HitEntity
 			local Cut = DamageInfo()
 			Cut:SetDamage(2)
@@ -94,7 +98,33 @@ if(SERVER)then
 			PlyToCut:SetVelocity(-data.TheirOldVelocity*.9)
 			PlyToCut:ViewPunch(Angle(0, 0, math.random(-8, 8)))
 			self:EmitSound("npc/headcrab/headbite.wav", 100, 100)
+		end--]]
+	end
+
+	function ENT:Touch(ply)
+		if not self.Mutated then return end
+		if not(IsValid(ply) and (ply:IsPlayer() or ply:IsNPC() or ply:IsNextBot())) then return end
+		local Time = CurTime()
+		if (self.NextCutTime > Time) then return end
+		local TheirVel = ply:GetVelocity()
+		local TheirSpeed = TheirVel:Length()
+		if TheirSpeed < 30 then return end
+		local Cut = DamageInfo()
+		Cut:SetDamage(2)
+		Cut:SetDamageType(DMG_SLASH)
+		Cut:SetDamageForce(-TheirVel*1.1)
+		Cut:SetDamagePosition(ply:GetPos() + self:GetUp() * 32)
+		Cut:SetInflictor(self)
+		Cut:SetAttacker(JMod.GetEZowner(self))
+		ply:TakeDamageInfo(Cut)
+		ply:SetVelocity(-TheirVel*.9)
+		if ply:IsPlayer() then
+			ply:ViewPunch(Angle(0, 0, math.random(-8, 8)))
 		end
+		self:EmitSound("npc/headcrab/headbite.wav", 100, 100)
+
+		JMod.EZimmobilize(ply, 1, self)
+		self.NextCutTime = Time + 1
 	end
 
 	function ENT:TryPlant()
