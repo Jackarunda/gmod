@@ -77,11 +77,15 @@ function JMod.IsEntContained(target, container)
 end
 
 local function IsActiveItemAllowed(ent)
-	if not IsValid(ent) then return false end
+	--if not IsValid(ent) then return false end
 	if not(JMod.Config.QoL.AllowActiveItemsInInventory) and (ent.GetState and ent:GetState() ~= 0) then
 		return ent.JModInvAllowedActive
 	else
 		return true
+	end
+
+	for k, v in pairs(ent:GetChildren()) do
+		if v.IsVehicle and v:IsVehicle() then return false end
 	end
 
 	return false
