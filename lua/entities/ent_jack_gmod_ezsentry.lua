@@ -460,6 +460,7 @@ if(SERVER)then
 		--
 		local Attacker = dmginfo:GetAttacker()
 		local Time = CurTime()
+		print((self:GetState() > JMod.EZ_STATE_OFF), not(IsValid(self.Target)), (self.NextTargetReSearch < Time), not(self.EngageOverride or self.AimOverride))
 		if(AttackAngle >= 60)then
 			Mult = Mult*.2
 			if(math.random(1,2) == 1)then
@@ -488,13 +489,14 @@ if(SERVER)then
 					})
 				end
 			end
-		--[[elseif self:GetState() > JMod.EZ_STATE_OFF and not(IsValid(self.Target)) and self.NextTargetSearch < Time and not(self.EngageOverride or self.AimOverride) then
-			self.NextTargetSearch = Time + 5
-			self.SearchData.NextSearchChange = Time + 1
-			self.SearchData.LastKnownPos = dmginfo:GetDamagePosition()
+		elseif (self:GetState() > JMod.EZ_STATE_OFF) and not(IsValid(self.Target)) and (self.NextTargetReSearch < Time) and not(self.EngageOverride or self.AimOverride) then
+			self.NextTargetSearch = Time + 3
+			self.SearchData.NextSearchChange = Time + 3
+			local LikelyOrigin = dmginfo:GetDamagePosition() - IncomingVec * 1000
+			self.SearchData.LastKnownPos = LikelyOrigin
 			self.SearchData.LastKnownVel = IncomingVec
 			self.SearchData.State = 1
-			self.NextTargetReSearch = Time + 1 --self.TargetLockTime
+			self.NextTargetReSearch = Time + 3 --self.TargetLockTime
 			self.SearchData.State = 0
 			self:SetState(STATE_ENGAGING)
 			self:EmitSound("snds_jack_gmod/ezsentry_engage.ogg", 65, 100)--]]
