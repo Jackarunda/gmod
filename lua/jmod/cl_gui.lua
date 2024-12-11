@@ -41,7 +41,7 @@ list.Set("ContentCategoryIcons", "JMod - LEGACY Misc.", JModLegacyIcon )
 list.Set("ContentCategoryIcons", "JMod - LEGACY NPCs", JModLegacyIcon )
 list.Set("ContentCategoryIcons", "JMod - LEGACY Weapons", JModLegacyIcon )
 
-local BlurryMenus = CreateClientConVar("jmod_enable_blurry_menus", "1", true)
+local BlurryMenus = CreateClientConVar("jmod_cl_blurry_menus", "1", true)
 local blurMat = Material("pp/blurscreen")
 local Dynamic = 0
 local function BlurBackground(panel)
