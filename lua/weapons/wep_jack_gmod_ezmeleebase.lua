@@ -267,9 +267,9 @@ function SWEP:Think()
 							end
 						end
 						
-						local ImpactSound = util.GetSurfaceData(tr.SurfaceProps).impactHardSound
-						if (ImpactSound) then
-							sound.Play(ImpactSound, tr.HitPos, 75, 100, 1)
+						local Surface = util.GetSurfaceData(tr.SurfaceProps)
+						if Surface and (Surface.impactHardSound) then
+							sound.Play(Surface.impactHardSound, tr.HitPos, 75, 100, 1)
 						end
 					end
 				end
