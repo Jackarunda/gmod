@@ -343,6 +343,7 @@ elseif(CLIENT)then
 	function ENT:Think()
 		local State, Grade, Typ, Prog = self:GetState(), self:GetGrade(), self:GetResourceType(), self:GetProgress()
 		local FT = FrameTime()
+		self.CurDepth = self.CurDepth or 0
 		if self.CurDepth - self:GetProgress() > 1 then
 			self.CurDepth = Lerp(math.ease.InOutExpo(FT * 15), self.CurDepth, self:GetProgress())
 		else

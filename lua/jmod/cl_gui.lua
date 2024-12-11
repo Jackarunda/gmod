@@ -798,7 +798,7 @@ net.Receive("JMod_EZtoolbox", function()
 			temp_ent:SetNoDraw(true)
 			temp_ent:Spawn()									-- have to do this to get an accurate bounding box
 			local Min, Max = temp_ent:OBBMaxs(), temp_ent:OBBMins() 		-- couldn't find a better way
-			local Ang = temp_ent.JModPreferredCarryAngles and temp_ent.JModPreferredCarryAngles
+			local Ang = temp_ent.JModPreferredCarryAngles and temp_ent.JModPreferredCarryAngles or Angle(0, 0, 0)
 			
 			if Min:IsZero() and Max:IsZero() then
 				if info.sizeScale then
@@ -811,7 +811,7 @@ net.Receive("JMod_EZtoolbox", function()
 			end
 			SafeRemoveEntityDelayed(temp_ent, 0)
 
-			ent.EZpreview = {Box = {mins = Min, maxs = Max}, SizeScale = info.sizeScale and info.sizeScale, SpawnAngles = Ang and Ang}
+			ent.EZpreview = {Box = {mins = Min, maxs = Max}, SizeScale = info.sizeScale and info.sizeScale, SpawnAngles = Ang}
 		end
 	end, 
 	function(parent) -- side panel func

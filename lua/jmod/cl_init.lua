@@ -666,10 +666,11 @@ hook.Add("PostDrawTranslucentRenderables", "JMOD_PLAYEREFFECTS", function(bDepth
 		 			for k, v in pairs(ents.FindByClass("npc_bullseye")) do
 		 				table.insert(Filter, v)
 		 			end
-		 			local Tr = util.QuickTrace(ply:GetShootPos(), ply:GetAimVector() * 100 * math.Clamp((ToolBox.CurrentBuildSize or 1), .5, 100), Filter)
+		 			local Tr = util.QuickTrace(ply:GetShootPos(), ply:GetAimVector() * 200 * math.Clamp((ToolBox.CurrentBuildSize or 1), .5, 100), Filter)
 		 			-- this trace code ^ is stolen from the toolbox, had to filter out ply to get a correct trace
 		 																																											--HSVToColor( CurTime() * 50 % 360, 1, 1 ) :troll:
-		 			render.DrawWireframeBox(Tr.HitPos + Tr.HitNormal * 20 * (ToolBox.EZpreview.SizeScale or 1), ToolBox.EZpreview.SpawnAngles or Angle(0, ply:EyeAngles().y, 0), ToolBox.EZpreview.Box.mins, ToolBox.EZpreview.Box.maxs, Translucent, true)
+					local DisplayAng = ToolBox.EZpreview.SpawnAngles + Angle(0, ply:EyeAngles().y, 0)
+		 			render.DrawWireframeBox(Tr.HitPos + Tr.HitNormal * 20 * (ToolBox.EZpreview.SizeScale or 1), DisplayAng, ToolBox.EZpreview.Box.mins, ToolBox.EZpreview.Box.maxs, Translucent, true)
 		 		end
 
 		 	elseif ToolBox:GetSelectedBuild() == "EZ Nail" then

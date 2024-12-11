@@ -287,8 +287,8 @@ function SWEP:GetEZsupplies(resourceType, getter)
 	local BuildSizeMult = self.CurrentBuildSize or 0
 	if IsValid(getter) and getter == self then BuildSizeMult = 0 end
 	local AvailableResources = {
-		[JMod.EZ_RESOURCE_TYPES.POWER] = math.floor(self:GetElectricity() - 8 * BuildSizeMult),
-		[JMod.EZ_RESOURCE_TYPES.GAS] = math.floor(self:GetGas() - 4 * BuildSizeMult)
+		[JMod.EZ_RESOURCE_TYPES.POWER] = math.floor(self:GetElectricity() - 4 * BuildSizeMult),
+		[JMod.EZ_RESOURCE_TYPES.GAS] = math.floor(self:GetGas() - 3 * BuildSizeMult)
 	}
 	if resourceType then
 		if AvailableResources[resourceType] and AvailableResources[resourceType] > 0 then
@@ -314,7 +314,8 @@ function SWEP:BuildItem(selectedBuild)
 	local Ent, Pos, Norm = self:WhomIlookinAt()
 	local BuildInfo = self.Craftables[selectedBuild]
 	if not BuildInfo then return end
-	if not(self:GetElectricity() >= 8 * (BuildInfo.sizeScale or 1)) or not(self:GetGas() >= 6 * (BuildInfo.sizeScale or 1)) then
+	local MaxElecConsume, MaxGasConsume = 40, 30
+	if not(self:GetElectricity() >= math.min(4 * (BuildInfo.sizeScale or 1), MaxElecConsume)) or not(self:GetGas() >= math.min(3 * (BuildInfo.sizeScale or 1), MaxGasConsume)) then
 		self:Msg("   You need to refill your gas and/or power\nPress Reload on gas or batteries to refill")
 		return
 	end
@@ -338,6 +339,9 @@ function SWEP:BuildItem(selectedBuild)
 		Built = true
 		local BuildSteps = math.ceil(20 * (BuildInfo.sizeScale or 1))
 
+		self:SetElectricity(math.Clamp(self:GetElectricity() - 8 * (BuildInfo.sizeScale or 1), 0, MaxElecConsume))
+		self:SetGas(math.Clamp(self:GetGas() - 4 * (BuildInfo.sizeScale or 1), 0, MaxGasConsume))
+
 		for i = 1, BuildSteps do
 			timer.Simple(i / 100, function()
 				if IsValid(self) then
@@ -353,7 +357,7 @@ function SWEP:BuildItem(selectedBuild)
 							local FuncName = StringParts[2]
 
 							if JMod.LuaConfig and JMod.LuaConfig.BuildFuncs and JMod.LuaConfig.BuildFuncs[FuncName] then
-								JMod.LuaConfig.BuildFuncs[FuncName](self.Owner, Pos + Norm * 10 * (BuildInfo.sizeScale or 1), Angle(0, self.Owner:EyeAngles().y, 0))
+								JMod.LuaConfig.BuildFuncs[FuncName](self.Owner, Pos + Norm * 200 * (BuildInfo.sizeScale or 1), Angle(0, self.Owner:EyeAngles().y, 0))
 							else
 								print("JMOD TOOLBOX ERROR: JMod.LuaConfig is missing, corrupt, or doesn't have an entry for that build function")
 							end
@@ -365,7 +369,7 @@ function SWEP:BuildItem(selectedBuild)
 							else
 								Ent = ents.Create(Class)
 							end
-							Ent:SetPos(Pos + Norm * 20 * (BuildInfo.sizeScale or 1))
+							Ent:SetPos(Pos + Norm * 200 * (BuildInfo.sizeScale or 1))
 							Ent:SetAngles(Angle(0, self.Owner:EyeAngles().y, 0))
 							JMod.SetEZowner(Ent, self.Owner)
 							Ent:SetCreator(self.Owner)
@@ -395,8 +399,6 @@ function SWEP:BuildItem(selectedBuild)
 								end
 							end
 							JMod.Hint(self.Owner, Class)
-							self:SetElectricity(math.Clamp(self:GetElectricity() - 8 * (BuildInfo.sizeScale or 1), 0, self.MaxElectricity))
-							self:SetGas(math.Clamp(self:GetGas() - 4 * (BuildInfo.sizeScale or 1), 0, self.MaxGas))
 						end
 						self:Msg("Power: " .. self:GetElectricity() .. " " .. "Gas: " .. self:GetGas() .. " ")
 					end
@@ -703,13 +705,13 @@ function SWEP:UpgradeEffect(pos, scale, suppressSound)
 end
 
 function SWEP:WhomIlookinAt()
-	local Filter = {self.Owner}
+	local Filter = {self, self.Owner}
 
 	for k, v in pairs(ents.FindByClass("npc_bullseye")) do
 		table.insert(Filter, v)
 	end
 
-	local Tr = util.QuickTrace(self.Owner:GetShootPos(), self.Owner:GetAimVector() * 100 * math.Clamp(self.CurrentBuildSize, .5, 100), Filter)
+	local Tr = util.QuickTrace(self.Owner:GetShootPos(), self.Owner:GetAimVector() * 200 * math.Clamp(self.CurrentBuildSize, .5, 100), Filter)
 
 	return Tr.Entity, Tr.HitPos, Tr.HitNormal
 end
@@ -913,10 +915,10 @@ function SWEP:DrawHUD()
 	if IsValid(Ent) and Ent.IsJackyEZmachine then
 		draw.SimpleTextOutlined((Ent.PrintName and tostring(Ent.PrintName)) or tostring(Ent), "Trebuchet24", W * .7, H * .5, Color(255, 255, 255, 100), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 50))
 		if Ent.MaxDurability then
-		draw.SimpleTextOutlined("Durability: "..tostring(math.Round(Ent:GetNW2Float("EZdurability", 0)) + Ent.MaxDurability * 2).."/"..Ent.MaxDurability*3, "Trebuchet24", W * .7, H * .5 + 30, Color(255, 255, 255, 100), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 50))
+			draw.SimpleTextOutlined("Durability: "..tostring(math.Round(Ent:GetNW2Float("EZdurability", 0)) + Ent.MaxDurability * 2).."/"..Ent.MaxDurability*3, "Trebuchet24", W * .7, H * .5 + 30, Color(255, 255, 255, 100), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 50))
 		end
 		if Ent.EZupgradable and Ent.GetGrade and Ent:GetGrade() > 0 then
-		draw.SimpleTextOutlined("Grade: "..tostring(Ent:GetGrade()), "Trebuchet24", W * .7, H * .5 + 60, Color(255, 255, 255, 100), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 50))
+			draw.SimpleTextOutlined("Grade: "..tostring(Ent:GetGrade()), "Trebuchet24", W * .7, H * .5 + 60, Color(255, 255, 255, 100), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 50))
 		end
 	end
 
