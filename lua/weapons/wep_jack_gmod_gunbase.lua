@@ -428,7 +428,7 @@ function SWEP:EnterBipod(sp)
 	if !sp and self:GetInBipod() then return end
 	local can, tr = self:CanBipod()
 	if !sp and !can then return end
-	print("Can We Bipod?", can, tr)
+	--print("Can We Bipod?", can, tr)
 
 	if SERVER and game.SinglePlayer() then self:CallOnClient("EnterBipod", "true") end
 
@@ -582,7 +582,7 @@ local ValidBenches = {
 	["ent_arccw_gunbench"] = true
 }
 function SWEP:ToggleCustomizeHUD(ic)
-	if self.CustomToggleCustomizeHUD then
+	if false then--self.CustomToggleCustomizeHUD then
 		local BenchNearby = false
 		for _, v in pairs(ents.FindInSphere(self:GetPos(), 100)) do
 			if ValidBenches[v:GetClass()] then
