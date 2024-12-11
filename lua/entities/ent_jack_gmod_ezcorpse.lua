@@ -96,6 +96,10 @@ if SERVER then
 					local ArmorPiece = JMod.RemoveArmorByID(Ply, k)
 					if IsValid(ArmorPiece) then
 						ArmorPiece:SetPos(Ragdoll:GetPos())
+						ArmorPiece.Durability = armorData.dur
+						if ArmorInfo.chrg then
+							ArmorPiece.ArmorCharges = table.FullCopy(armorData.chrg)
+						end
 					end
 				end
 			end
