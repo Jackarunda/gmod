@@ -163,8 +163,8 @@ if SERVER then
 		util.Effect("eff_jack_minesplode", plooie, true, true)
 		util.ScreenShake(SelfPos, 99999, 99999, 1, 500)
 		self:EmitSound("snd_jack_fragsplodeclose.ogg", 90, 100)
-		JMod.Sploom(Owner, SelfPos, math.random(10, 20))
-		JMod.FragSplosion(self, SelfPos + Up * 5, 1000, 25 * JMod.Config.Explosives.Mine.Power, 3000, Owner, Up, 1.2, 3)
+		JMod.Sploom(Owner, SelfPos, math.random(15, 20) * JMod.Config.Explosives.Mine.Power)
+		JMod.FragSplosion(self, SelfPos + Up * 5, 1500, 30 * JMod.Config.Explosives.Mine.Power, 3000, Owner, Up, 1.2, 3)
 		self:Remove()
 	end
 

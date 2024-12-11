@@ -28,7 +28,7 @@ if SERVER then
 		util.Effect("eff_jack_minesplode", plooie, true, true)
 		util.ScreenShake(SelfPos, 20, 20, 1, 1000)
 
-		local GroundTr = util.QuickTrace(SelfPos + Vector(0, 0, 5), Vector(0, 0, -15), {self})
+		local GroundTr = util.QuickTrace(SelfPos + Vector(0, 0, 5), Vector(0, 0, -15), self)
 
 		------------------ shooter, origin, fragNum, fragDmg, fragMaxDist, attacker, direction, spread, zReduction
 		if GroundTr.Hit then
