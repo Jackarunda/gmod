@@ -460,7 +460,6 @@ if(SERVER)then
 		--
 		local Attacker = dmginfo:GetAttacker()
 		local Time = CurTime()
-		print((self:GetState() > JMod.EZ_STATE_OFF), not(IsValid(self.Target)), (self.NextTargetReSearch < Time), not(self.EngageOverride or self.AimOverride))
 		if(AttackAngle >= 60)then
 			Mult = Mult*.2
 			if(math.random(1,2) == 1)then
