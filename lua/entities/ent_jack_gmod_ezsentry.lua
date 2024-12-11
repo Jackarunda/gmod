@@ -595,11 +595,21 @@ if(SERVER)then
 		local TargPos, SelfPos = self:DetermineTargetAimPoint(ent), self:GetPos() + self:GetUp() * 35
 		local Dist = TargPos:Distance(SelfPos)
 		if Dist > self.TargetingRadius then return false end
+		local Filter = {self, ent, self.NPCTarget}
+
+		if ent:IsPlayer() and IsValid(ent:GetEntityInUse()) then
+			table.insert(Filter, ent:GetUseEntity())
+		end
+
+		local Parent = ent:GetParent()
+		if IsValid(Parent) then
+			table.insert(Filter, Parent)
+		end
 
 		local Tr = util.TraceLine({
 			start = SelfPos,
 			endpos = TargPos,
-			filter = {self, ent, self.NPCTarget},
+			filter = Filter,
 			mask = MASK_SHOT + MASK_WATER
 		})
 
