@@ -1,6 +1,6 @@
 ﻿att.PrintName = "EZ Bipod"
 att.Icon = Material("entities/acwatt_bipod.png")
-att.Description = "if you be a good girl i might let you lick it"
+att.Description = "Fer stabilization"
 att.SortOrder = 10
 
 att.Desc_Pros = {"+ Bipod",}
