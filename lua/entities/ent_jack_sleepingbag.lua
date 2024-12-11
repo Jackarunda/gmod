@@ -72,6 +72,7 @@ if SERVER then
 	
 	function ENT:RollUp()
 		self.State = STATE_ROLLED
+		self.JModEZstorable = true
 		if(IsValid(self.Pod))then
 			self.Pod:SetParent(nil)
 			self.Pod:Fire("kill")
@@ -99,6 +100,7 @@ if SERVER then
 
 	function ENT:UnRoll()
 		self.State = STATE_UNROLLED
+		self.JModEZstorable = false
 		self:SetModel(MODEL_UNROLLED)
 		
 		self:PhysicsInit(SOLID_VPHYSICS)
