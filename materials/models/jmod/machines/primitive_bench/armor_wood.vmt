@@ -1,0 +1,5 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/jmod/machines/primitive_bench/armor_wood"
+	"$bumpmap" "models/jmod/machines/primitive_bench/armor_dirt_n"
+}

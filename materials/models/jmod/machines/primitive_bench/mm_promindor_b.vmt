@@ -1,0 +1,12 @@
+"VertexlitGeneric"
+{
+"$basetexture" "models/jmod/machines/primitive_bench/TX_Promindor_B_BM"
+"$bumpmap" "models/jmod/machines/primitive_bench/TX_Promindor_B_NM"
+"$surfaceprop" "wood"
+"$nocull" 1
+"$halflambert" 1
+"$phong" "1"
+"$phongexponent" "20"
+"$phongboost" "1"
+"$phongfresnelranges" "[.3 1 7]"
+}

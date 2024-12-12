@@ -1,0 +1,10 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/jmod/machines/primitive_bench/armor_desk"
+	"$bumpmap" "models/jmod/machines/primitive_bench/armor_desk_n"
+	
+	"$phong"	"1"
+	"$phongexponent"	"3"
+	"$phongboost"	".1"
+	"$phongfresnelranges"	"[.5 .25 0]"
+}
