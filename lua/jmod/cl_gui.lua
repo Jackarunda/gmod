@@ -2059,7 +2059,7 @@ end)
 local MachineStatus = {
 	[-1] = {"BROKEN", "icon16/bullet_red.png"},
 	[0] = {"OFFLINE", "icon16/bullet_black.png"},
-	[1] = {"ONLINE", "icon16/bullet_green.png"},
+	[1] = {"ONLINE", "icon16/bullet_green.png"}
 }
 
 net.Receive("JMod_ModifyConnections", function()
@@ -2088,7 +2088,7 @@ net.Receive("JMod_ModifyConnections", function()
 		if IsValid(Machine) then
 			local StatusIcon = vgui.Create("DImage", Line)
 			if Machine.GetState then
-				local State = Machine:GetState()
+				local State = math.Clamp(Machine:GetState(), -1, 1)
 				StatusIcon:SetImage(MachineStatus[State][2])
 				Line:SetColumnText(3, MachineStatus[State][1])
 			else
@@ -2104,7 +2104,7 @@ net.Receive("JMod_ModifyConnections", function()
 		{Text = "Disconnect", Func = "disconnect", Icon = "icon16/disconnect.png"},
 		{Text = "Disconnect All", Func = "disconnect_all", Icon = "icon16/disconnect.png"},
 		{Text = "Produce Resource", Func = "produce", Icon = "icon16/brick_add.png"},
-		{Text = "Toggle Machine", Func = "toggle", Icon = "icon16/brick.png"}
+		{Text = "Toggle Machine", Func = "toggle", Icon = "icon16/application_lightning.png"}
 	}
 
 	List.OnRowSelected = function(panel, rowIndex, row)
@@ -2115,7 +2115,7 @@ net.Receive("JMod_ModifyConnections", function()
 		DropDown:SetY(List:GetY() + 15 + (rowIndex * 17))
 		for k, v in ipairs(ButtonOptions) do
 			if (v.Func ~= "connect") and (v.Func ~= "disconnect_all") and not (((v.Func == "toggle") or (v.Func == "produce")) and List:GetLine(rowIndex):GetValue(3) == "BROKEN") then
-				local Option =DropDown:AddOption(v.Text, function()
+				local Option = DropDown:AddOption(v.Text, function()
 					net.Start("JMod_ModifyConnections")
 						net.WriteEntity(Ent)
 						net.WriteString(v.Func)
@@ -2133,7 +2133,7 @@ net.Receive("JMod_ModifyConnections", function()
 	end--]]
 
 	for k, v in ipairs(ButtonOptions) do
-		if (v.Func ~= "disconnect") and (v.Func ~= "toggle") then
+		if (v.Func ~= "disconnect") then
 			local SelectButton = vgui.Create("DButton", Frame)
 			SelectButton:SetText(v.Text)
 			SelectButton:SetHeight(22)

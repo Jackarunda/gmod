@@ -215,6 +215,12 @@ net.Receive("JMod_ModifyConnections", function(ln, ply)
 			elseif Ent2:GetState() >= JMod.EZ_STATE_ON then
 				Ent2:TurnOff(ply)
 			end
+		elseif Ent.GetState then
+			if Ent:GetState() == JMod.EZ_STATE_OFF then
+				Ent:TurnOn(ply)
+			elseif Ent:GetState() >= JMod.EZ_STATE_ON then
+				Ent:TurnOff(ply)
+			end
 		end
 	end
 end)
