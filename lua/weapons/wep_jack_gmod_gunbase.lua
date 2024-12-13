@@ -348,7 +348,8 @@ function SWEP:CanBipod()
 
 	if self:GetOwner():InVehicle() then return false end
 
-	--if self.CachedCanBipodTime >= CurTime() then return self.CachedCanBipod end
+	--print("CanBipod: "..tostring(self.CachedCanBipod), "Time: "..tostring(self.CachedCanBipodTime))
+	if self.CachedCanBipodTime >= CurTime() then return self.CachedCanBipod end
 
 	local pos = self:GetOwner():EyePos()
 	local angle = self:GetOwner():EyeAngles()
@@ -443,14 +444,19 @@ function SWEP:EnterBipod(sp)
 		self:DoLHIKAnimation("enter")
 	end
 
-	local bipodang = tr.HitNormal:Cross(self:GetOwner():EyeAngles():Right()):Angle()
+	if tr then
+		local bipodang = tr.HitNormal:Cross(self:GetOwner():EyeAngles():Right()):Angle()
 
-	debugoverlay.Axis(tr.HitPos, tr.HitNormal:Angle(), 16, 5, true)
-	debugoverlay.Line(tr.HitPos, tr.HitPos + bipodang:Forward() * 32, 5, color_white, true)
-	debugoverlay.Line(tr.HitPos, tr.HitPos + self:GetOwner():EyeAngles():Forward() * 32, 5, Color(255, 255, 0), true)
+		debugoverlay.Axis(tr.HitPos, tr.HitNormal:Angle(), 16, 5, true)
+		debugoverlay.Line(tr.HitPos, tr.HitPos + bipodang:Forward() * 32, 5, color_white, true)
+		debugoverlay.Line(tr.HitPos, tr.HitPos + self:GetOwner():EyeAngles():Forward() * 32, 5, Color(255, 255, 0), true)
 
-	self:SetBipodPos(self:GetOwner():EyePos())
-	self:SetBipodAngle(bipodang)
+		self:SetBipodPos(self:GetOwner():EyePos())
+		self:SetBipodAngle(bipodang)
+	else
+		self:SetBipodPos(self:GetOwner():EyePos())
+		self:SetBipodAngle(self:GetOwner():EyeAngles())
+	end
 	self.BipodStartAngle = self:GetOwner():EyeAngles()
 
 	if game.SinglePlayer() and CLIENT then return end
@@ -582,7 +588,7 @@ local ValidBenches = {
 	["ent_arccw_gunbench"] = true
 }
 function SWEP:ToggleCustomizeHUD(ic)
-	if false then--self.CustomToggleCustomizeHUD then
+	if self.CustomToggleCustomizeHUD then
 		local BenchNearby = false
 		for _, v in pairs(ents.FindInSphere(self:GetPos(), 100)) do
 			if ValidBenches[v:GetClass()] then
