@@ -327,18 +327,18 @@ function JMod.FindResourceContainer(typ, amt, pos, range, sourceEnt)
 			if obj.GetEZsupplies then
 				local AvailableResources = obj:GetEZsupplies(typ)
 				if AvailableResources and (AvailableResources >= amt) then
-					if JMod.VisCheck(pos, obj, sourceEnt) then
+					--if JMod.VisCheck(pos, obj, sourceEnt) then
 
 						return obj
-					end
+					--end
 				end
 			elseif obj.JModInv then
 				local AvailableResources = obj.JModInv.EZresources[typ]
 				if AvailableResources and (AvailableResources >= amt) then
-					if JMod.VisCheck(pos, obj, sourceEnt) then
+					--if JMod.VisCheck(pos, obj, sourceEnt) then
 
 						return obj
-					end
+					--end
 				end
 			end
 		end
