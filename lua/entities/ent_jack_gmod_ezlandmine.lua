@@ -83,7 +83,7 @@ if SERVER then
 	function ENT:PhysicsCollide(data, physobj)
 		if data.DeltaTime > 0.2 then
 			if data.Speed > 25 then
-				if (self:GetState() == STATE_ARMED) and (math.random(1, 5) == 3) then
+				if (self:GetState() == STATE_ARMED) and (IsValid(data.HitEntity) and JMod.ShouldAttack(self, data.HitEntity)) then
 					self:Detonate()
 				else
 					self:EmitSound("Weapon.ImpactHard")
