@@ -12,6 +12,7 @@ ENT.Model = "models/jmod/props/plants/corn_stalk01.mdl"
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.SpawnHeight = 0
 ENT.EZconsumes = nil
+ENT.EZupgradable = false
 --
 ENT.StaticPerfSpecs = {
 	MaxWater = 50,
@@ -20,7 +21,6 @@ ENT.StaticPerfSpecs = {
 
 if(SERVER)then
 	function ENT:CustomInit()
-		self.EZupgradable = false
 		self.Growth = 0
 		self.Hydration = self.Hydration or 0
 		self.Helf = 100

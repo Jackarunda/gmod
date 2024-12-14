@@ -14,6 +14,7 @@ ENT.EZcolorable = true
 ENT.SpawnHeight = 52
 ENT.Mass = 8000
 ENT.EZanchorage = 2000
+ENT.EZupgradable = true
 --
 ENT.StaticPerfSpecs = {
 	MaxDurability = 400,
@@ -45,7 +46,6 @@ local STATE_BROKEN, STATE_OFF, STATE_RUNNING = -1, 0, 1
 
 if(SERVER)then
 	function ENT:CustomInit()
-		self.EZupgradable = true
 		self:SetProgress(0)
 		if self.SpawnFull then
 			self:SetWater(self.MaxWater)

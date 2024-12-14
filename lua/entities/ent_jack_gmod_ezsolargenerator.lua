@@ -12,6 +12,7 @@ ENT.Mass = 100
 --
 ENT.JModPreferredCarryAngles = Angle(90, 0, 0)
 ENT.EZcolorable = true
+ENT.EZupgradable = true
 --
 ENT.StaticPerfSpecs = {
 	MaxDurability = 75,
@@ -34,7 +35,6 @@ local STATE_BROKEN, STATE_OFF,  STATE_ON = -1, 0, 1
 
 if(SERVER)then
 	function ENT:CustomInit()
-		self.EZupgradable = true
 		self:TurnOn()
 		self:SetProgress(0)
 		self.NextUse = 0

@@ -12,6 +12,7 @@ ENT.Model = "models/jmod/props/plants/razorgrain_pile.mdl"
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.SpawnHeight = 0
 ENT.EZconsumes = nil
+ENT.EZupgradable = false
 --
 ENT.StaticPerfSpecs = {
 	MaxWater = 100,
@@ -26,7 +27,6 @@ end
 
 if(SERVER)then
 	function ENT:CustomInit()
-		self.EZupgradable = false
 		self.Growth = 0
 		self.Hydration = self.Hydration or 100
 		self.Helf = 100

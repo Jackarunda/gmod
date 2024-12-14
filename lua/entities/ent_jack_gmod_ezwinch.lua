@@ -12,6 +12,7 @@ ENT.AdminSpawnable = true
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.Model = "models/jmod/ezwinch01.mdl"
 ENT.Mass = 30
+ENT.EZupgradable = false
 --
 ENT.StaticPerfSpecs={ 
 	MaxElectricity = 100,
@@ -84,7 +85,6 @@ if SERVER then
 
 	function ENT:CustomInit()
 		self.NextUseTime = 0
-		self.EZupgradable = false
 		self.EZcolorable = false
 		self.MaxConnectionRange = 1000
 		self.CurrentCableLength = 0

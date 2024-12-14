@@ -12,6 +12,7 @@ ENT.EZcolorable = false
 --
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.SpawnHeight = 0
+ENT.EZupgradable = false
 --
 ENT.StaticPerfSpecs = {
 	MaxElectricity = 0,
@@ -27,7 +28,6 @@ end
 
 if(SERVER)then
 	function ENT:CustomInit()
-		self.EZupgradable = false
 		self.Growth = 0
 		self.Hydration = self.Hydration or 100
 		self.OldHydration = self.Hydration

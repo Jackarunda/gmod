@@ -14,6 +14,7 @@ ENT.EZpowerBank = true
 ENT.Model = "models/jmod/machines/ez_powerbank.mdl"
 ENT.Mass = 150
 ENT.MaxConnectionRange = 1000
+ENT.EZupgradable = false
 --
 ENT.StaticPerfSpecs={ 
 	MaxElectricity = 1000,
@@ -36,7 +37,6 @@ if SERVER then
 	function ENT:CustomInit()
 		self.NextUseTime = 0
 		--self.EZconnections = {}
-		self.EZupgradable = false
 		self.EZcolorable = false
 		self.PowerFlow = 0
 	end

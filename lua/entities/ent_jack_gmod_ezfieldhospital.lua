@@ -18,6 +18,7 @@ ENT.EZconsumes = {
 }
 ENT.EZcolorable = true
 ENT.EZbouyancy = .3
+ENT.EZupgradable = true
 -- Config --
 ENT.StaticPerfSpecs={
 	MaxDurability = 100
@@ -51,8 +52,6 @@ if(SERVER)then
 		self.NextHumTime=0
 		self.NextHeal = 0
 		self.NextEnter = 0
-		---
-		self.EZupgradable=true
 		--
 		self:CreatePod()
 		self.NextOpStart = 0
