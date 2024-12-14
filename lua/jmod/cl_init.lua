@@ -657,11 +657,11 @@ hook.Add("PostDrawTranslucentRenderables", "JMOD_PLAYEREFFECTS", function(bDepth
 		local ToolBox = ply:GetActiveWeapon()
 
 		if not IsValid(ToolBox) then return end
-		if not ToolBox:GetClass() == "wep_jack_gmod_eztoolbox" then return end
-		
+		if ToolBox:GetClass() ~= "wep_jack_gmod_eztoolbox" then return end
+		local ToolboxBuild = ToolBox:GetSelectedBuild()
 		if ToolBox.EZpreview then
 		 	if ToolBox.EZpreview.Box then
-		 		if ToolBox:GetSelectedBuild() ~= "" then
+		 		if ToolboxBuild ~= "" then
 		 			local Filter = {ply}
 		 			for k, v in pairs(ents.FindByClass("npc_bullseye")) do
 		 				table.insert(Filter, v)
@@ -669,15 +669,14 @@ hook.Add("PostDrawTranslucentRenderables", "JMOD_PLAYEREFFECTS", function(bDepth
 		 			local Tr = util.QuickTrace(ply:GetShootPos(), ply:GetAimVector() * 200 * math.Clamp((ToolBox.CurrentBuildSize or 1), .5, 100), Filter)
 		 			-- this trace code ^ is stolen from the toolbox, had to filter out ply to get a correct trace
 		 																																											--HSVToColor( CurTime() * 50 % 360, 1, 1 ) :troll:
-					local DisplayAng = ToolBox.EZpreview.SpawnAngles + Angle(0, ply:EyeAngles().y, 0)
+					local DisplayAng = (ToolBox.EZpreview.SpawnAngles or Angle(0, 0, 0)) + Angle(0, ply:EyeAngles().y, 0)
 		 			render.DrawWireframeBox(Tr.HitPos + Tr.HitNormal * 20 * (ToolBox.EZpreview.SizeScale or 1), DisplayAng, ToolBox.EZpreview.Box.mins, ToolBox.EZpreview.Box.maxs, Translucent, true)
 		 		end
-
-		 	elseif ToolBox:GetSelectedBuild() == "EZ Nail" then
+		 	elseif ToolboxBuild == "EZ Nail" then
 		 		local Pos, Vec = ply:GetShootPos(), ply:GetAimVector()
 
 		 		local Tr1 = util.QuickTrace(Pos, Vec * 80, {ply})
-		 		local Tr2 = ni
+		 		local Tr2 = nil
 		 		if Tr1.Hit then
 		 			local Ent1 = Tr1.Entity
 
@@ -700,7 +699,7 @@ hook.Add("PostDrawTranslucentRenderables", "JMOD_PLAYEREFFECTS", function(bDepth
 
 		 		render.DrawWireframeBox(Tr1.HitPos, Vec:Angle(), Vector(15,.5,.5), Vector(-15,-.5,-.5), color_white, false)
 
-		 	elseif ToolBox:GetSelectedBuild() == "EZ Bolt" then
+		 	elseif ToolboxBuild == "EZ Bolt" then
 		 		local Pos, Vec = ply:GetShootPos(), ply:GetAimVector()
 
 		 		local Tr1 = util.QuickTrace(Pos, Vec * 80, {ply})

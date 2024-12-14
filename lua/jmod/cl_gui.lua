@@ -773,11 +773,11 @@ net.Receive("JMod_EZtoolbox", function()
 		ent.EZpreview = {}
 		local StringParts = string.Explode(" ", info["results"])																	  
 		if StringParts[1] and (StringParts[1] == "FUNC") then
-			if info.sizeScale then
+			if not info.sizeScale or (StringParts[2] == "EZnail") or (StringParts[2] == "EZbolt") then
+				ent.EZpreview = {Box = nil} --No way to tell size
+			else
 				local ScaledMinMax = Vector(info.sizeScale * 10, info.sizeScale * 10, info.sizeScale * 10)
 				ent.EZpreview = {Box = {mins = -ScaledMinMax, maxs = ScaledMinMax}, SizeScale = info.sizeScale}
-			else
-				ent.EZpreview = {Box = nil} --No way to tell size
 			end
 		else
 			local temp_ent
@@ -798,7 +798,7 @@ net.Receive("JMod_EZtoolbox", function()
 			temp_ent:SetNoDraw(true)
 			temp_ent:Spawn()									-- have to do this to get an accurate bounding box
 			local Min, Max = temp_ent:OBBMaxs(), temp_ent:OBBMins() 		-- couldn't find a better way
-			local Ang = temp_ent.JModPreferredCarryAngles and temp_ent.JModPreferredCarryAngles or Angle(0, 0, 0)
+			local Ang = (temp_ent.JModPreferredCarryAngles and temp_ent.JModPreferredCarryAngles) or Angle(0, 0, 0)
 			
 			if Min:IsZero() and Max:IsZero() then
 				if info.sizeScale then
