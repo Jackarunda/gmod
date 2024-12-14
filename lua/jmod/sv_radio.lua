@@ -97,12 +97,12 @@ function JMod.FindDropPosFromSignalOrigin(origin)
 	return Pos
 end
 
-local NextThink = 0
+local NextRadioThink = 0
 
 hook.Add("Think", "JMod_RADIO_THINK", function()
 	local Time = CurTime()
-	if Time < NextThink then return end
-	NextThink = Time + 5
+	if Time < NextRadioThink then return end
+	NextRadioThink = Time + 5
 
 	for stationID, station in pairs(JMod.EZ_RADIO_STATIONS) do
 		if station.state == JMod.EZ_STATION_STATE_DELIVERING then
