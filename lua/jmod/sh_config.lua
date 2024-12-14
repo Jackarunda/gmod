@@ -2005,7 +2005,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 			["EZ Bucket"] = {
 				results = "ent_jack_gmod_ezbucket",
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.STEEL] = 20
+					[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = 10
 				},
 				category = "Tools",
 				craftingType = {"craftingtable", "workbench"},
