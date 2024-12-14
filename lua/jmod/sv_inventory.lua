@@ -56,7 +56,7 @@ function JMod.GetItemVolumeWeight(ent)
 		local Z = math.abs(Maxs.z - Mins.z)
 		Vol = X * Y * Z
 	end
-	Vol = ent.EZstorageVolumeOverride or math.Round(Vol / JMod.VOLUMEDIV, 2)
+	Vol = ent.JModEZstorableVolume or math.Round(Vol / JMod.VOLUMEDIV, 2)
 	Mass = math.ceil(Phys:GetMass())
 	if ent.IsJackyEZresource then
 		Vol = 1

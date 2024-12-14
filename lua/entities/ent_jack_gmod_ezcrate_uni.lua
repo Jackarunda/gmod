@@ -83,8 +83,8 @@ if SERVER then
 			--[[local Class = ent:GetClass()
 			local Vol = (self.Items[Class] and self.Items[Class][2]) or math.ceil(ent:GetPhysicsObject():GetVolume() / JMod.VOLUMEDIV)
 
-			if ent.EZstorageVolumeOverride then
-				Vol = ent.EZstorageVolumeOverride
+			if ent.JModEZstorableVolume then
+				Vol = ent.JModEZstorableVolume
 			end
 
 			if ent.JModEZstorable and ent:IsPlayerHolding() and (not ent.GetState or ent:GetState() == 0) and self:GetItemCount() + Vol <= self.MaxItems then

@@ -19,7 +19,7 @@ ENT.DetDelay = 4
 
 ENT.Hints = {"frag sleeve"}
 
-ENT.EZstorageVolumeOverride = 2
+ENT.JModEZstorableVolume = 2
 ENT.Splitterring = false
 local BaseClass = baseclass.Get(ENT.Base)
 

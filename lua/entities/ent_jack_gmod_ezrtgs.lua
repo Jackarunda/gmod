@@ -19,7 +19,7 @@ ENT.Mass = 30
 ENT.SpawnHeight = 1
 --
 ENT.JModEZstorable = true
-ENT.EZstorageVolumeOverride = 10
+ENT.JModEZstorableVolume = 10
 ENT.JModInvAllowedActive = true
 --
 ENT.StaticPerfSpecs = {

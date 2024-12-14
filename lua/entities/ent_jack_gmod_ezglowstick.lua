@@ -11,7 +11,7 @@ ENT.AdminSpawnable = true
 ENT.JModGUIcolorable = true
 ---
 ENT.JModEZstorable = true
-ENT.EZstorageVolumeOverride = .5
+ENT.JModEZstorableVolume = .5
 ENT.JModInvAllowedActive = true
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ---
