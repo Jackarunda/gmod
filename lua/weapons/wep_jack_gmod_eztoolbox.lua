@@ -287,8 +287,8 @@ function SWEP:GetEZsupplies(resourceType, getter)
 	local BuildSizeMult = self.CurrentBuildSize or 0
 	if IsValid(getter) and getter == self then BuildSizeMult = 0 end
 	local AvailableResources = {
-		[JMod.EZ_RESOURCE_TYPES.POWER] = math.floor(self:GetElectricity() - 4 * BuildSizeMult),
-		[JMod.EZ_RESOURCE_TYPES.GAS] = math.floor(self:GetGas() - 3 * BuildSizeMult)
+		[JMod.EZ_RESOURCE_TYPES.POWER] = math.max(math.floor(self:GetElectricity() - 4 * BuildSizeMult), 0),
+		[JMod.EZ_RESOURCE_TYPES.GAS] = math.max(math.floor(self:GetGas() - 3 * BuildSizeMult), 0)
 	}
 	if resourceType then
 		if AvailableResources[resourceType] and AvailableResources[resourceType] > 0 then
