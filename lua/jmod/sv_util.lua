@@ -562,7 +562,7 @@ function JMod.GetPlayerStrength(ply)
 	return 1 + (math.max(PlyHealth - PlyMaxHealth, 0) ^ 1.2 / (PlyMaxHealth)) * JMod.Config.General.HandGrabStrength
 end
 
-function JMod.DebugArrangeEveryone(ply)
+function JMod.DebugArrangeEveryone(ply, mult)
 	local Origin, Dist, Ang = ply:GetPos(), 50, Angle(0, 0, 0)
 	local Beings = player.GetAll()
 	table.Add(Beings, ents.FindByClass("npc_*"))
@@ -571,8 +571,9 @@ function JMod.DebugArrangeEveryone(ply)
 			local Target = Origin + Ang:Forward() * Dist
 			local Tr = util.QuickTrace(Target + Vector(0, 0, 300), Vector(0, 0, -600), playa)
 			playa:SetPos(Tr.HitPos)
+			playa:SetHealth(playa:GetMaxHealth())
 			Ang:RotateAroundAxis(vector_up, 25)
-			Dist = Dist + 120
+			Dist = Dist + 120 * mult
 		end
 	end
 	ply:SetPos(Origin + Vector(0, 0, 200))

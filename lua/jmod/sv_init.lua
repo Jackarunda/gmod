@@ -943,7 +943,7 @@ concommand.Add("jacky_player_debug", function(ply, cmd, args)
 			ValidEntNum = ValidEntNum + 1
 		end
 	end--]]
-	JMod.DebugArrangeEveryone(ply)
+	JMod.DebugArrangeEveryone(ply, args[1] or 1)
 end, nil, "(CHEAT, ADMIN ONLY) Resets players' health.")
 
 hook.Add("GetFallDamage", "JMod_FallDamage", function(ply, spd)
