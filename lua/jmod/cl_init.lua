@@ -730,6 +730,35 @@ hook.Add("PostDrawTranslucentRenderables", "JMOD_PLAYEREFFECTS", function(bDepth
 	end
 end)
 
+-- Test for frag patterens
+--[[local Spread = .5
+local Fragments = 300
+hook.Add( "PostDrawTranslucentRenderables", "JMOD_FRAGPATTERNS", function(bDepth, bSkybox)
+	-- If we are drawing in the skybox, bail
+	if (bSkybox) then return end
+	if true then return end
+
+	local EyeTrace = LocalPlayer():GetEyeTrace()
+	local Pos, Norm = EyeTrace.HitPos, EyeTrace.HitNormal
+	local DirAng = Norm:Angle()
+	--DirAng:RotateAroundAxis(DirAng:Forward(), math.random(-180, 180))
+	local FragAng = DirAng:GetCopy()
+
+	local MaxAngle = 180
+	local AngleFraction = MaxAngle / Fragments
+
+	for i = 1, Fragments do
+		-- Change the angle for the next time around
+		FragAng:RotateAroundAxis(FragAng:Up(), AngleFraction * Spread)
+		FragAng:RotateAroundAxis(DirAng:Forward(), i)
+
+		-- Draw lines representing the direction the frags are going
+		local Dir = FragAng:Forward()
+		local End = Pos + Dir * 100
+		render.DrawLine(Pos, End, Color(255, 0, 0, 255), true)
+	end
+end)--]]
+
 local SomeKindOfFog = Material("white_square")
 
 hook.Add("PostDrawSkyBox", "JMOD_POSTSKYBOX", function()
@@ -750,7 +779,7 @@ hook.Add("SetupWorldFog", "JMOD_WORLDFOG", function()
 	local Time = CurTime()
 	local ply = LocalPlayer()
 
-	if ply:Alive() and JMod.PlyHasArmorEff(ply, "thermalVision") and not ply:ShouldDrawLocalPlayer() then
+	if IsValid(ply) and ply:Alive() and JMod.PlyHasArmorEff(ply, "thermalVision") and not ply:ShouldDrawLocalPlayer() then
 		render.FogMode(0)
 
 		return true
@@ -772,7 +801,7 @@ hook.Add("SetupSkyboxFog", "JMOD_SKYFOG", function(scale)
 	local Time = CurTime()
 	local ply = LocalPlayer()
 
-	if ply:Alive() and JMod.PlyHasArmorEff(ply, "thermalVision") and not ply:ShouldDrawLocalPlayer() then
+	if IsValid(ply) and ply:Alive() and JMod.PlyHasArmorEff(ply, "thermalVision") and not ply:ShouldDrawLocalPlayer() then
 		render.FogMode(0)
 
 		return true
