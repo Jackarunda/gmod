@@ -52,6 +52,7 @@ if SERVER then
 		self.EZowner = activator
 
 		if JMod.IsAltUsing(activator) then
+			if not IsValid(self.DetCable) then self:EmitSound("buttons/button4.wav") return end
 			self:EmitSound("snds_jack_gmod/plunger.ogg")
 			self:SetFired(true)
 
@@ -64,6 +65,15 @@ if SERVER then
 			self.DieTime = CurTime() + 10
 		else
 			activator:PickupObject(self)
+		end
+	end
+
+	function ENT:PhysicsCollide(data, physobj)
+		if data.DeltaTime > 0.2 then
+			if data.Speed > 200 then
+				self:EmitSound("Metal_Box.Break")
+				self.DieTime = CurTime() + 2
+			end
 		end
 	end
 

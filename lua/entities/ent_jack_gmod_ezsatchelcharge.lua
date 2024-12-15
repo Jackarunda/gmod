@@ -15,6 +15,8 @@ ENT.EZinvPrime = false
 
 ENT.Hints = {"arm"}
 
+ENT.UsableMats = {MAT_DIRT, MAT_FOLIAGE, MAT_SAND, MAT_SLOSH, MAT_GRASS, MAT_SNOW}
+
 DEFINE_BASECLASS(ENT.Base)
 
 if SERVER then
@@ -31,6 +33,8 @@ if SERVER then
 		timer.Simple(0, function()
 			plunger:SetParent(self)
 		end)
+		
+		self.NextStick = 0
 
 		if istable(WireLib) then
 			self.Inputs = WireLib.CreateInputs(self, {"Detonate"}, {"This will directly detonate the bomb"})
@@ -53,8 +57,9 @@ if SERVER then
 		self:SetState(JMod.EZ_STATE_PRIMED)
 		self.Plunger:SetParent(nil)
 		constraint.NoCollide(self, self.Plunger, 0, 0)
-		constraint.Rope(self, self.Plunger, 0, 0, Vector(0, 0, 0), Vector(0, 0, 0), 2000, 0, 0, .5, "cable/cable", false)
-
+		self.DetCable = constraint.Rope(self, self.Plunger, 0, 0, Vector(0, 0, 0), Vector(0, 0, 0), 2000, 0, 0, .5, "cable/cable", false)
+		self.Plunger.DetCable = self.DetCable
+		
 		timer.Simple(0, function()
 			self.Plunger:SetPos(self:GetPos() + Vector(0, 0, 20))
 		end)
@@ -78,12 +83,67 @@ if SERVER then
 
 			if State == JMod.EZ_STATE_OFF and Alt then
 				self:Prime()
+				activator:DropObject()
 				activator:PickupObject(self.Plunger)
+				self.NextStick = Time + .5
 				JMod.Hint(Dude, "arm satchelcharge", self.Plunger)
 			else
+				constraint.RemoveConstraints(self, "Weld")
+				self.StuckStick = nil
+				self.StuckTo = nil
+				activator:DropObject()
 				activator:PickupObject(self)
+				self.NextStick = Time + .5
 				JMod.Hint(Dude, "arm")
 			end
+		else
+			if self:IsPlayerHolding() and (self.NextStick < Time) then
+				self:Plant(Dude)
+			end
+		end
+	end
+
+	function ENT:Plant(ply)
+		local Tr = util.QuickTrace(ply:GetShootPos(), ply:GetAimVector() * 100, {self, ply, self.Plunger})
+		local Time = CurTime()
+
+		if Tr.Hit and IsValid(Tr.Entity:GetPhysicsObject()) and not Tr.Entity:IsNPC() and not Tr.Entity:IsPlayer() then
+			self.NextStick = Time + .5
+
+			if table.HasValue(self.UsableMats, Tr.MatType) then
+				local Ang = Tr.HitNormal:Angle()
+				Ang:RotateAroundAxis(Ang:Right(), -90)
+				Ang:RotateAroundAxis(Ang:Up(), 180)
+				self:SetAngles(Ang)
+				self:SetPos(Tr.HitPos + Tr.HitNormal * 3)
+
+				local Fff = EffectData()
+				Fff:SetOrigin(Tr.HitPos)
+				Fff:SetNormal(Tr.HitNormal)
+				Fff:SetScale(1)
+				util.Effect("eff_jack_sminebury", Fff, true, true)
+			else
+				local Ang = Tr.HitNormal:Angle()
+				Ang:RotateAroundAxis(Ang:Up(), -90)
+				Ang:RotateAroundAxis(Ang:Right(), 90)
+				self:SetAngles(Ang)
+				self:SetPos(Tr.HitPos + Tr.HitNormal * 4)
+			end
+
+			-- crash prevention
+			if Tr.Entity:GetClass() == "func_breakable" then
+				timer.Simple(0, function()
+					self:GetPhysicsObject():Sleep()
+				end)
+			else
+				local Weld = constraint.Weld(self, Tr.Entity, 0, Tr.PhysicsBone, 3000, false, false)
+				self.StuckTo = Tr.Entity
+				self.StuckStick = Weld
+			end
+
+			self:EmitSound("snd_jack_claythunk.ogg", 65, math.random(80, 120))
+			ply:DropObject()
+			JMod.Hint(ply, "arm")
 		end
 	end
 

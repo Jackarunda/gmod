@@ -127,6 +127,7 @@ if SERVER then
 				constraint.RemoveAll(self)
 				self.StuckStick = nil
 				self.StuckTo = nil
+				Dude:DropObject()
 				Dude:PickupObject(self)
 				self.NextStick = Time + .5
 				JMod.Hint(Dude, "sticky")
