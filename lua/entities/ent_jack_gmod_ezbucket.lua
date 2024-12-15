@@ -14,6 +14,31 @@ ENT.DamageThreshold = 120
 ENT.JModEZstorable = true
 ENT.JModEZstorableVolume = 2.5
 
+function ENT:GetEZsupplies(typ) 
+	local Supplies = {[JMod.EZ_RESOURCE_TYPES.WATER] = self:GetWater()}
+	if typ then
+		if Supplies[typ] and Supplies[typ] > 0 then
+			return Supplies[typ]
+		else
+			return nil
+		end
+	else
+		return Supplies
+	end
+end
+
+function ENT:SetEZsupplies(typ, amt, setter)
+	if not SERVER then return end -- Important because this is shared as well
+	if typ ~= JMod.EZ_RESOURCE_TYPES.WATER then return end -- Type doesn't matter because we only have one type, but we have it here because of uniformness
+	self:SetWater(amt) -- Otherwise, just set our resource to the new value
+	local Phys = self:GetPhysicsObject()
+	timer.Simple(.01, function()
+		if not IsValid(Phys) then return end
+		Phys:SetMass(math.max(self:GetWater(), 2.5))
+		Phys:Wake()
+	end)
+end
+
 ---
 function ENT:SetupDataTables() 
 	self:NetworkVar("Float", 0, "Water")
@@ -43,14 +68,17 @@ if SERVER then
 		self:SetUseType(SIMPLE_USE)
 
 		---
-		timer.Simple(.01, function()
-			self:GetPhysicsObject():SetMass(50)
-			self:GetPhysicsObject():Wake()
-		end)
 		self.MaxWater = 50
 		if self.SpawnFull then
 			self:SetWater(self.MaxWater)
 		end
+		---
+		local Phys = self:GetPhysicsObject()
+		timer.Simple(.01, function()
+			if not IsValid(Phys) then return end
+			Phys:SetMass(math.max(self:GetWater(), 2.5))
+			Phys:Wake()
+		end)
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
@@ -93,6 +121,7 @@ elseif CLIENT then
 	function ENT:Initialize()
 		self.MaxWater = 50
 	end
+
 	function ENT:Draw()
 		self:DrawModel()
 		local Opacity = math.random(50, 200)
