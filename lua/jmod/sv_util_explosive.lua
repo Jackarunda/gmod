@@ -47,7 +47,7 @@ function JMod.FragSplosion(shooter, origin, fragNum, fragDmg, fragMaxDist, attac
 	if direction then
 		Dir = Vector(direction.x, direction.y, direction.z)
 	end
-	--local FireAng = Dir:Angle()
+
 	local BulletsFired, MaxBullets, disperseTime = 0, fragNum / 10, .5
 
 	if fragNum >= 12000 then
@@ -56,15 +56,20 @@ function JMod.FragSplosion(shooter, origin, fragNum, fragDmg, fragMaxDist, attac
 		disperseTime = 1
 	end
 
+	local DirAng = Dir:Angle()
+	DirAng:RotateAroundAxis(DirAng:Forward(), math.random(-180, 180))
+	local FragAng = DirAng:GetCopy()
+
+	local MaxAngle = 180
+	local AngleFraction = MaxAngle / fragNum
+
 	for i = 1, fragNum do
 		timer.Simple((i / fragNum) * disperseTime, function()
 
 			if direction and spread then
-				Dir = Dir + VectorRand() * math.Rand(0, spread)
-				Dir:Normalize()
-				--FireAng:RotateAroundAxis(FireAng:Right(), 180 * spread * (i / fragNum) - 90)
-				--FireAng:RotateAroundAxis(FireAng:Up(), 360 * spread * (i / fragNum) - 180)
-				--Dir = FireAng:Forward()
+				FragAng:RotateAroundAxis(FragAng:Up(), AngleFraction * spread)
+				FragAng:RotateAroundAxis(DirAng:Forward(), i)
+				Dir = FragAng:Forward()
 			else
 				Dir = VectorRand()
 			end
