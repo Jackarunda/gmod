@@ -179,7 +179,7 @@ if SERVER then
 			end
 		end)
 		local Up = self:GetUp()
-		JMod.FragSplosion(self, SelfPos + Up * 5, 10000, 200, 1500, JMod.GetEZowner(self), Up, 1.2)
+		JMod.FragSplosion(self, SelfPos + Up * 5, 5000, 250, 1500, JMod.GetEZowner(self), Up, .6, 5)
 		---
 		self:Remove()
 
