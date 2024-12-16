@@ -1126,6 +1126,8 @@ net.Receive("JMod_EZradio", function()
 		local radio = net.ReadEntity()
 		local ply = net.ReadEntity()
 
+		if not IsValid(radio) then return end
+
 		local tbl = {radio:GetColor(), "Aid Radio", Color(255, 255, 255), ": ", msg}
 
 		if parrot then
