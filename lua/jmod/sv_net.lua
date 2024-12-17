@@ -140,6 +140,7 @@ net.Receive("JMod_EZtoolbox", function(ln, ply)
 	if IsValid(Wep) then
 		Wep:SwitchSelectedBuild(Name)
 	end
+	Wep.EZpreview = net.ReadTable()
 end)
 
 net.Receive("JMod_EZworkbench", function(l, ply)

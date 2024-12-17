@@ -764,20 +764,20 @@ net.Receive("JMod_EZtoolbox", function()
 		return JMod.HaveResourcesToPerformTask(ent:GetPos(), 150, info.craftingReqs, ent, LocallyAvailableResources) 
 	end, 
 	function(name, info, ply, ent)-- click func
-		net.Start("JMod_EZtoolbox")
-		net.WriteEntity(ent)
-		net.WriteString(name)
-		net.SendToServer()
 
 		-- wireframe preview
 		ent.EZpreview = {}
-		local StringParts = string.Explode(" ", info["results"])																	  
+		local StringParts = string.Explode(" ", info["results"])	
+		local Ang = nil 
+		if info.spawnRotation then
+			Ang = Angle(0, info.spawnRotation, 0)
+		end															  
 		if StringParts[1] and (StringParts[1] == "FUNC") then
 			if not info.sizeScale or (StringParts[2] == "EZnail") or (StringParts[2] == "EZbolt") then
 				ent.EZpreview = {Box = nil} --No way to tell size
 			else
 				local ScaledMinMax = Vector(info.sizeScale * 10, info.sizeScale * 10, info.sizeScale * 10)
-				ent.EZpreview = {Box = {mins = -ScaledMinMax, maxs = ScaledMinMax}, SizeScale = info.sizeScale}
+				ent.EZpreview = {Box = {mins = -ScaledMinMax, maxs = ScaledMinMax}, sizeScale = info.sizeScale, SpawnAngles = Ang or Angle(0, 0, 0)}
 			end
 		else
 			local temp_ent
@@ -798,8 +798,8 @@ net.Receive("JMod_EZtoolbox", function()
 			temp_ent:SetNoDraw(true)
 			temp_ent:Spawn()									-- have to do this to get an accurate bounding box
 			local Min, Max = temp_ent:OBBMaxs(), temp_ent:OBBMins() 		-- couldn't find a better way
-			local Ang = (temp_ent.JModPreferredCarryAngles and temp_ent.JModPreferredCarryAngles) or Angle(0, 0, 0)
-			
+			Ang = Ang or (temp_ent.JModPreferredCarryAngles and temp_ent.JModPreferredCarryAngles)
+
 			if Min:IsZero() and Max:IsZero() then
 				if info.sizeScale then
 					local ScaledMinMax = Vector(info.sizeScale * 10, info.sizeScale * 10, info.sizeScale * 10)
@@ -811,8 +811,29 @@ net.Receive("JMod_EZtoolbox", function()
 			end
 			SafeRemoveEntityDelayed(temp_ent, 0)
 
-			ent.EZpreview = {Box = {mins = Min, maxs = Max}, SizeScale = info.sizeScale and info.sizeScale, SpawnAngles = Ang}
+			--[[if Ang then
+				local SpawnAngles = Ang
+				local Cos = math.cos(-SpawnAngles.y)
+				local Sin = math.sin(-SpawnAngles.y)
+				Min = Vector(
+					Min.x * Cos - Min.y * Sin,
+					Min.x * Sin + Min.y * Cos,
+					Min.z
+				)
+				Max = Vector(
+					Max.x * Cos - Max.y * Sin,
+					Max.x * Sin + Max.y * Cos,
+					Max.z
+				)
+			end--]]
+
+			ent.EZpreview = {Box = {mins = Min, maxs = Max}, sizeScale = info.sizeScale and info.sizeScale, SpawnAngles = Ang}
 		end
+		net.Start("JMod_EZtoolbox")
+			net.WriteEntity(ent)
+			net.WriteString(name)
+			net.WriteTable(ent.EZpreview)
+		net.SendToServer()
 	end, 
 	function(parent) -- side panel func
 		local W, H, Myself = parent:GetWide(), parent:GetTall(), LocalPlayer()
