@@ -257,6 +257,7 @@ function JMod.ConsumeResourcesInRange(requirements, pos, range, sourceEnt, useRe
 		if TypesNeeded and (#TypesNeeded > 0) then
 			local ResourceTypeToLookFor = TypesNeeded[1]
 			local AmountWeNeed = math.ceil(RequirementsRemaining[ResourceTypeToLookFor] * mult)
+			
 			if propsToConsume then
 				for entID, yield in pairs(propsToConsume) do
 					local HasWhatWeNeed = false
@@ -270,15 +271,19 @@ function JMod.ConsumeResourcesInRange(requirements, pos, range, sourceEnt, useRe
 						end
 					end
 					local Ent = Entity(entID)
-					if Ent.JModInv then
+					--[[if Ent.JModInv then
 						for _, v in ipairs(Ent.JModInv.items) do
 							JMod.RemoveFromInventory(Ent, v.ent, pos + VectorRand() * 50)
 						end
-					end
+					end--]]
 					--print(Entity(entID), HasWhatWeNeed)
 					if HasWhatWeNeed then
 						SafeRemoveEntity(Ent) -- R.I.P. Props
 					end
+				end
+
+				if not AllDone then
+					propsToConsume = nil
 				end
 			else
 				local Donor = JMod.FindResourceContainer(ResourceTypeToLookFor, 1, pos, range, sourceEnt) -- every little bit helps
@@ -343,14 +348,25 @@ function JMod.FindResourceContainer(typ, amt, pos, range, sourceEnt)
 			end
 		end
 	end
-	if ValidSource and sourceEnt.GetEZsupplies then
-		local AvailableResources = sourceEnt:GetEZsupplies(typ)
-		if AvailableResources then
-			if (typ and AvailableResources >= amt) then
+	-- We do this so that the search algorithm prefers other containers before the source
+	if ValidSource then
+		if sourceEnt.GetEZsupplies then
+			local AvailableResources = sourceEnt:GetEZsupplies(typ)
+			if AvailableResources then
+				if (typ and AvailableResources >= amt) then
 
-				return sourceEnt
+					return sourceEnt
+				end
 			end
-		end
+		elseif sourceEnt.JModInv then
+			local AvailableResources = sourceEnt.JModInv.EZresources[typ]
+			if AvailableResources then
+				if (typ and AvailableResources >= amt) then
+
+					return sourceEnt
+				end
+			end
+		end 
 	end
 end
 
