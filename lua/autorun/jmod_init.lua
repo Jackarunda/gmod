@@ -403,8 +403,6 @@ if SERVER then
 	end
 end
 
-JMod.EZ_RESOURCE_INV_WEIGHT = .5
-
 --[[local ImpactSounds = {
 	Metal = {"Canister.ImpactSoft", "Metal_Barrel.BulletImpact", "Metal_Barrel.ImpactSoft", "Metal_Box.BulletImpact", "Metal_Box.ImpactSoft", "Metal_SeafloorCar.BulletImpact", "MetalGrate.BulletImpact", "MetalGrate.ImpactSoft", "MetalVehicle.ImpactSoft", "MetalVent.ImpactHard",},
 	Wood = {"Wood.BulletImpact", "Wood.ImpactSoft", "Wood_Box.BulletImpact", "Wood_Box.ImpactSoft", "Wood_Crate.ImpactSoft", "Wood_Furniture.ImpactSoft", "Wood_Panel.BulletImpact", "Wood_Panel.ImpactSoft", "Wood_Plank.BulletImpact", "Wood_Plank.ImpactSoft", "Wood_Solid.BulletImpact", "Wood_Solid.ImpactSoft"},

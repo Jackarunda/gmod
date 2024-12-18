@@ -130,7 +130,7 @@ function JMod.UpdateInv(invEnt, noplace, transfer, emergancyNetwork)
 	end
 	for typ, amt in pairs(invEnt.JModInv.EZresources) do
 		if isstring(typ) and (amt > 0) then
-			local ResourceWeightFactor = (JMod.EZ_RESOURCE_INV_WEIGHT / JMod.Config.ResourceEconomy.MaxResourceMult)
+			local ResourceWeightFactor = (JMod.Config.ResourceEconomy.ResourceInventoryWeight / JMod.Config.ResourceEconomy.MaxResourceMult)
 			local ResourceWeight = amt * ResourceWeightFactor
 			if (Capacity < (jmodinvfinal.volume + (ResourceWeight))) then
 				local Overflow = (ResourceWeight) - (Capacity - jmodinvfinal.volume)
@@ -260,6 +260,7 @@ function JMod.AddToInventory(invEnt, target, noUpdate)
 	end
 
 	hook.Run("JMod_OnInventoryAdd", invEnt, target, jmodinv)
+
 	return true
 end
 
@@ -351,10 +352,18 @@ function JMod.RemoveFromInventory(invEnt, target, pos, noUpdate, transfer)
 	end
 end
 
-hook.Add("JMod_OnInventoryRemove", "JMod_OnInventoryRemove", function(invEnt, target, jmodinv)
+hook.Add("JMod_OnInventoryRemove", "JMod_CalcWeight", function(invEnt, target, jmodinv)
 	if invEnt.NextLoad and invEnt.CalcWeight then 
 		invEnt.NextLoad = CurTime() + 2
-		invEnt:EmitSound("Ammo_Crate.Close")
+		--invEnt:EmitSound("Ammo_Crate.Close")
+		invEnt:CalcWeight()
+	end
+end)
+
+hook.Add("JMod_OnInventoryAdd", "JMod_CalcWeight", function(invEnt, target, jmodinv)
+	if invEnt.NextLoad and invEnt.CalcWeight then 
+		invEnt.NextLoad = CurTime() + 2
+		--nvEnt:EmitSound("Ammo_Crate.Close")
 		invEnt:CalcWeight()
 	end
 end)
@@ -532,7 +541,7 @@ function JMod.EZ_GrabItem(ply, cmd, args)
 		JMod.UpdateInv(ply)
 		local RoomLeft = math.floor((ply.JModInv.maxVolume) - (ply.JModInv.volume))
 		if RoomLeft > 0 then
-			local ResourceWeight = (JMod.EZ_RESOURCE_INV_WEIGHT / JMod.Config.ResourceEconomy.MaxResourceMult)
+			local ResourceWeight = (JMod.Config.ResourceEconomy.ResourceInventoryWeight / JMod.Config.ResourceEconomy.MaxResourceMult)
 			local RoomWeNeed = JMod.GetItemVolumeWeight(TargetEntity)
 			local IsResources = false
 

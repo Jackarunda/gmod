@@ -13,7 +13,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda & Friends",
-			Version = 48
+			Version = 49
 		},
 		General = {
 			Hints = true,
@@ -97,6 +97,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 			ResourceRichness = 1,
 			ExtractionSpeed = 1,
 			MaxResourceMult = 1,
+			ResourceInventoryWeight = .1,
 			SalvageYield = 1,
 			ScroungeAreaRefreshMult = 1,
 			ScroungeCooldownMult = 1,
