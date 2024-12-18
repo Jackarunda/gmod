@@ -56,7 +56,10 @@ if SERVER then
 		self:EmitSound("weapons/c4/c4_plant.wav", 60, 80)
 		self:SetState(JMod.EZ_STATE_PRIMED)
 		self.Plunger:SetParent(nil)
-		constraint.NoCollide(self, self.Plunger, 0, 0)
+		local NoCollide = constraint.NoCollide(self, self.Plunger, 0, 0, true)
+		timer.Simple(.5, function()
+			if IsValid(NoCollide) then NoCollide:Remove() end
+		end)
 		self.DetCable = constraint.Rope(self, self.Plunger, 0, 0, Vector(0, 0, 0), Vector(0, 0, 0), 2000, 0, 0, .5, "cable/cable", false)
 		self.Plunger.DetCable = self.DetCable
 		

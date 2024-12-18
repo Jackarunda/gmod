@@ -69,10 +69,23 @@ if SERVER then
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
-		if data.DeltaTime > 0.2 then
-			if data.Speed > 200 then
+		if data.DeltaTime > 0.5 and data.Speed > 100 then
+			--[[if data.Speed > 200 then
 				self:EmitSound("Metal_Box.Break")
 				self.DieTime = CurTime() + 2
+			end--]]
+			if data.HitEntity == self.Satchel then
+				timer.Simple(0, function()
+					if not (IsValid(self) and IsValid(self.Satchel)) then return end
+					self:ForcePlayerDrop()
+					self:SetPos(self.Satchel:GetPos() + self.Satchel:GetForward() * 5)
+					self:SetAngles(self.Satchel:GetAngles())
+					self:SetParent(data.HitEntity)
+					if IsValid(self.DetCable) then
+						self.DetCable:Remove()
+					end
+					data.HitEntity:SetState(JMod.EZ_STATE_OFF)
+				end)
 			end
 		end
 	end
