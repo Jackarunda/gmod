@@ -129,11 +129,12 @@ function SWEP:PrimaryAttack()
 end
 
 function SWEP:SecondaryAttack()
-	self:SetNextPrimaryFire(CurTime() + 1)
-	self:SetNextSecondaryFire(CurTime() + 1)
 	local Owner = self:GetOwner()
 
 	if self.SecondaryPush then
+		self:SetNextPrimaryFire(CurTime() + self.SecondaryAttackSpeed)
+		self:SetNextSecondaryFire(CurTime() + self.SecondaryAttackSpeed)
+
 		local vm = Owner:GetViewModel()
 		vm:SendViewModelMatchingSequence(vm:LookupSequence( "pushback" ))
 
@@ -198,7 +199,7 @@ function SWEP:Think()
 		self:SetHoldType(self.SprintHoldType)
 	else
 		self:SetHoldType(self.IdleHoldType)
-		if Swing then
+		if Swing and IsFirstTimePredicted() then
 			if self.SwingProgress < self.MaxSwingAngle then
 				self.SwingProgress = self.SwingProgress + (self.MaxSwingAngle * self.SwingSpeed * 0.05)
 
@@ -280,7 +281,7 @@ function SWEP:Think()
 				self:SetSwinging(false)
 				self.SwingProgress = 0
 			end
-		else
+		elseif IsFirstTimePredicted() then
 			self.SwingProgress = 0
 		end
 	end

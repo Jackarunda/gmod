@@ -95,6 +95,7 @@ function SWEP:CustomThink()
 end
 
 function SWEP:OnHit(swingProgress, tr)
+	if not IsFirstTimePredicted() then return end
 	local Owner = self:GetOwner()
 	--local SwingCos = math.cos(math.rad(swingProgress))
 	--local SwingSin = math.sin(math.rad(swingProgress))
@@ -152,6 +153,7 @@ function SWEP:OnHit(swingProgress, tr)
 end
 
 function SWEP:FinishSwing(swingProgress)
+	if not IsFirstTimePredicted() then return end
 	if swingProgress >= self.MaxSwingAngle then
 		self:SetTaskProgress(0)
 	else
