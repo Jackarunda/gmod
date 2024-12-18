@@ -774,7 +774,7 @@ net.Receive("JMod_EZtoolbox", function()
 		end															  
 		if StringParts[1] and (StringParts[1] == "FUNC") then
 			if not info.sizeScale or (StringParts[2] == "EZnail") or (StringParts[2] == "EZbolt") then
-				ent.EZpreview = {Box = nil} --No way to tell size
+				ent.EZpreview = {Box = nil, sizeScale = 1, SpawnAngles = Ang or Angle(0, 0, 0)} --No way to tell size
 			else
 				local ScaledMinMax = Vector(info.sizeScale * 10, info.sizeScale * 10, info.sizeScale * 10)
 				ent.EZpreview = {Box = {mins = -ScaledMinMax, maxs = ScaledMinMax}, sizeScale = info.sizeScale, SpawnAngles = Ang or Angle(0, 0, 0)}
@@ -810,22 +810,6 @@ net.Receive("JMod_EZtoolbox", function()
 				end
 			end
 			SafeRemoveEntityDelayed(temp_ent, 0)
-
-			--[[if Ang then
-				local SpawnAngles = Ang
-				local Cos = math.cos(-SpawnAngles.y)
-				local Sin = math.sin(-SpawnAngles.y)
-				Min = Vector(
-					Min.x * Cos - Min.y * Sin,
-					Min.x * Sin + Min.y * Cos,
-					Min.z
-				)
-				Max = Vector(
-					Max.x * Cos - Max.y * Sin,
-					Max.x * Sin + Max.y * Cos,
-					Max.z
-				)
-			end--]]
 
 			ent.EZpreview = {Box = {mins = Min, maxs = Max}, sizeScale = info.sizeScale and info.sizeScale, SpawnAngles = Ang}
 		end
@@ -1468,7 +1452,21 @@ end
 
 --Item Inventory
 local function CreateInvButton(parent, itemTable, x, y, w, h, scrollFrame, invEnt)
-	if not(itemTable and IsValid(itemTable.ent)) then return end
+	if not(itemTable and IsValid(itemTable.ent)) then
+		print(invEnt)
+		net.Start("JMod_ItemInventory")
+			net.WriteString("missing")
+			net.WriteEntity(NULL)
+			net.WriteEntity(invEnt)
+		net.SendToServer()
+
+		if IsValid(parent) then
+			parent:Close()
+		end
+
+		return
+	end
+
 	local Buttalony, Ply = vgui.Create("DButton", scrollFrame), LocalPlayer()
 	local Matty = nil
 	if string.find(itemTable.ent:GetClass(), "prop_") then
@@ -1521,6 +1519,7 @@ local function CreateInvButton(parent, itemTable, x, y, w, h, scrollFrame, invEn
 					else
 						net.Start("JMod_ItemInventory")
 							net.WriteString("missing")
+							net.WriteEntity(NULL)
 							net.WriteEntity(invEnt)
 						net.SendToServer()
 					end
@@ -1538,6 +1537,7 @@ local function CreateInvButton(parent, itemTable, x, y, w, h, scrollFrame, invEn
 					else
 						net.Start("JMod_ItemInventory")
 							net.WriteString("missing")
+							net.WriteEntity(NULL)
 							net.WriteEntity(Ply)
 						net.SendToServer()
 					end
@@ -1552,6 +1552,8 @@ local function CreateInvButton(parent, itemTable, x, y, w, h, scrollFrame, invEn
 					net.WriteEntity(itemTable.ent)
 					if invEnt ~= Ply then
 						net.WriteEntity(invEnt)
+					else
+						net.WriteEntity(NULL)
 					end
 					net.SendToServer()
 				end

@@ -91,7 +91,7 @@ local function IsActiveItemAllowed(ent)
 	return false
 end
 
-function JMod.UpdateInv(invEnt, noplace, transfer)
+function JMod.UpdateInv(invEnt, noplace, transfer, emergancyNetwork)
 	invEnt.JModInv = invEnt.JModInv or table.Copy(JMod.DEFAULT_INVENTORY)
 
 	local Capacity = JMod.GetStorageCapacity(invEnt)
@@ -111,6 +111,16 @@ function JMod.UpdateInv(invEnt, noplace, transfer)
 				jmodinvfinal.weight = jmodinvfinal.weight + Mass
 				jmodinvfinal.volume = jmodinvfinal.volume + math.Round(Vol, 2)
 				iteminfo.vol = Vol
+				if emergancyNetwork then
+					if iteminfo.ent:GetNoDraw() then -- Emergancy networking fix
+						iteminfo.ent:SetNoDraw(false)
+						timer.Simple(1, function()
+							if JMod.IsEntContained(iteminfo.ent, invEnt) then
+								iteminfo.ent:SetNoDraw(true)
+							end
+						end)
+					end
+				end
 			else
 				local Removed = JMod.RemoveFromInventory(invEnt, iteminfo.ent, not(noplace) and TrPos, true, transfer)
 				table.insert(RemovedItems, Removed)
@@ -287,7 +297,7 @@ function JMod.RemoveFromInventory(invEnt, target, pos, noUpdate, transfer)
 		target:SetNW2Entity("EZInvOwner", nil)
 
 		if not(pos) and not(transfer) then
-			SafeRemoveEntityDelayed(target, 0)
+			SafeRemoveEntity(target)
 		else
 			target:SetNoDraw(false)
 			target:SetNotSolid(false)
@@ -487,7 +497,7 @@ net.Receive("JMod_ItemInventory", function(len, ply)
 	elseif command == "full" then
 		JMod.Hint(ply,"hint item inventory full")
 	elseif command == "missing" then
-		JMod.UpdateInv(invEnt)
+		JMod.UpdateInv(invEnt, nil, nil, true)
 		JMod.Hint(ply,"hint item inventory missing")
 	end
 	--JMod.UpdateInv(invEnt)
