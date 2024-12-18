@@ -232,26 +232,8 @@ if(SERVER)then
 			local Pos = data.HitPos
 			if (IsValid(Ent) and Ent:IsPlayerHolding()) then Held = true end
 			if (data.Speed > 150) then
-				if Held and (Ent:GetPhysicsObject():GetMass() <= 35) and ((Ent:GetClass() == "prop_physics") or (table.HasValue(SalvageableMats, Ent:GetMaterialType()))) then
-					Ent:ForcePlayerDrop()
-					timer.Simple(0.1, function()
-						if not IsValid(Ent) then return end
-						local Yield, Message = JMod.GetSalvageYield(Ent)
-
-						if #table.GetKeys(Yield) <= 0 then
-							--
-						elseif Ent:GetPhysicsObject():GetMass() <= 35 then
-							sound.Play("snds_jack_gmod/ez_tools/hit.ogg", Pos + VectorRand(), 70, math.random(50, 60))
-							JMod.BuildEffect(Pos)
-
-							local i = 0
-							for k, v in pairs(Yield) do
-								JMod.MachineSpawnResource(self, k, v, self:WorldToLocal(Pos + VectorRand() * 40), Angle(0, 0, 0), Vector(0, 0, 100), 200)
-								i = i + 1
-							end
-							SafeRemoveEntity(Ent)
-						end
-					end)
+				if Held then
+					self:SalvageProp(Ent, nil, Pos)
 				end
 				self:EmitSound("Wood.ImpactHard")
 				if (data.Speed > 500) then
@@ -282,6 +264,39 @@ if(SERVER)then
 				end
 			end
 		end
+	end
+
+	function ENT:SalvageProp(ent, ply, pos)
+		if not (IsValid(ent) and IsValid(ent:GetPhysicsObject())) then return end
+		pos = pos or ent:GetPos()
+
+		local EntPhys = ent:GetPhysicsObject()
+		
+		if not (EntPhys:GetMass() <= 35 and (ent:GetClass() == "prop_physics" or table.HasValue(SalvageableMats, ent:GetMaterialType()))) then return end
+		if JMod.IsEntContained(ent) then 
+			JMod.RemoveFromInventory(nil, ent, self:GetPos())
+		end
+
+		ent:ForcePlayerDrop()
+
+		timer.Simple(0.1, function()
+			if not IsValid(ent) then return end
+			local Yield, Message = JMod.GetSalvageYield(ent)
+
+			if #table.GetKeys(Yield) <= 0 then
+				--
+			elseif EntPhys:GetMass() <= 35 then
+				sound.Play("snds_jack_gmod/ez_tools/hit.ogg", pos + VectorRand(), 70, math.random(50, 60))
+				JMod.BuildEffect(pos)
+
+				local i = 0
+				for k, v in pairs(Yield) do
+					JMod.MachineSpawnResource(self, k, v, self:WorldToLocal(pos + VectorRand() * 40), Angle(0, 0, 0), Vector(0, 0, 100), 200)
+					i = i + 1
+				end
+				SafeRemoveEntity(ent)
+			end
+		end)
 	end
 
 	function ENT:ProduceResource()
