@@ -287,8 +287,8 @@ function SWEP:GetEZsupplies(resourceType, getter)
 	local BuildSizeMult = self.CurrentBuildSize or 0
 	if IsValid(getter) and getter == self then BuildSizeMult = 0 end
 	local AvailableResources = {
-		[JMod.EZ_RESOURCE_TYPES.POWER] = math.Clamp(math.ceil(self:GetElectricity() - 4 * BuildSizeMult), 0, 40),
-		[JMod.EZ_RESOURCE_TYPES.GAS] = math.Clamp(math.ceil(self:GetGas() - 3 * BuildSizeMult), 0, 30)
+		[JMod.EZ_RESOURCE_TYPES.POWER] = self:GetElectricity(),
+		[JMod.EZ_RESOURCE_TYPES.GAS] = self:GetGas()
 	}
 	if resourceType then
 		if AvailableResources[resourceType] and AvailableResources[resourceType] > 0 then
@@ -305,7 +305,7 @@ function SWEP:SetEZsupplies(typ, amt, setter)
 	if not SERVER then  return end
 	local ResourceSetMethod = self["Set"..JMod.EZ_RESOURCE_TYPE_METHODS[typ]]
 	if ResourceSetMethod then
-		ResourceSetMethod(self, amt)
+		ResourceSetMethod(self, math.Clamp(amt, 0, self["Max"..JMod.EZ_RESOURCE_TYPE_METHODS[typ]] or 100))
 	end
 end
 
@@ -724,12 +724,16 @@ function SWEP:TryLoadResource(typ, amt)
 
 	for _, v in pairs(self.EZconsumes) do
 		if typ == v then
-			local CurAmt = (self:GetEZsupplies(typ, self) or 0) + 8 * (self.CurrentBuildSize or 0)
+			local CurAmt = self:GetEZsupplies(typ, self) or 0
 			local Take = math.min(amt, self.MaxElectricity - CurAmt)
 			
 			if Take > 0 then
 				self:SetEZsupplies(typ, CurAmt + Take)
-				sound.Play("snds_jack_gmod/gas_load.ogg", self:GetPos(), 65, math.random(90, 110))
+				if typ == JMod.EZ_RESOURCE_TYPES.POWER then
+					sound.Play("snd_jack_turretbatteryload.ogg", self.Owner:GetShootPos(), 65, math.random(90, 110))
+				elseif typ == JMod.EZ_RESOURCE_TYPES.GAS then
+					sound.Play("snds_jack_gmod/gas_load.ogg", self.Owner:GetShootPos(), 65, math.random(90, 110))
+				end
 				Accepted = Take
 			end
 		end
