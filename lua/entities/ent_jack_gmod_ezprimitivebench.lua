@@ -221,7 +221,17 @@ if(SERVER)then
 		MAT_DIRT,
 		MAT_FLESH,
 		MAT_GRASS,
-		MAT_SLOSH
+		MAT_SLOSH,
+		MAT_METAL,
+		MAT_GRATE,
+		MAT_COMPUTER,
+		MAT_TILE,
+		MAT_PLASTIC,
+		MAT_CONCRETE,
+		MAT_GLASS,
+		MAT_DEFAULT,
+		MAT_SAND,
+		MAT_FOLIAGE
 	}
 
 	function ENT:PhysicsCollide(data, physobj)
@@ -266,15 +276,29 @@ if(SERVER)then
 		end
 	end
 
+	local function CanSalvage(ent)
+		if not (IsValid(ent) and IsValid(ent:GetPhysicsObject())) then return false end
+		if (ent:GetClass() ~= "prop_physics") then return false end
+		if not table.HasValue(SalvageableMats, ent:GetMaterialType()) then return false end
+		if ent:GetPhysicsObject():GetMass() <= 35 then return true end
+		return false
+	end
+
 	function ENT:SalvageProp(ent, ply, pos)
 		if not (IsValid(ent) and IsValid(ent:GetPhysicsObject())) then return end
 		pos = pos or ent:GetPos()
 
 		local EntPhys = ent:GetPhysicsObject()
 		
-		if not (EntPhys:GetMass() <= 35 and (ent:GetClass() == "prop_physics" or table.HasValue(SalvageableMats, ent:GetMaterialType()))) then return end
+		if not CanSalvage(ent) then return end
 		if JMod.IsEntContained(ent) then 
 			JMod.RemoveFromInventory(nil, ent, self:GetPos())
+		end
+
+		if ent.JModInv then
+			self:ScrapInv(ent, true)
+
+			return
 		end
 
 		ent:ForcePlayerDrop()
@@ -297,6 +321,30 @@ if(SERVER)then
 				SafeRemoveEntity(ent)
 			end
 		end)
+	end
+
+	function ENT:ScrapInv(ply, scrapInvEntity)
+		if not IsValid(ply) then return end
+		if ply:GetPos():Distance(self:GetPos()) > 200 then return end
+		if not ply.JModInv then return end
+		local PropScrapAmount = #ply.JModInv.items
+		for k, entInfo in pairs(ply.JModInv.items) do
+			local ent = entInfo.ent
+			if CanSalvage(ent) then
+				timer.Simple(0.25 * k, function()
+					if not IsValid(self) or not IsValid(ent) or not IsValid(ply) or (ply:GetPos():Distance(self:GetPos()) > 200) then return end
+					ent = JMod.RemoveFromInventory(ply, ent, self:GetPos() + self:GetUp() * 50)
+					ent:GetPhysicsObject():EnableCollisions(false)
+					if IsValid(ent) then
+						self:SalvageProp(ent)
+					end
+
+					if scrapInvEntity and k == PropScrapAmount then
+						self:SalvageProp(ply)
+					end
+				end)
+			end
+		end
 	end
 
 	function ENT:ProduceResource()

@@ -868,8 +868,8 @@ net.Receive("JMod_EZworkbench", function()
 		local ResourceScroller = vgui.Create("DScrollPanel", parent)
 		ResourceScroller:SetSize(W - 20, H - 20)
 		ResourceScroller:SetPos(10, 10)
+		ResourceScroller:DockMargin(0, 5, 0, 0)
 		ResourceScroller:Dock(FILL)
-		ResourceScroller:DockMargin(0, 0, 0, 0)
 		ResourceScroller:SetPaintBackground(false)
 		ResourceScroller.VerticalScrollbar = true
 		ResourceScroller.HorizontalScrollbar = false
@@ -885,6 +885,28 @@ net.Receive("JMod_EZworkbench", function()
 				JMod.StandardResourceDisplay(k, v, nil, w * .55, h * .5, 30, false, "JMod-Stencil-XS")
 			end
 			ResourcePanel:SetTooltip(k .. " x" .. v)
+		end
+
+		if Bench:GetClass() == "ent_jack_gmod_ezprimitivebench" then
+			local ScrapButton = vgui.Create("DButton", parent)
+			ScrapButton:SetText("")
+			ScrapButton:SetSize(W - 20, 40)
+			ScrapButton:SetPos(10, H - 30)
+			ScrapButton:DockMargin(1, 5, 1, 5)
+			ScrapButton:Dock(BOTTOM)
+			ScrapButton.DoClick = function()
+				net.Start("JMod_EZworkbench")
+					net.WriteEntity(Bench)
+					net.WriteString("JMOD_SCRAPINV")
+				net.SendToServer()
+				parent:GetParent():Close()
+			end
+			ScrapButton:SetTooltip("Salvages the props in your Inventory")
+			function ScrapButton:Paint(w, h)
+				surface.SetDrawColor(0, 0, 0, 50)
+				surface.DrawRect(0, 0, w, h)
+				draw.SimpleText("SALVAGE INVENTORY PROPS", "JMod-Stencil-XS", w * .5, h * .5, TextColors.ButtonTextBright, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+			end
 		end
 	end, Multiplier)
 end)

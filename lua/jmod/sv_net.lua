@@ -146,8 +146,10 @@ end)
 net.Receive("JMod_EZworkbench", function(l, ply)
 	if not (IsValid(ply) and ply:Alive()) then return end
 	local bench, name = net.ReadEntity(), net.ReadString()
-
-	if (IsValid(bench) and bench.TryBuild) and ply:GetPos():DistToSqr(bench:GetPos()) < 15000 then
+	if not IsValid(bench) then return end
+	if name == "JMOD_SCRAPINV" and bench.ScrapInv then
+		bench:ScrapInv(ply)
+	elseif bench.TryBuild and ply:GetPos():Distance(bench:GetPos()) < 300 then
 		bench:TryBuild(name, ply)
 	end
 end)
