@@ -92,6 +92,7 @@ if SERVER then
 	local function ShouldIgnite(ent)
 		if not IsValid(ent) then return false end
 		if ent:IsOnFire() then return false end
+		if ent.LVS then return false end
 		if ent:IsPlayer() then return true end
 		if ent:IsNPC() then return true end
 		if ent:IsNextBot() then return true end
@@ -190,13 +191,13 @@ if SERVER then
 						local Func = v[v.JModHighlyFlammableFunc]
 						Func(v)
 					elseif not DamageBlacklist[v:GetClass()] and IsValid(v:GetPhysicsObject()) and JMod.VisCheck(Pos, v, self) then
-						local DistanceFactor = math.max( 1 - ( Pos:Distance( TheirPos ) / self.Range ), 0 ) ^ 1.5
-						FireDam:SetDamage(self.Power * DistanceFactor)
+						local DistanceFactor = math.max( 1 - ( Pos:Distance( TheirPos ) / ActualRange ), 0 ) ^ 2
+						FireDam:SetDamage(1 + (self.Power * DistanceFactor * 2))
 						v:TakeDamageInfo(FireDam)
 
 						if vFireInstalled then
 							CreateVFireEntFires(v, math.random(1, 3))
-						elseif (ShouldIgnite(v)) and (math.random(1, 30) == 1) then
+						elseif (ShouldIgnite(v)) and (math.random(1, 5) == 1) then
 							v:Ignite(math.random(8, 12) * Fraction, 0)
 						end
 					end
