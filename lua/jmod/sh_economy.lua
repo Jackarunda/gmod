@@ -299,12 +299,12 @@ local SalvagingTable = {
 	},
 	metalvehicle = {
 		[JMod.EZ_RESOURCE_TYPES.LEAD] = .05,
-		[JMod.EZ_RESOURCE_TYPES.STEEL] = .2,
+		[JMod.EZ_RESOURCE_TYPES.STEEL] = .3,
 		[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = .1,
 		[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = .1,
 		[JMod.EZ_RESOURCE_TYPES.COPPER] = .05,
 		[JMod.EZ_RESOURCE_TYPES.PLASTIC] = .1,
-		[JMod.EZ_RESOURCE_TYPES.RUBBER] = .1,
+		[JMod.EZ_RESOURCE_TYPES.RUBBER] = .2,
 		[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = .05
 	},
 	canister = {
@@ -344,22 +344,23 @@ local SalvagingTable = {
 		[JMod.EZ_RESOURCE_TYPES.CLOTH] = .1
 	},
 	sand = {
-		[JMod.EZ_RESOURCE_TYPES.SAND] = .2
+		[JMod.EZ_RESOURCE_TYPES.SAND] = .4
 	},
 	sandbags = {
-		[JMod.EZ_RESOURCE_TYPES.SAND] = .5
+		[JMod.EZ_RESOURCE_TYPES.SAND] = .8,
+		[JMod.EZ_RESOURCE_TYPES.WOOD] = .1
 	},
 	concrete = {
-		[JMod.EZ_RESOURCE_TYPES.CERAMIC] = .4
+		[JMod.EZ_RESOURCE_TYPES.CERAMIC] = .5
 	},
 	paper = {
-		[JMod.EZ_RESOURCE_TYPES.PAPER] = .5
+		[JMod.EZ_RESOURCE_TYPES.PAPER] = .8
 	},
 	cardboard = {
-		[JMod.EZ_RESOURCE_TYPES.PAPER] = .6
+		[JMod.EZ_RESOURCE_TYPES.PAPER] = .8
 	},
 	rubber = {
-		[JMod.EZ_RESOURCE_TYPES.RUBBER] = .5
+		[JMod.EZ_RESOURCE_TYPES.RUBBER] = .8
 	},
 	carpet = {
 		[JMod.EZ_RESOURCE_TYPES.CLOTH] = .4,
@@ -395,10 +396,9 @@ local SalvagingTable = {
 		[JMod.EZ_RESOURCE_TYPES.CERAMIC] = .4
 	},
 	metalvent = {
-		[JMod.EZ_RESOURCE_TYPES.STEEL] = .1,
-		[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = .1,
-		[JMod.EZ_RESOURCE_TYPES.PLASTIC] = .1,
-		[JMod.EZ_RESOURCE_TYPES.PAPER] = .1
+		[JMod.EZ_RESOURCE_TYPES.STEEL] = .2,
+		[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = .3,
+		[JMod.EZ_RESOURCE_TYPES.PLASTIC] = .2
 	},
 	flesh = {
 		[JMod.EZ_RESOURCE_TYPES.ORGANICS] = 3
@@ -423,11 +423,11 @@ local SalvagingTable = {
 		[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = .2
 	},
 	rubbertire = {
-		[JMod.EZ_RESOURCE_TYPES.RUBBER] = .3,
+		[JMod.EZ_RESOURCE_TYPES.RUBBER] = .6,
 		[JMod.EZ_RESOURCE_TYPES.STEEL] = .2
 	},
 	jeeptire = {
-		[JMod.EZ_RESOURCE_TYPES.RUBBER] = .3,
+		[JMod.EZ_RESOURCE_TYPES.RUBBER] = .6,
 		[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = .2
 	},
 	hay = {
@@ -689,7 +689,7 @@ local SpecializedSalvagingTable = {
 			}
 		},
 		{
-			substrings = {"computer"},
+			substrings = {"computer", "/props_lab/"},
 			yield = {
 				[JMod.EZ_RESOURCE_TYPES.PLASTIC] = .5,
 				[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = .1
@@ -735,11 +735,34 @@ local SpecializedSalvagingTable = {
 				[JMod.EZ_RESOURCE_TYPES.STEEL] = .6,
 				[JMod.EZ_RESOURCE_TYPES.TUNGSTEN] = .2,
 			}
+		},
+		{
+			substrings = {"/props_wasteland/barricade"},
+			yield = {
+				[JMod.EZ_RESOURCE_TYPES.STEEL] = .2,
+				[JMod.EZ_RESOURCE_TYPES.WOOD] = .5,
+			}
+		},
+		{
+			substrings = {"trashbin"},
+			yield = {
+				[JMod.EZ_RESOURCE_TYPES.PLASTIC] = .25,
+				[JMod.EZ_RESOURCE_TYPES.RUBBER] = .25,
+				[JMod.EZ_RESOURCE_TYPES.PAPER] = .2,
+				[JMod.EZ_RESOURCE_TYPES.STEEL] = .05,
+				[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = .1,
+				[JMod.EZ_RESOURCE_TYPES.COPPER] = .05
+			}
 		}
 	}
 }
 
 local BlacklistedGroups = {COLLISION_GROUP_DEBRIS, COLLISION_GROUP_WEAPON}
+local BlacklistedBor = 0
+
+for i = 1, #BlacklistedGroups do
+	BlacklistedBor = bit.bor(BlacklistedBor, BlacklistedGroups[i])
+end
 
 function JMod.GetSalvageYield(ent)
 	if not IsValid(ent) then return {}, "" end
@@ -747,7 +770,7 @@ function JMod.GetSalvageYield(ent)
 
 	local Class, Mdl = string.lower(ent:GetClass()), string.lower(ent:GetModel())
 
-	if table.HasValue(BlacklistedGroups, bit.band(ent:GetCollisionGroup(), bit.bor(COLLISION_GROUP_DEBRIS, COLLISION_GROUP_WEAPON))) then return {}, "cannot salvage: bad collision group" end
+	if table.HasValue(BlacklistedGroups, bit.band(ent:GetCollisionGroup(), BlacklistedBor)) then return {}, "cannot salvage: bad collision group" end
 	if ent:IsWorld() then return {}, "can't salvage the world" end
 
 	local PhysNum = ent:GetPhysicsObjectCount()
@@ -768,7 +791,9 @@ function JMod.GetSalvageYield(ent)
 			RagMass = (RagMass or 0) + RagPhys:GetMass()
 		end
 	end
-	Mass = math.ceil((RagMass or Mass) ^ .9) -- exponent to keep yield from stupidheavy objects from ruining the game
+	if Mass > 35 then
+		Mass = math.ceil((RagMass or Mass) ^ .9) -- exponent to keep yield from stupidheavy objects from ruining the game
+	end
 
 	-- again, more corrections
 	if Class == "func_physbox" then
@@ -845,7 +870,7 @@ function JMod.GetSalvageYield(ent)
 		if ScaleByMass then
 			Results[k] = math.ceil(v * Mass * 1.5 * JMod.Config.ResourceEconomy.SalvageYield)
 		else
-			Results[k] = math.ceil(v * .6)
+			Results[k] = math.ceil(v * .9)
 		end
 		if ent.LVS and ent.ExplodedAlready then
 			Results[k] = Results[k] * .5
@@ -1329,11 +1354,12 @@ if SERVER then
 			["models/props_c17/metalpot002a.mdl"] = 1,
 			["models/props_debris/wood_chunk06a.mdl"] = 1,
 			["models/props_interiors/pot01a.mdl"] = 2,
+			["models/props_interiors/pot02a.mdl"] = 2,
 			["models/jmod_scrounge/garbage_coffeemug001a_jmod.mdl"] = 1,
 			["models/jmod_scrounge/garbage_glassbottle001a_jmod.mdl"] = 2,
 			["models/props_junk/garbage_milkcarton001a.mdl"] = 3,
 			["models/props_junk/garbage_metalcan002a.mdl"] = 4,
-			["models/props_junk/garbage_takeoutcarton001a.mdl"] = 1,
+			["models/props_junk/garbage_takeoutcarton001a.mdl"] = .5,
 			["models/props_junk/garbage_plasticbottle003a.mdl"] = 2,
 			["models/props_junk/garbage_plasticbottle001a.mdl"] = 2,
 			["models/jmod_scrounge/glassbottle01a_jmod.mdl"] = 1,
@@ -1351,20 +1377,25 @@ if SERVER then
 			["models/props_wasteland/barricade001a.mdl"] = 1,
 			["models/props_interiors/SinkKitchen01a.mdl"] = 1,
 			["models/props_borealis/mooring_cleat01.mdl"] = 2,
-			["models/items/car_battery01.mdl"] = 0.3
+			["models/items/car_battery01.mdl"] = 0.3,
+			["models/props_junk/TrashBin01a.mdl"] = .3,
+			["models/props_junk/wood_crate001a.mdl"] = .3,
+			["models/props_junk/bicycle01a.mdl"] = .05
 		},
 		["rural"] = {
-			["ent_jack_gmod_ezwheatseed"] = 1,
-			["ent_jack_gmod_ezcornkernals"] = 1,
-			["ent_jack_gmod_ezacorn"] = 1.5,
+			["ent_jack_gmod_ezwheatseed"] = .5,
+			["ent_jack_gmod_ezcornkernals"] = .5,
+			["ent_jack_gmod_ezacorn"] = .5,
 			["models/jmod_scrounge/logs.mdl"] = 2,
-			["models/props_debris/wood_chunk06a.mdl"] = 3,
+			["models/props_debris/wood_chunk06a.mdl"] = 2,
 			["models/props_junk/watermelon01.mdl"] = 1,
-			["models/jmod/resources/rock05a.mdl"] = 2,
+			["models/jmod/resources/rock05a.mdl"] = 1,
 			["models/props_junk/rock001a.mdl"] = 1,
 			["models/props_vehicles/car003b_physics.mdl"] = 0.1,
 			["models/props_c17/streetsign004f.mdl"] = 1,
-			["models/items/car_battery01.mdl"] = 0.1
+			["models/items/car_battery01.mdl"] = 0.2,
+			["models/props_junk/TrashBin01a.mdl"] = .2,
+			["models/props_junk/wood_crate001a.mdl"] = .2
 		}
 	}
 
@@ -1449,6 +1480,8 @@ if SERVER then
 				debugoverlay.Line(StartPos, ConeTr.HitPos, 5, Color(255, 0, 0), true)
 				if ConeTr.Hit and (ConeTr.Entity == game.GetWorld()) then
 					local PosSetTr = util.QuickTrace(ConeTr.HitPos + ConeTr.HitNormal * 5, Vector(0, 0, -Range))
+					local InsertIntoInv = false
+
 					if PosSetTr.Hit and PosSetTr.Entity == game.GetWorld() then
 						local EnvironmentType = table.Random(ScroungeResults)
 						local SelectedScroungeTable = ScroungeTable[EnvironmentType]
@@ -1469,8 +1502,10 @@ if SERVER then
 							if Loot:SkinCount() > 0 then
 								Loot:SetSkin(math.random(0, Loot:SkinCount() - 1))
 							end
+							InsertIntoInv = true
 						else
 							Loot = ents.Create(ScroungedItem)
+							InsertIntoInv = true
 						end
 						debugoverlay.Line(ConeTr.HitPos + ConeTr.HitNormal * 5, PosSetTr.HitPos, 5, Color(0, 255, 0), true)
 						local Mins, Maxs = Loot:GetCollisionBounds()
