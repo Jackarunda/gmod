@@ -318,6 +318,7 @@ function JMod.RemoveFromInventory(invEnt, target, pos, noUpdate, transfer)
 					--if IsValid(target.JModInventoryAnchor) then
 					--	target.JModInventoryAnchor:Remove()
 					--end
+					Phys:EnableGravity(true)
 					Phys:EnableMotion(true)
 					Phys:Wake()
 					if IsValid(invEnt) and IsValid(invEnt:GetPhysicsObject()) then
