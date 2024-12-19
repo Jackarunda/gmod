@@ -34,8 +34,8 @@ end
 function ENT:SetEZsupplies(typ, amt, setter)
 	if not SERVER then return end -- Important because this is shared as well
 	if typ ~= self.EZsupplies then return end -- Type doesn't matter because we only have one type, but we have it here because of uniformness
-	if amt < 1 then self:Remove() return end -- We be empty, therefore, useless
-	self:SetResource(math.max(amt, 1)) -- Otherwise, just set our resource to the new value
+	self:SetResource(amt) -- Set our resource to the new value
+	if amt < 1 then self:Remove() end -- We be empty, therefore, useless
 end
 
 ---

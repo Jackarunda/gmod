@@ -287,7 +287,7 @@ function JMod.ConsumeResourcesInRange(requirements, pos, range, sourceEnt, useRe
 				end
 			else
 				local Donor = JMod.FindResourceContainer(ResourceTypeToLookFor, 1, pos, range, sourceEnt) -- every little bit helps
-				if Donor then
+				if IsValid(Donor) then
 					local AmountToTake = 0
 					if Donor.JModInv then
 						local AmountWeCanTake = Donor.JModInv.EZresources[ResourceTypeToLookFor]
