@@ -48,8 +48,6 @@ function ENT:CustomSetupDataTables()
 end
 if(SERVER)then
 	function ENT:CustomInit()
-		self:SetAngles(Angle(-90,0,0))
-		---
 		self:SetProgress(0)
 		self.Snd1=CreateSound(self,"snds_jack_gmod/40hz_sine1.wav")
 		self.Snd2=CreateSound(self,"snds_jack_gmod/40hz_sine2.wav")
@@ -57,7 +55,6 @@ if(SERVER)then
 		self.Snd1:SetSoundLevel(100)
 		self.Snd2:SetSoundLevel(100)
 		self.Snd3:SetSoundLevel(100)
-		--self:InitPerfSpecs()
 	end
 
 	function ENT:TurnOn(activator)
