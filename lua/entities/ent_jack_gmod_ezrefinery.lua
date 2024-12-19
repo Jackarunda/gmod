@@ -10,7 +10,7 @@ ENT.Base = "ent_jack_gmod_ezmachine_base"
 ENT.Model = "models/jmod/machines/oil_refinery.mdl"
 ENT.Mass = 4000
 ENT.SpawnHeight = 10
-ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
+ENT.JModPreferredCarryAngles = Angle(0, -180, 0)
 ENT.EZcolorable = true
 ---
 ENT.EZconsumes = {
@@ -41,7 +41,6 @@ function ENT:CustomSetupDataTables()
 end
 if(SERVER)then
 	function ENT:CustomInit()
-		self:SetAngles(Angle(0, 0, 0))
 		self:SetProgress(0)
 		self.LastOilTime = 0
 		self.NextEffThink = 0
