@@ -497,6 +497,7 @@ net.Receive("JMod_ItemInventory", function(len, ply)
 		if not Added then
 			if invEnt.EZconsumes and table.HasValue(invEnt.EZconsumes, resourceType) then
 				amt = invEnt:TryLoadResource(resourceType, amt)
+				JMod.RemoveFromInventory(ply, {resourceType, amt}, nil, false)
 			else
 				ply:PrintMessage(HUD_PRINTCENTER, "Could not stow or load resource")
 			end
