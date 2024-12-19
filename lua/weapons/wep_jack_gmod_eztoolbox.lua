@@ -311,7 +311,7 @@ end
 
 function SWEP:DetermineBuildPos()
 	local BuildInfo = self.EZpreview
-	local Ent, Pos, Norm = self:WhomIlookinAt(500)
+	local Ent, Pos, Norm = self:WhomIlookinAt(300)
 	if not BuildInfo then return Ent, Pos, Norm, BuildInfo.SpawnAngles end
 
 	local BuildBoundingBox = {
