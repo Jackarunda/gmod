@@ -284,7 +284,7 @@ function SWEP:UpdateNextIdle()
 end
 
 function SWEP:GetEZsupplies(resourceType, getter)
-	local BuildSizeMult = self.CurrentBuildSize or 0
+	local BuildSizeMult = self.CurrentBuildSize or 1
 	if IsValid(getter) and getter == self then BuildSizeMult = 0 end
 	local AvailableResources = {
 		[JMod.EZ_RESOURCE_TYPES.POWER] = self:GetElectricity(),
@@ -311,7 +311,8 @@ end
 
 function SWEP:DetermineBuildPos()
 	local BuildInfo = self.EZpreview
-	local Ent, Pos, Norm = self:WhomIlookinAt(300)
+	BuildInfo.SpawnAngles = BuildInfo.SpawnAngles or Angle(0, 0, 0)
+	local Ent, Pos, Norm = self:WhomIlookinAt(math.max((BuildInfo.sizeScale or self.CurrentBuildSize) * 30, 100))
 	if not BuildInfo then return Ent, Pos, Norm, BuildInfo.SpawnAngles end
 
 	local BuildBoundingBox = {
@@ -325,46 +326,47 @@ function SWEP:DetermineBuildPos()
 		BuildBoundingBox.maxs = BuildBoundingBox.maxs * BuildInfo.sizeScale
 	end
 
-	local CenterPos = Pos
-
 	local SpawnAngle = BuildInfo.SpawnAngles:GetCopy()
 	local ForwardDir = SpawnAngle:Forward()
 	local ForwardExtent = math.max(math.abs(ForwardDir.x * BuildBoundingBox.maxs.x), math.abs(ForwardDir.x * BuildBoundingBox.mins.x))
 	ForwardExtent = math.max(ForwardExtent, math.abs(ForwardDir.y * BuildBoundingBox.maxs.y))
 	ForwardExtent = math.max(ForwardExtent, math.abs(ForwardDir.y * BuildBoundingBox.mins.y))
 
+	debugoverlay.Cross(Pos, 5, .2, Color(255, 255, 255), true)
 	local WallTrDir = Angle(0, self.Owner:GetAngles().y, 0):Forward()
 	local WallTrace = util.TraceLine({
-		start = CenterPos,
-		endpos = CenterPos + WallTrDir * ForwardExtent,
+		start = Pos,
+		endpos = Pos + WallTrDir * ForwardExtent,
 		filter = self.Owner
 	})
 
 	if WallTrace.Hit then
-		local Difference = CenterPos - WallTrace.HitPos
+		debugoverlay.Cross(WallTrace.HitPos, 5, .2, Color(255, 0, 0), true)
+		local Difference = Pos - WallTrace.HitPos
 		Difference.z = 0
-		CenterPos = CenterPos - WallTrDir * (ForwardExtent - Difference:Length())
+		Pos = Pos - WallTrDir * (ForwardExtent - Difference:Length())
 		Norm = WallTrace.HitNormal
 	end
 
 	local FloorTrace = util.TraceLine({
-		start = CenterPos,
-		endpos = CenterPos - Vector(0, 0, math.abs(BuildBoundingBox.mins.z)),
+		start = Pos,
+		endpos = Pos - Vector(0, 0, math.abs(BuildBoundingBox.mins.z)),
 		filter = self.Owner
 	})
 
 	if FloorTrace.Hit then
-		local FloorPos = FloorTrace.HitPos + FloorTrace.HitNormal * math.abs(BuildBoundingBox.mins.z)
-		CenterPos = FloorPos
+		local Difference = Pos - FloorTrace.HitPos
+		debugoverlay.Cross(FloorTrace.HitPos, 5, .2, Color(200, 255, 0), true)
+		Pos = Pos + Vector(0, 0, math.abs(BuildBoundingBox.mins.z) - Difference.z)
 		Norm = FloorTrace.HitNormal
 	end
 
-	return Ent, Pos, Norm, CenterPos, SpawnAngle + Angle(0, self.Owner:GetAngles().y, 0)
+	return Ent, Pos, Norm, SpawnAngle + Angle(0, self.Owner:GetAngles().y, 0)
 end
 
 function SWEP:BuildItem(selectedBuild)
 	local Built = false
-	local Ent, Pos, Norm, CenterPos, SpawnAngle = self:DetermineBuildPos()
+	local Ent, Pos, Norm, SpawnAngle = self:DetermineBuildPos()
 	local BuildInfo = self.Craftables[selectedBuild]
 	if not BuildInfo then return end
 	local MaxElecConsume, MaxGasConsume = 40, 30
@@ -388,7 +390,8 @@ function SWEP:BuildItem(selectedBuild)
 
 			return
 		end
-		JMod.ConsumeResourcesInRange(Reqs, ConsumePos, nil, self, false, nil, mult or 1)
+		local SuccessfulConsume = JMod.ConsumeResourcesInRange(Reqs, ConsumePos, nil, self, false, nil, mult or 1)
+
 		Built = true
 		local BuildSteps = math.ceil(20 * (BuildInfo.sizeScale or 1))
 
@@ -410,7 +413,7 @@ function SWEP:BuildItem(selectedBuild)
 							local FuncName = StringParts[2]
 
 							if JMod.LuaConfig and JMod.LuaConfig.BuildFuncs and JMod.LuaConfig.BuildFuncs[FuncName] then
-								JMod.LuaConfig.BuildFuncs[FuncName](self.Owner, CenterPos, SpawnAngle or Angle(0, self.Owner:EyeAngles().y, 0))
+								JMod.LuaConfig.BuildFuncs[FuncName](self.Owner, Pos, SpawnAngle)
 							else
 								print("JMOD TOOLBOX ERROR: JMod.LuaConfig is missing, corrupt, or doesn't have an entry for that build function")
 							end
@@ -430,8 +433,8 @@ function SWEP:BuildItem(selectedBuild)
 							else
 								Ent = ents.Create(Class)
 							end
-							Ent:SetPos(CenterPos)
-							Ent:SetAngles(SpawnAngle or Angle(0, self.Owner:EyeAngles().y, 0))
+							Ent:SetPos(Pos)
+							Ent:SetAngles(SpawnAngle)
 							JMod.SetEZowner(Ent, self.Owner)
 							Ent:SetCreator(self.Owner)
 							Ent:Spawn()
@@ -471,7 +474,7 @@ function SWEP:BuildItem(selectedBuild)
 	if not Built then
 		self:Msg("missing supplies for build")
 	else
-		self:BuildEffect(CenterPos, selectedBuild, not Sound)
+		self:BuildEffect(Pos + Vector(0, 0, 5), selectedBuild, not Sound)
 	end
 	
 	return Built
@@ -485,7 +488,7 @@ function SWEP:PrimaryAttack()
 
 	if SERVER then
 		local Built, Upgraded, SelectedBuild = false, false, self:GetSelectedBuild()
-		local Ent, Pos, Norm = self:WhomIlookinAt()
+		local Ent, Pos, Norm = self:WhomIlookinAt(100)
 
 		if SelectedBuild and SelectedBuild ~= "" then
 			Built = self:BuildItem(SelectedBuild)
@@ -770,14 +773,14 @@ function SWEP:UpgradeEffect(pos, scale, suppressSound)
 end
 
 function SWEP:WhomIlookinAt(dist)
-	dist = dist or 200
+	dist = dist or 100
 	local Filter = {self, self.Owner}
 
 	for k, v in pairs(ents.FindByClass("npc_bullseye")) do
 		table.insert(Filter, v)
 	end
 
-	local Tr = util.QuickTrace(self.Owner:GetShootPos(), self.Owner:GetAimVector() * dist * math.Clamp(self.CurrentBuildSize, .5, 100), Filter)
+	local Tr = util.QuickTrace(self.Owner:GetShootPos(), self.Owner:GetAimVector() * dist, Filter)
 
 	return Tr.Entity, Tr.HitPos, Tr.HitNormal
 end
@@ -905,7 +908,7 @@ function SWEP:Think()
 		self:SetHoldType("fist")
 
 		if self.Owner:KeyDown(IN_ATTACK2) then
-			if self.NextTaskProgress < Time then
+			if SERVER and (self.NextTaskProgress < Time) then
 				self.NextTaskProgress = Time + .6
 				local Alt = self.Owner:KeyDown(JMod.Config.General.AltFunctionKey)
 				local Task = (Alt and "loosen") or "salvage"

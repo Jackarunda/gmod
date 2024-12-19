@@ -809,9 +809,12 @@ net.Receive("JMod_EZtoolbox", function()
 					Min, Max = temp_ent.Mdl:GetModelBounds()
 				end
 			end
+			local OriginDiff = temp_ent:LocalToWorld(temp_ent:OBBCenter()) - temp_ent:GetPos()
+			Min = Min - OriginDiff
+			Max = Max - OriginDiff
 			SafeRemoveEntityDelayed(temp_ent, 0)
 
-			ent.EZpreview = {Box = {mins = Min, maxs = Max}, sizeScale = info.sizeScale and info.sizeScale, SpawnAngles = Ang}
+			ent.EZpreview = {Box = {mins = Min, maxs = Max}, sizeScale = info.sizeScale and info.sizeScale, SpawnAngles = Ang or Angle(0, 0, 0)}
 		end
 		net.Start("JMod_EZtoolbox")
 			net.WriteEntity(ent)

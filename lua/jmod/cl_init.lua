@@ -717,9 +717,9 @@ hook.Add("PostDrawTranslucentRenderables", "JMOD_PLAYEREFFECTS", function(bDepth
 		 		end
 			elseif PreviewData.Box then
 				if ToolboxBuild ~= "" then
-				local Ent, Pos, Norm, CenterPos = NULL, nil, nil, nil
+				local Ent, Pos, Norm = NULL, nil, nil, nil
 				if ToolBox.DetermineBuildPos then
-					Ent, Pos, Norm, CenterPos = ToolBox:DetermineBuildPos()
+					Ent, Pos, Norm = ToolBox:DetermineBuildPos()
 				else
 					local Filter = {ply}
 					for k, v in pairs(ents.FindByClass("npc_bullseye")) do
@@ -727,12 +727,11 @@ hook.Add("PostDrawTranslucentRenderables", "JMOD_PLAYEREFFECTS", function(bDepth
 					end
 					local Tr = util.QuickTrace(ply:GetShootPos(), ply:GetAimVector() * 200 * math.Clamp((ToolBox.CurrentBuildSize or 1), .5, 100), Filter)
 					Ent, Pos, Norm = Tr.Entity, Tr.HitPos, Tr.HitNormal
+					-- this trace code ^ is stolen from the toolbox, had to filter out ply to get a correct trace
 				end
-					
-				-- this trace code ^ is stolen from the toolbox, had to filter out ply to get a correct trace
 																																													--HSVToColor( CurTime() * 50 % 360, 1, 1 ) :troll:
 				local DisplayAng = (PreviewData.SpawnAngles or Angle(0, 0, 0)) + Angle(0, ply:EyeAngles().y, 0)
-				local FinalPos = CenterPos or (Pos + Norm * math.abs(PreviewData.Box.maxs.z))
+				local FinalPos = Pos
 					render.DrawWireframeBox(FinalPos, DisplayAng, PreviewData.Box.mins, PreviewData.Box.maxs, Translucent, true)
 				end
 			end
