@@ -187,8 +187,8 @@ if(SERVER)then
 			elseif State == STATE_RUNNING then
 				if not self.EZinstalled then self:TurnOff() return end
 
-				if not JMod.NaturalResourceTable[self.DepositKey] and JMod.NaturalResourceTable[self.DepositKey].amt then 
-					self:TurnOff()
+				if not(JMod.NaturalResourceTable[self.DepositKey] and JMod.NaturalResourceTable[self.DepositKey].amt) then 
+					self:TryPlace()
 
 					return
 				end
