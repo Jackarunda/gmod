@@ -420,7 +420,7 @@ local SurfaceHardness = {
 function JMod.RicPenBullet(ent, pos, dir, dmg, doBlasts, wreckShit, num, penMul, tracerName, callback)
 	if not IsValid(ent) then return end
 	if num and num > 10 then return end
-	local Attacker = ent.EZowner or ent or game.GetWorld()
+	local Attacker = JMod.GetEZowner(ent)
 
 	ent:FireBullets({
 		Attacker = Attacker,
