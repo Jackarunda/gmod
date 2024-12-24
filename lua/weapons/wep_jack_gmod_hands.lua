@@ -332,7 +332,7 @@ function SWEP:PrimaryAttack()
 		side = "fists_right"
 	end
 
-	self:SetNextDown(CurTime() + 7)
+	self:SetNextDown(CurTime() + 5)
 
 	if not self:GetFists() then
 		self:SetFists(true)
@@ -363,7 +363,7 @@ function SWEP:PrimaryAttack()
 		self.Owner:ViewPunch(Angle(0, 0, math.random(-2, 2)))
 
 		timer.Simple(.075, function()
-			if IsValid(self) then
+			if IsValid(self) and IsValid(self.Owner) then
 				self:AttackFront()
 			end
 		end)
