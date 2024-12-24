@@ -130,22 +130,7 @@ if SERVER then
 
 			if State == JMod.EZ_STATE_OFF then
 				if Alt then
-					self:SetState(JMod.EZ_STATE_ARMING)
-					self:SetBodygroup(0, 1)
-					self:EmitSound("snd_jack_minearm.ogg", 60, 100)
-
-					timer.Simple(3, function()
-						if IsValid(self) then
-							if self:GetState() == JMod.EZ_STATE_ARMING then
-								local pos = self:GetAttachment(1).Pos
-								local trace = util.QuickTrace(pos, self:GetUp() * 1000, selfg)
-								self.BeamFrac = trace.Fraction
-								self:SetState(JMod.EZ_STATE_ARMED)
-							end
-						end
-					end)
-
-					JMod.Hint(Dude, "mine friends", selfg)
+					self:Arm(Dude)
 				else
 					if not IsValid(self.AttachedBomb) then
 						constraint.RemoveAll(self)
@@ -164,7 +149,7 @@ if SERVER then
 						self.NextStick = Time + .5
 					end
 
-					JMod.Hint(Dude, "sticky", selfg)
+					JMod.Hint(Dude, "sticky")
 				end
 			else
 				self:EmitSound("snd_jack_minearm.ogg", 60, 70)
@@ -173,42 +158,66 @@ if SERVER then
 			end
 		else -- player just released the USE key
 			if self:IsPlayerHolding() and (self.NextStick < Time) and not IsValid(self.AttachedBomb) then
-				local Tr = util.QuickTrace(Dude:GetShootPos(), Dude:GetAimVector() * 80, {self, Dude})
+				self:Plant(Dude)
+			end
+		end
+	end
 
-				if Tr.Hit then
-					if IsValid(Tr.Entity:GetPhysicsObject()) and not Tr.Entity:IsNPC() and not Tr.Entity:IsPlayer() then
-						self.NextStick = Time + .5
-						local Ang = Tr.HitNormal:Angle()
-						Ang:RotateAroundAxis(Ang:Right(), -90)
-						self:SetAngles(Ang)
-						self:SetPos(Tr.HitPos + Tr.HitNormal * 2.35)
+	function ENT:Arm(Dude)
+		self:SetState(JMod.EZ_STATE_ARMING)
+		self:SetBodygroup(0, 1)
+		self:EmitSound("snd_jack_minearm.ogg", 60, 100)
 
-						if Tr.Entity.EZdetonateOverride then
-							self.AttachedBomb = Tr.Entity
+		timer.Simple(3, function()
+			if IsValid(self) then
+				if self:GetState() == JMod.EZ_STATE_ARMING then
+					local pos = self:GetAttachment(1).Pos
+					local trace = util.QuickTrace(pos, self:GetUp() * 1000, selfg)
+					self.BeamFrac = trace.Fraction
+					self:SetState(JMod.EZ_STATE_ARMED)
+				end
+			end
+		end)
 
-							timer.Simple(0, function()
-								self:SetParent(Tr.Entity)
-							end)
-						else
-							-- crash prevention
-							if Tr.Entity:GetClass() == "func_breakable" then
-								timer.Simple(0, function()
-									self:GetPhysicsObject():Sleep()
-								end)
-							else
-								local Weld = constraint.Weld(self, Tr.Entity, 0, Tr.PhysicsBone, 3000, false, false)
-								self.StuckTo = Tr.Entity
-								self.StuckStick = Weld
-							end
-						end
+		JMod.Hint(Dude, "mine friends")
+	end
 
-						self:EmitSound("snd_jack_claythunk.ogg", 65, math.random(80, 120))
-						Dude:DropObject()
+	function ENT:Plant(Dude)
+		local Time = CurTime()
+		local Tr = util.QuickTrace(Dude:GetShootPos(), Dude:GetAimVector() * 80, {self, Dude})
 
-						if not JMod.Hint(Dude, "arm") then
-							JMod.Hint(Dude, "slam stick")
-						end
+		if Tr.Hit then
+			if IsValid(Tr.Entity:GetPhysicsObject()) and not Tr.Entity:IsNPC() and not Tr.Entity:IsPlayer() then
+				self.NextStick = Time + .5
+				local Ang = Tr.HitNormal:Angle()
+				Ang:RotateAroundAxis(Ang:Right(), -90)
+				self:SetAngles(Ang)
+				self:SetPos(Tr.HitPos + Tr.HitNormal * 2.35)
+
+				if Tr.Entity.EZdetonateOverride then
+					self.AttachedBomb = Tr.Entity
+
+					timer.Simple(0, function()
+						self:SetParent(Tr.Entity)
+					end)
+				else
+					-- crash prevention
+					if Tr.Entity:GetClass() == "func_breakable" then
+						timer.Simple(0, function()
+							self:GetPhysicsObject():Sleep()
+						end)
+					else
+						local Weld = constraint.Weld(self, Tr.Entity, 0, Tr.PhysicsBone, 3000, false, false)
+						self.StuckTo = Tr.Entity
+						self.StuckStick = Weld
 					end
+				end
+
+				self:EmitSound("snd_jack_claythunk.ogg", 65, math.random(80, 120))
+				Dude:DropObject()
+
+				if not JMod.Hint(Dude, "arm") then
+					JMod.Hint(Dude, "slam stick")
 				end
 			end
 		end
