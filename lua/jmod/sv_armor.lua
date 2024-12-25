@@ -464,7 +464,7 @@ function JMod.RemoveArmorByID(ply, ID, broken)
 		Ent = ents.Create(Specs.ent)
 		Ent:SetPos(ply:GetShootPos() + ply:GetAimVector() * 30 + VectorRand() * math.random(1, 20))
 		Ent:SetAngles(AngleRand())
-		Ent.ArmorDurability = Info.dur
+		Ent.Durability = Info.dur
 
 		if Info.chrg then
 			Ent.ArmorCharges = table.FullCopy(Info.chrg)
