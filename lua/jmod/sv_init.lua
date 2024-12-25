@@ -795,21 +795,6 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 	end
 
 	---
-	if NextSlowThink < Time then
-		NextSlowThink = Time + 2
-
-		if JMod.Config.QoL.ExtinguishUnderwater then
-			for k, v in ents.Iterator() do
-				if v.IsOnFire and v.WaterLevel then
-					if v:IsOnFire() and (v:WaterLevel() >= 3) then
-						v:Extinguish()
-					end
-				end
-			end
-		end
-	end
-
-	---
 	for _, v in ipairs(ents.FindByClass("npc_*")) do
 		VirusHostThink(v)
 
@@ -1085,3 +1070,12 @@ hook.Add("GravGunDrop", "JMod_ResetBouyancy", ResetBouyancy)
 hook.Add("GravGunPunt", "JMod_ResetBouyancy", ResetBouyancy)
 
 hook.Add("OnPlayerPhysicsDrop", "JMod_ResetBouyancy", ResetBouyancy)
+
+hook.Add("OnEntityWaterLevelChanged", "JMod_WaterExtinguish", function(ent, oldLevel, newLevel)
+	if JMod.Config.QoL.ExtinguishUnderwater and (ent.IsOnFire and ent:IsOnFire()) then
+		if (oldLevel == 0) and (newLevel > 0) then
+			sound.Play("snds_jack_gmod/hiss.ogg", ent:GetPos(), 100, math.random(70, 80))--"snds_jack_gmod/hiss.ogg", ent:GetPos(), 100, math.random(90, 110))
+		end
+		ent:Extinguish()
+	end
+end)
