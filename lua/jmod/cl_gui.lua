@@ -1841,6 +1841,7 @@ local JModInventoryMenu = function(PlyModel, itemTable)
 	PDispBT:SetPos(200, 30)
 	PDispBT:SetSize(200, 360)
 	PDispBT:SetText("")
+	PDispBT:SetTooltip("You can drag the model to rotate it.")
 
 	function PDispBT:Paint(w, h)
 		surface.SetDrawColor(0, 0, 0, 0)

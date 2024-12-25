@@ -627,7 +627,7 @@ end
 
 net.Receive("JMod_Inventory", function(ln, ply)
 	if not ply:Alive() then return end
-	local ActionType = net.ReadInt(8) -- 1: Remove armor | 2: Toggle armor | 3: Repair armor | 4: Recharge armor
+	local ActionType = net.ReadInt(8) -- 1: Remove armor | 2: Toggle armor | 3: Repair armor | 4: Recharge armor | 5: Color armor
 	local ID = net.ReadString()
 
 	if ActionType == 1 then
@@ -767,11 +767,20 @@ net.Receive("JMod_Inventory", function(ln, ply)
 			end
 		end
 	elseif ActionType == 5 then
-		local ItemData = ply.EZarmor.items[ID]
-		local ItemInfo = JMod.ArmorTable[ItemData.name]
-		if not ItemInfo["clrForced"] then
-			local NewColor = net.ReadColor()
-			ply.EZarmor.items[ID].col = {r = NewColor.r, g = NewColor.g, b = NewColor.b, a = 255}
+		local NewColor = net.ReadColor()
+		if ID == "" then
+			for k, v in pairs(ply.EZarmor.items) do
+				local ItemInfo = JMod.ArmorTable[v.name]
+				if not ItemInfo["clrForced"] then
+					ply.EZarmor.items[k].col = {r = NewColor.r, g = NewColor.g, b = NewColor.b, a = 255}
+				end
+			end
+		else
+			local ItemData = ply.EZarmor.items[ID]
+			local ItemInfo = JMod.ArmorTable[ItemData.name]
+			if not ItemInfo["clrForced"] then
+				ply.EZarmor.items[ID].col = {r = NewColor.r, g = NewColor.g, b = NewColor.b, a = 255}
+			end
 		end
 	end
 
