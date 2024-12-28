@@ -174,8 +174,23 @@ JMod.EZ_NightVisionScreenSpaceEffect = function(ply)
 	end
 end
 
+local NextFlashbangAdd = 0
+JMod.AddFlashbangEffect = function(ply, pos, intensity)
+	if CurTime() > NextFlashbangAdd then
+		NextFlashbangAdd = CurTime() + .5
+		ply.EZflashbangEffects = ply.EZflashbangEffects or {}
+		local ToScreenInfo = pos:ToScreen()
+		if ToScreenInfo.visible then
+			table.insert(ply.EZflashbangEffects, {{x = ToScreenInfo.x, y = ToScreenInfo.y, size = 2000 * intensity}, 255 * intensity})
+		end
+	end
+	ply.EZflashbanged = (ply.EZflashbanged or 0) + intensity * 5
+end
+
 local RavebreakColors = {Color(255, 0, 0), Color(0, 255, 0), Color(0, 0, 255), Color(0, 255, 255), Color(255, 0, 255), Color(255, 255, 0)}
 local NextRavebreakBeat, CurRavebreakColor, CurRavebreakLightPos = 0, math.random(1, 6), Vector(0, 0, 0)
+
+local FlashMat = Material("effects/fas_light_glare_noz")
 
 hook.Add("RenderScreenspaceEffects", "JMOD_SCREENSPACE", function()
 	local ply, FT, SelfPos, Time, W, H = LocalPlayer(), FrameTime(), EyePos(), CurTime(), ScrW(), ScrH()
@@ -325,13 +340,27 @@ hook.Add("RenderScreenspaceEffects", "JMOD_SCREENSPACE", function()
 		if ply.EZflashbanged then
 			if Alive then
 				DrawMotionBlur(.001, math.Clamp(ply.EZflashbanged / 20, 0, 1), .01)
-				ply.EZflashbanged = math.Clamp(ply.EZflashbanged - 7 * FT, 0, 200)
+				ply.EZflashbanged = math.Clamp(ply.EZflashbanged - 7 * FT, 0, 100)
+				if ply.EZflashbanged <= 0 then
+					ply.EZflashbanged = nil
+				end
 			else
-				ply.EZflashbanged = 0
-			end
-
-			if ply.EZflashbanged <= 0 then
 				ply.EZflashbanged = nil
+			end
+		end
+		if ply.EZflashbangEffects then
+			surface.SetMaterial(FlashMat)
+			for k, info in pairs(ply.EZflashbangEffects) do
+				--render.SetColorModulation(255, 255, 255)
+				local Mult = ((info[2] / 255) ^ .5) + .2
+				surface.SetDrawColor(255, 255, 255, 255 * Mult)
+				--surface.SetAlphaMultiplier(1)
+				if info[2] > 0 then
+					info[2] = info[2] - FT * 5
+					surface.DrawTexturedRect(info[1].x - info[1].size / 2, info[1].y - info[1].size / 2, info[1].size, info[1].size)
+				else
+					table.remove(ply.EZflashbangEffects, k)
+				end
 			end
 		end
 	end
@@ -378,6 +407,8 @@ hook.Add("RenderScreenspaceEffects", "JMOD_SCREENSPACE", function()
 	if not ply:Alive() then
 		ply.EZvisionBlur = 0
 		CurVisionBlur = 0
+		ply.EZflashbanged = nil
+		ply.EZflashbangEffects = nil
 	end
 end)
 

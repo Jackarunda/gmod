@@ -32,14 +32,13 @@ function EFFECT:Render()
 	if Frac < .8 then
 		local Pos, ply = EyePos(), LocalPlayer()
 
-		if Pos:Distance(self.Position) < 1000 then
+		if (Pos:Distance(self.Position) < 2000) then
 			if not util.TraceLine({
 				start = Pos,
 				endpos = self.Position,
 				filter = {self, ply}
 			}).Hit and not(JMod.PlyHasArmorEff(ply, "flashresistant")) then
-				ply.EZflashbanged = (ply.EZflashbanged or 0) + (10 * (self.Scale and self.Scale or 1) * (1 - Pos:Distance(self.Position) / 1000))
-				--print((1 - Pos:Distance(self.Position) / 1000))
+				JMod.AddFlashbangEffect(ply, self.Position, (self.Scale and self.Scale or 1) * (1 - Pos:Distance(self.Position) / 2000))
 			end
 		end
 	end
