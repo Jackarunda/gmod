@@ -252,8 +252,8 @@ end
 function JMod.TryVirusInfectInRange(host, att, hostFaceProt, hostSkinProt)
 	local Range, SelfPos = 300 * JMod.Config.Particles.VirusSpreadMult, host:GetPos()
 
-	if hostFaceProt > 0 or hostSkinProt > 0 then
-		Range = Range * (1 - (hostFaceProt + hostSkinProt) / 2)
+	if hostFaceProt > 0 then
+		Range = Range * (1 - (hostFaceProt) / 1)
 	end
 
 	if Range <= 0 then return end
@@ -268,10 +268,10 @@ function JMod.TryVirusInfectInRange(host, att, hostFaceProt, hostSkinProt)
 			end
 
 			---
-			local VictimFaceProtection, VictimSkinProtection = JMod.GetArmorBiologicalResistance(obj, DMG_RADIATION)
+			local VictimFaceProtection, VictimSkinProtection = JMod.GetArmorBiologicalResistance(obj, DMG_NERVEGAS)
 
-			if VictimFaceProtection > 0 or VictimSkinProtection > 0 then
-				Chance = Chance * (1 - (VictimFaceProtection + VictimSkinProtection) / 2)
+			if VictimFaceProtection > 0 then
+				Chance = Chance * (1 - (VictimFaceProtection) / 1)
 			end
 
 			if Chance > 0 then
