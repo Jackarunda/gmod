@@ -328,7 +328,7 @@ hook.Add("StartCommand", "JMod_CreateMove", function(ply, cmd)
 	end
 
 	if CLIENT and input.WasKeyPressed(KEY_BACKSPACE) then
-		if not (ply:IsTyping() or gui.IsConsoleVisible() or gui.IsGameUIVisible() or input.IsKeyDown(input.GetKeyCode(input.LookupBinding("+menu"))) or input.IsKeyDown(input.GetKeyCode(input.LookupBinding("+menu_context")))) then
+		if not (ply:IsTyping() or gui.IsConsoleVisible() or gui.IsGameUIVisible() or input.IsKeyDown(input.GetKeyCode(input.LookupBinding("+menu") or 0)) or input.IsKeyDown(input.GetKeyCode(input.LookupBinding("+menu_context") or 0))) then
 			local Time = CurTime()
 			if not(ply.NextDropTime) or ply.NextDropTime < Time then
 				RunConsoleCommand("jmod_ez_dropweapon")
