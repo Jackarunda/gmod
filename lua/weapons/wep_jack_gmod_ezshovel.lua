@@ -124,11 +124,11 @@ function SWEP:OnHit(swingProgress, tr)
 		if tr.Entity.IsEZcorpse and IsValid(tr.Entity.EZcorpseEntity) then
 			tr.Entity.EZcorpseEntity:Bury()
 		end
-	elseif tr.Entity:IsWorld() and (table.HasValue(DirtTypes, util.GetSurfaceData(tr.SurfaceProps).material)) then
+	elseif tr.Entity:IsWorld() then
 		local Message = JMod.EZprogressTask(self, tr.HitPos, self.Owner, "mining", JMod.GetPlayerStrength(self.Owner) ^ 1.5)
 
 		if Message then
-			if (tr.MatType == MAT_SAND) or (tr.MatType == MAT_DIRT) then
+			if (table.HasValue(DirtTypes, util.GetSurfaceData(tr.SurfaceProps).material)) then
 				self:SetResourceType(JMod.EZ_RESOURCE_TYPES.SAND)
 				self:SetTaskProgress(100)
 				JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.SAND, math.random(10, 33), self:WorldToLocal(tr.HitPos + Vector(0, 0, 8)), Angle(0, 0, 0), self:WorldToLocal(tr.HitPos), 200)
