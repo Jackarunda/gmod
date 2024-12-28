@@ -656,10 +656,14 @@ net.Receive("JMod_Inventory", function(ln, ply)
 			BuildRecipe = JMod.BackupArmorRepairRecipes[ItemData.name]
 		end
 
+		local AvailableResources = {}
 		if BuildRecipe then
 			local DamagedFraction = 1 - (ItemData.dur / ItemInfo.dur)
-
 			for resourceName, resourceAmt in pairs(BuildRecipe) do
+				-- If it requires things it also consumes, like fuel, gas and chemicals, we shouldn't require those for repair
+				if ItemInfo.chrg[resourceName] then
+					resourceAmt = 0
+				end
 				local RequiredAmt = math.floor(resourceAmt * DamagedFraction * 1.2) -- 20% efficiency penalty for not needing a workbench
 
 				if RequiredAmt > 0 then
@@ -670,7 +674,8 @@ net.Receive("JMod_Inventory", function(ln, ply)
 			RepairStatus = 1
 
 			---
-			if JMod.HaveResourcesToPerformTask(nil, nil, RepairRecipe, ply) then
+			AvailableResources = JMod.CountResourcesInRange(nil, nil, ply)
+			if JMod.HaveResourcesToPerformTask(nil, nil, RepairRecipe, ply, AvailableResources) then
 				RepairStatus = 2
 				JMod.ConsumeResourcesInRange(BuildRecipe, nil, nil, ply)
 				ItemData.dur = ItemInfo.dur
@@ -683,11 +688,13 @@ net.Receive("JMod_Inventory", function(ln, ply)
 			local mats = ""
 
 			for k, v in pairs(RepairRecipe) do
+				local AmountNeeded = math.max(0, v - (AvailableResources[k] or 0))
 				if next(RepairRecipe, k) ~= nil then
-					mats = mats .. k .. ", "
+					mats = mats .. k .. " x" .. tostring(AmountNeeded) .. ", "
 				else
-					mats = mats .. k
+					mats = mats .. k .. " x" .. tostring(AmountNeeded)
 				end
+
 			end
 
 			ply:PrintMessage(HUD_PRINTCENTER, "Missing resources for repair, need: \n" .. mats)
