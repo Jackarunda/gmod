@@ -193,32 +193,34 @@ if SERVER then
 				JMod.WreckBuildings(self, SelfPos, PowerMult)
 				JMod.BlastDoors(self, SelfPos, PowerMult)
 
-				-- Find what deposit we are over
-				local DepositKey = JMod.GetDepositAtPos(self, SelfPos, 1)
+				if self.StuckTo and self.StuckTo == game.GetWorld() then
+					-- Find what deposit we are over
+					local DepositKey = JMod.GetDepositAtPos(self, SelfPos, 1)
 
-				if DepositKey then
-					local DepositTable = JMod.NaturalResourceTable[DepositKey]
-					local AmountToBlast = math.random(math.floor(DepositTable.amt * .05), math.ceil(DepositTable.amt * .15))
-					local ChunkNumber = math.ceil(AmountToBlast/(25 * JMod.Config.ResourceEconomy.MaxResourceMult))
+					if DepositKey then
+						local DepositTable = JMod.NaturalResourceTable[DepositKey]
+						local AmountToBlast = math.random(math.floor(DepositTable.amt * .05), math.ceil(DepositTable.amt * .15))
+						local ChunkNumber = math.ceil(AmountToBlast/(25 * JMod.Config.ResourceEconomy.MaxResourceMult))
 
-					for i = 1, ChunkNumber do
-						timer.Simple(.1 * i, function()
-							local Ore = ents.Create(JMod.EZ_RESOURCE_ENTITIES[DepositTable.typ])
-							Ore:SetPos(SelfPos)
-							Ore:SetAngles(AngleRand())
-							Ore:Spawn()
-							JMod.SetEZowner(Ore, Blaster)
-							Ore:SetEZsupplies(DepositTable.typ, math.floor(AmountToBlast / ChunkNumber))
-							Ore:Activate()
-							timer.Simple(0, function()
-								if IsValid(Ore) and IsValid(Ore:GetPhysicsObject()) then
-									Ore:GetPhysicsObject():AddVelocity((vector_up + VectorRand() * .5) * 800)
-								end
+						for i = 1, ChunkNumber do
+							timer.Simple(.1 * i, function()
+								local Ore = ents.Create(JMod.EZ_RESOURCE_ENTITIES[DepositTable.typ])
+								Ore:SetPos(SelfPos)
+								Ore:SetAngles(AngleRand())
+								Ore:Spawn()
+								JMod.SetEZowner(Ore, Blaster)
+								Ore:SetEZsupplies(DepositTable.typ, math.floor(AmountToBlast / ChunkNumber))
+								Ore:Activate()
+								timer.Simple(0, function()
+									if IsValid(Ore) and IsValid(Ore:GetPhysicsObject()) then
+										Ore:GetPhysicsObject():AddVelocity((vector_up + VectorRand() * .5) * 800)
+									end
+								end)
 							end)
-						end)
-					end
+						end
 
-					JMod.DepleteNaturalResource(DepositKey, AmountToBlast)
+						JMod.DepleteNaturalResource(DepositKey, AmountToBlast)
+					end
 				end
 
 				timer.Simple(0, function()
