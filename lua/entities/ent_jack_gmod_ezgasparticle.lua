@@ -43,6 +43,7 @@ if SERVER then
 	function ENT:ShouldDamage(ent)
 		if not IsValid(ent) then return false end
 		if ent.EZgasParticle == true then return false end
+		if (ent.EZcoughTime or 0) > CurTime() then return false end
 		if ent:IsPlayer() then return ent:Alive() end
 
 		if (ent:IsNPC() or ent:IsNextBot()) and ent.Health and ent:Health() then
@@ -87,6 +88,8 @@ if SERVER then
 			local inhaleProt = JMod.GetArmorBiologicalResistance(obj, DMG_NERVEGAS)
 			if inhaleProt < .75 then
 				JMod.TryCough(obj)
+			else
+				obj.EZcoughTime = CurTime() + .5
 			end
 		end
 	end
@@ -160,7 +163,7 @@ if SERVER then
 			end
 		end
 
-		debugoverlay.Line(OldPos, self:GetPos(), 2, Color(0, 89, 255), true)
+		--debugoverlay.Line(OldPos, self:GetPos(), 2, Color(0, 89, 255), true)
 
 		-- self:Extinguish()
 

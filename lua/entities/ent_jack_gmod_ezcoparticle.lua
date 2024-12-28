@@ -29,7 +29,7 @@ if SERVER then
 		if obj:IsPlayer() then
 			local inhaleProt, skinProt, eyeProt = JMod.GetArmorBiologicalResistance(obj, DMG_NERVEGAS)
 
-			JMod.DepleteArmorChemicalCharge(obj, (inhaleProt) * .06)
+			JMod.DepleteArmorChemicalCharge(obj, (inhaleProt) * .02)
 
 			if inhaleProt < .75 then
 				JMod.TryCough(obj)
@@ -42,6 +42,8 @@ if SERVER then
 					Dmg:SetDamagePosition(obj:GetPos())
 					obj:TakeDamageInfo(Dmg)
 				end
+			else
+				obj.EZcoughTime = Time + .5
 			end
 		elseif obj:IsNPC() then
 			obj.EZNPCincapacitate = Time + math.Rand(2, 5)
