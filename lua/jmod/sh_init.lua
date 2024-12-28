@@ -163,6 +163,48 @@ hook.Add("StartCommand", "JMod_StartCommand", function(ply, ucmd)
 	end
 end)
 
+local WDir = VectorRand()
+
+hook.Add("StartCommand", "ParachuteShake", function(ply, cmd)
+	if not ply:Alive() then return end
+
+	if ply:GetNW2Bool("EZparachuting", false) then
+		local Amt, Sporadicness, FT = 30, 20, FrameTime()
+
+		if ply:KeyDown(IN_FORWARD) then
+			Sporadicness = Sporadicness * 1.5
+			Amt = Amt * 2
+		end
+
+		local S, EAng = .05, cmd:GetViewAngles()
+		--(JMod.Wind + EAng:Forward())
+		WDir = (WDir + FT * VectorRand() * Sporadicness):GetNormalized()
+		EAng.pitch = math.NormalizeAngle(EAng.pitch + math.sin(RealTime() * 2) * 0.02)
+		ply.LerpedYaw = math.ApproachAngle(ply.LerpedYaw, EAng.y, FT * 120)
+		EAng.yaw = ply.LerpedYaw + math.NormalizeAngle(WDir.x * FT * Amt * S)
+		cmd:SetViewAngles(EAng)
+	else
+		ply.LerpedYaw = cmd:GetViewAngles().y
+	end
+end)
+
+hook.Add("StartCommand", "RocketSpeen", function(ply, cmd)
+	if not ply:Alive() then return end
+
+	if ply:GetNW2Bool("EZrocketSpin", false) then
+		local FT = FrameTime()
+
+		local Spin, EAng = 1200, cmd:GetViewAngles()
+		local WDir = ply:GetVelocity():GetNormalized()
+		ply.LerpedYaw = math.ApproachAngle(ply.LerpedYaw, EAng.y, FT * 120)
+		EAng.yaw = ply.LerpedYaw + math.NormalizeAngle(WDir.x * Spin * FT)
+		cmd:SetViewAngles(EAng)
+	else
+		ply.LerpedYaw = cmd:GetViewAngles().y
+	end
+end)
+
+
 function JMod.GetPlayerHeldEntity(ply)
 	if not(IsValid(ply) and ply:Alive()) then return end
 	local HeldEntity = ply:GetNW2Entity("EZheldEnt", ply.EZheldEnt)

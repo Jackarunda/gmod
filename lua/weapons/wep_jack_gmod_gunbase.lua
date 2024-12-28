@@ -283,8 +283,7 @@ local function FocusOut(wep)
 	end
 end
 
-hook.Add("CreateMove", "JMod_CreateMove", function(cmd)
-	local ply = LocalPlayer()
+hook.Add("StartCommand", "JMod_CreateMove", function(ply, cmd)
 	if not ply:Alive() then return end
 	local Wep = ply:GetActiveWeapon()
 
@@ -328,7 +327,7 @@ hook.Add("CreateMove", "JMod_CreateMove", function(cmd)
 		cmd:SetViewAngles(EAng)
 	end
 
-	if input.WasKeyPressed(KEY_BACKSPACE) then
+	if CLIENT and input.WasKeyPressed(KEY_BACKSPACE) then
 		if not (ply:IsTyping() or gui.IsConsoleVisible() or gui.IsGameUIVisible() or input.IsKeyDown(input.GetKeyCode(input.LookupBinding("+menu"))) or input.IsKeyDown(input.GetKeyCode(input.LookupBinding("+menu_context")))) then
 			local Time = CurTime()
 			if not(ply.NextDropTime) or ply.NextDropTime < Time then
