@@ -199,7 +199,7 @@ if SERVER then
 
 					if DepositKey then
 						local DepositTable = JMod.NaturalResourceTable[DepositKey]
-						local AmountToBlast = math.random(math.floor(DepositTable.amt * .05), math.ceil(DepositTable.amt * .15))
+						local AmountToBlast = math.random(math.floor(DepositTable.amt * .05), math.ceil(DepositTable.amt * .10))
 						local ChunkNumber = math.ceil(AmountToBlast/(25 * JMod.Config.ResourceEconomy.MaxResourceMult))
 
 						for i = 1, ChunkNumber do
