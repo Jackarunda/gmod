@@ -126,11 +126,7 @@ if SERVER then
 	function ENT:Use(activator)
 		self:CalcWeight()
 		--if self:GetItemCount() <= 0 then return end
-		net.Start("JMod_ItemInventory")
-		net.WriteEntity(self)
-		net.WriteString("open_menu")
-		net.WriteTable(self.JModInv)
-		net.Send(activator)
+		JMod.OpenEntityInventory(self, activator)
 	end
 
 	function ENT:Think()

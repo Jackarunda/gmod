@@ -385,6 +385,18 @@ local CanPickup = function(ent)
 	return false
 end
 
+local CanSeeInventoryEnt = function(ent, ply)
+	local InvEntPos = ent:LocalToWorld(ent:OBBCenter())
+	local CanSeeNonPlyInv = not util.TraceLine({
+		start = ply:GetShootPos(),
+		endpos = InvEntPos,
+		filter = {ply, ent, ent:GetParent()},
+		mask = MASK_SOLID
+	}).Hit
+	
+	return ply:GetShootPos():Distance(InvEntPos) < 200 and CanSeeNonPlyInv
+end
+
 -- I put this in here because they all have to do with each other
 net.Receive("JMod_ItemInventory", function(len, ply)
 	local command = net.ReadString()
@@ -400,7 +412,7 @@ net.Receive("JMod_ItemInventory", function(len, ply)
 	local Tr = util.QuickTrace(ply:GetShootPos(), ply:GetAimVector() * JMod.GRABDISTANCE, ply)
 	local InvSound = util.GetSurfaceData(Tr.SurfaceProps).impactSoftSound
 	local NonPlyInv = (invEnt ~= ply)
-	local CanSeeNonPlyInv = (Tr.Entity == invEnt)
+	local CanSeeNonPlyInv = CanSeeInventoryEnt(invEnt, ply)
 
 	--print(command, invEnt, target, CanSeeNonPlyInv, JMod.IsEntContained(target, invEnt))
 	--jprint((NonPlyInv and InvSound) or ("snds_jack_gmod/equip"..math.random(1, 5)..".ogg"))
@@ -514,6 +526,19 @@ net.Receive("JMod_ItemInventory", function(len, ply)
 	--JMod.UpdateInv(invEnt)
 end)
 
+function JMod.OpenEntityInventory(ent, ply)
+	if not IsValid(ent) or not(ent.JModInv) then return end
+	if not (IsValid(ply) and ply:Alive()) then return end
+	local ShouldOpenInv = hook.Run("JMod_ShouldOpenInventory", ent, ply)
+	if ShouldOpenInv ~= nil and not(ShouldOpenInv) then return end
+
+	net.Start("JMod_ItemInventory")
+		net.WriteEntity(ent)
+		net.WriteString("open_menu")
+		net.WriteTable(ent.JModInv)
+	net.Send(ply)
+end
+
 function JMod.EZ_GrabItem(ply, cmd, args)
 	if not SERVER then return end
 	if not(IsValid(ply)) or not(ply:Alive()) then return end
@@ -521,9 +546,13 @@ function JMod.EZ_GrabItem(ply, cmd, args)
 	if (ply.EZnextGrabTime or 0) > Time then return end
 	ply.EZnextGrabTime = Time + 1
 
-	local TargetEntity = isnumber(args[1]) and Entity(tonumber(args[1]))
+	local TargetEntity = NULL
 
-	if not(IsValid(TargetEntity) and (TargetEntity:GetPos():Distance(ply:GetShootPos()) < JMod.GRABDISTANCE)) then
+	if args[1] then
+		TargetEntity = Entity(tonumber(args[1]))
+	end
+
+	if not(IsValid(TargetEntity)) or not(CanSeeInventoryEnt(TargetEntity, ply)) then
 		TargetEntity = util.QuickTrace(ply:GetShootPos(), ply:GetAimVector() * JMod.GRABDISTANCE, ply).Entity
 	end
 
@@ -531,11 +560,7 @@ function JMod.EZ_GrabItem(ply, cmd, args)
 
 	if TargetEntity.JModInv and (next(TargetEntity.JModInv.items) or next(TargetEntity.JModInv.EZresources)) then
 		JMod.UpdateInv(TargetEntity)
-		net.Start("JMod_ItemInventory")
-			net.WriteEntity(TargetEntity)
-			net.WriteString("open_menu")
-			net.WriteTable(TargetEntity.JModInv)
-		net.Send(ply)
+		JMod.OpenEntityInventory(TargetEntity, ply)
 		sound.Play("snd_jack_clothequip.ogg", ply:GetPos(), 50, math.random(90, 110))
 
 	elseif not(TargetEntity:IsConstrained()) and CanPickup(TargetEntity) then
