@@ -12,6 +12,9 @@ ENT.AdminSpawnable = true
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.JModEZstorable = true
 ENT.JModHighlyFlammableFunc = "Arm"
+ENT.NextStick = 0
+ENT.UsableMats = {MAT_DIRT, MAT_FOLIAGE, MAT_SAND, MAT_SLOSH, MAT_GRASS, MAT_SNOW}
+ENT.BlacklistedResources = {JMod.EZ_RESOURCE_TYPES.WATER, JMod.EZ_RESOURCE_TYPES.OIL, JMod.EZ_RESOURCE_TYPES.SAND, "geothermal"}
 
 ---
 function ENT:SetupDataTables()
@@ -124,11 +127,62 @@ if SERVER then
 				JMod.Hint(Dude, "fuse")
 			end
 
+			constraint.RemoveConstraints(self, "Weld")
+			self.StuckStick = nil
+			self.StuckTo = nil
 			JMod.ThrowablePickup(Dude, self, 500, 250)
 
 			if not Alt then
 				JMod.Hint(Dude, "arm")
 			end
+		else
+			if self:IsPlayerHolding() and (self.NextStick < Time) then
+				self:Plant(Dude)
+			end
+		end
+	end
+
+	function ENT:Plant(ply)
+		local Tr = util.QuickTrace(ply:GetShootPos(), ply:GetAimVector() * 100, {self, ply})
+		local Time = CurTime()
+
+		if Tr.Hit and IsValid(Tr.Entity:GetPhysicsObject()) and not Tr.Entity:IsNPC() and not Tr.Entity:IsPlayer() then
+			self.NextStick = Time + .5
+
+			if table.HasValue(self.UsableMats, Tr.MatType) then
+				local Ang = Tr.HitNormal:Angle()
+				Ang:RotateAroundAxis(Ang:Right(), -90)
+				Ang:RotateAroundAxis(Ang:Up(), 180)
+				self:SetAngles(Ang)
+				self:SetPos(Tr.HitPos + Tr.HitNormal * 3)
+
+				local Fff = EffectData()
+				Fff:SetOrigin(Tr.HitPos)
+				Fff:SetNormal(Tr.HitNormal)
+				Fff:SetScale(.5)
+				util.Effect("eff_jack_sminebury", Fff, true, true)
+			else
+				local Ang = Tr.HitNormal:Angle()
+				Ang:RotateAroundAxis(Ang:Up(), -90)
+				Ang:RotateAroundAxis(Ang:Right(), 90)
+				self:SetAngles(Ang)
+				self:SetPos(Tr.HitPos + Tr.HitNormal * 4)
+			end
+
+			-- crash prevention
+			if Tr.Entity:GetClass() == "func_breakable" then
+				timer.Simple(0, function()
+					self:GetPhysicsObject():Sleep()
+				end)
+			else
+				local Weld = constraint.Weld(self, Tr.Entity, 0, Tr.PhysicsBone, 3000, false, false)
+				self.StuckTo = Tr.Entity
+				self.StuckStick = Weld
+			end
+
+			self:EmitSound("snd_jack_claythunk.ogg", 65, math.random(80, 120))
+			ply:DropObject()
+			JMod.Hint(ply, "arm")
 		end
 	end
 
@@ -143,6 +197,37 @@ if SERVER then
 		Blam:SetScale(0.5)
 		util.Effect("eff_jack_plastisplosion", Blam, true, true)
 		util.ScreenShake(SelfPos, 20, 20, 1, 700)
+
+		if self.StuckTo and self.StuckTo == game.GetWorld() then
+			-- Find what deposit we are over
+			local DepositKey = JMod.GetDepositAtPos(self, SelfPos, 1)
+
+			if DepositKey then
+				local DepositTable = JMod.NaturalResourceTable[DepositKey]
+				local AmountToBlast = math.min(math.random(math.floor(DepositTable.amt * .01), math.ceil(DepositTable.amt * .05)), 30)
+				local ChunkNumber = math.ceil(AmountToBlast/(25 * JMod.Config.ResourceEconomy.MaxResourceMult))
+
+				for i = 1, ChunkNumber do
+					timer.Simple(.1 * i, function()
+						local Ore = ents.Create(JMod.EZ_RESOURCE_ENTITIES[DepositTable.typ])
+						Ore:SetPos(SelfPos)
+						Ore:SetAngles(AngleRand())
+						Ore:Spawn()
+						JMod.SetEZowner(Ore, Blaster)
+						Ore:SetEZsupplies(DepositTable.typ, math.floor(AmountToBlast / ChunkNumber))
+						Ore:Activate()
+						timer.Simple(0, function()
+							if IsValid(Ore) and IsValid(Ore:GetPhysicsObject()) then
+								Ore:GetPhysicsObject():AddVelocity((vector_up + VectorRand() * .5) * 800)
+							end
+						end)
+					end)
+				end
+
+				JMod.DepleteNaturalResource(DepositKey, AmountToBlast)
+			end
+		end
+
 		self:Remove()
 	end
 

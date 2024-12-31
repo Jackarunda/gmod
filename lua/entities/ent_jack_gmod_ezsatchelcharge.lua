@@ -199,7 +199,7 @@ if SERVER then
 
 					if DepositKey then
 						local DepositTable = JMod.NaturalResourceTable[DepositKey]
-						local AmountToBlast = math.random(math.floor(DepositTable.amt * .05), math.ceil(DepositTable.amt * .10))
+						local AmountToBlast = math.min(math.random(math.floor(DepositTable.amt * .05), math.ceil(DepositTable.amt * .10)), 400)
 						local ChunkNumber = math.ceil(AmountToBlast/(25 * JMod.Config.ResourceEconomy.MaxResourceMult))
 
 						for i = 1, ChunkNumber do
@@ -213,7 +213,7 @@ if SERVER then
 								Ore:Activate()
 								timer.Simple(0, function()
 									if IsValid(Ore) and IsValid(Ore:GetPhysicsObject()) then
-										Ore:GetPhysicsObject():AddVelocity((vector_up + VectorRand() * .5) * 800)
+										Ore:GetPhysicsObject():AddVelocity((vector_up + VectorRand() * .5) * 500)
 									end
 								end)
 							end)

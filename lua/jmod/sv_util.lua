@@ -254,6 +254,7 @@ end
 local TriggerKeys = {IN_ATTACK, IN_USE, IN_ATTACK2}
 
 function JMod.ThrowablePickup(playa, item, hardstr, softstr)
+	playa:DropObject()
 	playa:PickupObject(item)
 	local HookName = "EZthrowable_" .. item:EntIndex()
 
