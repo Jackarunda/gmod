@@ -200,10 +200,8 @@ net.Receive("JMod_ModifyConnections", function(ln, ply)
 	elseif Action == "disconnect_all" then
 		if Ent.DisconnectAll then
 			Ent:DisconnectAll()
-		elseif Ent.EZconnections then
-			for k, v in pairs(Ent.EZconnections) do
-				JMod.RemoveResourceConnection(Ent, k)
-			end
+		else
+			JMod.RemoveResourceConnection(Ent)
 		end
 	elseif Action == "produce" then
 		if IsValid(Ent2) and JMod.ConnectionValid(Ent, Ent2) and Ent2.ProduceResource then

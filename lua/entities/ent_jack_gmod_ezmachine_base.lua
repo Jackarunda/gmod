@@ -113,7 +113,6 @@ if(SERVER)then
 			JMod.EZ_RESOURCE_TYPES.BASICPARTS, 
 			JMod.EZ_RESOURCE_TYPES.POWER
 		}
-		self.EZconnections = self.EZconnections or {}
 		--
 		self:SetModel(self.Model)
 		if(self.Mat)then
@@ -329,16 +328,18 @@ if(SERVER)then
 	end
 
 	function ENT:ModConnections(dude)
-		if not(IsValid(dude) and dude:IsPlayer()) then return end
 		local Connections = {}
-		if self.EZconnections then
-			for entID, cable in pairs(self.EZconnections) do
-				local ConnectedEnt = Entity(entID)
-				if IsValid(ConnectedEnt) then
-					table.insert(Connections, {DisplayName = ConnectedEnt.PrintName, Index = entID})
-				end
+		for _, cable in pairs(constraint.FindConstraints(self, "JModResourceCable")) do
+			if (cable.Ent1 == self) and JMod.ConnectionValid(self, cable.Ent2) then
+				table.insert(Connections, {DisplayName = cable.Ent2.PrintName, Index = cable.Ent2:EntIndex()})
+			elseif JMod.ConnectionValid(self, cable.Ent1) then
+				table.insert(Connections, {DisplayName = cable.Ent1.PrintName, Index = cable.Ent1:EntIndex()})
+			else
+				JMod.RemoveResourceConnection(self, cable.Ent1)
 			end
 		end
+
+		if not(IsValid(dude) and dude:IsPlayer()) then return end
 		net.Start("JMod_ModifyConnections")
 			net.WriteEntity(self)
 			net.WriteTable(Connections)
@@ -402,11 +403,9 @@ if(SERVER)then
 			end
 			self.Pod:Fire("lock","",0)
 		end
-		if self.EZconnections then
-			for entID, cable in ipairs(self.EZconnections) do
-				JMod.RemoveResourceConnection(self, entID)
-			end
-		end
+
+		constraint.RemoveConstraints(self, "JModResourceCable")
+
 		if(self.OnBreak)then self:OnBreak() end
 	end
 
@@ -682,32 +681,25 @@ if(SERVER)then
 			end
 		end
 
-		if self.EZconnections then
-			timer.Simple(0, function()
-				if not IsValid(self) then return end
-				--print("Machine with connection: "..tostring(self))
-				--PrintTable(createdEntities)
-				local OldConnections = table.FullCopy(self.EZconnections)
-				self.EZconnections = {}
-				for entID, cable in pairs(OldConnections) do
-					local ConnectedEnt = createdEntities[entID]
-					local OldEnt = Entity(entID)
-					if not IsValid(ConnectedEnt) and table.HasValue(createdEntities, OldEnt) then
-						ConnectedEnt = OldEnt
-					end
-					local NewConnectionID = ConnectedEnt:EntIndex()
-					--print("Connect ID: ", entID, "Created Ent: ", ConnectedEnt, "Old Ent: ", OldEnt)
-					if IsValid(ConnectedEnt) then
-						local CableConnection = constraint.Find(ent, ConnectedEnt, "Rope", 0, 0)
-
-						if IsValid(CableConnection) then
-							JMod.CreateResourceConnection(self, ConnectedEnt, JMod.EZ_RESOURCE_TYPES.POWER, CableConnection:GetPos(), CableConnection.length, CableConnection)
-						else
-							JMod.RemoveResourceConnection(self, ConnectedEnt)
-						end
+		print("===PostEntityPaste" .. tostring(ent) .. "===")
+		timer.Simple(0, function()
+			--[[for k, con in pairs(ent.Constraints) do
+				if (con.Type == "JModResourceCable") then
+					print("---Constraint " .. k .. "---")
+					local ConnectedMachine = con.Ent1 == ent and con.Ent2 or con.Ent1
+					print("Is Connection Valid? " .. tostring(JMod.ConnectionValid(ent, ConnectedMachine, con)))
+					PrintTable(con:GetTable())
+					if not(JMod.ConnectionValid(ent, ConnectedMachine, con)) then
+						ent.Constraints.k = nil
 					end
 				end
-			end)
+			end
+			PrintTable(ent.Constraints)--]]
+			self:ModConnections()
+		end)
+
+		if self.EZconnections then
+			self.EZconnections = nil -- Down with the old system
 		end
 		
 		if self.OnPostEntityPaste then

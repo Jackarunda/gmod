@@ -75,25 +75,39 @@ function JMod.StartResourceConnection(machine, ply)
 	ply:PickupObject(Plugy)
 end
 
---[[function JModResourceCable(Machine1, Connection, connectionData)
-	local Machine2 = connectionData.EntToConnect
-	if not(IsValid(Machine1) and IsValid(Machine2) and IsValid(Connection)) then return end
-	Ent1.EZconnections = Ent1.EZconnections or {}
-	Ent2.EZconnections = Ent2.EZconnections or {}
+function JModResourceCable(Ent1, Ent2, resType, plugPos, dist, newCable)
+	if not(IsValid(Ent1) and IsValid(Ent2)) then return false end
+	if Ent1 == Ent2 then return false end
+	if not resType then return false end
+	if not plugPos then
+		plugPos = Vector(0, 0, 0)
+	end
 
+	local LengthConstraint, Rope = NULL, NULL
 
-	constraint.AddConstraintTable( Machine1, Connection, Machine2 )
+	if not(IsValid(newCable)) then
+		LengthConstraint, Rope = constraint.Rope(Ent1, Ent2, 0, 0, Ent1.EZpowerSocket or Vector(0, 0, 0), plugPos, dist + 20, 10, 100, 2, "cable/cable2")
+	end
 
-	Ent2:SetTable( {
-		Type = "JModResourceCable",
-		Ent1 = Machine1,
-		Ent2 = Connection,
-		MyCoolData = MyCoolData
-	} )
+	if not IsValid(LengthConstraint) then return false end
+	if not IsValid(Rope) then
+		LengthConstraint:Remove()
 
-	return Connection
+		return false 
+	end
+
+	local newCableTable = LengthConstraint:GetTable()
+
+	newCableTable.Type = "JModResourceCable"
+	newCableTable.resType = resType
+	newCableTable.plugPos = plugPos
+	newCableTable.dist = dist
+
+	LengthConstraint:SetTable(newCableTable)
+
+	return newCable
 end
-duplicator.RegisterConstraint("JModResourceCable", JModResourceCable, "Machine1", "Connection", "MyCoolData")--]]
+duplicator.RegisterConstraint("JModResourceCable", JModResourceCable, "Ent1", "Ent2", "resType", "plugPos", "dist", "newCable")
 
 function JMod.CreateResourceConnection(machine, ent, resType, plugPos, dist, newCable)
 	dist = dist or 1000
@@ -107,71 +121,82 @@ function JMod.CreateResourceConnection(machine, ent, resType, plugPos, dist, new
 		local DistanceBetween = (machine:GetPos() - ent:LocalToWorld(PluginPos)):Length()
 		if (DistanceBetween > (dist + 50)) then return false end
 	end
-	--
-	local MachineID = machine:EntIndex()
+	local EntConnections = constraint.FindConstraints(ent, "JModResourceCable")
 
-	machine.EZconnections = machine.EZconnections or {}
-	ent.EZconnections = ent.EZconnections or {}
-
-	local AlreadyConnected = false
-	local EntID = ent:EntIndex()
-	for entID, cable in pairs(machine.EZconnections) do
-		if entID == EntID and IsValid(cable) then
-			AlreadyConnected = true
-			newCable = cable
-			break
-		end
-	end
-	--if AlreadyConnected then return false end
-	
-	for entID, cable in pairs(ent.EZconnections) do
-		if (EntID == MachineID) then
-			if IsValid(cable) then
-				cable:Remove()
+	if (#EntConnections > 0) then
+		for _, cable in pairs(EntConnections) do
+			if IsValid(cable.Ent1) then
+				if cable.Ent1 == machine then
+					return false
+				end
+			elseif IsValid(cable.Ent2) then
+				if cable.Ent2 == machine then
+					return false
+				end
 			end
-			ent.EZconnections[entID] = nil
 		end
 	end
-	--
-	if not IsValid(newCable) then
-		newCable = constraint.Rope(machine, ent, 0, 0, machine.EZpowerSocket or Vector(0, 0, 0), PluginPos, dist + 20, 10, 100, 2, "cable/cable2")
-	end
-	ent.EZconnections[MachineID] = newCable
-	machine.EZconnections[EntID] = newCable
+
+	local Cable = constraint.JModResourceCable(machine, ent, resType, plugPos, dist, newCable)
 
 	return true
 end
 
-function JMod.RemoveResourceConnection(machine, connection, removeCable)
-	if not IsValid(machine) then return end
-	removeCable = removeCable or true
-	-- Check if connection is a entity first
-	if type(connection) == "Entity" and IsValid(connection) then
+function JMod.RemoveResourceConnection(machine, connected)
+	if not IsValid(machine) then return false end
+
+	if type(connected) == "number" then
 		-- Check if it is connected
-		connection = connection:EntIndex()
+		connected = Entity(connected)
 	end
 
-	if not(machine.EZconnections[connection]) then return end
+	for _, cable in pairs(constraint.FindConstraints(machine, "JModResourceCable")) do
+		if not(IsValid(connected)) then
+			if JMod.ConnectionValid(machine, cable.Ent1, cable) then
+				cable.Constraint:Remove()
+			elseif JMod.ConnectionValid(machine, cable.Ent2, cable) then
+				cable.Constraint:Remove()
+			else
+				for key, con in pairs(machine.Constraints) do
+					if (con.Type == "JModResourceCable") and (con.Ent1 == cable.Ent1) or (con.Ent2 == cable.Ent1) then
+						machine.Constraints[key] = nil
+					end
+				end
+			end
+		end
 
-	local ConnectedEnt = Entity(connection)
-	local Cable = machine.EZconnections[connection]
+		if JMod.ConnectionValid(machine, connected, cable) then
+			cable.Constraint:Remove()
 
-	if removeCable and IsValid(Cable) then
-		Cable:Remove()
+			return true
+		else
+			for key, con in pairs(machine.Constraints) do
+				if (con.Type == "JModResourceCable") and (con.Ent1 == connected) or (con.Ent2 == connected) then
+					machine.Constraints[key] = nil
+
+					return true
+				end
+			end
+		end 
 	end
 
-	machine.EZconnections[connection] = nil
-
-	if IsValid(ConnectedEnt) and ConnectedEnt.EZconnections then
-		ConnectedEnt.EZconnections[machine:EntIndex()] = nil
-	end
+	return IsValid(connected) and false or true
 end
 
-function JMod.ConnectionValid(machine, otherMachine)
+function JMod.ConnectionValid(machine, otherMachine, cable)
 	if not(IsValid(machine) and IsValid(otherMachine)) then return false end
-	if not(machine.EZconnections and otherMachine.EZconnections) then return false end
-	if not(IsValid(machine.EZconnections[otherMachine:EntIndex()])) then return false end
-	return true
+	if IsValid(cable) then
+		if (cable.Ent1 == machine) and (cable.Ent2 == otherMachine) then return true end
+		if (cable.Ent2 == machine) and (cable.Ent1 == otherMachine) then return true end
+	else
+		local ConnectionList = constraint.FindConstraints(machine, "JModResourceCable")
+		for _, cable in pairs(ConnectionList) do
+			if cable.Ent1 == otherMachine and cable.Ent2 == machine then return true end
+			if cable.Ent2 == otherMachine and cable.Ent1 == machine then return true end
+		end
+	end
+
+	return false
 end
 
 function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnPos, relativeSpawnAngle, ejectionVector, findCrateRange)
@@ -180,15 +205,15 @@ function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnP
 	machine.NextRefillTime = CurTime() + 1
 	local SpawnPos, SpawnAngle, MachineOwner = machine:LocalToWorld(relativeSpawnPos), relativeSpawnAngle and machine:LocalToWorldAngles(relativeSpawnAngle), JMod.GetEZowner(machine)
 	local MachineCenter = machine:LocalToWorld(machine:OBBCenter())
-	if (resourceType == JMod.EZ_RESOURCE_TYPES.POWER) and (machine.GetState and machine:GetState() == JMod.EZ_STATE_ON) and machine.EZconnections then
+	if (resourceType == JMod.EZ_RESOURCE_TYPES.POWER) and (machine.GetState and machine:GetState() == JMod.EZ_STATE_ON) then
 		local PowerToGive = amount
-		for entID, cable in pairs(machine.EZconnections) do
-			local Ent, Cable = Entity(entID), cable
-			if not IsValid(Ent) or not IsValid(Cable) or not(Ent.EZconsumes and table.HasValue(Ent.EZconsumes, JMod.EZ_RESOURCE_TYPES.POWER)) then
-				JMod.RemoveResourceConnection(machine, Ent)
+		for _, cable in pairs(constraint.FindConstraints(machine, "JModResourceCable")) do
+			local EntToPower = cable.Ent1 == machine and cable.Ent2 or cable.Ent1
+			if not IsValid(EntToPower) or not(EntToPower.EZconsumes and table.HasValue(EntToPower.EZconsumes, JMod.EZ_RESOURCE_TYPES.POWER)) then
+				cable:Remove()
 			else
-				local Accepted = Ent:TryLoadResource(resourceType, PowerToGive)
-				Ent.NextRefillTime = 0
+				local Accepted = EntToPower:TryLoadResource(resourceType, PowerToGive)
+				EntToPower.NextRefillTime = 0
 				amount = math.Clamp(amount - Accepted, 0, 100)
 			end
 		end
