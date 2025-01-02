@@ -2,7 +2,7 @@
 
 function EFFECT:Init(data)
 	self.Position = data:GetOrigin()
-	self.Scale = data:GetScale()
+	self.Scale = data:GetScale() or 1
 	self.LifeTime = .2
 	self.DieTime = CurTime() + self.LifeTime
 end
@@ -38,7 +38,7 @@ function EFFECT:Render()
 				endpos = self.Position,
 				filter = {self, ply}
 			}).Hit and not(JMod.PlyHasArmorEff(ply, "flashresistant")) then
-				JMod.AddFlashbangEffect(ply, self.Position, (self.Scale and self.Scale or 1) * (1 - Pos:Distance(self.Position) / 1500))
+				JMod.AddFlashbangEffect(ply, self.Position, self.Scale * (1 - Pos:Distance(self.Position) / 1500) ^ 2)
 			end
 		end
 	end
