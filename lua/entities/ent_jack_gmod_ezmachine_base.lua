@@ -681,20 +681,7 @@ if(SERVER)then
 			end
 		end
 
-		print("===PostEntityPaste" .. tostring(ent) .. "===")
 		timer.Simple(0, function()
-			--[[for k, con in pairs(ent.Constraints) do
-				if (con.Type == "JModResourceCable") then
-					print("---Constraint " .. k .. "---")
-					local ConnectedMachine = con.Ent1 == ent and con.Ent2 or con.Ent1
-					print("Is Connection Valid? " .. tostring(JMod.ConnectionValid(ent, ConnectedMachine, con)))
-					PrintTable(con:GetTable())
-					if not(JMod.ConnectionValid(ent, ConnectedMachine, con)) then
-						ent.Constraints.k = nil
-					end
-				end
-			end
-			PrintTable(ent.Constraints)--]]
 			self:ModConnections()
 		end)
 
