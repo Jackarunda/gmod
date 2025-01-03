@@ -551,30 +551,33 @@ function SWEP:OnDrop()
 	local Specs = JMod.WeaponTable[self.PrintName]
 
 	if Specs then
-		local Pos, Ang = self:GetPos(), self:GetAngles()
-		if IsValid(self.EZdropper) and self.EZdropper:IsPlayer() then
-			local AimPos, AimVec = self.EZdropper:GetShootPos(), self.EZdropper:GetAimVector()
-			local PlaceTr = util.QuickTrace(AimPos, AimVec * 60, {self, self.EZdropper})
-			Pos = PlaceTr.HitPos + PlaceTr.HitNormal * 5
-			--Ang = PlaceTr.HitNormal:Angle() --(PlaceTr.HitPos - AimPos):Angle()
-		end
+		timer.Simple(0.001, function()
+			if not IsValid(self) then return end
+			local Pos, Ang = self:GetPos(), self:GetAngles()
+			if IsValid(self.EZdropper) and self.EZdropper:IsPlayer() then
+				local AimPos, AimVec = self.EZdropper:GetShootPos(), self.EZdropper:GetAimVector()
+				local PlaceTr = util.QuickTrace(AimPos, AimVec * 60, {self, self.EZdropper})
+				Pos = PlaceTr.HitPos + PlaceTr.HitNormal * 5
+				--Ang = PlaceTr.HitNormal:Angle() --(PlaceTr.HitPos - AimPos):Angle()
+			end
 
-		local Ent = ents.Create(Specs.ent)
-		Ent:SetPos(Pos)
-		Ent:SetAngles(Ang)
-		Ent.MagRounds = self:Clip1()
-		if self:Clip2() > 0 then
-			Ent.MorRounds = self:Clip2()
-		end
-		Ent:Spawn()
-		Ent:Activate()
-		local Phys = Ent:GetPhysicsObject()
+			local Ent = ents.Create(Specs.ent)
+			Ent:SetPos(Pos)
+			Ent:SetAngles(Ang)
+			Ent.MagRounds = self:Clip1()
+			if self:Clip2() > 0 then
+				Ent.MorRounds = self:Clip2()
+			end
+			Ent:Spawn()
+			Ent:Activate()
+			local Phys = Ent:GetPhysicsObject()
 
-		if Phys and self and IsValid(Phys) and IsValid(self) and IsValid(self:GetPhysicsObject()) then
-			Phys:SetVelocity(self:GetPhysicsObject():GetVelocity() / 2)
-		end
+			if Phys and self and IsValid(Phys) and IsValid(self) and IsValid(self:GetPhysicsObject()) then
+				Phys:SetVelocity(self:GetPhysicsObject():GetVelocity() / 2)
+			end
 
-		self:Remove()
+			self:Remove()
+		end)
 	else
 		self.EZdropper = nil
 	end
