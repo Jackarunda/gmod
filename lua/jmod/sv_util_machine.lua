@@ -453,7 +453,7 @@ function JMod.GetPackagableObject(packager, origin, dir)
 
 		if Constrained then
 
-			return nil, "object is constrained"
+			return nil, "object must be loosened first"
 		end
 
 		for k, v in pairs(PackageBlacklist) do
