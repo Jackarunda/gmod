@@ -10,11 +10,7 @@ local function JackaSpawnHook(ply, transition)
 	ply.JModSpawnTime = CurTime()
 	ply.JModFriends = ply.JModFriends or {}
 
-	if ply.EZarmor and ply.EZarmor.suited then
-		ply:SetColor(Color(255, 255, 255))
-	end
-
-	ply.EZarmor = {
+	ply.EZarmor = ply.EZarmor or {
 		items = {},
 		speedFrac = nil,
 		effects = {},
@@ -25,19 +21,25 @@ local function JackaSpawnHook(ply, transition)
 		totalWeight = 0
 	}
 
-	ply.JModInv = table.Copy(JMod.DEFAULT_INVENTORY)
+	ply.JModInv = ply.JModInv or table.Copy(JMod.DEFAULT_INVENTORY)
 
 	JMod.EZarmorSync(ply)
-	ply.EZhealth = nil
-	ply.EZirradiated = nil
 	ply.EZoxygen = 100
 	ply.EZbleeding = 0
 	JMod.SyncBleeding(ply)
-	ply.EZvirus = nil
 
 	timer.Simple(0, function()
 		if IsValid(ply) then
 			ply.EZoriginalPlayerModel = ply:GetModel()
+			if ply.EZarmor.suited then
+				for k, v in pairs(ply.EZarmor.items) do
+					local ArmorInfo = JMod.ArmorTable[v.name]
+		
+					if ArmorInfo.plymdl then
+						JMod.SetPlayerModel(ply, ArmorInfo.plymdl)
+					end
+				end
+			end
 		end
 	end)
 
@@ -937,9 +939,7 @@ hook.Add("GetFallDamage", "JMod_FallDamage", function(ply, spd)
 end)
 
 hook.Add("DoPlayerDeath", "JMOD_SERVER_DOPLAYERDEATH", function(ply, attacker, dmg)
-	ply.EZnutrition = nil
-	ply.EZhealth = nil
-	ply.EZkillme = nil
+	
 	ply.EZoverDamage = dmg:GetDamage()
 	--jprint(ply:Health(), ply.EZoverDamage)
 
@@ -977,13 +977,7 @@ hook.Add("PlayerDeath", "JMOD_SERVER_PLAYERDEATH", function(ply, inflictor, atta
 			end
 		end
 	end
-	ply.EZoverDamage = nil
-	if ply.JMod_WillAsplode then
-		ply.EZnutrition = nil
-		ply.EZhealth = nil
-		ply.EZkillme = nil
-	end
-	ply.JMod_WillAsplode = nil
+
 	ply:SetNW2Bool("EZrocketSpin", false)
 
 	local ShouldInvDrop = JMod.Config.QoL.JModInvDropOnDeath
@@ -1005,6 +999,31 @@ hook.Add("PlayerDeath", "JMOD_SERVER_PLAYERDEATH", function(ply, inflictor, atta
 			end
 		end
 	end
+end)
+
+hook.Add("PostPlayerDeath", "JMod_PostPlayerDeath", function(ply)
+	if ply.EZarmor and ply.EZarmor.suited then
+		ply:SetColor(Color(255, 255, 255))
+	end
+
+	ply.EZarmor = {
+		items = {},
+		speedFrac = nil,
+		effects = {},
+		mskmat = nil,
+		sndlop = nil,
+		suited = false,
+		bodygroups = nil,
+		totalWeight = 0
+	}
+
+	ply.EZnutrition = nil
+	ply.EZhealth = nil
+	ply.EZkillme = nil
+	ply.EZoverDamage = nil
+	ply.EZirradiated = nil
+	ply.JMod_WillAsplode = nil
+	ply.EZvirus = nil
 end)
 
 concommand.Add("jmod_debug_parachute", function(ply, cmd, args) 

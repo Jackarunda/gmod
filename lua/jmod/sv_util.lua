@@ -478,7 +478,7 @@ function JMod.EZprogressTask(ent, pos, deconstructor, task, mult)
 			end
 		elseif task == "salvage" then
 			if constraint.HasConstraints(ent) or not Phys:IsMotionEnabled() then
-				return "object is constrained"
+				return "object must be loosened first"
 			else
 				local Mass = (Phys:GetMass() * ent:GetPhysicsObjectCount()) ^ .8
 				ent:ForcePlayerDrop()
