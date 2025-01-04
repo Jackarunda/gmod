@@ -85,7 +85,16 @@ if SERVER then
 
 		if (obj:Health() < Helf) and obj:IsPlayer() then
 			JMod.Hint(obj, "gas damage")
-			local inhaleProt = JMod.GetArmorBiologicalResistance(obj, DMG_NERVEGAS)
+			local inhaleProt, skinProt, eyeProt = JMod.GetArmorBiologicalResistance(obj, DMG_NERVEGAS)
+
+			if eyeProt < .5 then
+				net.Start("JMod_VisionBlur")
+				net.WriteFloat(1 * math.Clamp(1 - eyeProt, 0, 1))
+				net.WriteFloat(2)
+				net.WriteBit(false)
+				net.Send(obj)
+			end
+
 			if inhaleProt < .75 then
 				JMod.TryCough(obj)
 			else
@@ -99,8 +108,8 @@ if SERVER then
 		local Time, SelfPos, ThinkRateHz = CurTime(), self:GetPos(), self.ThinkRate
 
 		if self.DieTime < Time then
-			--self:Remove()
-			--return
+			self:Remove()
+			return
 		end
 
 		local OldPos = self:GetPos()
@@ -193,7 +202,7 @@ elseif CLIENT then
 	local Cheating = GetConVar("sv_cheats")
 
 	function ENT:Initialize()
-		self.Col = Color(math.random(100, 120), math.random(100, 150), 100)
+		self.Col = Color(math.random(120, 120), math.random(120, 150), 75)
 		self.Visible = true
 		self.Show = true
 		self.siz = math.random(50, 150)
@@ -226,7 +235,7 @@ elseif CLIENT then
 		if self.Show then
 			local SelfPos = self:GetPos()
 			render.SetMaterial(Mat)
-			render.DrawSprite(self.LastPos, self.siz, self.siz, Color(self.Col.r, self.Col.g, self.Col.b, 10))
+			render.DrawSprite(self.LastPos, self.siz, self.siz, Color(self.Col.r, self.Col.g, self.Col.b, 25))
 			self.LastPos = LerpVector(FrameTime() * 1, self.LastPos, self:GetPos())
 		end
 	end
