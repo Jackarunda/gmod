@@ -51,50 +51,52 @@ function JMod.ArmorPlayerModelDraw(ply, nomerge)
 
 					if Index then
 						local Matric = ply:GetBoneMatrix(Index)
-						local Pos, Ang = Matric:GetTranslation(), Matric:GetAngles()
+						if Matric then
+							local Pos, Ang = Matric:GetTranslation(), Matric:GetAngles()
 
-						if Pos and Ang then
-							if not(ArmorInfo.merge) or nomerge then
-								local Right, Forward, Up = Ang:Right(), Ang:Forward(), Ang:Up()
-								Pos = Pos + Right * ArmorInfo.pos.x + Forward * ArmorInfo.pos.y + Up * ArmorInfo.pos.z
-								Ang:RotateAroundAxis(Right, ArmorInfo.ang.p)
-								Ang:RotateAroundAxis(Up, ArmorInfo.ang.y)
-								Ang:RotateAroundAxis(Forward, ArmorInfo.ang.r)
-								Mdl:SetRenderOrigin(Pos)
-								Mdl:SetRenderAngles(Ang)
-								local Mat = Matrix()
-								Mat:Scale(ArmorInfo.siz)
-								Mdl:EnableMatrix("RenderMultiply", Mat)
-							else
-								Mdl:SetupBones()
-								for i = 0, Mdl:GetBoneCount() do
-									Mdl:ManipulateBoneScale(i, ArmorInfo.siz)
+							if Pos and Ang then
+								if not(ArmorInfo.merge) or nomerge then
+									local Right, Forward, Up = Ang:Right(), Ang:Forward(), Ang:Up()
+									Pos = Pos + Right * ArmorInfo.pos.x + Forward * ArmorInfo.pos.y + Up * ArmorInfo.pos.z
+									Ang:RotateAroundAxis(Right, ArmorInfo.ang.p)
+									Ang:RotateAroundAxis(Up, ArmorInfo.ang.y)
+									Ang:RotateAroundAxis(Forward, ArmorInfo.ang.r)
+									Mdl:SetRenderOrigin(Pos)
+									Mdl:SetRenderAngles(Ang)
+									local Mat = Matrix()
+									Mat:Scale(ArmorInfo.siz)
+									Mdl:EnableMatrix("RenderMultiply", Mat)
+								else
+									Mdl:SetupBones()
+									for i = 0, Mdl:GetBoneCount() do
+										Mdl:ManipulateBoneScale(i, ArmorInfo.siz)
+									end
 								end
-							end
-							if ArmorInfo.bdg then
-								for k, v in pairs(ArmorInfo.bdg) do
-									Mdl:SetBodygroup(k, v)
+								if ArmorInfo.bdg then
+									for k, v in pairs(ArmorInfo.bdg) do
+										Mdl:SetBodygroup(k, v)
+									end
 								end
-							end
 
-							if ArmorInfo.skin then
-								Mdl:SetSkin(ArmorInfo.skin)
-							end
+								if ArmorInfo.skin then
+									Mdl:SetSkin(ArmorInfo.skin)
+								end
 
-							local OldR, OldG, OldB = render.GetColorModulation()
-							local Colr = armorData.col
-							if (not(ArmorInfo.merge) or nomerge) then
-								render.SetColorModulation(Colr.r / 255, Colr.g / 255, Colr.b / 255)
-							else
-								Mdl:SetColor(Color(Colr.r, Colr.g, Colr.b))
-							end
+								local OldR, OldG, OldB = render.GetColorModulation()
+								local Colr = armorData.col
+								if (not(ArmorInfo.merge) or nomerge) then
+									render.SetColorModulation(Colr.r / 255, Colr.g / 255, Colr.b / 255)
+								else
+									Mdl:SetColor(Color(Colr.r, Colr.g, Colr.b))
+								end
 
-							local NoDraw = hook.Run("JMod_ArmorModelDraw", ply, Mdl, armorData, ArmorInfo)
+								local NoDraw = hook.Run("JMod_ArmorModelDraw", ply, Mdl, armorData, ArmorInfo)
 
-							if not(NoDraw) and (not(ArmorInfo.merge) or nomerge) then
-								Mdl:DrawModel()
+								if not(NoDraw) and (not(ArmorInfo.merge) or nomerge) then
+									Mdl:DrawModel()
+								end
+								render.SetColorModulation(OldR, OldG, OldB)
 							end
-							render.SetColorModulation(OldR, OldG, OldB)
 						end
 
 						if ArmorInfo.bonsiz then
