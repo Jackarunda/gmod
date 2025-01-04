@@ -69,7 +69,7 @@ if SERVER then
 			start = self:GetPos(),
 			endpos = ent:GetPos(),
 			filter = {self, ent, self.Canister},
-			mask = MASK_SHOT
+			mask = MASK_SHOT+MASK_WATER
 		})
 		return not Tr.Hit
 	end
@@ -99,8 +99,8 @@ if SERVER then
 		local Time, SelfPos, ThinkRateHz = CurTime(), self:GetPos(), self.ThinkRate
 
 		if self.DieTime < Time then
-			self:Remove()
-			return
+			--self:Remove()
+			--return
 		end
 
 		local OldPos = self:GetPos()
@@ -138,9 +138,9 @@ if SERVER then
 				start = SelfPos,
 				endpos = NewPos,
 				filter = { self, self.Canister },
-				mask = MASK_SHOT
+				mask = MASK_SHOT+MASK_WATER
 			})
-			if MoveTrace.StartSolid then
+			if MoveTrace.StartSolid or (bit.band(util.PointContents(MoveTrace.HitPos), CONTENTS_WATER) == CONTENTS_WATER) then
 				SafeRemoveEntity(self)
 
 				return
