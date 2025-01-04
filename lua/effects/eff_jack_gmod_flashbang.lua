@@ -5,6 +5,35 @@ function EFFECT:Init(data)
 	self.Scale = data:GetScale() or 1
 	self.LifeTime = .2
 	self.DieTime = CurTime() + self.LifeTime
+
+	-- Some smoke effect
+	local emitter = ParticleEmitter(self.Position)
+
+	if emitter then
+		for i = 1, math.ceil(15 * self.Scale) do
+			local particle = emitter:Add("particles/smokey", self.Position)
+
+			if particle then
+				particle:SetVelocity(Vector(math.Rand(-.2, .2), math.Rand(-.2, .2), math.Rand(-1, 1)) * math.random(200, 500) * self.Scale)
+				particle:SetLifeTime(0)
+				particle:SetDieTime(math.Rand(2, 6) * self.Scale)
+				particle:SetStartAlpha(math.Rand(150, 200))
+				particle:SetEndAlpha(0)
+				particle:SetStartSize(10)
+				particle:SetEndSize(120 * self.Scale)
+				particle:SetRoll(math.rad(math.Rand(0, 360)))
+				particle:SetRollDelta(math.Rand(-1, 1))
+				particle:SetLighting(false)
+				particle:SetAirResistance(75)
+				particle:SetGravity(Vector(0, 0, 20))
+				local Brightness = math.Rand(.75, 1)
+				particle:SetColor(255 * Brightness, 255 * Brightness, 255 * Brightness)
+				particle:SetCollide(true)
+			end
+		end
+
+		emitter:Finish()
+	end
 end
 
 function EFFECT:Think()
