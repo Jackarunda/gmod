@@ -172,7 +172,7 @@ local function GetProtectionFromSlot(ply, slot, dmg, dmgAmt, protectionMul, shou
 										Busted = true
 									end
 								elseif armorData.chrg and armorData.chrg.chemicals then
-									JMod.DepleteArmorChemicalCharge(ply, Protection * dmgAmt * .02)
+									JMod.DepleteArmorChemicalCharge(ply, Protection * dmgAmt * .01)
 
 									if armorData.chrg.chemicals <= 0 then
 										Protection = 0
