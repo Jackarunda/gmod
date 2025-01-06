@@ -41,7 +41,8 @@ list.Set("ContentCategoryIcons", "JMod - LEGACY Misc.", JModLegacyIcon )
 list.Set("ContentCategoryIcons", "JMod - LEGACY NPCs", JModLegacyIcon )
 list.Set("ContentCategoryIcons", "JMod - LEGACY Weapons", JModLegacyIcon )
 
-local BlurryMenus = CreateClientConVar("jmod_cl_blurry_menus", "1", true)
+local BlurryMenus = CreateClientConVar("jmod_cl_blurry_menus", "1", true, true, "Enables blurry menus, not for potatoes", 0, 1)
+local SortEnabled = CreateClientConVar("jmod_cl_sort_enabled", "1", true, true, "Sorts enabled menu buttons to the top of the list", 0, 1)
 local blurMat = Material("pp/blurscreen")
 local Dynamic = 0
 local function BlurBackground(panel)
@@ -474,7 +475,7 @@ local function PopulateItems(parent, items, typ, motherFrame, entity, enableFunc
 		Butt:SetMouseInputEnabled(true)
 		Butt.hovered = false
 		Butt.enabled = enableFunc(itemName, itemInfo, LocalPlayer(), entity)
-		if Butt.enabled then
+		if SortEnabled:GetBool() and Butt.enabled then
 			Butt:SetPos(0, EnabledY)
 			EnabledY = EnabledY + 47
 			for _, button in pairs(Scroll:GetCanvas():GetChildren()) do
