@@ -7,7 +7,6 @@ end
 
 local function JackaSpawnHook(ply, transition)
 	if transition then return end
-	ply.JModSpawnTime = CurTime()
 	ply.JModFriends = ply.JModFriends or {}
 
 	ply.EZarmor = ply.EZarmor or {
@@ -92,7 +91,9 @@ hook.Add("PlayerInitialSpawn", "JMod_PlayerInitialSpawn", function(ply, transit)
 	JMod.LuaConfigSync(false) 
 end)
 
-hook.Add("PlayerSelectSpawn", "JMod_SleepingBagSpawn", function(ply, spawnpoint) 
+hook.Add("PlayerSelectSpawn", "JMod_SleepingBagSpawn", function(ply, transition) 
+	if transition then return end
+	ply.JModSpawnTime = CurTime()
 	local STATE_ROLLED, STATE_UNROLLED = 0, 1
 	local Sleepingbag = ply.JModSpawnPointEntity
 	if IsValid(Sleepingbag) and (Sleepingbag.State == STATE_UNROLLED) and (IsValid(Sleepingbag.Pod)) then
