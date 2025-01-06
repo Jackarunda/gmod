@@ -395,8 +395,8 @@ function SWEP:BuildItem(selectedBuild)
 		Built = true
 		local BuildSteps = math.ceil(20 * (BuildInfo.sizeScale or 1))
 
-		self:SetElectricity(math.Clamp(self:GetElectricity() - 8 * (BuildInfo.sizeScale or 1), 0, MaxElecConsume))
-		self:SetGas(math.Clamp(self:GetGas() - 4 * (BuildInfo.sizeScale or 1), 0, MaxGasConsume))
+		self:SetElectricity(self:GetElectricity() - math.Clamp(4 * (BuildInfo.sizeScale or 1), 0, MaxElecConsume))
+		self:SetGas(self:GetGas() - math.Clamp(3 * (BuildInfo.sizeScale or 1), 0, MaxGasConsume))
 
 		for i = 1, BuildSteps do
 			timer.Simple(i / 100, function()
