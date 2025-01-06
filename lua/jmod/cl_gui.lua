@@ -449,8 +449,10 @@ local function PopulateItems(parent, items, typ, motherFrame, entity, enableFunc
 	Scroll:SetPos(10, 10)
 	---
 	local Pos, Range = entity:GetPos(), 150
-	local Y, AlphabetizedItemNames = 0, table.GetKeys(items)
+	local AlphabetizedItemNames = table.GetKeys(items)
 	table.sort(AlphabetizedItemNames, function(a, b) return a < b end)
+
+	local EnabledY, Y = 0, 0
 
 	for k, itemName in pairs(AlphabetizedItemNames) do
 		local Butt = Scroll:Add("DButton")
@@ -469,9 +471,18 @@ local function PopulateItems(parent, items, typ, motherFrame, entity, enableFunc
 		end
 
 		Butt:SetTooltip(desc)
-		Butt.enabled = enableFunc(itemName, itemInfo, LocalPlayer(), entity)
 		Butt:SetMouseInputEnabled(true)
 		Butt.hovered = false
+		Butt.enabled = enableFunc(itemName, itemInfo, LocalPlayer(), entity)
+		if Butt.enabled then
+			Butt:SetPos(0, EnabledY)
+			EnabledY = EnabledY + 47
+			for _, button in pairs(Scroll:GetCanvas():GetChildren()) do
+				if not button.enabled then
+					button:SetY(button:GetY() + 47)
+				end
+			end
+		end
 
 		function Butt:Paint(w, h)
 			local Hovr = self:IsHovered()
@@ -835,16 +846,18 @@ net.Receive("JMod_EZtoolbox", function()
 		ResourceScroller.HorizontalScrollbar = false
 
 		for k, v in pairs(LocallyAvailableResources) do
-			local ResourcePanel = vgui.Create("DPanel", ResourceScroller)
-			ResourcePanel:SetSize(W - 20, 40)
-			ResourcePanel:Dock(TOP)
-			ResourcePanel:DockMargin(0, 0, 0, 5)
-			function ResourcePanel:Paint(w, h)
-				surface.SetDrawColor(0, 0, 0, 50)
-				surface.DrawRect(0, 0, w, h)
-				JMod.StandardResourceDisplay(k, v, nil, w * .55, h * .5, 30, false, "JMod-Stencil-XS")
+			if v > 0 then
+				local ResourcePanel = vgui.Create("DPanel", ResourceScroller)
+				ResourcePanel:SetSize(W - 20, 40)
+				ResourcePanel:Dock(TOP)
+				ResourcePanel:DockMargin(0, 0, 0, 5)
+				function ResourcePanel:Paint(w, h)
+					surface.SetDrawColor(0, 0, 0, 50)
+					surface.DrawRect(0, 0, w, h)
+					JMod.StandardResourceDisplay(k, v, nil, w * .55, h * .5, 30, false, "JMod-Stencil-XS")
+				end
+				ResourcePanel:SetTooltip(k .. " x" .. v)
 			end
-			ResourcePanel:SetTooltip(k .. " x" .. v)
 		end
 	end)
 end)
@@ -878,16 +891,18 @@ net.Receive("JMod_EZworkbench", function()
 		ResourceScroller.HorizontalScrollbar = false
 
 		for k, v in pairs(LocallyAvailableResources) do
-			local ResourcePanel = vgui.Create("DPanel", ResourceScroller)
-			ResourcePanel:SetSize(W - 20, 40)
-			ResourcePanel:Dock(TOP)
-			ResourcePanel:DockMargin(0, 0, 0, 5)
-			function ResourcePanel:Paint(w, h)
-				surface.SetDrawColor(0, 0, 0, 50)
-				surface.DrawRect(0, 0, w, h)
-				JMod.StandardResourceDisplay(k, v, nil, w * .55, h * .5, 30, false, "JMod-Stencil-XS")
+			if v > 0 then
+				local ResourcePanel = vgui.Create("DPanel", ResourceScroller)
+				ResourcePanel:SetSize(W - 20, 40)
+				ResourcePanel:Dock(TOP)
+				ResourcePanel:DockMargin(0, 0, 0, 5)
+				function ResourcePanel:Paint(w, h)
+					surface.SetDrawColor(0, 0, 0, 50)
+					surface.DrawRect(0, 0, w, h)
+					JMod.StandardResourceDisplay(k, v, nil, w * .55, h * .5, 30, false, "JMod-Stencil-XS")
+				end
+				ResourcePanel:SetTooltip(k .. " x" .. v)
 			end
-			ResourcePanel:SetTooltip(k .. " x" .. v)
 		end
 
 		if Bench:GetClass() == "ent_jack_gmod_ezprimitivebench" then
@@ -2005,7 +2020,7 @@ net.Receive("JMod_ItemInventory", function(len, sender) -- for when we pick up s
 		invEnt = Ply
 	end
 
-	if newInv and istable(newInv) then
+	if newInv and istable(newInv) and next(newInv) then
 		invEnt.JModInv = newInv
 	end
 
@@ -2077,13 +2092,14 @@ net.Receive("JMod_ItemInventory", function(len, sender) -- for when we pick up s
 			BlurBackground(self)
 		end
 
+		local MaxAmt = invEnt:GetEZsupplies(invEnt.EZsupplies)
 		local amtSlide = vgui.Create("DNumSlider", ResourceGrabFrame)
 		amtSlide:SetText(string.upper(invEnt.EZsupplies))
 		amtSlide:SetSize(280, 20)
 		amtSlide:SetPos((ResourceGrabFrame:GetWide() - amtSlide:GetWide()) / 2, 30)
 		amtSlide:SetMin(0)
-		amtSlide:SetMax(invEnt:GetEZsupplies(invEnt.EZsupplies))
-		amtSlide:SetValue(((JMod.Config.ResourceEconomy and JMod.Config.ResourceEconomy.MaxResourceMult) or 1) * 100)
+		amtSlide:SetMax(MaxAmt)
+		amtSlide:SetValue(math.min(((JMod.Config.ResourceEconomy and JMod.Config.ResourceEconomy.MaxResourceMult) or 1) * 100), MaxAmt)
 		amtSlide:SetDecimals(0)
 		
 		local tek = vgui.Create("DButton", ResourceGrabFrame)
@@ -2092,7 +2108,7 @@ net.Receive("JMod_ItemInventory", function(len, sender) -- for when we pick up s
 		tek:SetText("TAKE")
 
 		function tek:DoClick()
-			Ply:ConCommand("jmod_ez_grab " .. tostring(invEnt:EntIndex()) .. " " .. amtSlide:GetValue())
+			Ply:ConCommand("jmod_ez_grab " .. tostring(invEnt:EntIndex()) .. " " .. tostring(amtSlide:GetValue()))
 			ResourceGrabFrame:Close()
 		end
 
