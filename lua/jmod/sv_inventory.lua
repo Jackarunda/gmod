@@ -39,31 +39,37 @@ function JMod.GetStorageCapacity(ent)
 			end
 		end
 	end
+
 	return Capacity * JMod.Config.QoL.InventorySizeMult
 end
 
-function JMod.GetItemVolumeWeight(ent)
-	if not IsValid(ent) then return nil end
-	local Phys = ent:GetPhysicsObject()
-	if not IsValid(Phys) then return nil end
+function JMod.GetItemVolumeWeight(ent, amt)
+	amt = amt or 1
 
-	local Vol = Phys:GetVolume()
-	local Mass = 0
-	if Vol == nil then
-		local Mins, Maxs = ent:GetCollisionBounds()
-		local X = math.abs(Maxs.x - Mins.x)
-		local Y = math.abs(Maxs.y - Mins.y)
-		local Z = math.abs(Maxs.z - Mins.z)
-		Vol = X * Y * Z
-	end
-	Vol = ent.JModEZstorableVolume or math.Round(Vol / JMod.VOLUMEDIV, 2)
-	Mass = math.ceil(Phys:GetMass())
-	if ent.IsJackyEZresource then
-		Vol = 1
-		Mass = 1
+	if isstring(ent) then
+		local ResourceWeightFactor = (JMod.Config.ResourceEconomy.ResourceInventoryWeight / JMod.Config.ResourceEconomy.MaxResourceMult)
+		local ResourceWeight = ResourceWeightFactor * amt
+		return ResourceWeight, ResourceWeight
+	elseif IsValid(ent) then
+		local Phys = ent:GetPhysicsObject()
+		if not IsValid(Phys) then return nil end
+
+		local Vol = Phys:GetVolume()
+		local Mass = 0
+		if Vol == nil then
+			local Mins, Maxs = ent:GetCollisionBounds()
+			local X = math.abs(Maxs.x - Mins.x)
+			local Y = math.abs(Maxs.y - Mins.y)
+			local Z = math.abs(Maxs.z - Mins.z)
+			Vol = X * Y * Z
+		end
+		Vol = ent.JModEZstorableVolume or math.Round(Vol / JMod.VOLUMEDIV, 2)
+		Mass = math.ceil(Phys:GetMass())
+
+		return Vol, Mass
 	end
 
-	return Vol, Mass
+	return nil
 end
 
 function JMod.IsEntContained(target, container)
@@ -103,8 +109,6 @@ function JMod.UpdateInv(invEnt, noplace, transfer, emergancyNetwork)
 	jmodinvfinal.maxVolume = Capacity
 
 	for k, iteminfo in ipairs(invEnt.JModInv.items) do
-		local RandomPos = Vector(math.random(-100, 100), math.random(-100, 100), math.random(100, 100))
-		local TrPos = util.QuickTrace(EntPos, RandomPos, {invEnt}).HitPos
 		if (Capacity > 0) and JMod.IsEntContained(iteminfo.ent, invEnt) and (iteminfo.ent:EntIndex() ~= -1) then
 			local Vol, Mass = JMod.GetItemVolumeWeight(iteminfo.ent)
 			if (Vol ~= nil) and IsActiveItemAllowed(iteminfo.ent) and (Capacity >= (jmodinvfinal.volume + Vol)) then
@@ -122,6 +126,8 @@ function JMod.UpdateInv(invEnt, noplace, transfer, emergancyNetwork)
 					end
 				end
 			else
+				local RandomPos = Vector(math.random(-100, 100), math.random(-100, 100), math.random(100, 100))
+				local TrPos = util.QuickTrace(EntPos, RandomPos, {invEnt}).HitPos
 				local Removed = JMod.RemoveFromInventory(invEnt, iteminfo.ent, not(noplace) and TrPos, true, transfer)
 				table.insert(RemovedItems, Removed)
 			end
@@ -130,8 +136,7 @@ function JMod.UpdateInv(invEnt, noplace, transfer, emergancyNetwork)
 	end
 	for typ, amt in pairs(invEnt.JModInv.EZresources) do
 		if isstring(typ) and (amt > 0) then
-			local ResourceWeightFactor = (JMod.Config.ResourceEconomy.ResourceInventoryWeight / JMod.Config.ResourceEconomy.MaxResourceMult)
-			local ResourceWeight = amt * ResourceWeightFactor
+			local ResourceWeight = JMod.GetItemVolumeWeight(typ, amt)
 			if (Capacity < (jmodinvfinal.volume + (ResourceWeight))) then
 				local Overflow = (ResourceWeight) - (Capacity - jmodinvfinal.volume)
 				local OverflowResult = math.Round((amt - Overflow) * ResourceWeightFactor)
@@ -587,7 +592,8 @@ function JMod.EZ_GrabItem(ply, cmd, args)
 					end
 				end
 
-				Amt = math.floor(Amt or TargetEntity:GetEZsupplies(TargetEntity.EZsupplies))
+				local SuppliesLeft = TargetEntity:GetEZsupplies(TargetEntity.EZsupplies)
+				Amt = math.floor(math.min(Amt or SuppliesLeft), SuppliesLeft)
 				RoomWeNeed = math.min(Amt * ResourceWeight, RoomLeft)
 				IsResources = true
 			end
