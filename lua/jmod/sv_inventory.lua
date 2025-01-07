@@ -49,7 +49,7 @@ function JMod.GetItemVolumeWeight(ent, amt)
 	if isstring(ent) then
 		local ResourceWeightFactor = (JMod.Config.ResourceEconomy.ResourceInventoryWeight / JMod.Config.ResourceEconomy.MaxResourceMult)
 		local ResourceWeight = ResourceWeightFactor * amt
-		return ResourceWeight, ResourceWeight
+		return ResourceWeight, ResourceWeightFactor
 	elseif IsValid(ent) then
 		local Phys = ent:GetPhysicsObject()
 		if not IsValid(Phys) then return nil end
@@ -136,17 +136,19 @@ function JMod.UpdateInv(invEnt, noplace, transfer, emergancyNetwork)
 	end
 	for typ, amt in pairs(invEnt.JModInv.EZresources) do
 		if isstring(typ) and (amt > 0) then
-			local ResourceWeight = JMod.GetItemVolumeWeight(typ, amt)
+			local ResourceWeight, ResourceWeightFactor = JMod.GetItemVolumeWeight(typ, amt)
 			if (Capacity < (jmodinvfinal.volume + (ResourceWeight))) then
 				local Overflow = (ResourceWeight) - (Capacity - jmodinvfinal.volume)
-				local OverflowResult = math.Round((amt - Overflow) * ResourceWeightFactor)
+				print("Overflow", Overflow)
+				local OverflowWeight = math.Round((amt - Overflow) * ResourceWeightFactor)
+				local AmountToRemove = math.Round(Overflow / ResourceWeightFactor)
 				if Overflow > 0 then
-					local Removed, amt = JMod.RemoveFromInventory(invEnt, {typ, Overflow / ResourceWeight}, not(noplace) and (EntPos + Vector(math.random(-100, 100), math.random(-100, 100), math.random(100, 100))), true)
+					local Removed, amt = JMod.RemoveFromInventory(invEnt, {typ, AmountToRemove}, not(noplace) and (EntPos + Vector(math.random(-100, 100), math.random(-100, 100), math.random(100, 100))), true)
 					table.insert(RemovedItems, {Removed, amt})
 				end
-				jmodinvfinal.weight = jmodinvfinal.weight + OverflowResult
-				jmodinvfinal.volume = jmodinvfinal.volume + (OverflowResult)
-				jmodinvfinal.EZresources[typ] = math.Round(amt - Overflow / ResourceWeight)
+				jmodinvfinal.weight = jmodinvfinal.weight + OverflowWeight
+				jmodinvfinal.volume = jmodinvfinal.volume + OverflowWeight
+				jmodinvfinal.EZresources[typ] = math.Round(amt - AmountToRemove)
 			else
 				jmodinvfinal.weight = jmodinvfinal.weight + math.Round(ResourceWeight)
 				jmodinvfinal.volume = jmodinvfinal.volume + math.Round(ResourceWeight)
