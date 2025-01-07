@@ -272,14 +272,18 @@ local WDir, StabilityStamina, BreathStatus = VectorRand(), 100, false
 local function FocusIn(wep)
 	if not BreathStatus then
 		BreathStatus = true
-		wep:EmitSound("snds_jack_gmod/ez_weapons/focus_in.ogg")
+		if CLIENT then
+			surface.PlaySound("snds_jack_gmod/ez_weapons/focus_in.ogg")
+		end
 	end
 end
 
 local function FocusOut(wep)
 	if BreathStatus then
 		BreathStatus = false
-		wep:EmitSound("snds_jack_gmod/ez_weapons/focus_out.ogg")
+		if CLIENT then
+			surface.PlaySound("snds_jack_gmod/ez_weapons/focus_out.ogg")
+		end
 	end
 end
 
