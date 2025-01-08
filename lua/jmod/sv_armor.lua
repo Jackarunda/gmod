@@ -555,7 +555,9 @@ function JMod.EZ_Equip_Armor(ply, nameOrEnt)
 		NewArmorDurability = nameOrEnt.Durability or NewArmorSpecs.dur
 		NewArmorColor = nameOrEnt:GetColor()
 		NewArmorCharges = nameOrEnt.ArmorCharges
-		nameOrEnt:Remove()
+		if not nameOrEnt.JModInv then
+			nameOrEnt:Remove()
+		end
 	else
 		NewArmorSpecs = JMod.ArmorTable[NewArmorName]
 		NewArmorID = JMod.GenerateGUID()
@@ -617,8 +619,10 @@ function JMod.EZ_Equip_Armor(ply, nameOrEnt)
 		end
 		for k, v in pairs(nameOrEnt.JModInv.EZresources) do
 			JMod.AddToInventory(ply, {k, v})
+			nameOrEnt.JModInv.EZresources[k] = nil
 		end
 		nameOrEnt.KeepJModInv = false
+		nameOrEnt:Remove()
 	end
 
 	JMod.CalcSpeed(ply)

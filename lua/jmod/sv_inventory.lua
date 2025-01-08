@@ -139,11 +139,10 @@ function JMod.UpdateInv(invEnt, noplace, transfer, emergancyNetwork)
 			local ResourceWeight, ResourceWeightFactor = JMod.GetItemVolumeWeight(typ, amt)
 			if (Capacity < (jmodinvfinal.volume + (ResourceWeight))) then
 				local Overflow = (ResourceWeight) - (Capacity - jmodinvfinal.volume)
-				print("Overflow", Overflow)
 				local OverflowWeight = math.Round((amt - Overflow) * ResourceWeightFactor)
 				local AmountToRemove = math.Round(Overflow / ResourceWeightFactor)
 				if Overflow > 0 then
-					local Removed, amt = JMod.RemoveFromInventory(invEnt, {typ, AmountToRemove}, not(noplace) and (EntPos + Vector(math.random(-100, 100), math.random(-100, 100), math.random(100, 100))), true)
+					local Removed, amt = JMod.RemoveFromInventory(invEnt, {typ, AmountToRemove}, not(noplace) and (EntPos + Vector(math.random(-100, 100), math.random(-100, 100), math.random(100, 100))), true, transfer)
 					table.insert(RemovedItems, {Removed, amt})
 				end
 				jmodinvfinal.weight = jmodinvfinal.weight + OverflowWeight
