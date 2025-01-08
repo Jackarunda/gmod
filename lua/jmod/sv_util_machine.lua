@@ -39,7 +39,6 @@ function JMod.EZinstallMachine(machine, install)
 	if not(IsValid(machine)) then return end
 	if ((machine.EZinstalled or false) == install) then return end
 	if (install == nil) then install = true end
-	if not(IsValid(machine)) then return end
 	local Phys = machine:GetPhysicsObject()
 	if not(IsValid(Phys)) then return end
 

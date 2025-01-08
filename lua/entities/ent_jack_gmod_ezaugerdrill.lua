@@ -210,7 +210,6 @@ if(SERVER)then
 				self:SetProgress(self:GetProgress() + drillRate)
 
 				if self:GetProgress() >= 100 then
-					local amtToDrill = math.min(JMod.NaturalResourceTable[self.DepositKey].amt, 100)
 					self:ProduceResource()
 				end
 
