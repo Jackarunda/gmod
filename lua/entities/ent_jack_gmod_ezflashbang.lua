@@ -27,9 +27,12 @@ if SERVER then
 		util.Effect("eff_jack_gmod_flashbang", plooie, true, true)
 		util.ScreenShake(SelfPos, 20, 20, .2, 1000)
 
-		for k, v in pairs(ents.FindInSphere(SelfPos, 200)) do
+		for k, v in pairs(ents.FindInSphere(SelfPos, 300)) do
 			if v:IsNPC() then
 				v.EZNPCincapacitate = Time + math.Rand(3, 5)
+			end
+			if v:IsPlayer() and v:Alive() and JMod.ClearLoS(self, v, false, 10) then
+				v.EZflashbanged = math.Clamp(v.EZflashbanged or 0 + (100 * SelfPos:Distance(v:GetPos()) / 300), 0, 100)
 			end
 		end
 
@@ -49,3 +52,20 @@ elseif CLIENT then
 
 	language.Add("ent_jack_gmod_ezflashbang", "EZ Flashbang Grenade")
 end
+
+hook.Add("SetupMove", "JMOD_FLASHBANG", function(ply, mvd, cmd)
+	if ply.EZflashbanged and (ply.EZflashbanged >= 0) then
+		-- Slow player's movement and turning speed
+		local CurrentSpeed = mvd:GetMaxClientSpeed()
+		local CurrentSlow = (1 - (ply.EZflashbanged or 0) / 200)
+		if CurrentSpeed > 10 then
+			mvd:SetMaxClientSpeed(math.max(CurrentSpeed * CurrentSlow, 10))
+			mvd:SetMaxSpeed(math.max(CurrentSpeed * CurrentSlow, 10))
+		end
+
+		ply.EZflashbanged = math.Clamp(ply.EZflashbanged - 10 * FrameTime(), 0, 100)
+		if (ply.EZflashbanged) <= 0 then
+			ply.EZflashbanged = nil
+		end
+	end
+end)
