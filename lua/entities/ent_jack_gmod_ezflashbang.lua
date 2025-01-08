@@ -27,12 +27,13 @@ if SERVER then
 		util.Effect("eff_jack_gmod_flashbang", plooie, true, true)
 		util.ScreenShake(SelfPos, 20, 20, .2, 1000)
 
-		for k, v in pairs(ents.FindInSphere(SelfPos, 300)) do
+		local BlastDist = 500
+		for k, v in pairs(ents.FindInSphere(SelfPos, BlastDist)) do
 			if v:IsNPC() then
 				v.EZNPCincapacitate = Time + math.Rand(3, 5)
 			end
 			if v:IsPlayer() and v:Alive() and JMod.ClearLoS(self, v, false, 10) then
-				v.EZblastShock = math.Clamp(v.EZblastShock or 0 + (100 * SelfPos:Distance(v:GetPos()) / 300), 0, 100)
+				v.EZblastShock = math.Clamp(v.EZblastShock or 0 + 200 * (1 - SelfPos:Distance(v:GetPos()) / BlastDist), 0, 100)
 			end
 		end
 
@@ -50,15 +51,17 @@ if SERVER then
 		if ply.EZblastShock and (ply.EZblastShock >= 0) then
 			-- Slow player's movement
 			local CurrentSpeed = mvd:GetMaxClientSpeed()
-			local CurrentSlow = (1 - (ply.EZblastShock or 0) / 200)
+			local CurrentSlow = (1 - (ply.EZblastShock or 0) / 100) ^ 2
 			if CurrentSpeed > 10 then
 				mvd:SetMaxClientSpeed(math.max(CurrentSpeed * CurrentSlow, 10))
 				mvd:SetMaxSpeed(math.max(CurrentSpeed * CurrentSlow, 10))
 			end
 	
-			ply.EZblastShock = math.Clamp(ply.EZblastShock - 7 * FrameTime(), 0, 100)
-			if (ply.EZblastShock) <= 0 then
-				ply.EZblastShock = nil
+			if IsFirstTimePredicted() then
+				ply.EZblastShock = math.Clamp(ply.EZblastShock - 5 * FrameTime(), 0, 100)
+				if (ply.EZblastShock) <= 0 then
+					ply.EZblastShock = nil
+				end
 			end
 		end
 	end)

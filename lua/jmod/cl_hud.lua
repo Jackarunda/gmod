@@ -340,7 +340,7 @@ hook.Add("RenderScreenspaceEffects", "JMOD_SCREENSPACE", function()
 		if ply.EZflashbanged then
 			if Alive then
 				DrawMotionBlur(.001, math.Clamp(ply.EZflashbanged / 20, 0, 1), .01)
-				ply.EZflashbanged = math.Clamp(ply.EZflashbanged - 7 * FT, 0, 100)
+				ply.EZflashbanged = math.Clamp(ply.EZflashbanged - 5 * FT, 0, 100)
 				if ply.EZflashbanged <= 0 then
 					ply.EZflashbanged = nil
 				end
