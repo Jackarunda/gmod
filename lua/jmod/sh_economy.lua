@@ -1099,6 +1099,7 @@ if SERVER then
 		if not JMod.NatureMats[tr.MatType] then return false end
 		if TabContainsSubString(SurfacePropBlacklist, mat) then return false end
 		if TabContainsSubString(SurfacePropBlacklist, HitTexture) then return false end
+		if tr.HitNormal.z < 0.75 then return false end
 
 		return true
 	end
