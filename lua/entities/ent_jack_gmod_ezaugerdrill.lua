@@ -67,6 +67,9 @@ if(SERVER)then
 			if not self.DepositKey then
 				JMod.Hint(JMod.GetEZowner(self), "ground drill")
 				self.EZstayOn = nil
+				if self:GetState() > STATE_OFF then
+					self:TurnOff()
+				end
 			elseif(GroundIsSolid)then
 				--
 				local HitAngle = Tr.HitNormal:Angle()
