@@ -32,7 +32,7 @@ if SERVER then
 				v.EZNPCincapacitate = Time + math.Rand(3, 5)
 			end
 			if v:IsPlayer() and v:Alive() and JMod.ClearLoS(self, v, false, 10) then
-				v.EZflashbanged = math.Clamp(v.EZflashbanged or 0 + (100 * SelfPos:Distance(v:GetPos()) / 300), 0, 100)
+				v.EZblastShock = math.Clamp(v.EZblastShock or 0 + (100 * SelfPos:Distance(v:GetPos()) / 300), 0, 100)
 			end
 		end
 
@@ -45,6 +45,23 @@ if SERVER then
 
 		SafeRemoveEntityDelayed(self, 10)
 	end
+
+	hook.Add("SetupMove", "JMOD_FLASHBANG", function(ply, mvd, cmd)
+		if ply.EZblastShock and (ply.EZblastShock >= 0) then
+			-- Slow player's movement
+			local CurrentSpeed = mvd:GetMaxClientSpeed()
+			local CurrentSlow = (1 - (ply.EZblastShock or 0) / 200)
+			if CurrentSpeed > 10 then
+				mvd:SetMaxClientSpeed(math.max(CurrentSpeed * CurrentSlow, 10))
+				mvd:SetMaxSpeed(math.max(CurrentSpeed * CurrentSlow, 10))
+			end
+	
+			ply.EZblastShock = math.Clamp(ply.EZblastShock - 7 * FrameTime(), 0, 100)
+			if (ply.EZblastShock) <= 0 then
+				ply.EZblastShock = nil
+			end
+		end
+	end)
 elseif CLIENT then
 	function ENT:Draw()
 		self:DrawModel()
@@ -52,20 +69,3 @@ elseif CLIENT then
 
 	language.Add("ent_jack_gmod_ezflashbang", "EZ Flashbang Grenade")
 end
-
-hook.Add("SetupMove", "JMOD_FLASHBANG", function(ply, mvd, cmd)
-	if ply.EZflashbanged and (ply.EZflashbanged >= 0) then
-		-- Slow player's movement and turning speed
-		local CurrentSpeed = mvd:GetMaxClientSpeed()
-		local CurrentSlow = (1 - (ply.EZflashbanged or 0) / 200)
-		if CurrentSpeed > 10 then
-			mvd:SetMaxClientSpeed(math.max(CurrentSpeed * CurrentSlow, 10))
-			mvd:SetMaxSpeed(math.max(CurrentSpeed * CurrentSlow, 10))
-		end
-
-		ply.EZflashbanged = math.Clamp(ply.EZflashbanged - 10 * FrameTime(), 0, 100)
-		if (ply.EZflashbanged) <= 0 then
-			ply.EZflashbanged = nil
-		end
-	end
-end)
