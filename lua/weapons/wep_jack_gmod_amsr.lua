@@ -39,6 +39,7 @@ SWEP.MuzzleEffect = "muzzle_center_M82"
 SWEP.ShellModel = "models/jhells/shell_762nato.mdl"
 SWEP.ShellPitch = 70
 SWEP.ShellScale = 4
+SWEP.ShellSounds = JMod.ShellSounds.metal
 SWEP.SpeedMult = .9
 SWEP.SightedSpeedMult = .5
 SWEP.SightTime = .75
@@ -119,6 +120,7 @@ SWEP.Animations = {
 		Time = 2.5,
 		Mult = 1,
 		ShellEjectAt = 1.1,
+		TPAnim = ACT_HL2MP_GESTURE_RANGE_ATTACK_AR2,
 		SoundTable = {
 			{
 				s = "snds_jack_gmod/ez_weapons/amsr/up.ogg",

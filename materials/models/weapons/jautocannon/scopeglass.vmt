@@ -1,0 +1,5 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/weapons/jautocannon/ScopeGlass"
+	$envmap env_cubemap
+}

@@ -41,6 +41,7 @@ SWEP.MuzzleEffect = "muzzleflash_suppressed"
 SWEP.ShellModel = "models/jhells/shell_9mm.mdl"
 SWEP.ShellPitch = 120
 SWEP.ShellScale = 1
+SWEP.ShellSounds = JMod.ShellSounds.metal
 SWEP.SpeedMult = 1
 SWEP.SightedSpeedMult = .9
 SWEP.SightTime = .25
@@ -99,11 +100,13 @@ SWEP.Animations = {
 		Source = "shoot1",
 		Time = 0.5,
 		ShellEjectAt = 0,
+		TPAnim = ACT_HL2MP_GESTURE_RANGE_ATTACK_PISTOL
 	},
 	["fire_empty"] = {
 		Source = "dry",
 		Time = 1,
 		ShellEjectAt = 0,
+		TPAnim = ACT_HL2MP_GESTURE_RANGE_ATTACK_PISTOL
 	},
 	["reload"] = {
 		Source = "reload_full",

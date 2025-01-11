@@ -35,6 +35,7 @@ SWEP.MuzzleEffect = "muzzleflash_m14"
 SWEP.ShellModel = "models/jhells/shell_762nato.mdl"
 SWEP.ShellPitch = 80
 SWEP.ShellScale = 2
+SWEP.ShellSounds = JMod.ShellSounds.metal
 SWEP.SpeedMult = 1
 SWEP.SightedSpeedMult = .7
 SWEP.SightTime = .6
@@ -122,7 +123,8 @@ SWEP.Animations = {
 	},
 	["fire"] = {
 		Source = "shoot",
-		Time = 0.5
+		Time = 0.5,
+		TPAnim = ACT_HL2MP_GESTURE_RANGE_ATTACK_AR2
 	},
 	["reload_empty"] = {
 		Source = "reload",

@@ -42,11 +42,7 @@ SWEP.MuzzleEffect = "muzzleflash_pistol_rbull"
 SWEP.ExtraMuzzleLua = "eff_jack_gmod_bpmuzzle"
 SWEP.ExtraMuzzleLuaScale = .8
 SWEP.ShellModel = "models/jhells/shell_12gauge.mdl"
-
-if ArcCW then
-	SWEP.ShellSounds = ArcCW.PistolShellSoundsTable
-end
-
+SWEP.ShellSounds = JMod.ShellSounds.metal
 SWEP.ShellPitch = 80
 SWEP.ShellScale = 1.5
 SWEP.SpeedMult = 1
@@ -243,7 +239,8 @@ SWEP.Animations = {
 	},
 	["fire"] = {
 		Source = "Fire",
-		Time = 1.5
+		Time = 1.5,
+		TPAnim = ACT_HL2MP_GESTURE_RANGE_ATTACK_PISTOL
 	},
 	["sgreload_start"] = {
 		Source = "reload_start",

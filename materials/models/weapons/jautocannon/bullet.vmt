@@ -1,0 +1,15 @@
+"VertexLitGeneric"
+{
+	$basetexture "models/weapons/jautocannon/Bullet"
+	$bumpmap "models/weapons/jautocannon/BulletNormal"
+
+	$envmap env_cubemap
+	"$envmaptint" "[1 .6 .5]"
+
+	$phong 1
+	$phongboost 10
+	"$phongexponent" "40"
+	$phongfresnelranges "[1 1 1]"
+	"$phongtint" "[1 .3 .2]"
+
+}

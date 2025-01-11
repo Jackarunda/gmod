@@ -1,0 +1,6 @@
+"UnlitGeneric"
+{
+	"$basetexture" "models/weapons/jautocannon/Reticle"
+	$translucent 1
+
+}

@@ -37,11 +37,7 @@ SWEP.ShootSoundExtraMult = 1
 SWEP.MuzzleEffect = "muzzleflash_m3"
 SWEP.ShellModel = "models/jhells/shell_12gauge.mdl"
 SWEP.ShellPitch = 90
-
-if ArcCW then
-	SWEP.ShellSounds = ArcCW.ShotgunShellSoundsTable
-end
-
+SWEP.ShellSounds = JMod.ShellSounds.plastic
 SWEP.ShellScale = 3
 SWEP.SpeedMult = 1
 SWEP.SightedSpeedMult = .7
@@ -95,6 +91,7 @@ SWEP.Animations = {
 		Source = "fire",
 		Time = 0.3,
 		ShellEjectAt = .05,
+		TPAnim = ACT_HL2MP_GESTURE_RANGE_ATTACK_AR2
 	},
 	["sgreload_start"] = {
 		Source = "reload_start",

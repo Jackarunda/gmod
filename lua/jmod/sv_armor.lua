@@ -502,6 +502,16 @@ function JMod.RemoveArmorByID(ply, ID, broken)
 		end
 	end
 
+	-- if this armor piece increased ammo carry limit, we need to go through and strip extra ammo now
+	if (Specs.ammoCarryMult) then
+		for k, v in pairs(ply:GetAmmo()) do
+			local Max = game.GetAmmoMax(k)
+			if (v > Max) then
+				ply:RemoveAmmo(v - Max, k)
+			end
+		end
+	end
+
 	hook.Run("JMod_ArmorRemoved", ply, Info, Specs, Ent, broken)
 
 	return Ent

@@ -984,6 +984,28 @@ JMod.ArmorTable = {
 		dur = 100,
 		ent = "ent_jack_gmod_ezarmor_backpack"
 	},
+	["Munition Backpack"] = {
+		PrintName = "Munition Backpack",
+		mdl = "models/weapons/jautocannonbackpack.mdl",
+		clr = {
+			r = 255,
+			g = 255,
+			b = 255
+		},
+		clrForced = true,
+		slots = {
+			back = .9
+		},
+		ammoCarryMult = 5,
+		def = NonArmorProtectionProfile,
+		bon = "ValveBiped.Bip01_Spine2",
+		siz = Vector(.9, .9, .9),
+		pos = Vector(3, 2, 0),
+		ang = Angle(-90, 0, 90),
+		wgt = 5,
+		dur = 100,
+		ent = "ent_jack_gmod_ezarmor_munitionbackpack"
+	},
 	["Pouches"] = {
 		PrintName = "Pouches",
 		mdl = "models/weapons/w_defuser.mdl",

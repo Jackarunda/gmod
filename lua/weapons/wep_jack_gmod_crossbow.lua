@@ -116,7 +116,8 @@ SWEP.Animations = {
 	},
 	["fire"] = {
 		Source = "shoot",
-		Time = .5
+		Time = .5,
+		TPAnim = ACT_HL2MP_GESTURE_RANGE_ATTACK_AR2
 	},
 	["reload_empty"] = {
 		Source = "reload",

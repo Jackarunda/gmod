@@ -364,6 +364,18 @@ net.Receive("JMod_LuaConfigSync", function(dataLength)
 	end
 end)
 
+--[[
+hook.Add("CalcView", "HD2_TEST", function(ply, pos, ang, fov)
+	local view = {
+		origin = pos + ang:Forward() * 100 - ang:Up() * 20 + ang:Right() * 15,
+		angles = ang,
+		fov = fov,
+		drawviewer = true
+	}
+	return view
+end)
+--]]
+
 function JMod.MakeModel(self, mdl, mat, scale, col)
 	local Mdl = ClientsideModel(mdl)
 

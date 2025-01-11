@@ -105,6 +105,7 @@ SWEP.Animations = {
 		Source = "fire",
 		Time = 1.4,
 		Mult = 1,
+		TPAnim = ACT_HL2MP_GESTURE_RANGE_ATTACK_PISTOL,
 		SoundTable = {
 			{
 				s = "snds_jack_gmod/ez_weapons/cabr/cock.ogg",

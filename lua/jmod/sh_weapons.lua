@@ -219,6 +219,12 @@ JMod.WeaponTable = {
 		ent = "ent_jack_gmod_ezweapon_mrl",
 		size = 1.1
 	},
+	["Autocannon"] = {
+		mdl = "models/weapons/jautocannon_w.mdl",
+		swep = "wep_jack_gmod_autocannon",
+		ent = "ent_jack_gmod_ezweapon_autocannon",
+		size = 1
+	},
 	["Crossbow"] = {
 		mdl = "models/weapons/w_jmod_crossbow.mdl",
 		swep = "wep_jack_gmod_crossbow",
@@ -392,6 +398,15 @@ JMod.AmmoTable = {
 		nicename = "EZ Mini Rocket",
 		basedmg = 350,
 		blastrad = 200
+	},
+	["Autocannon Round"] = {
+		resourcetype = "munitions",
+		sizemult = 40,
+		carrylimit = 10,
+		ent = "ent_jack_gmod_ezautocannonshot",
+		nicename = "EZ Autocannon Round",
+		basedmg = 80,
+		blastrad = 140
 	},
 	["Arrow"] = {
 		sizemult = 24,
@@ -598,6 +613,33 @@ JMod.GunHandlingSounds = {
 	},
 	grab = {"snds_jack_gmod/ez_weapons/handling/grab1.ogg"},
 	shotshell = {"snds_jack_gmod/ez_weapons/handling/shotshell_insert1.ogg", "snds_jack_gmod/ez_weapons/handling/shotshell_insert2.ogg", "snds_jack_gmod/ez_weapons/handling/shotshell_insert3.ogg", "snds_jack_gmod/ez_weapons/handling/shotshell_insert4.ogg"}
+}
+
+JMod.ShellSounds = {
+	metal = {
+		"snds_jack_shells/m1.wav",
+		"snds_jack_shells/m2.wav",
+		"snds_jack_shells/m3.wav",
+		"snds_jack_shells/m4.wav",
+		"snds_jack_shells/m5.wav",
+		"snds_jack_shells/m6.wav",
+		"snds_jack_shells/m7.wav",
+		"snds_jack_shells/m8.wav",
+		"snds_jack_shells/m9.wav",
+		"snds_jack_shells/m10.wav",
+		"snds_jack_shells/m11.wav",
+		"snds_jack_shells/m12.wav",
+		"snds_jack_shells/m13.wav"
+	},
+	plastic = {
+		"snds_jack_shells/p1.wav",
+		"snds_jack_shells/p2.wav",
+		"snds_jack_shells/p3.wav",
+		"snds_jack_shells/p4.wav",
+		"snds_jack_shells/p5.wav",
+		"snds_jack_shells/p6.wav",
+		"snds_jack_shells/p7.wav"
+	}
 }
 
 if CLIENT then
@@ -850,12 +892,20 @@ elseif SERVER then
 			if Wep then
 				local PrimType, SecType, PrimSize, SecSize = Wep:GetPrimaryAmmoType(), Wep:GetSecondaryAmmoType(), Wep:GetMaxClip1(), Wep:GetMaxClip2()
 				local PrimMax, SecMax, PrimName, SecName = game.GetAmmoMax(PrimType), game.GetAmmoMax(SecType), game.GetAmmoName(PrimType), game.GetAmmoName(SecType)
-				
 				local IsMunitionBox = ent.EZsupplies == "munitions"
+				local ArmorAmmoCarryMult = 1
+				if ply.EZarmor and ply.EZarmor.items then
+					for id, v in pairs(ply.EZarmor.items) do
+						local ArmorInfo = JMod.ArmorTable[v.name]
+						if ArmorInfo.ammoCarryMult then
+							ArmorAmmoCarryMult = ArmorAmmoCarryMult * ArmorInfo.ammoCarryMult
+						end
+					end
+				end
 
 				--[[ PRIMARY --]]
 				if PrimName then
-					PrimMax = PrimMax * JMod.Config.Weapons.AmmoCarryLimitMult
+					PrimMax = PrimMax * JMod.Config.Weapons.AmmoCarryLimitMult * ArmorAmmoCarryMult
 					local IsPrimMunitions = IsAmmoOnTable(PrimName, JMod.Config.Weapons.AmmoTypesThatAreMunitions)
 					if (IsPrimMunitions == IsMunitionBox) and not(IsAmmoOnTable(PrimName, JMod.Config.Weapons.WeaponAmmoBlacklist)) then
 						if PrimSize == -1 then
@@ -886,7 +936,7 @@ elseif SERVER then
 				if ent:GetResource() <= 0 then return end
 				--[[ Secondary --]]
 				if SecName then
-					SecMax = SecMax * JMod.Config.Weapons.AmmoCarryLimitMult
+					SecMax = SecMax * JMod.Config.Weapons.AmmoCarryLimitMult * ArmorAmmoCarryMult
 					local IsSecMunitions = IsAmmoOnTable(SecName, JMod.Config.Weapons.AmmoTypesThatAreMunitions)
 					if (IsSecMunitions == IsMunitionBox) and not(IsAmmoOnTable(SecName, JMod.Config.Weapons.WeaponAmmoBlacklist)) then
 						if SecSize == -1 then
@@ -919,7 +969,7 @@ elseif SERVER then
 			-- it's a specific ammo box or ammo entity
 			local Typ, CountInBox = ent.EZammo, ent:GetCount()
 			local AmmoInfo, CurrentAmmo = JMod.GetAmmoSpecs(Typ), ply:GetAmmoCount(Typ)
-			local SpaceLeftInPlayerInv = AmmoInfo.carrylimit - CurrentAmmo
+			local SpaceLeftInPlayerInv = (AmmoInfo.carrylimit * ArmorAmmoCarryMult * JMod.Config.Weapons.AmmoCarryLimitMult) - CurrentAmmo
 			local AmtToGive = math.min(SpaceLeftInPlayerInv, CountInBox)
 
 			if AmtToGive > 0 then

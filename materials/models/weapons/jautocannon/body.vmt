@@ -1,0 +1,18 @@
+"VertexLitGeneric"
+{
+	$basetexture "models/weapons/jautocannon/Body"
+	$bumpmap "models/weapons/jautocannon/BodyNormal"
+
+	$envmap env_cubemap
+	"$normalmapalphaenvmapmask" "1"
+	"$envmaptint" "[.05 .05 .05]"
+
+	"$phong" "1"
+	"$phongfresnelranges" "[1 1 1]"
+	"$phongboost" "3"
+	"$phongexponent" "30"
+
+	"$detail" "models\tex_jack_gmod_metaldetail"
+	"$detailscale"		"10"
+	"$detailblendfactor"		".7"
+}

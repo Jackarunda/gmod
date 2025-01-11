@@ -1,0 +1,14 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/weapons/jautocannon/BackClips"
+
+	$envmap env_cubemap
+	$envmaplightscale 1
+
+	$phong 1			
+	$phongexponent 5
+	$phongalbedotint 1
+	$phongboost 10.0
+	$phongfresnelranges "[0 0.5 1]"
+
+}

@@ -232,6 +232,10 @@ SWEP.Hook_PostFireBullets = function(self)
 
 		JMod.RicPenBullet(self.Owner, RPos, RDir, self.RicPenShotData[1] or 10, self.RicPenShotData[2], self.RicPenShotData[3], 1, self.RicPenShotData[4] or 5, "eff_jack_gmod_smallarmstracer", self.RicPenShotCallback and self.RicPenShotCallback)
 	end
+
+	if self.DistantShootSound and SERVER then
+		self:MyEmitSound(self.DistantShootSound, 80, 100, 1, CHAN_WEAPON-1, true)
+	end
 end
 
 -- Behavior Modifications by Jackarunda --

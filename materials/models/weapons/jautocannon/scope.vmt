@@ -1,0 +1,15 @@
+"VertexLitGeneric"
+{
+	$basetexture "models/weapons/jautocannon/Scope"
+	$bumpmap "models/weapons/jautocannon/ScopeNormal"
+
+	"$phong" "1"
+	"$phongfresnelranges" "[1 1 1]"
+	"$phongboost" "1"
+	"$phongexponent" "30"
+
+	"$detail" "models\tex_jack_gmod_metaldetail"
+	"$detailscale"		"10"
+	"$detailblendfactor"		".7"
+
+}
