@@ -885,6 +885,15 @@ elseif SERVER then
 	end
 
 	function JMod.GiveAmmo(ply, ent, noRemove)
+		local ArmorAmmoCarryMult = 1
+		if ply.EZarmor and ply.EZarmor.items then
+			for id, v in pairs(ply.EZarmor.items) do
+				local ArmorInfo = JMod.ArmorTable[v.name]
+				if ArmorInfo.ammoCarryMult then
+					ArmorAmmoCarryMult = ArmorAmmoCarryMult * ArmorInfo.ammoCarryMult
+				end
+			end
+		end
 		-- it's a resource box
 		if ent.EZsupplies then
 			local Wep = ply:GetActiveWeapon()
@@ -893,15 +902,6 @@ elseif SERVER then
 				local PrimType, SecType, PrimSize, SecSize = Wep:GetPrimaryAmmoType(), Wep:GetSecondaryAmmoType(), Wep:GetMaxClip1(), Wep:GetMaxClip2()
 				local PrimMax, SecMax, PrimName, SecName = game.GetAmmoMax(PrimType), game.GetAmmoMax(SecType), game.GetAmmoName(PrimType), game.GetAmmoName(SecType)
 				local IsMunitionBox = ent.EZsupplies == "munitions"
-				local ArmorAmmoCarryMult = 1
-				if ply.EZarmor and ply.EZarmor.items then
-					for id, v in pairs(ply.EZarmor.items) do
-						local ArmorInfo = JMod.ArmorTable[v.name]
-						if ArmorInfo.ammoCarryMult then
-							ArmorAmmoCarryMult = ArmorAmmoCarryMult * ArmorInfo.ammoCarryMult
-						end
-					end
-				end
 
 				--[[ PRIMARY --]]
 				if PrimName then
