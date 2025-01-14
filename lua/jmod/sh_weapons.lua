@@ -894,8 +894,20 @@ elseif SERVER then
 				end
 			end
 		end
-		-- it's a resource box
-		if ent.EZsupplies then
+
+		if isnumber(ent) and game.GetAmmoName(ent) then
+			-- it's an ammo type
+			local MaxAmmo = (game.GetAmmoMax(ent) * JMod.Config.Weapons.AmmoCarryLimitMult * ArmorAmmoCarryMult)
+			local CurrentAmmo = ply:GetAmmoCount(ent)
+			local SpaceLeftInPlayerInv = MaxAmmo - CurrentAmmo
+			local AmtToGive = math.min(SpaceLeftInPlayerInv, noRemove)
+
+			if AmtToGive > 0 then
+				ply:GiveAmmo(AmtToGive, ent)
+			end
+
+		elseif ent.EZsupplies then
+			-- it's a resource box
 			local Wep = ply:GetActiveWeapon()
 
 			if Wep then
