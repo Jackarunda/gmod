@@ -60,7 +60,7 @@ if SERVER then
 		timer.Simple(.3, function()
 			util.ScreenShake(SelfPos, 1000, 3, 2, 2000 * Oof)
 			---
-			util.BlastDamage(game.GetWorld(), Att, SelfPos, 2000 * Oof, 200 * Oof)
+			util.BlastDamage(game.GetWorld(), IsValid(Att) and Att or game.GetWorld(), SelfPos, 2000 * Oof, 200 * Oof)
 			---
 			for k, v in ipairs(ents.FindInSphere(SelfPos, 2000 * Oof)) do
 				if v:GetClass() == "ent_jack_gmod_ezoilfire" then
