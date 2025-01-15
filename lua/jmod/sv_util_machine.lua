@@ -82,18 +82,13 @@ function JModResourceCable(Ent1, Ent2, resType, plugPos, dist, newCable)
 		plugPos = Vector(0, 0, 0)
 	end
 
-	local LengthConstraint, Rope = NULL, NULL
-
-	if not(IsValid(newCable)) then
-		LengthConstraint, Rope = constraint.Rope(Ent1, Ent2, 0, 0, Ent1.EZpowerSocket or Vector(0, 0, 0), plugPos, dist + 20, 10, 100, 2, "cable/cable2")
+	local LengthConstraint, Rope = constraint.Rope(Ent1, Ent2, 0, 0, Ent1.EZpowerSocket or Vector(0, 0, 0), plugPos, dist + 20, 10, 100, 2, "cable/cable2")
+	if IsValid(newCable) then
+		LengthConstraint:Remove()
+		LengthConstraint = newCable
 	end
 
 	if not IsValid(LengthConstraint) then return false end
-	if not IsValid(Rope) then
-		LengthConstraint:Remove()
-
-		return false 
-	end
 
 	local newCableTable = LengthConstraint:GetTable()
 
@@ -138,7 +133,7 @@ function JMod.CreateResourceConnection(machine, ent, resType, plugPos, dist, new
 
 	local Cable = constraint.JModResourceCable(machine, ent, resType, plugPos, dist, newCable)
 
-	return true
+	return Cable and IsValid(Cable)
 end
 
 function JMod.RemoveResourceConnection(machine, connected)
@@ -537,7 +532,12 @@ function JMod.Rope(ply, origin, dir, width, strength, mat)
 	local Dist = ply.EZropeData.Ent:LocalToWorld(RopeStartData.Pos):Distance(RopeTr.HitPos)
 
 	local Rope, Vrope = constraint.Rope(ply.EZropeData.Ent, RopeTr.Entity, 0, 0, LropePos1, LropePos2, Dist, 0, strength or 5000, width or 2, mat or "cable/cable2", false)
-	return Rope, RopeTr.Entity
+	
+	local RopeTable = Rope:GetTable()
+	RopeTable.KeyframeRope = Vrope
+	Rope:SetTable(RopeTable)
+	
+	return Rope, RopeTr.Entity, Vrope
 end
 
 function JMod.BuildRecipe(results, ply, Pos, Ang, skinNum)
