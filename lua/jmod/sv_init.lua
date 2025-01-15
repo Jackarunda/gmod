@@ -296,7 +296,7 @@ local function VirusCough(ply)
 	local VirusAttacker = (IsValid(ply.EZvirus.Attacker) and ply.EZvirus.Attacker) or game.GetWorld()
 	local Dmg = DamageInfo()
 	Dmg:SetDamageType(DMG_GENERIC) -- why aint this working to hazmat wearers?
-	Dmg:SetAttacker(IsValid(ply.EZvirus.Attacker) and ply.EZvirus.Attacker) or game.GetWorld()))
+	Dmg:SetAttacker(VirusAttacker)
 	Dmg:SetInflictor(ply)
 	Dmg:SetDamagePosition(ply:GetPos())
 	Dmg:SetDamageForce(Vector(0, 0, 0))
