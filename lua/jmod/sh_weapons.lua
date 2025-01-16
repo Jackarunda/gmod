@@ -387,8 +387,8 @@ JMod.AmmoTable = {
 		carrylimit = 20,
 		ent = "ent_jack_gmod_ezprojectilenade",
 		nicename = "EZ 40mm Grenade",
-		basedmg = 240,
-		blastrad = 180
+		basedmg = 480,
+		blastrad = 300
 	},
 	["Mini Rocket"] = {
 		resourcetype = "munitions",
