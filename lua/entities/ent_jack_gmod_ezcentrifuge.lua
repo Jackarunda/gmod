@@ -233,5 +233,5 @@ elseif(CLIENT)then
 			end
 		end
 	end
-	language.Add("ent_jack_gmod_ezlfg", "EZ Uranium Enrichment Centrifuge")
+	language.Add("ent_jack_gmod_ezcentrifuge", "EZ Uranium Enrichment Centrifuge")
 end

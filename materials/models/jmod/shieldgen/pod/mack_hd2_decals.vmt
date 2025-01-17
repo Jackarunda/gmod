@@ -1,0 +1,19 @@
+"vertexlitgeneric"
+{
+	"$basetexture" "models/jmod/shieldgen/pod/hd2_decals"
+	"$translucent" "1"
+
+	"$blendtintcoloroverbase" "0"
+	"$blendtintbybasealpha" "1"
+
+	"$envmap" env_cubemap
+	"$normalmapalphaenvmapmask" "1"
+ 	"$envmaptint" "[0.2 0.2 0.2]"
+
+	"$phong" "1"
+	"$phongfresnelranges" "[0 1 2]"
+	"$phongalbedotint" "1"
+	"$phongexponent" "20" 
+	"$phongboost" "9"
+
+}

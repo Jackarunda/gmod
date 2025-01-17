@@ -1,0 +1,18 @@
+"vertexlitgeneric"
+{
+	"$basetexture" "models/jmod/shieldgen/shieldgen_d"
+	"$bumpmap" "models/jmod/shieldgen/shieldgen_n"
+
+	"$phong" "1"
+	"$phongfresnelranges" "[0 1 2]"
+	"$phongalbedotint" "1"
+	"$phongexponent" "20" 
+	"$phongboost" "5"
+
+	"$detail" "models\tex_jack_gmod_metaldetail"
+	"$detailscale" "10"
+	"$detailblendfactor" ".5"
+
+	"$blendtintbybasealpha" "1"
+	"$blendtintcoloroverbase" "0"
+}

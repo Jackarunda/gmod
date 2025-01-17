@@ -1494,7 +1494,6 @@ end
 --Item Inventory
 local function CreateInvButton(parent, itemTable, x, y, w, h, scrollFrame, invEnt)
 	if not(itemTable and IsValid(itemTable.ent)) then
-		print(invEnt)
 		net.Start("JMod_ItemInventory")
 			net.WriteString("missing")
 			net.WriteEntity(NULL)
@@ -1546,7 +1545,7 @@ local function CreateInvButton(parent, itemTable, x, y, w, h, scrollFrame, invEn
 		if OpenDropdown then
 			OpenDropdown:Remove()
 		end
-		
+
 		local Options={
 			[1]={
 				title="Drop",
@@ -1692,7 +1691,7 @@ local function CreateResButton(parent, resourceType, amt, x, y, w, h, scrollFram
 	Buttalony:SetSize(w, h)
 	Buttalony:SetPos(x, y)
 	Buttalony:SetCursor("hand")
-	
+
 	function Buttalony:Paint(w, h)
 		surface.SetDrawColor(50, 50, 50, 100)
 		surface.DrawRect(0, 0, w, h)
@@ -1709,9 +1708,9 @@ local function CreateResButton(parent, resourceType, amt, x, y, w, h, scrollFram
 	end
 
 	HelpStr = (resourceType .. " x" .. amt)
-	
+
 	Buttalony:SetTooltip(HelpStr)
-	
+
 	function Buttalony:DoClick()
 		if OpenDropdown then
 			OpenDropdown:Remove()
@@ -1793,7 +1792,7 @@ local function CreateResButton(parent, resourceType, amt, x, y, w, h, scrollFram
 				end
 			end
 		end
-		
+
 		OpenDropdown = frame
 	end
 end
@@ -1992,8 +1991,6 @@ local JModInventoryMenu = function(PlyModel, itemTable)
 			return true
 		end
 	end
-
-	--function motherFrame
 
 	CurrentSelectionMenu = motherFrame
 	CurrentJModInvScreen = motherFrame
