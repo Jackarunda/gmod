@@ -12,6 +12,70 @@ ENT.NoPhys = true
 ENT.IsEZrocket = true
 local ThinkRate = 22 --Hz
 
+ENT.DetType = "HEAT"
+ENT.DetTypes = {
+	["INCENDIARY"] = function(self, tr, pos, dir, attacker) 
+		JMod.FireSplosion(pos, dir * 100, 10, 2, 1, true, self, attacker)
+	end,
+	["THERMOBARIC"] = function(self, tr, pos, dir, attacker) 
+		local Sploom = EffectData()
+		Sploom:SetOrigin(pos)
+		util.Effect("eff_jack_gmod_faebomb_predet", Sploom, true, true)
+		---
+		local Oof = .05
+
+		for i = 1, 500 do
+			local Tr = util.QuickTrace(pos, VectorRand() * 500, self)
+
+			if Tr.Hit then
+				Oof = Oof * 1.005
+			end
+		end
+
+		---
+		timer.Simple(.3, function()
+			util.ScreenShake(pos, 1000, 3, 2, 2000 * Oof)
+			---
+			util.BlastDamage(game.GetWorld(), IsValid(attacker) and attacker or game.GetWorld(), pos, 2000 * Oof, 200 * Oof)
+			---
+			for k, v in ipairs(ents.FindInSphere(pos, 2000 * Oof)) do
+				if v:GetClass() == "ent_jack_gmod_ezoilfire" then
+					v:Diffuse()
+				end
+			end
+			---
+			for i = 1, 2 * Oof do
+				sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".wav", pos + VectorRand() * 1000, 160, math.random(80, 110))
+			end
+
+			---
+			JMod.WreckBuildings(self, pos, 10 * Oof)
+			JMod.BlastDoors(self, pos, 10 * Oof)
+
+			---
+			timer.Simple(.2, function()
+				JMod.WreckBuildings(self, pos, 10 * Oof)
+				JMod.BlastDoors(self, pos, 10 * Oof)
+			end)
+
+			---
+			timer.Simple(.1, function()
+				local Tr = util.QuickTrace(pos + Vector(0, 0, 100), Vector(0, 0, -400))
+
+				if Tr.Hit then
+					util.Decal("BigScorch", Tr.HitPos + Tr.HitNormal, Tr.HitPos - Tr.HitNormal)
+				end
+			end)
+
+			---
+			local Sploom = EffectData()
+			Sploom:SetOrigin(pos)
+			Sploom:SetScale(Oof)
+			util.Effect("eff_jack_gmod_faebomb_main", Sploom, true, true)
+		end)
+	end,
+}
+
 ---
 if SERVER then
 	function ENT:Initialize()
@@ -65,6 +129,10 @@ if SERVER then
 				util.Decal("Scorch", Tr.HitPos + Tr.HitNormal, Tr.HitPos - Tr.HitNormal)
 			end
 		end)
+
+		if self.DetTypes[self.DetType] then
+			self.DetTypes[self.DetType](self, tr, SelfPos, Dir, Att)
+		end
 
 		---
 		self:Remove()

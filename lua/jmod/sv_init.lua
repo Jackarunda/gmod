@@ -293,9 +293,10 @@ local function VirusCough(ply)
 		JMod.TryCough(ply)
 	end
 
+	local VirusAttacker = (IsValid(ply.EZvirus.Attacker) and ply.EZvirus.Attacker) or game.GetWorld()
 	local Dmg = DamageInfo()
 	Dmg:SetDamageType(DMG_GENERIC) -- why aint this working to hazmat wearers?
-	Dmg:SetAttacker((IsValid(ply.EZvirus.Attacker) and ply.EZvirus.Attacker) or game.GetWorld())
+	Dmg:SetAttacker(VirusAttacker)
 	Dmg:SetInflictor(ply)
 	Dmg:SetDamagePosition(ply:GetPos())
 	Dmg:SetDamageForce(Vector(0, 0, 0))
@@ -304,7 +305,7 @@ local function VirusCough(ply)
 	--
 	local HostFaceProtection, HostSkinProtection = JMod.GetArmorBiologicalResistance(ply, DMG_RADIATION)
 	if (HostFaceProtection + HostSkinProtection) >= 2 then return end
-	JMod.TryVirusInfectInRange(ply, ply.EZvirus.Attacker, HostFaceProtection, HostSkinProtection)
+	JMod.TryVirusInfectInRange(ply, VirusAttacker, HostFaceProtection, HostSkinProtection)
 
 	if math.random(1, 10) == 10 then
 		local Gas = ents.Create("ent_jack_gmod_ezvirusparticle")

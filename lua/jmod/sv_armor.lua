@@ -504,10 +504,17 @@ function JMod.RemoveArmorByID(ply, ID, broken)
 
 	-- if this armor piece increased ammo carry limit, we need to go through and strip extra ammo now
 	if (Specs.ammoCarryMult) then
+		if not(broken) then
+			Ent.ammoStored = {}
+		end
 		for k, v in pairs(ply:GetAmmo()) do
 			local Max = game.GetAmmoMax(k)
 			if (v > Max) then
-				ply:RemoveAmmo(v - Max, k)
+				local AmountToRemove = v - Max
+				ply:RemoveAmmo(AmountToRemove, k)
+				if not(broken) then
+					Ent.ammoStored[k] = (Ent.ammoStored[k] or 0) + (AmountToRemove)
+				end
 			end
 		end
 	end
@@ -565,7 +572,7 @@ function JMod.EZ_Equip_Armor(ply, nameOrEnt)
 		NewArmorDurability = nameOrEnt.Durability or NewArmorSpecs.dur
 		NewArmorColor = nameOrEnt:GetColor()
 		NewArmorCharges = nameOrEnt.ArmorCharges
-		if not nameOrEnt.JModInv then
+		if not(nameOrEnt.JModInv) and not(nameOrEnt.ammoStored) then
 			nameOrEnt:Remove()
 		end
 	else
@@ -622,16 +629,23 @@ function JMod.EZ_Equip_Armor(ply, nameOrEnt)
 		ply:EmitSound(table.Random(EquipSounds), 60, math.random(80, 120))
 	end
 
-	if IsValid(nameOrEnt) and nameOrEnt.JModInv then
-		nameOrEnt.KeepJModInv = true
-		for _, v in ipairs(nameOrEnt.JModInv.items) do
-			JMod.AddToInventory(ply, v.ent)
+	if IsValid(nameOrEnt) then
+		if nameOrEnt.JModInv then
+			nameOrEnt.KeepJModInv = true
+			for _, v in ipairs(nameOrEnt.JModInv.items) do
+				JMod.AddToInventory(ply, v.ent)
+			end
+			for k, v in pairs(nameOrEnt.JModInv.EZresources) do
+				JMod.AddToInventory(ply, {k, v})
+				nameOrEnt.JModInv.EZresources[k] = nil
+			end
+			nameOrEnt.KeepJModInv = false
 		end
-		for k, v in pairs(nameOrEnt.JModInv.EZresources) do
-			JMod.AddToInventory(ply, {k, v})
-			nameOrEnt.JModInv.EZresources[k] = nil
+		if nameOrEnt.ammoStored then
+			for k, v in pairs(nameOrEnt.ammoStored) do
+				JMod.GiveAmmo(ply, k, v)
+			end
 		end
-		nameOrEnt.KeepJModInv = false
 		nameOrEnt:Remove()
 	end
 
@@ -670,17 +684,32 @@ net.Receive("JMod_Inventory", function(ln, ply)
 			BuildRecipe = JMod.BackupArmorRepairRecipes[ItemData.name]
 		end
 
+		local BenchNearby = false
+		for _, ent in pairs(ents.FindInSphere(ply:GetPos(), 200)) do
+			if ent.Craftables and istable(ent.Craftables) then
+				local HasOurRecipe = false
+				for k, v in pairs(ent.Craftables) do
+					if v.results == ItemInfo.ent then
+						HasOurRecipe = true
+						break
+					end
+				end
+				if HasOurRecipe then
+					BenchNearby = true
+					break
+				end
+			end
+		end
+
 		local AvailableResources = {}
 		if BuildRecipe then
 			local DamagedFraction = 1 - (ItemData.dur / ItemInfo.dur)
 			for resourceName, resourceAmt in pairs(BuildRecipe) do
-				-- If it requires things it also consumes, like fuel, gas and chemicals, we shouldn't require those for repair
-				if ItemInfo.chrg[resourceName] then
-					resourceAmt = 0
-				end
-				local RequiredAmt = math.floor(resourceAmt * DamagedFraction * 1.2) -- 20% efficiency penalty for not needing a workbench
+				local RequiredAmt = math.floor(resourceAmt * DamagedFraction) 
+				if not BenchNearby then RequiredAmt = math.floor(RequiredAmt * 1.2) end -- 20% efficiency penalty for not needing a workbench
 
-				if RequiredAmt > 0 then
+				-- If it requires things it also consumes, like fuel, gas and chemicals, we shouldn't require those for repair
+				if not(ItemInfo.chrg and ItemInfo.chrg[resourceName]) and (RequiredAmt > 0) then
 					RepairRecipe[resourceName] = RequiredAmt
 				end
 			end
@@ -691,7 +720,7 @@ net.Receive("JMod_Inventory", function(ln, ply)
 			AvailableResources = JMod.CountResourcesInRange(nil, nil, ply)
 			if JMod.HaveResourcesToPerformTask(nil, nil, RepairRecipe, ply, AvailableResources) then
 				RepairStatus = 2
-				JMod.ConsumeResourcesInRange(BuildRecipe, nil, nil, ply)
+				JMod.ConsumeResourcesInRange(RepairRecipe, nil, nil, ply)
 				ItemData.dur = ItemInfo.dur
 			end
 		end

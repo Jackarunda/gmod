@@ -164,9 +164,7 @@ if SERVER then
 
 			self:EmitSound("snd_jack_metallicload.ogg", 65, 90)
 
-			timer.Simple(0.1, function()
-				SafeRemoveEntity(rocket)
-			end)
+			SafeRemoveEntityDelayed(rocket, 0.1)
 
 			self.EZlaunchableWeaponLoadTime = CurTime()
 			self:UpdateWireOutputs()

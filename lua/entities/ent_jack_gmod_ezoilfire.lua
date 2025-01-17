@@ -56,7 +56,7 @@ if SERVER then
 			util.Decal("BigScorch", Tr.HitPos + Tr.HitNormal, Tr.HitPos - Tr.HitNormal)
 		end
 
-		if IsValid(self.SoundLoop) then
+		if self.SoundLoop then
 			self.SoundLoop:Stop()
 		end
 		self.SoundLoop = CreateSound(self, "snds_jack_gmod/intense_fire_loop.wav")
@@ -66,7 +66,7 @@ if SERVER then
 	end
 
 	function ENT:Diffuse()
-		if IsValid(self.SoundLoop) then
+		if self.SoundLoop then
 			self.SoundLoop:Stop()
 		end
 		self.SoundLoop = CreateSound(self, "snds_jack_gmod/intense_liquid_spray.wav")
@@ -184,7 +184,7 @@ if SERVER then
 	end
 
 	function ENT:OnRemove()
-		if IsValid(self.SoundLoop) then
+		if self.SoundLoop then
 			self.SoundLoop:Stop()
 		end
 	end

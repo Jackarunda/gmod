@@ -387,8 +387,8 @@ JMod.AmmoTable = {
 		carrylimit = 20,
 		ent = "ent_jack_gmod_ezprojectilenade",
 		nicename = "EZ 40mm Grenade",
-		basedmg = 240,
-		blastrad = 180
+		basedmg = 480,
+		blastrad = 300
 	},
 	["Mini Rocket"] = {
 		resourcetype = "munitions",
@@ -885,23 +885,35 @@ elseif SERVER then
 	end
 
 	function JMod.GiveAmmo(ply, ent, noRemove)
-		-- it's a resource box
-		if ent.EZsupplies then
+		local ArmorAmmoCarryMult = 1
+		if ply.EZarmor and ply.EZarmor.items then
+			for id, v in pairs(ply.EZarmor.items) do
+				local ArmorInfo = JMod.ArmorTable[v.name]
+				if ArmorInfo.ammoCarryMult then
+					ArmorAmmoCarryMult = ArmorAmmoCarryMult * ArmorInfo.ammoCarryMult
+				end
+			end
+		end
+
+		if isnumber(ent) and game.GetAmmoName(ent) then
+			-- it's an ammo type
+			local MaxAmmo = (game.GetAmmoMax(ent) * JMod.Config.Weapons.AmmoCarryLimitMult * ArmorAmmoCarryMult)
+			local CurrentAmmo = ply:GetAmmoCount(ent)
+			local SpaceLeftInPlayerInv = MaxAmmo - CurrentAmmo
+			local AmtToGive = math.min(SpaceLeftInPlayerInv, noRemove)
+
+			if AmtToGive > 0 then
+				ply:GiveAmmo(AmtToGive, ent)
+			end
+
+		elseif ent.EZsupplies then
+			-- it's a resource box
 			local Wep = ply:GetActiveWeapon()
 
 			if Wep then
 				local PrimType, SecType, PrimSize, SecSize = Wep:GetPrimaryAmmoType(), Wep:GetSecondaryAmmoType(), Wep:GetMaxClip1(), Wep:GetMaxClip2()
 				local PrimMax, SecMax, PrimName, SecName = game.GetAmmoMax(PrimType), game.GetAmmoMax(SecType), game.GetAmmoName(PrimType), game.GetAmmoName(SecType)
 				local IsMunitionBox = ent.EZsupplies == "munitions"
-				local ArmorAmmoCarryMult = 1
-				if ply.EZarmor and ply.EZarmor.items then
-					for id, v in pairs(ply.EZarmor.items) do
-						local ArmorInfo = JMod.ArmorTable[v.name]
-						if ArmorInfo.ammoCarryMult then
-							ArmorAmmoCarryMult = ArmorAmmoCarryMult * ArmorInfo.ammoCarryMult
-						end
-					end
-				end
 
 				--[[ PRIMARY --]]
 				if PrimName then

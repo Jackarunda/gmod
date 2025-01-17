@@ -312,7 +312,7 @@ if(SERVER)then
 					Accepted = math.min(Missing,amt)
 					self:SetChemicals(Chem + Accepted)
 					self:EmitSound("snds_jack_gmod/liquid_load.ogg", 65, math.random(90, 110))
-				elseif(typ == JMod.EZ_RESOURCE_TYPES.PROPELLENT)then
+				elseif(typ == JMod.EZ_RESOURCE_TYPES.PROPELLANT)then
 					local Wata = self.Hydration
 					local Missing = 100 - Wata
 					if (Missing <= 0) then return 0 end

@@ -54,6 +54,7 @@ function EFFECT:Init(data)
 	end)
 
 	self.Pos = Pos
+	self.Scale = Scale
 end
 
 function EFFECT:Think()
@@ -76,7 +77,10 @@ function EFFECT:Render()
 		DLight.Style = 0
 	end
 
+	local SpriteSize = 8000 * Frac * self.Scale
+	local SpriteSize2 = 7000 * Frac * self.Scale
+
 	render.SetMaterial(Refract)
-	render.DrawSprite(self.Pos, 8000 * Frac, 8000 * Frac, Color(255, 255, 255, 255))
-	render.DrawSprite(self.Pos, 7000 * Frac, 7000 * Frac, Color(255, 255, 255, 255))
+	render.DrawSprite(self.Pos, SpriteSize, SpriteSize, Color(255, 255, 255, 255))
+	render.DrawSprite(self.Pos, SpriteSize2, SpriteSize2, Color(255, 255, 255, 255))
 end

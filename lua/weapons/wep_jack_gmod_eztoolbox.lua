@@ -310,7 +310,7 @@ function SWEP:SetEZsupplies(typ, amt, setter)
 end
 
 function SWEP:DetermineBuildPos()
-	local BuildInfo = self.EZpreview
+	local BuildInfo = self.EZpreview or {sizeScale = 1}
 	BuildInfo.SpawnAngles = BuildInfo.SpawnAngles or Angle(0, 0, 0)
 	local Ent, Pos, Norm = self:WhomIlookinAt(math.max((BuildInfo.sizeScale or self.CurrentBuildSize) * 30, 100))
 	if not BuildInfo then return Ent, Pos, Norm, BuildInfo.SpawnAngles end
