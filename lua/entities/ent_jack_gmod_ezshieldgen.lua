@@ -123,7 +123,7 @@ if(SERVER)then
 		if self.BaseSoundLoop then self.BaseSoundLoop:Stop() end
 		self:EmitSound("snds_jack_gmod/electrical_forced_shut_off.ogg", 70, 100)
 		self:SetState(STATE_OFF)
-		self:ShieldProgress(0)
+		self:SetShieldProgress(0)
 		self:SetShieldStrength(0)
 	end
 
@@ -167,7 +167,7 @@ if(SERVER)then
 	function ENT:Think()
 		local Time, State, Grade = CurTime(), self:GetState(), self:GetGrade()
 
-		print(State, "elec", self:GetElectricity(), "prog", self:GetShieldProgress(), "streng", self:GetShieldStrength())
+		--print(State, "elec", self:GetElectricity(), "prog", self:GetShieldProgress(), "streng", self:GetShieldStrength())
 
 		self:UpdateWireOutputs()
 
@@ -229,12 +229,12 @@ elseif(CLIENT)then
 				local DisplayAng = SelfAng:GetCopy()
 				DisplayAng:RotateAroundAxis(DisplayAng:Right(), 0)
 				DisplayAng:RotateAroundAxis(DisplayAng:Up(), 0)
-				DisplayAng:RotateAroundAxis(DisplayAng:Forward(), 90)
+				DisplayAng:RotateAroundAxis(DisplayAng:Forward(), 45)
 				local Opacity = math.random(50, 150)
 				local ShieldAmt = self:GetShieldStrength()
 				local ElecAmt = self:GetElectricity()
 
-				cam.Start3D2D(SelfPos - Forward * 10 - Right * 5 + Up * 50, DisplayAng, .06)
+				cam.Start3D2D(SelfPos - Forward * 15 + Right * 8 - Up * 40, DisplayAng, .06)
 				surface.SetDrawColor(10, 10, 10, Opacity + 50)
 				local RankX, RankY = 300, 30
 				surface.DrawRect(RankX, RankY, 128, 128)
