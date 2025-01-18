@@ -23,11 +23,16 @@ SWEP.ChamberSize = 1 -- sigh arctic
 SWEP.Recoil = 4
 SWEP.VisualRecoilMult = 2
 SWEP.Delay = .3
+SWEP.ShotgunReload = false
 
 SWEP.Firemodes = {
 	{
 		Mode = 1,
 		PrintName = "SEMI-AUTO"
+	},
+	{
+		Mode = 2,
+		PrintName = "FULL-AUTO"
 	},
 	{
 		Mode = 0
@@ -231,6 +236,104 @@ SWEP.Animations = {
 			{
 				s = JMod.GunHandlingSounds.grab,
 				t = 4.8,
+				v = 60
+			}
+		}
+	},
+	["sgreload_start"] = {
+		RestoreAmmo = 5,
+		Source = "reload",
+		Time = 3,
+		TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
+		Checkpoints = {24, 42, 59, 71, 89},
+		FrameRate = 37,
+		Mult = 1,
+		LHIK = true,
+		LHIKIn = 0.5,
+		LHIKOut = 0.5,
+		SoundTable = {
+			{
+				s = JMod.GunHandlingSounds.cloth.quiet,
+				t = .01,
+				v = 60
+			},
+			{
+				s = JMod.GunHandlingSounds.cloth.loud,
+				t = .1,
+				v = 60
+			},
+			{
+				s = "snds_jack_gmod/ez_weapons/autocannon/clip_draw.ogg",
+				t = .5,
+				v = 65
+			},
+			{
+				s = JMod.GunHandlingSounds.cloth.quiet,
+				t = .6,
+				v = 60
+			},
+			{
+				s = "snds_jack_gmod/ez_weapons/autocannon/clip_load.ogg",
+				t = .7,
+				v = 65
+			},
+			{
+				s = JMod.GunHandlingSounds.cloth.move,
+				t = 2,
+				v = 60
+			},
+			{
+				s = JMod.GunHandlingSounds.grab,
+				t = 2.8,
+				v = 60
+			}
+		}
+	},
+	["sgreload_insert"] = {
+		RestoreAmmo = 5,
+		Source = "reload",
+		Time = 3,
+		TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
+		Checkpoints = {24, 42, 59, 71, 89},
+		FrameRate = 37,
+		Mult = 1,
+		LHIK = true,
+		LHIKIn = 0.5,
+		LHIKOut = 0.5,
+		SoundTable = {
+			{
+				s = JMod.GunHandlingSounds.cloth.quiet,
+				t = .01,
+				v = 60
+			},
+			{
+				s = JMod.GunHandlingSounds.cloth.loud,
+				t = .1,
+				v = 60
+			},
+			{
+				s = "snds_jack_gmod/ez_weapons/autocannon/clip_draw.ogg",
+				t = .5,
+				v = 65
+			},
+			{
+				s = JMod.GunHandlingSounds.cloth.quiet,
+				t = .6,
+				v = 60
+			},
+			{
+				s = "snds_jack_gmod/ez_weapons/autocannon/clip_load.ogg",
+				t = .7,
+				v = 65
+			},
+			{
+				s = JMod.GunHandlingSounds.cloth.move,
+				t = 2,
+				v = 60
+			},
+			{
+				s = JMod.GunHandlingSounds.grab,
+				t = 2.8,
 				v = 60
 			}
 		}

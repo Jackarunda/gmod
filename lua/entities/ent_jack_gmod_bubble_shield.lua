@@ -34,25 +34,32 @@ hook.Add("EntityFireBullets", "JMOD_SHIELDBULLETS", function(ent, data)
 end)
 
 hook.Add("ShouldCollide", "JMOD_SHIELDCOLLISION", function(ent1, ent2)
-	local ShieldEnt = ent1
-	local OtherEnt = ent2
-	if ent2:GetClass() == "ent_jack_gmod_bubble_shield" then
-		ShieldEnt = ent2
-		OtherEnt = ent1
-	elseif ent1:GetClass() ~= "ent_jack_gmod_bubble_shield" then
-		return nil
-	end
+	local snc1 = ent1.ShouldNotCollide
+	if snc1 and snc1(ent1, ent2) then return false end
 
-	if OtherEnt:IsPlayer() then
-		return false
-	end
-	local TheirVel = OtherEnt:GetVelocity()
-	local InsideShield = OtherEnt:GetPos():DistToSqr(ShieldEnt:GetPos()) < ShieldEnt.ShieldRadiusSqr
-	--local AreTheyTravelingAway = TheirVel:GetNormalized():Dot(ShieldEnt:GetPos() - OtherEnt:GetPos()) > 0
-	if InsideShield or TheirVel:Length() < 1000 then
-		return false
-	end
+	local snc2 = ent2.ShouldNotCollide
+	if snc2 and snc2(ent2, ent1) then return false end
 end)
+
+function ENT:ShouldNotCollide(ent)
+	if ent:IsPlayer() then
+		return true
+	end
+	local TheirVel = ent:GetVelocity()
+	local InsideShield = ent:GetPos():DistToSqr(self:GetPos()) < self.ShieldRadiusSqr
+	if InsideShield or TheirVel:Length() < 1000 then
+		return true
+	end
+end
+
+function ENT:TestCollision(startpos, delta, isbox, extents, mask)
+	if startpos:DistToSqr(self:GetPos()) < self.ShieldRadiusSqr then
+
+		return false
+	else
+		return true
+	end
+end
 
 if SERVER then
 	function ENT:Initialize()
@@ -64,8 +71,6 @@ if SERVER then
 		self:SetCollisionGroup(COLLISION_GROUP_NONE)--COLLISION_GROUP_WORLD)
 		self:DrawShadow(false)
 		self:SetRenderMode(RENDERMODE_TRANSCOLOR)
-		self:SetCustomCollisionCheck(true)
-		self:CollisionRulesChanged()
 
 		local phys = self:GetPhysicsObject()
 
@@ -74,6 +79,10 @@ if SERVER then
 		phys:Wake()
 		phys:SetMass(9e9)
 		phys:EnableMotion(false)
+
+		self:EnableCustomCollisions(true)
+		self:SetCustomCollisionCheck(true)
+		self:CollisionRulesChanged()
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
@@ -104,14 +113,18 @@ if CLIENT then
 		self:SetRenderMode(RENDERMODE_TRANSCOLOR)
 		self.Bubble1 = JMod.MakeModel(self, "models/jmod/giant_hollow_dome.mdl", "models/mat_jack_gmod_hexshield")
 		self.Bubble2 = JMod.MakeModel(self, "models/jmod/giant_hollow_dome.mdl", "models/mat_jack_gmod_hexshield")
+		self:EnableCustomCollisions(true)
 	end
 
 	function ENT:DrawTranslucent(flags)
 		local FT = FrameTime()
 		local SelfPos, SelfAng = self:GetPos(), self:GetAngles()
 		local ShieldModulate = .98 + (math.sin(CurTime() * .5) - 0.015) * 0.01
-		JMod.RenderModel(self.Bubble1, SelfPos, SelfAng, Vector(1, 1, 1) * ShieldModulate, ShieldColor:ToVector())
-		JMod.RenderModel(self.Bubble2, SelfPos, SelfAng, nil, ShieldColor:ToVector())
+		self.ShieldRotate = (self.ShieldRotate or 0) + FT
+		local ShieldAng = SelfAng:GetCopy()
+		ShieldAng:RotateAroundAxis(ShieldAng:Up(), self.ShieldRotate)
+		JMod.RenderModel(self.Bubble1, SelfPos, ShieldAng, Vector(1, 1, 1) * ShieldModulate, ShieldColor:ToVector())
+		JMod.RenderModel(self.Bubble2, SelfPos, ShieldAng, nil, ShieldColor:ToVector())
 
 		--render.SetMaterial(Refract)
 		--render.DrawSprite(SelfPos, 650, 650, ShieldColor)

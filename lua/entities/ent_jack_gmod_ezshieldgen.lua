@@ -21,7 +21,8 @@ ENT.StaticPerfSpecs = {
 }
 ENT.DynamicPerfSpecs = {
 	MaxElectricity = 100,
-	MaxShieldStrength = 1
+	MaxShieldStrength = 1,
+	ChargeSpeed = 5
 }
 ENT.EZconsumes = {
 	JMod.EZ_RESOURCE_TYPES.POWER
@@ -183,8 +184,8 @@ if(SERVER)then
 			if (Progress >= 100) then
 				self:EstablishShield()
 			else
-				self:SetShieldProgress(Progress + 5)
-				self:ConsumeElectricity(1)
+				self:SetShieldProgress(Progress + 5 * self.ChargeSpeed)
+				self:ConsumeElectricity(1 * self.ChargeSpeed)
 			end
 		end
 
