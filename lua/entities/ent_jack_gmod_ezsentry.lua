@@ -611,7 +611,7 @@ if(SERVER)then
 			start = SelfPos,
 			endpos = TargPos,
 			filter = Filter,
-			mask = MASK_SHOT + MASK_WATER
+			mask = MASK_BLOCKLOS_AND_NPCS + MASK_WATER
 		})
 
 		return not Tr.Hit
