@@ -7,7 +7,7 @@ ENT.Spawnable = false
 ENT.AdminSpawnable = false
 ENT.Model = "models/jmod/giant_hollow_dome.mdl"
 ENT.PhysgunDisabled = true
-ENT.ShieldRadiusSqr = 56169
+ENT.ShieldRadiusSqr = 238 * 238
 
 function ENT:GravGunPunt(ply)
 	return false
@@ -50,6 +50,8 @@ function ENT:ShouldNotCollide(ent)
 	if InsideShield or TheirVel:Length() < 1000 then
 		return true
 	end
+
+	return false
 end
 
 function ENT:TestCollision(startpos, delta, isbox, extents, mask)
@@ -57,6 +59,7 @@ function ENT:TestCollision(startpos, delta, isbox, extents, mask)
 
 		return false
 	else
+
 		return true
 	end
 end
@@ -68,7 +71,7 @@ if SERVER then
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)
 		self:SetSolid(SOLID_VPHYSICS)
-		self:SetCollisionGroup(COLLISION_GROUP_NONE)--COLLISION_GROUP_WORLD)
+		self:SetCollisionGroup(COLLISION_GROUP_NONE)
 		self:DrawShadow(false)
 		self:SetRenderMode(RENDERMODE_TRANSCOLOR)
 
@@ -80,9 +83,9 @@ if SERVER then
 		phys:SetMass(9e9)
 		phys:EnableMotion(false)
 
-		self:EnableCustomCollisions(true)
-		self:SetCustomCollisionCheck(true)
-		self:CollisionRulesChanged()
+		--self:EnableCustomCollisions(true)
+		--self:SetCustomCollisionCheck(true)
+		--self:CollisionRulesChanged()
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
@@ -130,8 +133,8 @@ if CLIENT then
 	function ENT:Initialize()
 		self:SetRenderMode(RENDERMODE_GLOW)
 		self.Bubble1 = JMod.MakeModel(self, "models/jmod/giant_hollow_dome.mdl", "models/mat_jack_gmod_hexshield")
-		--self.Bubble2 = JMod.MakeModel(self, "models/jmod/giant_hollow_dome.mdl", "models/mat_jack_gmod_hexshield")
 		self:EnableCustomCollisions(true)
+		--self.Bubble2 = JMod.MakeModel(self, "models/jmod/giant_hollow_dome.mdl", "models/mat_jack_gmod_hexshield")
 	end
 
 	function ENT:DrawTranslucent(flags)
