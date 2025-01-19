@@ -75,7 +75,7 @@ if SERVER then
 		self:SetSolid(SOLID_VPHYSICS)
 		self:SetCollisionGroup(COLLISION_GROUP_WEAPON)
 		self:DrawShadow(false)
-		self:SetRenderMode(RENDERMODE_TRANSCOLOR)
+		self:SetRenderMode(RENDERMODE_GLOW)
 
 		local phys = self:GetPhysicsObject()
 
@@ -120,15 +120,21 @@ if CLIENT then
 	*/
 
 	hook.Add("PostDrawTranslucentRenderables", "JMOD_POSTDRAWTRANSLUCENTRENDERABLES", function()
-		for k, v in pairs(ents.FindByClass("ent_jack_gmod_bubble_shield")) do
+		for k, v in ipairs(ents.FindByClass("ent_jack_gmod_bubble_shield")) do
 			local SelfPos = v:GetPos()
 			local Epos = EyePos()
 			local Vec = Epos - SelfPos
 			local Dist = Vec:Length()
-			local DistFrac = math.Clamp(600 - Dist, 0, 600) / 600
-			local Size = 550 + 800 * DistFrac ^ 2
-			render.SetMaterial(GlowSprite)
-			render.DrawSprite(SelfPos, Size, Size, Color(255, 255, 255, 128))
+			if Dist < 240 then
+				local Eang = EyeAngles()
+				render.SetMaterial(GlowSprite)
+				render.DrawSprite(Epos + Eang:Forward() * 10, 100, 100, Color(255, 255, 255, 128))
+			else
+				local DistFrac = math.Clamp(600 - Dist, 0, 600) / 600
+				local Size = 550 + 800 * DistFrac ^ 2
+				render.SetMaterial(GlowSprite)
+				render.DrawSprite(SelfPos, Size, Size, Color(255, 255, 255, 128))
+			end
 		end
 	end)
 
