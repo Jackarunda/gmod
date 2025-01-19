@@ -108,17 +108,34 @@ if SERVER then
 end
 
 if CLIENT then
-	function ENT:Initialize()
-		self:SetRenderMode(RENDERMODE_TRANSCOLOR)
-		self.Bubble1 = JMod.MakeModel(self, "models/jmod/giant_hollow_dome.mdl", "models/mat_jack_gmod_hexshield")
-		--self.Bubble2 = JMod.MakeModel(self, "models/jmod/giant_hollow_dome.mdl", "models/mat_jack_gmod_hexshield")
-		--self:EnableCustomCollisions(true)
-		--self:SetCustomCollisionCheck(true)
-		--self:CollisionRulesChanged()
-	end
-
 	local ShieldColor = Color(255, 255, 255)
 	local GlowSprite = Material("sprites/mat_jack_gmod_bubbleshieldglow")
+	/*
+	hook.Add("PreDrawHalos", "JMOD_PREDRAWHALOS", function()
+		--halo.Add(ents.FindByClass("ent_jack_gmod_bubble_shield"), Color(255, 255, 255, 10), 5, 5, 20)
+	end)
+	*/
+
+	hook.Add("PostDrawTranslucentRenderables", "JMOD_POSTDRAWTRANSLUCENTRENDERABLES", function()
+		for k, v in pairs(ents.FindByClass("ent_jack_gmod_bubble_shield")) do
+			local SelfPos = v:GetPos()
+			local Epos = EyePos()
+			local Vec = Epos - SelfPos
+			local Dist = Vec:Length()
+			local DistFrac = math.Clamp(600 - Dist, 0, 600) / 600
+			local Size = 550 + 800 * DistFrac ^ 2
+			render.SetMaterial(GlowSprite)
+			render.DrawSprite(SelfPos, Size, Size, Color(255, 255, 255, 128))
+		end
+	end)
+
+	function ENT:Initialize()
+		self:SetRenderMode(RENDERMODE_GLOW)
+		self.Bubble1 = JMod.MakeModel(self, "models/jmod/giant_hollow_dome.mdl", "models/mat_jack_gmod_hexshield")
+		self:EnableCustomCollisions(true)
+		--self.Bubble2 = JMod.MakeModel(self, "models/jmod/giant_hollow_dome.mdl", "models/mat_jack_gmod_hexshield")
+	end
+
 	function ENT:DrawTranslucent(flags)
 		local FT = FrameTime()
 		local SelfPos, SelfAng = self:GetPos(), self:GetAngles()
@@ -128,18 +145,6 @@ if CLIENT then
 		ShieldAng:RotateAroundAxis(ShieldAng:Up(), self.ShieldRotate)
 		JMod.RenderModel(self.Bubble1, SelfPos, ShieldAng, Vector(1, 1, 1) * ShieldModulate, ShieldColor:ToVector())
 		--JMod.RenderModel(self.Bubble2, SelfPos, ShieldAng, nil, ShieldColor:ToVector())
-
-		local Epos = EyePos()
-		local Vec = Epos - SelfPos
-		local Dist = Vec:Length()
-		local Dir = Vec:GetNormalized()
-		local DistFrac = (math.Clamp(1000 - Dist, 0, 1000) / 1000) ^ 2
-		--jprint(DistFrac)
-		render.SetMaterial(GlowSprite)
-		render.DrawSprite(SelfPos + Dir * 240, 350, 350, Color(255, 255, 255, 100))
-
-		--render.SetMaterial(Refract)
-		--render.DrawSprite(SelfPos, 650, 650, ShieldColor)
 	end
 	language.Add("ent_jack_gmod_bubble_shield", "Bubble Shield")
 end
