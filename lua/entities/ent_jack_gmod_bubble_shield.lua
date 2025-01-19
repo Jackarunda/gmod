@@ -108,9 +108,6 @@ if SERVER then
 	end
 end
 
-local ShieldColor = Color(255, 252, 50)
-local Refract = Material("sprites/mat_jack_shockwave")
-
 if CLIENT then
 	function ENT:Initialize()
 		self:SetRenderMode(RENDERMODE_TRANSCOLOR)
@@ -119,6 +116,8 @@ if CLIENT then
 		--self:EnableCustomCollisions(true)
 	end
 
+	local ShieldColor = Color(255, 255, 255)
+	local GlowSprite = Material("sprites/mat_jack_gmod_bubbleshieldglow")
 	function ENT:DrawTranslucent(flags)
 		local FT = FrameTime()
 		local SelfPos, SelfAng = self:GetPos(), self:GetAngles()
@@ -127,7 +126,16 @@ if CLIENT then
 		local ShieldAng = SelfAng:GetCopy()
 		ShieldAng:RotateAroundAxis(ShieldAng:Up(), self.ShieldRotate)
 		JMod.RenderModel(self.Bubble1, SelfPos, ShieldAng, Vector(1, 1, 1) * ShieldModulate, ShieldColor:ToVector())
-		JMod.RenderModel(self.Bubble2, SelfPos, ShieldAng, nil, ShieldColor:ToVector())
+		--JMod.RenderModel(self.Bubble2, SelfPos, ShieldAng, nil, ShieldColor:ToVector())
+
+		local Epos = EyePos()
+		local Vec = Epos - SelfPos
+		local Dist = Vec:Length()
+		local Dir = Vec:GetNormalized()
+		local DistFrac = (math.Clamp(1000 - Dist, 0, 1000) / 1000) ^ 2
+		--jprint(DistFrac)
+		render.SetMaterial(GlowSprite)
+		render.DrawSprite(SelfPos + Dir * 240, 350, 350, Color(255, 255, 255, 100))
 
 		--render.SetMaterial(Refract)
 		--render.DrawSprite(SelfPos, 650, 650, ShieldColor)
