@@ -13,6 +13,7 @@ function ENT:GravGunPunt(ply)
 	return false
 end
 
+--[[
 hook.Add("EntityFireBullets", "JMOD_SHIELDBULLETS", function(ent, data) 
 	local ShieldBubbles = ents.FindByClass("ent_jack_gmod_bubble_shield")
 	if #ShieldBubbles > 0 then
@@ -32,7 +33,9 @@ hook.Add("EntityFireBullets", "JMOD_SHIELDBULLETS", function(ent, data)
 		end
 	end
 end)
+--]]
 
+--[[
 hook.Add("ShouldCollide", "JMOD_SHIELDCOLLISION", function(ent1, ent2)
 	local snc1 = ent1.ShouldNotCollide
 	if snc1 and snc1(ent1, ent2) then return false end
@@ -56,12 +59,12 @@ end
 
 function ENT:TestCollision(startpos, delta, isbox, extents, mask)
 	if startpos:DistToSqr(self:GetPos()) < self.ShieldRadiusSqr then
-
 		return false
 	end
 
 	return true
 end
+--]]
 
 if SERVER then
 	function ENT:Initialize()
@@ -70,7 +73,7 @@ if SERVER then
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)
 		self:SetSolid(SOLID_VPHYSICS)
-		self:SetCollisionGroup(COLLISION_GROUP_WORLD)
+		self:SetCollisionGroup(COLLISION_GROUP_WEAPON)
 		self:DrawShadow(false)
 		self:SetRenderMode(RENDERMODE_TRANSCOLOR)
 
@@ -132,14 +135,14 @@ if CLIENT then
 	function ENT:Initialize()
 		self:SetRenderMode(RENDERMODE_GLOW)
 		self.Bubble1 = JMod.MakeModel(self, "models/jmod/giant_hollow_dome.mdl", "models/mat_jack_gmod_hexshield")
-		self:EnableCustomCollisions(true)
+		--self:EnableCustomCollisions(true)
 		--self.Bubble2 = JMod.MakeModel(self, "models/jmod/giant_hollow_dome.mdl", "models/mat_jack_gmod_hexshield")
 	end
 
 	function ENT:DrawTranslucent(flags)
 		local FT = FrameTime()
 		local SelfPos, SelfAng = self:GetPos(), self:GetAngles()
-		local ShieldModulate = .98 + (math.sin(CurTime() * .5) - 0.015) * 0.01
+		local ShieldModulate = .995 + (math.sin(CurTime() * .5) - 0.015) * .005
 		self.ShieldRotate = (self.ShieldRotate or 0) + FT
 		local ShieldAng = SelfAng:GetCopy()
 		ShieldAng:RotateAroundAxis(ShieldAng:Up(), self.ShieldRotate)
