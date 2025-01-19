@@ -173,7 +173,7 @@ if(SERVER)then
 		self:UpdateWireOutputs()
 
 		if (State == STATE_ON) then
-			self:ConsumeElectricity(.1)
+			--self:ConsumeElectricity(.1)
 			if not (IsValid(self.Shield)) then
 				self:ShieldBreak()
 			else

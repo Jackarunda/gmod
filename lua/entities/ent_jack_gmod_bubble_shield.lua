@@ -58,10 +58,9 @@ function ENT:TestCollision(startpos, delta, isbox, extents, mask)
 	if startpos:DistToSqr(self:GetPos()) < self.ShieldRadiusSqr then
 
 		return false
-	else
-
-		return true
 	end
+
+	return true
 end
 
 if SERVER then
@@ -71,7 +70,7 @@ if SERVER then
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)
 		self:SetSolid(SOLID_VPHYSICS)
-		self:SetCollisionGroup(COLLISION_GROUP_NONE)
+		self:SetCollisionGroup(COLLISION_GROUP_WORLD)
 		self:DrawShadow(false)
 		self:SetRenderMode(RENDERMODE_TRANSCOLOR)
 
@@ -112,8 +111,10 @@ if CLIENT then
 	function ENT:Initialize()
 		self:SetRenderMode(RENDERMODE_TRANSCOLOR)
 		self.Bubble1 = JMod.MakeModel(self, "models/jmod/giant_hollow_dome.mdl", "models/mat_jack_gmod_hexshield")
-		self.Bubble2 = JMod.MakeModel(self, "models/jmod/giant_hollow_dome.mdl", "models/mat_jack_gmod_hexshield")
+		--self.Bubble2 = JMod.MakeModel(self, "models/jmod/giant_hollow_dome.mdl", "models/mat_jack_gmod_hexshield")
 		--self:EnableCustomCollisions(true)
+		--self:SetCustomCollisionCheck(true)
+		--self:CollisionRulesChanged()
 	end
 
 	local ShieldColor = Color(255, 255, 255)
