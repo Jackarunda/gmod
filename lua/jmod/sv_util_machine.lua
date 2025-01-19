@@ -99,7 +99,7 @@ function JModResourceCable(Ent1, Ent2, resType, plugPos, dist, newCable)
 
 	LengthConstraint:SetTable(newCableTable)
 
-	return newCable
+	return LengthConstraint
 end
 duplicator.RegisterConstraint("JModResourceCable", JModResourceCable, "Ent1", "Ent2", "resType", "plugPos", "dist", "newCable")
 
