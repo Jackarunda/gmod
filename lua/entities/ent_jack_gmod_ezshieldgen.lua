@@ -101,7 +101,7 @@ if(SERVER)then
 		if (self:GetElectricity() > 0) then
 			self.NextUseTime = CurTime() + 1
 			if (self:EstablishSelf(activator)) then
-				self:EmitSound("snds_jack_gmod/electrical_start_charge.ogg", 60, 100)
+				self:EmitSound("snds_jack_gmod/electrical_start_charge.ogg", 60, 100 * self.ChargeSpeed)
 				self:SetState(STATE_CHARGING)
 				self.BaseSoundLoop = CreateSound(self, "snds_jack_gmod/electric_machine_low_hum_loop.wav")
 				self.BaseSoundLoop:SetSoundLevel(65)
