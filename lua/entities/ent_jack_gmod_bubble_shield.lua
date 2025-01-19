@@ -8,6 +8,7 @@ ENT.AdminSpawnable = false
 ENT.Model = "models/jmod/giant_hollow_dome.mdl"
 ENT.PhysgunDisabled = true
 ENT.ShieldRadiusSqr = 238 * 238
+ENT.mmRHAe = 10 -- for ArcCW, hinders bullet penetration of the shield
 
 function ENT:GravGunPunt(ply)
 	return false
@@ -66,14 +67,23 @@ function ENT:TestCollision(startpos, delta, isbox, extents, mask)
 end
 --]]
 
+function ENT:SetupDataTables()
+	self:NetworkVar("Bool", 0, "AmInnerShield")
+	self:NetworkVar("Int", 1, "SizeClass")
+end
+
+function ENT:ImpactTrace(tr, dmgType)
+	return true
+end
+
 if SERVER then
 	function ENT:Initialize()
 		self:SetModel(self.Model)
-		self:SetMaterial("models/mat_jack_gmod_hexshield")
+		self:SetMaterial("models/mat_jack_gmod_hexshield1")
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)
 		self:SetSolid(SOLID_VPHYSICS)
-		self:SetCollisionGroup(COLLISION_GROUP_WEAPON)
+		self:SetCollisionGroup(COLLISION_GROUP_NONE)
 		self:DrawShadow(false)
 		self:SetRenderMode(RENDERMODE_GLOW)
 
@@ -84,10 +94,22 @@ if SERVER then
 		phys:Wake()
 		phys:SetMass(9e9)
 		phys:EnableMotion(false)
+		phys:SetMaterial("solidmetal")
 
 		--self:EnableCustomCollisions(true)
 		--self:SetCustomCollisionCheck(true)
 		--self:CollisionRulesChanged()
+
+		--[[
+		if (not(self:GetAmInnerShield())) then
+			self.InnerShield = ents.Create("ent_jack_gmod_bubble_shield")
+			self.InnerShield:SetAmInnerShield(true)
+			self.InnerShield.OuterShield = self
+			self.InnerShield:SetPos(self:GetPos() - Vector(0, 0, 10))
+			self.InnerShield:Spawn()
+			self.InnerShield:Activate()
+		end
+		--]]
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
@@ -95,8 +117,40 @@ if SERVER then
 	end
 
 	function ENT:OnTakeDamage(dmginfo)
-		--self:TakePhysicsDamage(dmginfo)
-		-- todo
+		local DmgPos = dmginfo:GetDamagePosition()
+		local SelfPos = self:GetPos()
+		local Vec = DmgPos - SelfPos
+		local Dir = Vec:GetNormalized()
+		local Scale = (dmginfo:GetDamage() / 30) ^ .5
+		---
+		local Ripple = EffectData()
+		Ripple:SetOrigin(DmgPos)
+		Ripple:SetScale(Scale)
+		Ripple:SetNormal(Dir)
+		util.Effect("eff_jack_gmod_refractripple", Ripple, true, true)
+		---
+		self:EmitSound("snds_jack_gmod/ez_bubbleshield_hits/"..math.random(1, 7)..".ogg", 65, math.random(90, 110))
+		---
+		--[[ -- attempted bullet ricochet, but this crashes the game
+		if (dmginfo:IsBulletDamage() and true) then
+			local Dmg = dmginfo:GetDamage()
+			local DmgForce = dmginfo:GetDamageForce()
+			local DmgDir = DmgForce:GetNormalized()
+			local DmgDirAng = DmgDir:Angle()
+			DmgDirAng:RotateAroundAxis(Dir, 180)
+			---
+			self:FireBullets({
+				Src = DmgPos,
+				Dir = Dir,
+				Tracer = 1,
+				Num = 1,
+				Spread = Vector(0,0,0),
+				Damage = Dmg,
+				Force = DmgForce,
+				Attacker = dmginfo:GetAttacker()
+			})
+		end
+		--]]
 	end
 
 	function ENT:Think()
@@ -108,16 +162,14 @@ if SERVER then
 			end
 		end
 	end
+
+	function ENT:OnRemove()
+		if (IsValid(self.InnerShield)) then self.InnerShield:Remove() end
+	end
 end
 
 if CLIENT then
-	local ShieldColor = Color(255, 255, 255)
 	local GlowSprite = Material("sprites/mat_jack_gmod_bubbleshieldglow")
-	/*
-	hook.Add("PreDrawHalos", "JMOD_PREDRAWHALOS", function()
-		--halo.Add(ents.FindByClass("ent_jack_gmod_bubble_shield"), Color(255, 255, 255, 10), 5, 5, 20)
-	end)
-	*/
 
 	hook.Add("PostDrawTranslucentRenderables", "JMOD_POSTDRAWTRANSLUCENTRENDERABLES", function()
 		for k, v in ipairs(ents.FindByClass("ent_jack_gmod_bubble_shield")) do
@@ -125,24 +177,29 @@ if CLIENT then
 			local Epos = EyePos()
 			local Vec = Epos - SelfPos
 			local Dist = Vec:Length()
-			if Dist < 240 then
-				local Eang = EyeAngles()
-				render.SetMaterial(GlowSprite)
-				render.DrawSprite(Epos + Eang:Forward() * 10, 100, 100, Color(255, 255, 255, 128))
-			else
-				local DistFrac = math.Clamp(600 - Dist, 0, 600) / 600
-				local Size = 550 + 800 * DistFrac ^ 2
-				render.SetMaterial(GlowSprite)
-				render.DrawSprite(SelfPos, Size, Size, Color(255, 255, 255, 128))
+			local R, G, B = JMod.GoodBadColor(v.ShieldStrength)
+			R = math.Clamp(R + 30, 0, 255)
+			G = math.Clamp(G + 30, 0, 255)
+			B = math.Clamp(B + 30, 0, 255)
+			if (v.ShieldStrength > .2 or math.Rand(0, 1) > .1) then
+				if Dist < 240 then
+					local Eang = EyeAngles()
+					render.SetMaterial(GlowSprite)
+					render.DrawSprite(Epos + Eang:Forward() * 10, 45, 35, Color(R, G, B, 200))
+				else
+					local DistFrac = math.Clamp(600 - Dist, 0, 600) / 600
+					local Size = 550 + 800 * DistFrac ^ 2
+					render.SetMaterial(GlowSprite)
+					render.DrawSprite(SelfPos, Size, Size, Color(R, G, B, 128))
+				end
 			end
 		end
 	end)
 
 	function ENT:Initialize()
 		self:SetRenderMode(RENDERMODE_GLOW)
-		self.Bubble1 = JMod.MakeModel(self, "models/jmod/giant_hollow_dome.mdl", "models/mat_jack_gmod_hexshield")
-		--self:EnableCustomCollisions(true)
-		--self.Bubble2 = JMod.MakeModel(self, "models/jmod/giant_hollow_dome.mdl", "models/mat_jack_gmod_hexshield")
+		self.Bubble1 = JMod.MakeModel(self, "models/jmod/giant_hollow_dome.mdl", "models/mat_jack_gmod_hexshield1")
+		self.ShieldStrength = 1
 	end
 
 	function ENT:DrawTranslucent(flags)
@@ -152,8 +209,9 @@ if CLIENT then
 		self.ShieldRotate = (self.ShieldRotate or 0) + FT
 		local ShieldAng = SelfAng:GetCopy()
 		ShieldAng:RotateAroundAxis(ShieldAng:Up(), self.ShieldRotate)
-		JMod.RenderModel(self.Bubble1, SelfPos, ShieldAng, Vector(1, 1, 1) * ShieldModulate, ShieldColor:ToVector())
-		--JMod.RenderModel(self.Bubble2, SelfPos, ShieldAng, nil, ShieldColor:ToVector())
+		if (self.ShieldStrength > .2 or math.Rand(0, 1) > .1) then
+			JMod.RenderModel(self.Bubble1, SelfPos, ShieldAng, Vector(1, 1, 1) * ShieldModulate)
+		end
 	end
 	language.Add("ent_jack_gmod_bubble_shield", "Bubble Shield")
 end
