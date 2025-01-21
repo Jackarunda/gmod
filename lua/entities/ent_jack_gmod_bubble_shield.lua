@@ -5,7 +5,7 @@ ENT.PrintName = "Bubble Shield"
 ENT.Author = "Jackarunda"
 ENT.Spawnable = false
 ENT.AdminSpawnable = false
-ENT.Model = "models/jmod/giant_hollow_dome.mdl"
+ENT.Model = "models/jmod/giant_hollow_dome.mdl"--"models/jmod/giant_hollow_sphere.mdl"
 ENT.PhysgunDisabled = true
 ENT.ShieldRadiusSqr = 238 * 238
 ENT.mmRHAe = 10 -- for ArcCW, hinders bullet penetration of the shield
@@ -79,7 +79,7 @@ end
 if SERVER then
 	function ENT:Initialize()
 		self:SetModel(self.Model)
-		self:SetMaterial("models/mat_jack_gmod_hexshield1")
+		--self:SetMaterial("models/mat_jack_gmod_hexshield1")
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)
 		self:SetSolid(SOLID_VPHYSICS)
@@ -198,7 +198,8 @@ if CLIENT then
 
 	function ENT:Initialize()
 		self:SetRenderMode(RENDERMODE_GLOW)
-		self.Bubble1 = JMod.MakeModel(self, "models/jmod/giant_hollow_dome.mdl", "models/mat_jack_gmod_hexshield1")
+		--self.Bubble1 = JMod.MakeModel(self, "models/jmod/giant_hollow_dome.mdl", "models/mat_jack_gmod_hexshield1")
+		self.Bubble1 = JMod.MakeModel(self, "models/jmod/giant_hollow_sphere.mdl", "models/jmod/icosphere_shield")
 		self.ShieldStrength = 1
 	end
 
