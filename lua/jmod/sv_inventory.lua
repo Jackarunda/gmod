@@ -613,7 +613,7 @@ function JMod.EZ_GrabItem(ply, cmd, args)
 						ply:ViewPunch(Angle(1, 0, 0))
 						ply:SetAnimation(PLAYER_ATTACK1)
 						--
-						JMod.Hint(ply,"hint item inventory add")
+						--JMod.Hint(ply,"hint item inventory add")
 						sound.Play("snd_jack_clothequip.ogg", ply:GetPos(), 60, math.random(90, 110))
 					end
 				else
