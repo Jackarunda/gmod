@@ -80,7 +80,7 @@ if SERVER then
 			start = SelfPos,
 			endpos = NewPos,
 			filter = { self, self.Canister },
-			mask = MASK_SHOT+MASK_WATER
+			mask = MASK_SOLID+MASK_WATER
 		})
 		if not MoveTrace.Hit then
 			-- move unobstructed

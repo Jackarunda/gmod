@@ -147,7 +147,7 @@ if SERVER then
 				start = SelfPos,
 				endpos = NewPos,
 				filter = { self, self.Canister },
-				mask = MASK_SHOT+MASK_WATER
+				mask = MASK_SOLID+MASK_WATER
 			})
 			if MoveTrace.StartSolid or (bit.band(util.PointContents(MoveTrace.HitPos), CONTENTS_WATER) == CONTENTS_WATER) then
 				SafeRemoveEntity(self)

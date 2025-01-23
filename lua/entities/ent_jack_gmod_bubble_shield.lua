@@ -7,15 +7,16 @@ ENT.Spawnable = false
 ENT.AdminSpawnable = false
 ENT.Model = "models/jmod/giant_hollow_sphere.mdl"--"models/jmod/giant_hollow_dome.mdl"
 ENT.PhysgunDisabled = true
-ENT.ShieldRadiusSqr = 238 * 238
+ENT.ShieldRadiusSqr = 240 * 240
 ENT.mmRHAe = 10 -- for ArcCW, hinders bullet penetration of the shield
+ENT.DisableDuplicator =	true
 
 function ENT:GravGunPunt(ply)
 	return false
 end
 
 --[[
-hook.Add("EntityFireBullets", "JMOD_SHIELDBULLETS", function(ent, data) 
+hook.Remove("EntityFireBullets", "JMOD_SHIELDBULLETS", function(ent, data) 
 	local ShieldBubbles = ents.FindByClass("ent_jack_gmod_bubble_shield")
 	if #ShieldBubbles > 0 then
 		for k, v in ipairs(ShieldBubbles) do
@@ -27,7 +28,7 @@ hook.Add("EntityFireBullets", "JMOD_SHIELDBULLETS", function(ent, data)
 					filter = {ent}
 				})
 				if EdgeTr.Entity == v then
-					data.Src = EdgeTr.HitPos + EdgeTr.Normal * 30
+					data.Src = EdgeTr.HitPos + EdgeTr.Normal * 40
 					return true
 				end
 			end
@@ -36,7 +37,7 @@ hook.Add("EntityFireBullets", "JMOD_SHIELDBULLETS", function(ent, data)
 end)
 --]]
 
---[[
+--
 hook.Add("ShouldCollide", "JMOD_SHIELDCOLLISION", function(ent1, ent2)
 	local snc1 = ent1.ShouldNotCollide
 	if snc1 and snc1(ent1, ent2) then return false end
@@ -46,22 +47,87 @@ hook.Add("ShouldCollide", "JMOD_SHIELDCOLLISION", function(ent1, ent2)
 end)
 
 function ENT:ShouldNotCollide(ent)
+	--print(ent)
 	if ent:IsPlayer() then
 		return true
 	end
 	local TheirVel = ent:GetVelocity()
 	local InsideShield = ent:GetPos():DistToSqr(self:GetPos()) < self.ShieldRadiusSqr
-	if InsideShield or TheirVel:Length() < 1000 then
+	if InsideShield or TheirVel:Length() < 500 then
 		return true
 	end
 
 	return false
 end
 
+function ENT:MyCollisionRulesChanged()
+	if not self.m_OldCollisionGroup then self.m_OldCollisionGroup = self:GetCollisionGroup() end
+	self:SetCollisionGroup(self.m_OldCollisionGroup == COLLISION_GROUP_DEBRIS and COLLISION_GROUP_WORLD or COLLISION_GROUP_DEBRIS)
+	self:SetCollisionGroup(self.m_OldCollisionGroup)
+	self.m_OldCollisionGroup = nil
+end
+--]]
 function ENT:TestCollision(startpos, delta, isbox, extents, mask)
-	if startpos:DistToSqr(self:GetPos()) < self.ShieldRadiusSqr then
-		return false
+	local SelfPos = self:GetPos()
+	local EndPos = startpos + delta
+	local TestNorm = (startpos - (EndPos)):GetNormalized()
+	local OurNorm = (SelfPos - startpos):GetNormalized()
+
+	--if (OurNorm + TestNorm):Length() > 1 then
+		
+		--return false 
+	--end
+
+	--[[if SelfPos:DistToSqr(startpos) < self.ShieldRadiusSqr then
+		local RandColServer, RandColorClient = Color(0, math.random(0, 255), 255), Color(255, math.random(0, 255), 0)
+		if CLIENT then
+			if isbox then
+				debugoverlay.Box(EndPos, -extents, extents, 2, RandColorClient, false)
+			else
+				debugoverlay.Cross(EndPos, 2, 2, RandColorClient, true)
+				debugoverlay.Line(EndPos, EndPos + TestNorm * 10, 2, RandColorClient, true)
+			end
+		else
+			--print((TestNorm + OurNorm):Length())
+			if isbox then
+				debugoverlay.Box(EndPos, -extents, extents, 2, RandColServer, false)
+			else
+				debugoverlay.Cross(EndPos, 2, 2, RandColServer, true)
+				debugoverlay.Line(EndPos, EndPos + TestNorm * 10, 2, RandColServer	, true)
+			end
+		end
+	end--]]
+
+	if isbox then
+		local PointsToCheck = {
+			startpos,
+			startpos + extents,
+			startpos - extents,
+			startpos + Vector(extents.x, extents.y, -extents.z),
+			startpos + Vector(extents.x, -extents.y, extents.z),
+			startpos + Vector(-extents.x, extents.y, -extents.z),
+			startpos + Vector(-extents.x, -extents.y, extents.z)
+		}
+		for i, point in ipairs(PointsToCheck) do
+			if SelfPos:DistToSqr(point) < self.ShieldRadiusSqr then
+				--print("Box")
+
+				return false
+			end
+		end
+	else
+		if SelfPos:DistToSqr(startpos) < self.ShieldRadiusSqr then
+
+			return false
+		end
 	end
+	--debugoverlay.Cross(EndPos, 2, 5, Color(255, 0, 0), true)
+	--debugoverlay.Line(EndPos, EndPos + TestNorm * 5, 5, Color(255, 255, 255), true)
+	--if bit.band(mask, MASK_SOLID) == MASK_SOLID then
+
+		--return false
+	--end
+	--]]
 
 	return true
 end
@@ -86,6 +152,7 @@ if SERVER then
 		self:SetCollisionGroup(COLLISION_GROUP_NONE)
 		self:DrawShadow(false)
 		self:SetRenderMode(RENDERMODE_GLOW)
+		self:AddEFlags(EFL_NO_DISSOLVE)
 
 		local phys = self:GetPhysicsObject()
 
@@ -96,18 +163,20 @@ if SERVER then
 		phys:EnableMotion(false)
 		phys:SetMaterial("solidmetal")
 
-		--self:EnableCustomCollisions(true)
-		--self:SetCustomCollisionCheck(true)
-		--self:CollisionRulesChanged()
-
-		--[[
-		if (not(self:GetAmInnerShield())) then
+		self:EnableCustomCollisions(true)
+		if not(self:GetAmInnerShield()) then
 			self.InnerShield = ents.Create("ent_jack_gmod_bubble_shield")
 			self.InnerShield:SetAmInnerShield(true)
 			self.InnerShield.OuterShield = self
+			self.InnerShield.Projector = self.Projector
 			self.InnerShield:SetPos(self:GetPos() - Vector(0, 0, 10))
 			self.InnerShield:Spawn()
 			self.InnerShield:Activate()
+			self.InnerShield:SetCollisionGroup(COLLISION_GROUP_WORLD)
+			self:DeleteOnRemove(self.InnerShield)
+			-- We set ourselves to become the prop blocker
+			self:SetCustomCollisionCheck(true)
+			self:CollisionRulesChanged()
 		end
 		--]]
 	end
@@ -123,14 +192,18 @@ if SERVER then
 		local Dir = Vec:GetNormalized()
 		local Scale = (dmginfo:GetDamage() / 30) ^ .5
 		---
-		local Ripple = EffectData()
-		Ripple:SetOrigin(DmgPos)
-		Ripple:SetScale(Scale)
-		Ripple:SetNormal(Dir)
-		util.Effect("eff_jack_gmod_refractripple", Ripple, true, true)
+		-- This is to stop stuff like fire from causing ripples on the shield in weird places
+		if dmginfo:IsBulletDamage() or dmginfo:IsExplosionDamage() or dmginfo:GetDamageForce():Length() > 10 then
+			local Ripple = EffectData()
+			Ripple:SetOrigin(DmgPos)
+			Ripple:SetScale(Scale)
+			Ripple:SetNormal(Dir)
+			util.Effect("eff_jack_gmod_refractripple", Ripple, true, true)
+			---
+			self:EmitSound("snds_jack_gmod/ez_bubbleshield_hits/"..math.random(1, 7)..".ogg", 65, math.random(90, 110))
+		end
 		---
-		self:EmitSound("snds_jack_gmod/ez_bubbleshield_hits/"..math.random(1, 7)..".ogg", 65, math.random(90, 110))
-		---
+		--print(dmginfo:GetAttacker())
 		--[[ -- attempted bullet ricochet, but this crashes the game
 		if (dmginfo:IsBulletDamage() and true) then
 			local Dmg = dmginfo:GetDamage()
@@ -157,14 +230,19 @@ if SERVER then
 		if IsValid(self.Projector) then
 			self:SetPos(self.Projector:GetPos() - self.Projector:GetUp() * 120)
 			self:SetAngles(self.Projector:GetAngles())
-			if IsValid(self:GetPhysicsObject()) then
-				self:GetPhysicsObject():EnableMotion(false)
-			end
+		elseif IsValid(self.OuterShield) then
+			self:SetPos(self.OuterShield:GetPos())
+			self:SetAngles(self.OuterShield:GetAngles())
+		end
+		if IsValid(self:GetPhysicsObject()) then
+			self:GetPhysicsObject():EnableMotion(false)
 		end
 	end
 
 	function ENT:OnRemove()
-		if (IsValid(self.InnerShield)) then self.InnerShield:Remove() end
+		--print("Removed Inner Shield", self:GetAmInnerShield())
+		SafeRemoveEntity(self.InnerShield)
+		SafeRemoveEntity(self.OuterShield)
 	end
 end
 
@@ -173,24 +251,26 @@ if CLIENT then
 
 	hook.Add("PostDrawTranslucentRenderables", "JMOD_POSTDRAWTRANSLUCENTRENDERABLES", function()
 		for k, v in ipairs(ents.FindByClass("ent_jack_gmod_bubble_shield")) do
-			local SelfPos = v:GetPos()
-			local Epos = EyePos()
-			local Vec = Epos - SelfPos
-			local Dist = Vec:Length()
-			local R, G, B = JMod.GoodBadColor(v.ShieldStrength)
-			R = math.Clamp(R + 30, 0, 255)
-			G = math.Clamp(G + 30, 0, 255)
-			B = math.Clamp(B + 30, 0, 255)
-			if (v.ShieldStrength > .2 or math.Rand(0, 1) > .1) then
-				if Dist < 240 then
-					local Eang = EyeAngles()
-					render.SetMaterial(GlowSprite)
-					render.DrawSprite(Epos + Eang:Forward() * 10, 45, 35, Color(R, G, B, 200))
-				else
-					local DistFrac = math.Clamp(600 - Dist, 0, 600) / 600
-					local Size = 550 + 800 * DistFrac ^ 2
-					render.SetMaterial(GlowSprite)
-					render.DrawSprite(SelfPos, Size, Size, Color(R, G, B, 128))
+			if not v:GetAmInnerShield() then
+				local SelfPos = v:GetPos()
+				local Epos = EyePos()
+				local Vec = Epos - SelfPos
+				local Dist = Vec:Length()
+				local R, G, B = JMod.GoodBadColor(v.ShieldStrength)
+				R = math.Clamp(R + 30, 0, 255)
+				G = math.Clamp(G + 30, 0, 255)
+				B = math.Clamp(B + 30, 0, 255)
+				if (v.ShieldStrength > .2 or math.Rand(0, 1) > .1) then
+					if Dist < 240 then
+						local Eang = EyeAngles()
+						render.SetMaterial(GlowSprite)
+						render.DrawSprite(Epos + Eang:Forward() * 10, 45, 35, Color(R, G, B, 200))
+					else
+						local DistFrac = math.Clamp(600 - Dist, 0, 600) / 600
+						local Size = 550 + 800 * DistFrac ^ 2
+						render.SetMaterial(GlowSprite)
+						render.DrawSprite(SelfPos, Size, Size, Color(R, G, B, 128))
+					end
 				end
 			end
 		end
@@ -201,13 +281,32 @@ if CLIENT then
 		--self.Bubble1 = JMod.MakeModel(self, "models/jmod/giant_hollow_dome.mdl", "models/mat_jack_gmod_hexshield1")
 		self.Bubble1 = JMod.MakeModel(self, "models/jmod/giant_hollow_sphere.mdl", "models/jmod/icosphere_shield")
 		self.ShieldStrength = 1
+		self.ShieldRotate = 0
+		--
+		if IsInnerShield then
+			self:EnableCustomCollisions(true)
+		end
+		--self:SetCustomCollisionCheck(true)
+		--self:MyCollisionRulesChanged()
+		--self:CollisionRulesChanged()
+		--
+	end
+
+	function ENT:Think()
+		local FT = FrameTime()
+		self.ShieldRotate = (self.ShieldRotate or 0) + FT
+		if (self.ShieldRotate > 360) then
+			self.ShieldRotate = self.ShieldRotate - 360
+		end
 	end
 
 	function ENT:DrawTranslucent(flags)
+		if self:GetAmInnerShield() then
+			return
+		end
 		local FT = FrameTime()
 		local SelfPos, SelfAng = self:GetPos(), self:GetAngles()
 		local ShieldModulate = .995 + (math.sin(CurTime() * .5) - 0.015) * .005
-		self.ShieldRotate = (self.ShieldRotate or 0) + FT
 		local ShieldAng = SelfAng:GetCopy()
 		ShieldAng:RotateAroundAxis(ShieldAng:Up(), self.ShieldRotate)
 		if (self.ShieldStrength > .2 or math.Rand(0, 1) > .1) then
