@@ -7,8 +7,14 @@ ENT.Spawnable = false
 ENT.AdminSpawnable = false
 ENT.Model = "models/jmod/giant_hollow_sphere.mdl"--"models/jmod/giant_hollow_dome.mdl"
 ENT.PhysgunDisabled = true
-ENT.ShieldRadiusSqr = 240 * 240
-ENT.mmRHAe = 10 -- for ArcCW, hinders bullet penetration of the shield
+ENT.ShieldRadii = {
+	[1] = 240,
+	[2] = 360,
+	[3] = 540,
+	[4] = 810,
+	[5] = 1620
+}
+ENT.mmRHAe = 100 -- for ArcCW, hinders bullet penetration of the shield
 ENT.DisableDuplicator =	true
 
 function ENT:GravGunPunt(ply)
@@ -121,12 +127,31 @@ function ENT:TestCollision(startpos, delta, isbox, extents, mask)
 			return false
 		end
 	end
+
 	--debugoverlay.Cross(EndPos, 2, 5, Color(255, 0, 0), true)
 	--debugoverlay.Line(EndPos, EndPos + TestNorm * 5, 5, Color(255, 255, 255), true)
-	--if bit.band(mask, MASK_SOLID) == MASK_SOLID then
+	--[[
+	if bit.band(mask, MASK_SHOT) == MASK_SHOT then
 
-		--return false
-	--end
+		local EdgeTr = util.TraceLine({
+			start = startpos,
+			endpos = EndPos,
+			mask = MASK_SOLID
+		})
+		if EdgeTr.Hit then
+			debugoverlay.Cross(EdgeTr.HitPos, 2, 5, Color(255, 0, 0), true)
+			-- Reflect
+			local ReflectAng = TestNorm:Angle()
+			ReflectAng:RotateAroundAxis(ReflectAng:Right(), 180)
+			local ReflectDir = ReflectAng:Forward()
+
+			return {
+				HitPos = EdgeTr.HitPos,
+				Fraction = 0,
+				HitNormal = EdgeTr.HitNormal
+			}
+		end
+	end
 	--]]
 
 	return true
@@ -162,6 +187,12 @@ if SERVER then
 		phys:SetMass(9e9)
 		phys:EnableMotion(false)
 		phys:SetMaterial("solidmetal")
+
+		-- Initializing some values
+		self:SetSizeClass(1)
+		local ShieldGrade = self:GetSizeClass()
+		self.ShieldRadius = self.ShieldRadii[ShieldGrade]
+		self.ShieldRadiusSqr = self.ShieldRadius * self.ShieldRadius
 
 		self:EnableCustomCollisions(true)
 		if not(self:GetAmInnerShield()) then
@@ -280,8 +311,13 @@ if CLIENT then
 		self:SetRenderMode(RENDERMODE_GLOW)
 		--self.Bubble1 = JMod.MakeModel(self, "models/jmod/giant_hollow_dome.mdl", "models/mat_jack_gmod_hexshield1")
 		self.Bubble1 = JMod.MakeModel(self, "models/jmod/giant_hollow_sphere.mdl", "models/jmod/icosphere_shield")
+		-- Initializing some values
 		self.ShieldStrength = 1
 		self.ShieldRotate = 0
+		self:SetSizeClass(1)
+		local ShieldGrade = self:GetSizeClass()
+		self.ShieldRadius = self.ShieldRadii[ShieldGrade]
+		self.ShieldRadiusSqr = self.ShieldRadius * self.ShieldRadius
 		--
 		if IsInnerShield then
 			self:EnableCustomCollisions(true)
