@@ -386,14 +386,20 @@ hook.Add("RenderScreenspaceEffects", "JMOD_SCREENSPACE", function()
 	end
 
 	if CurVisionBlur > 0 and FirstPerson then
-		render.UpdateScreenEffectTexture()
-		blurMaterial:SetTexture("$BASETEXTURE", render.GetScreenEffectTexture())
-		blurMaterial:SetTexture("$DEPTHTEXTURE", render.GetResolvedFullFrameDepth())
-		blurMaterial:SetFloat("$size", (CurVisionBlur * 40) ^ .5)
-		blurMaterial:SetFloat("$focus", 1)
-		blurMaterial:SetFloat("$focusradius", 1)
-		render.SetMaterial(blurMaterial)
-		render.DrawScreenQuad()
+		if GetConVar("jmod_cl_blurry_menus"):GetBool() then
+			render.UpdateScreenEffectTexture()
+			blurMaterial:SetTexture("$BASETEXTURE", render.GetScreenEffectTexture())
+			blurMaterial:SetTexture("$DEPTHTEXTURE", render.GetResolvedFullFrameDepth())
+			blurMaterial:SetFloat("$size", (CurVisionBlur * 40) ^ .5)
+			blurMaterial:SetFloat("$focus", 1)
+			blurMaterial:SetFloat("$focusradius", 1)
+			render.SetMaterial(blurMaterial)
+			render.DrawScreenQuad()
+		else
+			-- We grey out the screen for potato users
+			surface.SetDrawColor(100, 120, 100, math.min(255 * CurVisionBlur, 240))
+			surface.DrawRect(-1, -1, W + 2, H + 2)
+		end
 	end
 
 	ply.EZvisionBlur = math.Clamp((ply.EZvisionBlur or 0) - FT * BlurFadeAmt, 0, 75)
