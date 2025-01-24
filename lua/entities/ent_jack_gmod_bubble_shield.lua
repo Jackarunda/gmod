@@ -79,19 +79,15 @@ function ENT:TestCollision(startpos, delta, isbox, extents, mask)
 	local TestNorm = (startpos - (EndPos)):GetNormalized()
 	local OurNorm = (SelfPos - startpos):GetNormalized()
 
-	--if (OurNorm + TestNorm):Length() > 1 then
-		
-		--return false 
-	--end
-
-	--[[if SelfPos:DistToSqr(startpos) < self.ShieldRadiusSqr then
+	--[[if (bit.band(mask, MASK_SHOT) == MASK_SHOT) then
 		local RandColServer, RandColorClient = Color(0, math.random(0, 255), 255), Color(255, math.random(0, 255), 0)
+		local WhereCameFrom = EndPos + TestNorm * 10
 		if CLIENT then
 			if isbox then
 				debugoverlay.Box(EndPos, -extents, extents, 2, RandColorClient, false)
 			else
 				debugoverlay.Cross(EndPos, 2, 2, RandColorClient, true)
-				debugoverlay.Line(EndPos, EndPos + TestNorm * 10, 2, RandColorClient, true)
+				debugoverlay.Line(EndPos, startpos, 2, RandColorClient, true)
 			end
 		else
 			--print((TestNorm + OurNorm):Length())
@@ -99,7 +95,7 @@ function ENT:TestCollision(startpos, delta, isbox, extents, mask)
 				debugoverlay.Box(EndPos, -extents, extents, 2, RandColServer, false)
 			else
 				debugoverlay.Cross(EndPos, 2, 2, RandColServer, true)
-				debugoverlay.Line(EndPos, EndPos + TestNorm * 10, 2, RandColServer	, true)
+				debugoverlay.Line(EndPos, startpos, 2, RandColServer	, true)
 			end
 		end
 	end--]]
@@ -138,18 +134,20 @@ function ENT:TestCollision(startpos, delta, isbox, extents, mask)
 			endpos = EndPos,
 			mask = MASK_SOLID
 		})
-		if EdgeTr.Hit then
-			debugoverlay.Cross(EdgeTr.HitPos, 2, 5, Color(255, 0, 0), true)
+		if EdgeTr.Hit and (EdgeTr.Entity:GetClass() == "ent_jack_gmod_bubble_shield") then
+			debugoverlay.Cross(EdgeTr.HitPos - EdgeTr.Normal * 5, 2, 5, Color(255, 0, 0), true)
 			-- Reflect
 			local ReflectAng = TestNorm:Angle()
 			ReflectAng:RotateAroundAxis(ReflectAng:Right(), 180)
 			local ReflectDir = ReflectAng:Forward()
 
 			return {
-				HitPos = EdgeTr.HitPos,
-				Fraction = 0,
-				HitNormal = EdgeTr.HitNormal
+				HitPos = EdgeTr.HitPos - EdgeTr.Normal * 5,
+				Fraction = 1,
+				HitNormal = -EdgeTr.HitNormal
 			}
+		else
+			--print("Miss")
 		end
 	end
 	--]]
@@ -195,7 +193,6 @@ if SERVER then
 		self.ShieldRadius = self.ShieldRadii[ShieldGrade]
 		self.ShieldRadiusSqr = self.ShieldRadius * self.ShieldRadius
 
-		self:EnableCustomCollisions(true)
 		if not(self:GetAmInnerShield()) then
 			self.InnerShield = ents.Create("ent_jack_gmod_bubble_shield")
 			self.InnerShield:SetAmInnerShield(true)
@@ -203,12 +200,15 @@ if SERVER then
 			self.InnerShield.Projector = self.Projector
 			self.InnerShield:SetPos(self:GetPos() - Vector(0, 0, 10))
 			self.InnerShield:Spawn()
-			self.InnerShield:Activate()
 			self.InnerShield:SetCollisionGroup(COLLISION_GROUP_WORLD)
 			self:DeleteOnRemove(self.InnerShield)
+			self.InnerShield:SetModelScale(.8, 0.001)
+			self.InnerShield:Activate()
 			-- We set ourselves to become the prop blocker
 			self:SetCustomCollisionCheck(true)
 			self:CollisionRulesChanged()
+		else
+			self:EnableCustomCollisions(true)
 		end
 		--]]
 	end
@@ -267,6 +267,7 @@ if SERVER then
 			self:SetAngles(self.OuterShield:GetAngles())
 		end
 		if IsValid(self:GetPhysicsObject()) then
+			self:GetPhysicsObject():SetVelocity(Vector(0, 0, 0))
 			self:GetPhysicsObject():EnableMotion(false)
 		end
 	end
