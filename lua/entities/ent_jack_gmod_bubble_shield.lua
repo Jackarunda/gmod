@@ -282,7 +282,7 @@ end
 if CLIENT then
 	local GlowSprite = Material("sprites/mat_jack_gmod_bubbleshieldglow")
 
-	hook.Add("PostDrawTranslucentRenderables", "JMOD_POSTDRAWTRANSLUCENTRENDERABLES", function()
+	hook.Add("PostDrawTranslucentRenderables", "JMOD_DRAWBUBBLESHIELD", function()
 		for k, v in ipairs(ents.FindByClass("ent_jack_gmod_bubble_shield")) do
 			if not v:GetAmInnerShield() then
 				local SelfPos = v:GetPos()

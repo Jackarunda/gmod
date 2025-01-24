@@ -1,7 +1,7 @@
 "Refract"
 {
  	"$model" 1
- 	"$refractamount" "0.2"
+ 	"$refractamount" "0.05"
  	"$bluramount" "1"
 	"$REFRACTTINT" "{255 255 255}"
 	"$scale" "[1 1]"
