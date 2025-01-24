@@ -171,6 +171,7 @@ if SERVER then
 	function ENT:Initialize()
 		self:SetModel(self.Model)
 		--self:SetMaterial("models/mat_jack_gmod_hexshield1")
+		--self:SetMaterial("models/jmod/icosphere_shield")
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)
 		self:SetSolid(SOLID_VPHYSICS)

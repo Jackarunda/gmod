@@ -2,11 +2,11 @@
 {
  	"$model" 1
  	"$refractamount" "0.2"
- 	"$bluramount" "0.5"
+ 	"$bluramount" "1"
 	"$REFRACTTINT" "{255 255 255}"
 	"$scale" "[1 1]"
-	"$dudvmap" "models/tex_jack_flat_normal"
-	"$normalmap" "models/tex_jack_flat_normal"
+	"$dudvmap" "models/jmod/icoshield_n"
+	"$normalmap" "models/jmod/icoshield_n"
 	"$nocull" 1
 	"$surfaceprop" "No_decal"
 	"$nodecal" "1"
