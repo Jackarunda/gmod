@@ -356,6 +356,7 @@ net.Receive("JMod_LuaConfigSync", function(dataLength)
 	JMod.Config.Weapons = {SwayMult = Payload.WeaponSwayMult}
 	JMod.Config.QoL = table.FullCopy(Payload.QoL)
 	JMod.Config.ResourceEconomy = {MaxResourceMult = Payload.MaxResourceMult}
+	JMod.Config.Explosives = {Flashbang = Payload.Flashbang}
 
 	if tobool(net.ReadBit()) then
 		for k, v in player.Iterator() do

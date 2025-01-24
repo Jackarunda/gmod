@@ -30,10 +30,15 @@ if SERVER then
 		local BlastDist = 500
 		for k, v in pairs(ents.FindInSphere(SelfPos, BlastDist)) do
 			if v:IsNPC() then
-				v.EZNPCincapacitate = Time + math.Rand(3, 5)
+				v.EZNPCincapacitate = Time + math.Rand(3, 6)
 			end
 			if v:IsPlayer() and v:Alive() and JMod.ClearLoS(self, v, false, 10) then
-				v.EZblastShock = math.Clamp(v.EZblastShock or 0 + 200 * (1 - SelfPos:Distance(v:GetPos()) / BlastDist), 0, 100)
+				local AlreadyBLasted = v:GetNW2Float("EZblastShock", 0)
+				local BlastAmount = 200
+				if JMod.PlyHasArmorEff(v, "earPro") then
+					BlastAmount = BlastAmount * .5
+				end
+				v:SetNW2Float("EZblastShock", math.Clamp(AlreadyBLasted + BlastAmount * (1 - SelfPos:Distance(v:GetPos()) / BlastDist), 0, 100))
 			end
 		end
 
@@ -46,25 +51,7 @@ if SERVER then
 
 		SafeRemoveEntityDelayed(self, 10)
 	end
-
-	hook.Add("SetupMove", "JMOD_FLASHBANG", function(ply, mvd, cmd)
-		if ply.EZblastShock and (ply.EZblastShock >= 0) then
-			-- Slow player's movement
-			local CurrentSpeed = mvd:GetMaxClientSpeed()
-			local CurrentSlow = (1 - (ply.EZblastShock or 0) / 100) ^ 2
-			if CurrentSpeed > 10 then
-				mvd:SetMaxClientSpeed(math.max(CurrentSpeed * CurrentSlow, 10))
-				mvd:SetMaxSpeed(math.max(CurrentSpeed * CurrentSlow, 10))
-			end
 	
-			if IsFirstTimePredicted() then
-				ply.EZblastShock = math.Clamp(ply.EZblastShock - 5 * FrameTime(), 0, 100)
-				if (ply.EZblastShock) <= 0 then
-					ply.EZblastShock = nil
-				end
-			end
-		end
-	end)
 elseif CLIENT then
 	function ENT:Draw()
 		self:DrawModel()
@@ -72,3 +59,25 @@ elseif CLIENT then
 
 	language.Add("ent_jack_gmod_ezflashbang", "EZ Flashbang Grenade")
 end
+
+hook.Add("SetupMove", "JMOD_FLASHBANG", function(ply, mvd, cmd)
+	local BlastShock = ply:GetNW2Float("EZblastShock", nil)
+	if BlastShock then
+		-- Slow player's movement
+		local CurrentSpeed = mvd:GetMaxClientSpeed()
+		local CurrentSlow = (1 - (BlastShock or 0) / 100) ^ 2
+		if CurrentSpeed > 10 then
+			mvd:SetMaxClientSpeed(math.max(CurrentSpeed * CurrentSlow, 10))
+			mvd:SetMaxSpeed(math.max(CurrentSpeed * CurrentSlow, 10))
+		end
+
+		if IsFirstTimePredicted() then
+			local WearoffMult = 1 / (JMod.Config.Explosives.Flashbang.StunDurationMult or 1)
+			BlastShock = math.Clamp(BlastShock - 10 * WearoffMult * FrameTime(), 0, 100)
+			if (BlastShock <= 0) then
+				BlastShock = nil
+			end
+			ply:SetNW2Float("EZblastShock", BlastShock)
+		end
+	end
+end)
