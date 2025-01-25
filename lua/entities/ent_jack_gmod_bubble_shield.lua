@@ -316,7 +316,8 @@ if CLIENT then
 	function ENT:Initialize()
 		self:SetRenderMode(RENDERMODE_GLOW)
 		--self.Bubble1 = JMod.MakeModel(self, "models/jmod/giant_hollow_dome.mdl", "models/mat_jack_gmod_hexshield1")
-		self.Bubble1 = JMod.MakeModel(self, "models/jmod/giant_hollow_sphere.mdl", "models/jmod/icosphere_shield")
+		self.Bubble1 = JMod.MakeModel(self, "models/jmod/giant_hollow_sphere.mdl")
+		self.Mat = Material("models/jmod/icosphere_shield")
 		-- Initializing some values
 		self.ShieldStrength = 1
 		self.ShieldRotate = 0
@@ -351,8 +352,10 @@ if CLIENT then
 		local ShieldModulate = .995 + (math.sin(CurTime() * .5) - 0.015) * .005
 		local ShieldAng = SelfAng:GetCopy()
 		ShieldAng:RotateAroundAxis(ShieldAng:Up(), self.ShieldRotate)
+		local RefractAmt = (math.sin(CurTime() * 3) / 2 + .5) * .045 + .005
+		self.Mat:SetFloat("$refractamount", RefractAmt)
 		if (self.ShieldStrength > .2 or math.Rand(0, 1) > .1) then
-			JMod.RenderModel(self.Bubble1, SelfPos, ShieldAng, Vector(1, 1, 1) * ShieldModulate)
+			JMod.RenderModel(self.Bubble1, SelfPos, ShieldAng, Vector(1, 1, 1) * ShieldModulate, Vector(1, 1, 1), self.Mat)
 		end
 	end
 	language.Add("ent_jack_gmod_bubble_shield", "Bubble Shield")
