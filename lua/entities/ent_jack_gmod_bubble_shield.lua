@@ -26,18 +26,22 @@ hook.Remove("EntityFireBullets", "JMOD_SHIELDBULLETS", function(ent, data)
 	local ShieldBubbles = ents.FindByClass("ent_jack_gmod_bubble_shield")
 	if #ShieldBubbles > 0 then
 		for k, v in ipairs(ShieldBubbles) do
-			if data.Src:DistToSqr(v:GetPos()) < v.ShieldRadiusSqr then
-				local EdgeTr = util.TraceLine(
-					{start = data.Src, 
-					endpos = data.Src + data.Dir * data.Distance,
-					mask = MASK_ALL,
-					filter = {ent}
-				})
-				if EdgeTr.Entity == v then
-					data.Src = EdgeTr.HitPos + EdgeTr.Normal * 40
-					return true
+			--if v:GetAmInnerShield() then
+				if data.Src:DistToSqr(v:GetPos()) < v.ShieldRadiusSqr then
+					local EdgeTr = util.TraceLine(
+						{start = data.Src, 
+						endpos = data.Src + data.Dir * data.Distance,
+						mask = MASK_SOLID,
+						filter = {ent}
+					})
+					if EdgeTr.Entity == v then
+						data.Src = EdgeTr.HitPos + EdgeTr.Normal * 40
+						return true
+					end
+				else
+
 				end
-			end
+			--end
 		end
 	end
 end)
@@ -193,7 +197,9 @@ if SERVER then
 		self.ShieldRadius = self.ShieldRadii[ShieldGrade]
 		self.ShieldRadiusSqr = self.ShieldRadius * self.ShieldRadius
 
+		self:EnableCustomCollisions(true)
 		if not(self:GetAmInnerShield()) then
+			-- Inner shields are for bullets
 			self.InnerShield = ents.Create("ent_jack_gmod_bubble_shield")
 			self.InnerShield:SetAmInnerShield(true)
 			self.InnerShield.OuterShield = self
@@ -202,13 +208,11 @@ if SERVER then
 			self.InnerShield:Spawn()
 			self.InnerShield:SetCollisionGroup(COLLISION_GROUP_WORLD)
 			self:DeleteOnRemove(self.InnerShield)
-			self.InnerShield:SetModelScale(.8, 0.001)
+			self.InnerShield:SetModelScale(.85, 0.001)
 			self.InnerShield:Activate()
 			-- We set ourselves to become the prop blocker
 			self:SetCustomCollisionCheck(true)
 			self:CollisionRulesChanged()
-		else
-			self:EnableCustomCollisions(true)
 		end
 		--]]
 	end
@@ -321,9 +325,9 @@ if CLIENT then
 		self.ShieldRadius = self.ShieldRadii[ShieldGrade]
 		self.ShieldRadiusSqr = self.ShieldRadius * self.ShieldRadius
 		--
-		if IsInnerShield then
+		--if IsInnerShield then
 			self:EnableCustomCollisions(true)
-		end
+		--end
 		--self:SetCustomCollisionCheck(true)
 		--self:MyCollisionRulesChanged()
 		--self:CollisionRulesChanged()
