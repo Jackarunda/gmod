@@ -147,6 +147,7 @@ if(SERVER)then
 		self.Shield = ents.Create("ent_jack_gmod_bubble_shield")
 		self.Shield:SetPos(Pos)
 		self.Shield.Projector = self
+		self.Shield:SetSizeClass(self:GetGrade())
 		self.Shield:Spawn()
 		self.Shield:Initialize()
 	end

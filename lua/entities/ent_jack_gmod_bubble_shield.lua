@@ -5,7 +5,7 @@ ENT.PrintName = "Bubble Shield"
 ENT.Author = "Jackarunda"
 ENT.Spawnable = false
 ENT.AdminSpawnable = false
-ENT.Model = "models/jmod/giant_hollow_sphere.mdl"--"models/jmod/giant_hollow_dome.mdl"
+ENT.Model = "models/jmod/giant_hollow_sphere_1.mdl"
 ENT.PhysgunDisabled = true
 ENT.ShieldRadii = {
 	[1] = 240,
@@ -171,7 +171,13 @@ end
 
 if SERVER then
 	function ENT:Initialize()
-		self:SetModel(self.Model)
+		-- Initializing some values
+		if self:GetSizeClass() < 1 then self:SetSizeClass(1) end
+		local ShieldGrade = self:GetSizeClass()
+		self.ShieldRadius = self.ShieldRadii[ShieldGrade]
+		self.ShieldRadiusSqr = self.ShieldRadius * self.ShieldRadius
+
+		self:SetModel("models/jmod/giant_hollow_sphere_"..tostring(ShieldGrade)..".mdl")
 		--self:SetMaterial("models/mat_jack_gmod_hexshield1")
 		--self:SetMaterial("models/jmod/icosphere_shield")
 		self:PhysicsInit(SOLID_VPHYSICS)
@@ -191,12 +197,7 @@ if SERVER then
 		phys:EnableMotion(false)
 		phys:SetMaterial("solidmetal")
 
-		-- Initializing some values
-		self:SetSizeClass(1)
-		local ShieldGrade = self:GetSizeClass()
-		self.ShieldRadius = self.ShieldRadii[ShieldGrade]
-		self.ShieldRadiusSqr = self.ShieldRadius * self.ShieldRadius
-
+		--
 		self:EnableCustomCollisions(true)
 		if not(self:GetAmInnerShield()) then
 			-- Inner shields are for bullets
@@ -204,6 +205,7 @@ if SERVER then
 			self.InnerShield:SetAmInnerShield(true)
 			self.InnerShield.OuterShield = self
 			self.InnerShield.Projector = self.Projector
+			self.InnerShield:SetSizeClass(self:GetSizeClass())
 			self.InnerShield:SetPos(self:GetPos() - Vector(0, 0, 10))
 			self.InnerShield:Spawn()
 			self.InnerShield:SetCollisionGroup(COLLISION_GROUP_WORLD)
@@ -314,15 +316,16 @@ if CLIENT then
 	end)
 
 	function ENT:Initialize()
+		local ShieldGrade = self:GetSizeClass()
+
 		self:SetRenderMode(RENDERMODE_GLOW)
 		--self.Bubble1 = JMod.MakeModel(self, "models/jmod/giant_hollow_dome.mdl", "models/mat_jack_gmod_hexshield1")
-		self.Bubble1 = JMod.MakeModel(self, "models/jmod/giant_hollow_sphere.mdl")
+		self.Bubble1 = JMod.MakeModel(self, "models/jmod/giant_hollow_sphere_"..tostring(ShieldGrade)..".mdl")
 		self.Mat = Material("models/jmod/icosphere_shield")
 		-- Initializing some values
 		self.ShieldStrength = 1
 		self.ShieldRotate = 0
-		self:SetSizeClass(1)
-		local ShieldGrade = self:GetSizeClass()
+		self.ShieldGrow = 0
 		self.ShieldRadius = self.ShieldRadii[ShieldGrade]
 		self.ShieldRadiusSqr = self.ShieldRadius * self.ShieldRadius
 		--
@@ -341,6 +344,7 @@ if CLIENT then
 		if (self.ShieldRotate > 360) then
 			self.ShieldRotate = self.ShieldRotate - 360
 		end
+		self.ShieldGrow = math.Clamp((self.ShieldGrow or 0) + FT * 2, 0, 1)
 	end
 
 	function ENT:DrawTranslucent(flags)
@@ -355,7 +359,7 @@ if CLIENT then
 		local RefractAmt = (math.sin(CurTime() * 3) / 2 + .5) * .045 + .005
 		self.Mat:SetFloat("$refractamount", RefractAmt)
 		if (self.ShieldStrength > .2 or math.Rand(0, 1) > .1) then
-			JMod.RenderModel(self.Bubble1, SelfPos, ShieldAng, Vector(1, 1, 1) * ShieldModulate, Vector(1, 1, 1), self.Mat)
+			JMod.RenderModel(self.Bubble1, SelfPos, ShieldAng, Vector(self.ShieldGrow, self.ShieldGrow, self.ShieldGrow) * ShieldModulate, Vector(1, 1, 1), self.Mat)
 		end
 	end
 	language.Add("ent_jack_gmod_bubble_shield", "Bubble Shield")
