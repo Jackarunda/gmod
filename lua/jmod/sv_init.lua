@@ -7,6 +7,7 @@ end
 
 local function JackaSpawnHook(ply, transition)
 	if transition then return end
+	ply.EZragdoll = nil
 	ply.JModFriends = ply.JModFriends or {}
 
 	ply.EZarmor = ply.EZarmor or {
@@ -695,7 +696,10 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 		for _, playa in PlyIterator, Playas, startingindex do
 			if playa.EZnutrition then
 				if playa:Alive() then
-					local RestMult = (playa.JMod_IsSleeping and 2) or 1
+					local RestMult = 1
+					if playa.JMod_IsSleeping then
+						RestMult = 2
+					end
 					local Nuts = playa.EZnutrition.Nutrients
 
 					if Nuts > 0 then
@@ -977,6 +981,7 @@ hook.Add("PlayerDeath", "JMOD_SERVER_PLAYERDEATH", function(ply, inflictor, atta
 			EZcorpse:Activate()
 			if IsValid(EZcorpse.EZragdoll) then
 				EZcorpse.EZragdoll.EZstorageSpace = JMod.GetStorageCapacity(ply) 
+				ply.EZragdoll = EZcorpse.EZragdoll
 			end
 		end
 	end
