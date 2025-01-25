@@ -558,9 +558,10 @@ function JMod.GetPlayerStrength(ply)
 	if not(IsValid(ply) and ply:IsPlayer() and ply:Alive()) then return 1 end
 	local PlyHealth = ply:Health()
 	local PlyMaxHealth = ply:GetMaxHealth()
+	local HealthDiff = math.Clamp(PlyHealth - PlyMaxHealth, 0, PlyMaxHealth * 2)
 
 	--jprint(1 + (math.max(PlyHealth - PlyMaxHealth, 0) ^ 1.2 / (PlyMaxHealth)) * JMod.Config.General.HandGrabStrength)
-	return 1 + (math.max(PlyHealth - PlyMaxHealth, 0) ^ 1.2 / (PlyMaxHealth)) * JMod.Config.General.HandGrabStrength
+	return 1 + math.Round(HealthDiff ^ 1.2 / (PlyMaxHealth), 2) * JMod.Config.General.HandGrabStrength
 end
 
 function JMod.DebugArrangeEveryone(ply, mult)
