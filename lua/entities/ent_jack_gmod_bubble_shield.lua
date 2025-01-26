@@ -70,12 +70,6 @@ function ENT:ShouldNotCollide(ent)
 	return false
 end
 
-function ENT:MyCollisionRulesChanged()
-	if not self.m_OldCollisionGroup then self.m_OldCollisionGroup = self:GetCollisionGroup() end
-	self:SetCollisionGroup(self.m_OldCollisionGroup == COLLISION_GROUP_DEBRIS and COLLISION_GROUP_WORLD or COLLISION_GROUP_DEBRIS)
-	self:SetCollisionGroup(self.m_OldCollisionGroup)
-	self.m_OldCollisionGroup = nil
-end
 --]]
 function ENT:TestCollision(startpos, delta, isbox, extents, mask)
 	local SelfPos = self:GetPos()
@@ -294,7 +288,8 @@ end
 if CLIENT then
 	local GlowSprite = Material("sprites/mat_jack_gmod_bubbleshieldglow")
 
-	hook.Add("PostDrawTranslucentRenderables", "JMOD_DRAWBUBBLESHIELD", function()
+	hook.Add("PostDrawTranslucentRenderables", "JMOD_DRAWBUBBLESHIELD", function(bDrawingDepth, bDrawingSkybox, isDraw3DSkybox)
+		if bDrawingSkybox then return end
 		for _, v in ipairs(ents.FindByClass("ent_jack_gmod_bubble_shield")) do
 			if not v:GetAmInnerShield() then
 				local SelfPos = v:GetPos()
@@ -342,13 +337,7 @@ if CLIENT then
 		self.ShieldRadius = self.ShieldRadii[ShieldGrade]
 		self.ShieldRadiusSqr = self.ShieldRadius * self.ShieldRadius
 		--
-		--if IsInnerShield then
-			self:EnableCustomCollisions(true)
-		--end
-		--self:SetCustomCollisionCheck(true)
-		--self:MyCollisionRulesChanged()
-		--self:CollisionRulesChanged()
-		--
+		self:EnableCustomCollisions(true)
 	end
 
 	function ENT:Think()
@@ -357,7 +346,6 @@ if CLIENT then
 		if (self.ShieldRotate > 360) then
 			self.ShieldRotate = self.ShieldRotate - 360
 		end
-		--self.ShieldGrow = math.Clamp((self.ShieldGrow or 0) + FT * 2, 0, 1)
 		self.ShieldGrow = Lerp(CurTime() - self.ShieldGrowEnd, 0, 1)
 	end
 
