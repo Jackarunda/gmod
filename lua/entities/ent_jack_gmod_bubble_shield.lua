@@ -9,10 +9,10 @@ ENT.Model = "models/jmod/giant_hollow_sphere_1.mdl"
 ENT.PhysgunDisabled = true
 ENT.ShieldRadii = {
 	[1] = 240,
-	[2] = 360,
-	[3] = 540,
-	[4] = 810,
-	[5] = 1620
+	[2] = 300,
+	[3] = 375,
+	[4] = 468,
+	[5] = 585
 }
 ENT.mmRHAe = 100 -- for ArcCW, hinders bullet penetration of the shield
 ENT.DisableDuplicator =	true
@@ -130,29 +130,11 @@ function ENT:TestCollision(startpos, delta, isbox, extents, mask)
 
 	--debugoverlay.Cross(EndPos, 2, 5, Color(255, 0, 0), true)
 	--debugoverlay.Line(EndPos, EndPos + TestNorm * 5, 5, Color(255, 255, 255), true)
-	--[[
+	--
 	if bit.band(mask, MASK_SHOT) == MASK_SHOT then
-
-		local EdgeTr = util.TraceLine({
-			start = startpos,
-			endpos = EndPos,
-			mask = MASK_SOLID
-		})
-		if EdgeTr.Hit and (EdgeTr.Entity:GetClass() == "ent_jack_gmod_bubble_shield") then
-			debugoverlay.Cross(EdgeTr.HitPos - EdgeTr.Normal * 5, 2, 5, Color(255, 0, 0), true)
-			-- Reflect
-			local ReflectAng = TestNorm:Angle()
-			ReflectAng:RotateAroundAxis(ReflectAng:Right(), 180)
-			local ReflectDir = ReflectAng:Forward()
-
-			return {
-				HitPos = EdgeTr.HitPos - EdgeTr.Normal * 5,
-				Fraction = 1,
-				HitNormal = -EdgeTr.HitNormal
-			}
-		else
-			--print("Miss")
-		end
+		return {
+			Fraction = 0
+		}
 	end
 	--]]
 
@@ -231,7 +213,31 @@ if SERVER then
 		local Scale = (dmginfo:GetDamage() / 30) ^ .5
 		---
 		-- This is to stop stuff like fire from causing ripples on the shield in weird places
-		if dmginfo:IsBulletDamage() or dmginfo:IsExplosionDamage() or dmginfo:GetDamageForce():Length() > 10 then
+		local IsBullet = dmginfo:IsBulletDamage()
+		if IsBullet then
+			local ShotOrigin = DmgPos
+
+			local Attacker = dmginfo:GetAttacker()
+			local Inflictor = dmginfo:GetInflictor()
+			if IsValid(Attacker) and Attacker.GetShootPos then
+				ShotOrigin = Attacker:GetShootPos()
+			elseif IsValid(Inflictor) then
+				ShotOrigin = dmginfo:GetInflictor():GetPos()
+			end
+
+			local ShieldTr = util.TraceLine({
+				start = ShotOrigin,
+				endpos = DmgPos,
+				filter = {Attacker, Inflictor},
+				mask = MASK_SOLID
+			})
+			if ShieldTr.Hit and IsValid(ShieldTr.Entity) and ShieldTr.Entity:GetClass() == "ent_jack_gmod_bubble_shield" then
+				DmgPos = ShieldTr.HitPos
+				Dir = ShieldTr.HitNormal
+			end
+		end
+		
+		if IsBullet or dmginfo:IsExplosionDamage() or dmginfo:GetDamageForce():Length() > 10 then
 			local Ripple = EffectData()
 			Ripple:SetOrigin(DmgPos)
 			Ripple:SetScale(Scale)
@@ -289,7 +295,7 @@ if CLIENT then
 	local GlowSprite = Material("sprites/mat_jack_gmod_bubbleshieldglow")
 
 	hook.Add("PostDrawTranslucentRenderables", "JMOD_DRAWBUBBLESHIELD", function()
-		for k, v in ipairs(ents.FindByClass("ent_jack_gmod_bubble_shield")) do
+		for _, v in ipairs(ents.FindByClass("ent_jack_gmod_bubble_shield")) do
 			if not v:GetAmInnerShield() then
 				local SelfPos = v:GetPos()
 				local Epos = EyePos()
@@ -300,15 +306,21 @@ if CLIENT then
 				G = math.Clamp(G + 30, 0, 255)
 				B = math.Clamp(B + 30, 0, 255)
 				if (v.ShieldStrength > .2 or math.Rand(0, 1) > .1) then
-					if Dist < 240 then
+					if Dist < v.ShieldRadius then
 						local Eang = EyeAngles()
 						render.SetMaterial(GlowSprite)
 						render.DrawSprite(Epos + Eang:Forward() * 10, 45, 35, Color(R, G, B, 200))
 					else
-						local DistFrac = math.Clamp(600 - Dist, 0, 600) / 600
-						local Size = 550 + 800 * DistFrac ^ 2
+						local ShieldRadius = v.ShieldRadius
+						local ShieldDiameter = ShieldRadius * 2
+						local ShieldPie = ShieldRadius * math.pi
+						local DistToEdge = Dist - ShieldRadius
+						local DistFrac = math.Clamp(ShieldPie - DistToEdge, 0, ShieldPie) / ShieldPie
+						local ClosenessCompensation = (ShieldPie * 1.15) * DistFrac ^ (math.pi ^ 2)
+						--print(ClosenessCompensation)
+						local Siz = (ShieldDiameter * 1.15 + ClosenessCompensation) * v.ShieldGrow
 						render.SetMaterial(GlowSprite)
-						render.DrawSprite(SelfPos, Size, Size, Color(R, G, B, 128))
+						render.DrawSprite(SelfPos, Siz, Siz, Color(R, G, B, 128))
 					end
 				end
 			end
@@ -326,6 +338,7 @@ if CLIENT then
 		self.ShieldStrength = 1
 		self.ShieldRotate = 0
 		self.ShieldGrow = 0
+		self.ShieldGrowEnd = CurTime() + .5
 		self.ShieldRadius = self.ShieldRadii[ShieldGrade]
 		self.ShieldRadiusSqr = self.ShieldRadius * self.ShieldRadius
 		--
@@ -344,7 +357,8 @@ if CLIENT then
 		if (self.ShieldRotate > 360) then
 			self.ShieldRotate = self.ShieldRotate - 360
 		end
-		self.ShieldGrow = math.Clamp((self.ShieldGrow or 0) + FT * 2, 0, 1)
+		--self.ShieldGrow = math.Clamp((self.ShieldGrow or 0) + FT * 2, 0, 1)
+		self.ShieldGrow = Lerp(CurTime() - self.ShieldGrowEnd, 0, 1)
 	end
 
 	function ENT:DrawTranslucent(flags)
