@@ -226,17 +226,18 @@ concommand.Add("jmod_debug_killme", function(ply)
 	print("good luck")
 end, nil, "Makes all your entities hate you.")
 
-concommand.Add("jmod_insta_upgrade", function(ply)
+concommand.Add("jmod_insta_upgrade", function(ply, cmd, args)
 	if not IsValid(ply) then return end
 	if not ply:IsSuperAdmin() then return end
 	local Ent = ply:GetEyeTrace().Entity
 
+	local Level = tonumber(args[1]) and tonumber(args[1]) or nil
 	if IsValid(Ent) and Ent.EZupgradable then
-		Ent:Upgrade()
+		Ent:Upgrade(Level)
 	elseif IsValid(Ent) and Ent.Growth then
 		Ent.Growth = 100
 	end
-end, nil, "Instantly upgrades upgradable machines you are looking at.")
+end, nil, "Instantly upgrades upgradable machines you are looking at. \nEnter a number for desired grade")
 
 concommand.Add("jmod_deposits_save", function(ply, cmd, args)
 	if not(IsValid(ply)) and not(ply:IsSuperAdmin()) then return end
