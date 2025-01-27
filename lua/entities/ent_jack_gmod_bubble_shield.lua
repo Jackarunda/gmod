@@ -159,7 +159,7 @@ if SERVER then
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)
 		self:SetSolid(SOLID_VPHYSICS)
-		self:SetCollisionGroup(COLLISION_GROUP_NONE)
+		self:SetCollisionGroup(COLLISION_GROUP_WORLD)
 		self:DrawShadow(false)
 		self:SetRenderMode(RENDERMODE_GLOW)
 		self:AddEFlags(EFL_NO_DISSOLVE)
@@ -176,21 +176,20 @@ if SERVER then
 		--
 		self:EnableCustomCollisions(true)
 		if not(self:GetAmInnerShield()) then
-			-- Inner shields are for bullets
+			-- Inner shield is for prop blocking
 			self.InnerShield = ents.Create("ent_jack_gmod_bubble_shield")
+			self:DeleteOnRemove(self.InnerShield)
 			self.InnerShield:SetAmInnerShield(true)
 			self.InnerShield.OuterShield = self
 			self.InnerShield.Projector = self.Projector
 			self.InnerShield:SetSizeClass(self:GetSizeClass())
 			self.InnerShield:SetPos(self:GetPos() - Vector(0, 0, 10))
 			self.InnerShield:Spawn()
-			self.InnerShield:SetCollisionGroup(COLLISION_GROUP_WORLD)
-			self:DeleteOnRemove(self.InnerShield)
-			self.InnerShield:SetModelScale(.85, 0.001)
+			self.InnerShield:SetModelScale(.9, 0.001)
+			self.InnerShield:SetCollisionGroup(COLLISION_GROUP_NONE)
+			self.InnerShield:SetCustomCollisionCheck(true)
+			self.InnerShield:CollisionRulesChanged()
 			self.InnerShield:Activate()
-			-- We set ourselves to become the prop blocker
-			self:SetCustomCollisionCheck(true)
-			self:CollisionRulesChanged()
 		end
 		--]]
 	end
@@ -233,6 +232,7 @@ if SERVER then
 		
 		if IsBullet or dmginfo:IsExplosionDamage() or dmginfo:GetDamageForce():Length() > 10 then
 			local Ripple = EffectData()
+			Ripple:SetEntity(self)
 			Ripple:SetOrigin(DmgPos)
 			Ripple:SetScale(Scale)
 			Ripple:SetNormal(Dir)
@@ -275,6 +275,9 @@ if SERVER then
 		if IsValid(self:GetPhysicsObject()) then
 			self:GetPhysicsObject():SetVelocity(Vector(0, 0, 0))
 			self:GetPhysicsObject():EnableMotion(false)
+		end
+		if self:IsOnFire() then
+			self:Extinguish()
 		end
 	end
 
@@ -331,7 +334,6 @@ if CLIENT then
 		self.Mat = Material("models/jmod/icosphere_shield")
 		-- Initializing some values
 		self.ShieldStrength = 1
-		self.ShieldRotate = 0
 		self.ShieldGrow = 0
 		self.ShieldGrowEnd = CurTime() + .5
 		self.ShieldRadius = self.ShieldRadii[ShieldGrade]
@@ -342,10 +344,6 @@ if CLIENT then
 
 	function ENT:Think()
 		local FT = FrameTime()
-		self.ShieldRotate = (self.ShieldRotate or 0) + FT
-		if (self.ShieldRotate > 360) then
-			self.ShieldRotate = self.ShieldRotate - 360
-		end
 		self.ShieldGrow = Lerp(CurTime() - self.ShieldGrowEnd, 0, 1)
 	end
 
@@ -357,11 +355,16 @@ if CLIENT then
 		local SelfPos, SelfAng = self:GetPos(), self:GetAngles()
 		local ShieldModulate = .995 + (math.sin(CurTime() * .5) - 0.015) * .005
 		local ShieldAng = SelfAng:GetCopy()
-		ShieldAng:RotateAroundAxis(ShieldAng:Up(), self.ShieldRotate)
+		ShieldAng:RotateAroundAxis(ShieldAng:Up(), FT)
+		self:SetRenderAngles(ShieldAng)
 		local RefractAmt = (math.sin(CurTime() * 3) / 2 + .5) * .045 + .005
 		self.Mat:SetFloat("$refractamount", RefractAmt)
 		if (self.ShieldStrength > .2 or math.Rand(0, 1) > .1) then
-			JMod.RenderModel(self.Bubble1, SelfPos, ShieldAng, Vector(self.ShieldGrow, self.ShieldGrow, self.ShieldGrow) * ShieldModulate, Vector(1, 1, 1), self.Mat)
+			local MacTheMatrix = Matrix()
+			MacTheMatrix:Scale(Vector(self.ShieldGrow, self.ShieldGrow, self.ShieldGrow) * ShieldModulate)
+			self:EnableMatrix("RenderMultiply", MacTheMatrix)
+			self:DrawModel()
+			--JMod.RenderModel(self.Bubble1, SelfPos, ShieldAng, Vector(self.ShieldGrow, self.ShieldGrow, self.ShieldGrow) * ShieldModulate, Vector(1, 1, 1), self.Mat)
 		end
 	end
 	language.Add("ent_jack_gmod_bubble_shield", "Bubble Shield")
