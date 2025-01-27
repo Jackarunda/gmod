@@ -1,8 +1,12 @@
 ﻿local Spark = Material("sprites/mat_jack_nicespark")
 
 function EFFECT:Init(data)
+	self.Entity = data:GetEntity()
 	self.Scale = data:GetScale()
 	self.Pos = data:GetOrigin()
+	if IsValid(self.Entity) then
+		self.Pos = self.Entity:WorldToLocal(self.Pos)
+	end
 	self.LifeTime = .5
 	self.DieTime = CurTime() + self.LifeTime
 	self.Size = .1
@@ -53,9 +57,15 @@ end
 function EFFECT:Render()
 	local Time = CurTime()
 	local Frac = ((self.DieTime - Time) / self.LifeTime) ^ 3
+	local FinalPos = self.Pos
+	local FinalNorm = self.Normal
+	if IsValid(self.Entity) then
+		FinalPos = self.Entity:LocalToWorld(self.Pos)
+		FinalNorm = (FinalPos - self.Entity:GetPos()):GetNormalized()
+	end
 	render.SetMaterial(Spark)
-	render.DrawSprite(self.Pos + self.Normal, 10 * Frac, 10 * Frac, color_white)
+	render.DrawSprite(FinalPos + FinalNorm, 10 * Frac, 10 * Frac, color_white)
 	render.SetMaterial(self.Mat)
-	render.DrawQuadEasy(self.Pos + self.Normal, self.Normal, self.Size * self.Scale, self.Size * self.Scale, color_white)
+	render.DrawQuadEasy(FinalPos + FinalNorm, FinalNorm, self.Size * self.Scale, self.Size * self.Scale, color_white)
 	return
 end
