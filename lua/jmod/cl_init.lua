@@ -488,9 +488,10 @@ end
 local WHOTents, NextWHOTcheck = {}, 0
 
 local function IsWHOT(ent)
+	if not(IsValid(ent)) then return end
 	local Time = CurTime()
 	if ent:IsWorld() then return false end
-	if ent:IsPlayer() or ent:IsOnFire() then return true end
+	if ent:IsPlayer() or ent:IsOnFire() then return true end -- null entity
 
 	if ent:IsNPC() then
 		if ent.Health and (ent:Health() > 0) then return true end
