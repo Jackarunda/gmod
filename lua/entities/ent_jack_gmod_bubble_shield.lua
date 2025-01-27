@@ -46,6 +46,19 @@ hook.Remove("EntityFireBullets", "JMOD_SHIELDBULLETS", function(ent, data)
 	end
 end)
 --]]
+hook.Add("EntityTakeDamage", "JMOD_SHIELDEXPLOSION", function( target, dmginfo )
+	if target:GetClass() == "ent_jack_gmod_bubble_shield" then return end
+	local Shield = NULL
+	for _, shield in ipairs(ents.FindByClass("ent_jack_gmod_bubble_shield")) do
+		if target:GetPos():DistToSqr(shield:GetPos()) < shield.ShieldRadiusSqr then
+			Shield = shield
+			break
+		end
+	end
+	if IsValid(Shield) and (dmginfo:GetReportedPosition():DistToSqr(Shield:GetPos()) > Shield.ShieldRadiusSqr) then
+		return true
+	end
+end)
 
 --
 hook.Add("ShouldCollide", "JMOD_SHIELDCOLLISION", function(ent1, ent2)
@@ -75,7 +88,7 @@ function ENT:TestCollision(startpos, delta, isbox, extents, mask)
 	local SelfPos = self:GetPos()
 	local EndPos = startpos + delta
 	local TestNorm = (startpos - (EndPos)):GetNormalized()
-	local OurNorm = (SelfPos - startpos):GetNormalized()
+	--local OurNorm = (SelfPos - startpos):GetNormalized()
 
 	--[[if (bit.band(mask, MASK_SHOT) == MASK_SHOT) then
 		local RandColServer, RandColorClient = Color(0, math.random(0, 255), 255), Color(255, math.random(0, 255), 0)
@@ -88,7 +101,6 @@ function ENT:TestCollision(startpos, delta, isbox, extents, mask)
 				debugoverlay.Line(EndPos, startpos, 2, RandColorClient, true)
 			end
 		else
-			--print((TestNorm + OurNorm):Length())
 			if isbox then
 				debugoverlay.Box(EndPos, -extents, extents, 2, RandColServer, false)
 			else
@@ -122,15 +134,16 @@ function ENT:TestCollision(startpos, delta, isbox, extents, mask)
 		end
 	end
 
-	--debugoverlay.Cross(EndPos, 2, 5, Color(255, 0, 0), true)
-	--debugoverlay.Line(EndPos, EndPos + TestNorm * 5, 5, Color(255, 255, 255), true)
+	if SERVER then
+		--debugoverlay.Cross(startpos, 2, 5, Color(255, 153, 0), true)
+		--debugoverlay.Line(EndPos, startpos, 3, Color(96, 255, 3), true)
+	end
 	--
 	if bit.band(mask, MASK_SHOT) == MASK_SHOT then
 		return {
 			Fraction = 0
 		}
 	end
-	--]]
 
 	return true
 end
