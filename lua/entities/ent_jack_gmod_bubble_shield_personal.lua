@@ -243,7 +243,6 @@ if CLIENT then
 		self.Bubble1 = JMod.MakeModel(self, "models/jmod/hollow_sphere_personal.mdl")
 		self.Mat = Material("models/jmod/icosphere_shield")
 		-- Initializing some values
-		self.ShieldRotate = 0
 		self.ShieldGrow = 0
 		self.ShieldGrowEnd = CurTime() + .5
 		--
@@ -252,10 +251,6 @@ if CLIENT then
 
 	function ENT:Think()
 		local FT = FrameTime()
-		self.ShieldRotate = (self.ShieldRotate or 0) + FT
-		if (self.ShieldRotate > 360) then
-			self.ShieldRotate = self.ShieldRotate - 360
-		end
 		self.ShieldGrow = Lerp(CurTime() - self.ShieldGrowEnd, 0, 1)
 	end
 
@@ -263,9 +258,7 @@ if CLIENT then
 		local FT = FrameTime()
 		local SelfPos, SelfAng = self:GetPos(), self:GetAngles()
 		local ShieldModulate = .995 + (math.sin(CurTime() * .5) - 0.015) * .005
-		--local ShieldAng = SelfAng:GetCopy()
-		--ShieldAng:RotateAroundAxis(ShieldAng:Up(), self.ShieldRotate)
-		--self:SetRenderAngles(ShieldAng)
+		self:SetRenderAngles(Angle(0, self.GetPlayerOwner():GetAngles().y, 0))
 		--
 		local RefractAmt = (math.sin(CurTime() * 3) / 2 + .5) * .045 + .005
 		self.Mat:SetFloat("$refractamount", RefractAmt)
@@ -283,7 +276,6 @@ if CLIENT then
 			MacTheMatrix:Scale(Vector(self.ShieldGrow, self.ShieldGrow, self.ShieldGrow) * ShieldModulate)
 			self:EnableMatrix("RenderMultiply", MacTheMatrix)
 			self:DrawModel()
-			--JMod.RenderModel(self.Bubble1, SelfPos, ShieldAng, Vector(self.ShieldGrow, self.ShieldGrow, self.ShieldGrow) * ShieldModulate * .5, Vector(1, 1, 1), self.Mat)
 		end
 	end
 	language.Add("ent_jack_gmod_bubble_shield_personal", "Personal Bubble Shield")
