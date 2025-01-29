@@ -306,6 +306,7 @@ end
 if CLIENT then
 	local GlowSprite = Material("sprites/mat_jack_gmod_bubbleshieldglow")
 	local WireMat = Material("models/wireframe")
+	local SHPERE_COLOR = Color(0, 0, 0, 0)
 
 	hook.Add("PostDrawTranslucentRenderables", "JMOD_DRAWBUBBLESHIELD", function(bDrawingDepth, bDrawingSkybox, isDraw3DSkybox)
 		if bDrawingSkybox then return end
@@ -335,36 +336,33 @@ if CLIENT then
 						local DistFrac = math.Clamp(ShieldPie - DistToEdge, 0, ShieldPie) / ShieldPie
 						local ClosenessCompensation = (ShieldPie * 1.15) * DistFrac ^ (math.pi ^ 2)
 						--print(ClosenessCompensation)
-						--[[local Siz = (ShieldDiameter * 1.15 + ClosenessCompensation) * v.ShieldGrow
-						render.SetMaterial(GlowSprite)
-						render.DrawSprite(SelfPos, Siz, Siz, Color(R, G, B, 128))--]]
+						--print(DistFrac)
 
-						-- If you'd like to see the mask layer, you can comment this line out
+						-- Set up the stencil op with safe values
 						render.SetStencilEnable(true)
 						render.ClearStencil()
 						render.SetStencilTestMask(255)
 						render.SetStencilWriteMask(255)
-						render.SetStencilPassOperation(STENCILOPERATION_INCRSAT)
-						render.SetStencilZFailOperation(STENCILOPERATION_ZERO)
-						-- Now, let's confiure the parts of the Stencil system we are going to use
-						------ We're creating a mask, so we don't want anything we do right now to draw onto the screen
-						------ All pixels should fail the Compare Function (They should NEVER pass)
-						render.SetStencilCompareFunction(STENCILCOMPARISONFUNCTION_ALWAYS)
-						------ When a pixel fails, which they all should, we want to REPLACE their current Stencil value with
-						------ whatever the Reference Value is
+						-- We want to keep only the pixels that pass the depth check
 						render.SetStencilReferenceValue(1)
+						render.SetStencilPassOperation(STENCILOPERATION_REPLACE)
+						render.SetStencilZFailOperation(STENCILOPERATION_ZERO)
 						render.SetStencilFailOperation(STENCILOPERATION_ZERO)
-						-- At this point, we're ready to perform draw operations to create our mask
+						-- Pass everything and just check depth
+						render.SetStencilCompareFunction(STENCILCOMPARISONFUNCTION_ALWAYS)
+						-- Setup the mask with a color material
 						render.SetColorMaterial()
-						render.DrawSphere(SelfPos, ShieldRadius * v.ShieldGrow * 1.02, 30, 30, Color(0, 0, 0, 0))
-						-- Now, we need to re-configure the Stencil system so we can use the mask we just created
-						------ Like the Pass and Z Failure operations, we don't want to change the Stencil Buffer if a pixel
-						------ fails the Compare Function because that would change the mask
+						-- Perspective offset is for helping with making it look more like the glow is coming from the edge of the shield.
+						local PerspectiveOffset = OffsetVec:GetNormalized() * (ShieldRadius * .1)
+						-- We are drawing it completely invisible becasue it's a mask
+						-- There might be another way to do this, but this works for now
+						render.DrawSphere(SelfPos - PerspectiveOffset, ShieldRadius * v.ShieldGrow * 1.1, 50, 50, SHPERE_COLOR)
+						-- Now we are drawing the effects, so we don't really want to modify the stencil buffer mask
+						-- We won't bother with the depth test because we are going to be ignoring Z anyway
 						render.SetStencilFailOperation(STENCILOPERATION_KEEP)
-						------ We want to pass (and therefore draw on) pixels that match (Are EQUAL to) the Reference Value
+						-- Typical equuator function for finding what's on the mask
 						render.SetStencilCompareFunction(STENCILCOMPARISONFUNCTION_EQUAL)
-
-						-- We're finally ready to draw the content we want to have masked
+						-- Now we are going to draw the glow
 						local Siz = (ShieldDiameter * 1.15 + ClosenessCompensation) * v.ShieldGrow
 						render.SetMaterial(GlowSprite)
 						cam.IgnoreZ(true)
