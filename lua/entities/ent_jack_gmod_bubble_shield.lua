@@ -57,8 +57,13 @@ hook.Add("EntityTakeDamage", "JMOD_SHIELDEXPLOSION", function( target, dmginfo )
 			break
 		end
 	end
-	if IsValid(Shield) and (dmginfo:GetReportedPosition():DistToSqr(Shield:GetPos()) > Shield.ShieldRadiusSqr) then
-		return true
+	if not IsValid(Shield) then return end
+	local FinalDamagePos = dmginfo:GetDamagePosition()
+	if FinalDamagePos == vector_origin then
+		FinalDamagePos = dmginfo:GetDamagePosition()
+	end
+	if (FinalDamagePos:DistToSqr(Shield:GetPos()) > Shield.ShieldRadiusSqr) then
+		--return true
 	end
 end)
 
@@ -316,7 +321,7 @@ if CLIENT then
 				local Epos = EyePos()
 				local OffsetVec = Epos - SelfPos
 				local Dist = OffsetVec:Length()
-				local FoV = 1 / (LocalPlayer():GetFOV() / 90)
+				local FoV = 1 / (LocalPlayer():GetFOV() / 100)
 				local R, G, B = JMod.GoodBadColor(v.ShieldStrength)
 				R = math.Clamp(R + 30, 0, 255)
 				G = math.Clamp(G + 30, 0, 255)
