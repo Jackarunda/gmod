@@ -7,7 +7,7 @@ ENT.NoSitAllowed = true
 ENT.MaxLifeTime = 5
 ENT.DefaultSpeed = 600
 ENT.FireEffect = "eff_jack_gmod_fire"
--- this has been copied over from Slayer and modified, which is why it looks so weird
+-- this has been copied over from Slayer and modified (a lot), which is why it looks so weird
 -- Halo FTW
 local ThinkRate = 22 --Hz
 
@@ -118,7 +118,16 @@ if SERVER then
 				return
 			end
 
-			self:Detonate(Tr)
+			if IsValid(Tr.Entity) and Tr.Entity.JMod_NapalmBounce then
+				local OurSpeed = self.CurVel:Length()
+				local NewVec = Tr.Normal:Angle()
+				NewVec:RotateAroundAxis(Tr.HitNormal, 180)
+				NewVec = NewVec:Forward()
+				self.CurVel = (-NewVec * OurSpeed) / 2
+				self.LifeTime = (self.LifeTime or 1) + .5
+			else
+				self:Detonate(Tr)
+			end
 		else
 			self:SetPos(Pos + self.CurVel / ThinkRate)
 
@@ -143,17 +152,15 @@ if SERVER then
 			self.CurVel = self.CurVel + physenv.GetGravity() / ThinkRate * .5
 		end
 
-		if IsValid(self) then
-			self.LifeTime = (self.LifeTime or 1) - (1 / ThinkRate)
-			if self.LifeTime < 0 then
-				self:Detonate()
+		self.LifeTime = (self.LifeTime or 1) - (1 / ThinkRate)
+		if self.LifeTime < 0 then
+			self:Detonate()
 
-				return
-			end
-
-			self:NextThink(Time + (1 / ThinkRate))
-			self:SetAngles(self.CurVel:Angle())
+			return
 		end
+
+		self:NextThink(Time + (1 / ThinkRate))
+		self:SetAngles(self.CurVel:Angle())
 
 		return true
 	end
