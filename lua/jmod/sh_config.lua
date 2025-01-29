@@ -1025,6 +1025,18 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				craftingType = "toolbox",
 				description = "Cluster bomb that can pierce multiple hard targets from the air."
 			},
+			["EZ Cluster Mine Layer"] = {
+				results = "ent_jack_gmod_ezclusterminebomb",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 50,
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 15 * 45,
+					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES] = 10 * 45
+				},
+				sizeScale = 1,
+				category = "Explosives",
+				craftingType = "toolbox",
+				description = "Cluster mine layer for creating a new Afghanistan."
+			},
 			["EZ War Mine"] = {
 				results = "ent_jack_gmod_ezwarmine",
 				craftingReqs = {
