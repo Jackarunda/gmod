@@ -16,7 +16,8 @@ local TextColors = {
 
 local SpecialIcons = {
 	["geothermal"] = Material("ez_resource_icons/geothermal.png"),
-	["warning"] = Material("ez_misc_icons/warning.png")
+	["warning"] = Material("ez_misc_icons/warning.png"),
+	["anomalous resource"] = Material("ez_resource_icons/anomaly resource.png")
 }
 
 local RankIcons = {Material("ez_rank_icons/grade_1.png"), Material("ez_rank_icons/grade_2.png"), Material("ez_rank_icons/grade_3.png"), Material("ez_rank_icons/grade_4.png"), Material("ez_rank_icons/grade_5.png")}
@@ -134,7 +135,10 @@ function JMod.StandardResourceDisplay(typ, amt, maximum, x, y, siz, vertical, fo
 	opacity = opacity or 150
 	brite = brite or 200
 	surface.SetDrawColor(255, 255, 255, opacity)
-	surface.SetMaterial(JMod.EZ_RESOURCE_TYPE_ICONS[typ] or SpecialIcons[typ])
+	local Mat = JMod.EZ_RESOURCE_TYPE_ICONS[typ] or SpecialIcons[typ]
+	if Mat then
+		surface.SetMaterial(Mat)
+	end
 	surface.DrawTexturedRect(x - siz / 2, y - siz / 2, siz, siz)
 	local Col = Color(brite, brite, brite, opacity)
 	local UnitText = tostring(amt) .. " UNITS"
