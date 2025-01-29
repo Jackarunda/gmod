@@ -16,6 +16,8 @@ ENT.ShieldRadii = {
 }
 ENT.mmRHAe = 100 -- for ArcCW, hinders bullet penetration of the shield
 ENT.DisableDuplicator =	true
+--
+ENT.JMod_NapalmBounce = true
 
 function ENT:GravGunPunt(ply)
 	return false
@@ -251,7 +253,7 @@ if SERVER then
 			Ripple:SetNormal(Dir)
 			util.Effect("eff_jack_gmod_refractripple", Ripple, true, true)
 			---
-			self:EmitSound("snds_jack_gmod/ez_bubbleshield_hits/"..math.random(1, 7)..".ogg", 65, math.random(90, 110))
+			sound.Play("snds_jack_gmod/ez_bubbleshield_hits/"..math.random(1, 7)..".ogg", DmgPos, 65, math.random(90, 110))
 		end
 		---
 		--print(dmginfo:GetAttacker())
@@ -303,6 +305,7 @@ end
 
 if CLIENT then
 	local GlowSprite = Material("sprites/mat_jack_gmod_bubbleshieldglow")
+	local WireMat = Material("models/wireframe")
 
 	hook.Add("PostDrawTranslucentRenderables", "JMOD_DRAWBUBBLESHIELD", function(bDrawingDepth, bDrawingSkybox, isDraw3DSkybox)
 		if bDrawingSkybox then return end
@@ -310,17 +313,20 @@ if CLIENT then
 			if not v:GetAmInnerShield() then
 				local SelfPos = v:GetPos()
 				local Epos = EyePos()
-				local Vec = Epos - SelfPos
-				local Dist = Vec:Length()
+				local OffsetVec = Epos - SelfPos
+				local Dist = OffsetVec:Length()
+				local FoV = 1 / (LocalPlayer():GetFOV() / 90)
 				local R, G, B = JMod.GoodBadColor(v.ShieldStrength)
 				R = math.Clamp(R + 30, 0, 255)
 				G = math.Clamp(G + 30, 0, 255)
 				B = math.Clamp(B + 30, 0, 255)
 				if (v.ShieldStrength > .2 or math.Rand(0, 1) > .1) then
-					if Dist < v.ShieldRadius then
+					if Dist < v.ShieldRadius * 1.03 * v.ShieldGrow then
 						local Eang = EyeAngles()
 						render.SetMaterial(GlowSprite)
-						render.DrawSprite(Epos + Eang:Forward() * 10, 45, 35, Color(R, G, B, 200))
+						cam.IgnoreZ(true)
+							render.DrawSprite(Epos + Eang:Forward() * 10, 45 * FoV, 35, Color(R, G, B, 200))
+						cam.IgnoreZ(false)
 					else
 						local ShieldRadius = v.ShieldRadius
 						local ShieldDiameter = ShieldRadius * 2
@@ -329,9 +335,43 @@ if CLIENT then
 						local DistFrac = math.Clamp(ShieldPie - DistToEdge, 0, ShieldPie) / ShieldPie
 						local ClosenessCompensation = (ShieldPie * 1.15) * DistFrac ^ (math.pi ^ 2)
 						--print(ClosenessCompensation)
+						--[[local Siz = (ShieldDiameter * 1.15 + ClosenessCompensation) * v.ShieldGrow
+						render.SetMaterial(GlowSprite)
+						render.DrawSprite(SelfPos, Siz, Siz, Color(R, G, B, 128))--]]
+
+						-- If you'd like to see the mask layer, you can comment this line out
+						render.SetStencilEnable(true)
+						render.ClearStencil()
+						render.SetStencilTestMask(255)
+						render.SetStencilWriteMask(255)
+						render.SetStencilPassOperation(STENCILOPERATION_INCRSAT)
+						render.SetStencilZFailOperation(STENCILOPERATION_ZERO)
+						-- Now, let's confiure the parts of the Stencil system we are going to use
+						------ We're creating a mask, so we don't want anything we do right now to draw onto the screen
+						------ All pixels should fail the Compare Function (They should NEVER pass)
+						render.SetStencilCompareFunction(STENCILCOMPARISONFUNCTION_ALWAYS)
+						------ When a pixel fails, which they all should, we want to REPLACE their current Stencil value with
+						------ whatever the Reference Value is
+						render.SetStencilReferenceValue(1)
+						render.SetStencilFailOperation(STENCILOPERATION_ZERO)
+						-- At this point, we're ready to perform draw operations to create our mask
+						render.SetColorMaterial()
+						render.DrawSphere(SelfPos, ShieldRadius * v.ShieldGrow * 1.02, 30, 30, Color(0, 0, 0, 0))
+						-- Now, we need to re-configure the Stencil system so we can use the mask we just created
+						------ Like the Pass and Z Failure operations, we don't want to change the Stencil Buffer if a pixel
+						------ fails the Compare Function because that would change the mask
+						render.SetStencilFailOperation(STENCILOPERATION_KEEP)
+						------ We want to pass (and therefore draw on) pixels that match (Are EQUAL to) the Reference Value
+						render.SetStencilCompareFunction(STENCILCOMPARISONFUNCTION_EQUAL)
+
+						-- We're finally ready to draw the content we want to have masked
 						local Siz = (ShieldDiameter * 1.15 + ClosenessCompensation) * v.ShieldGrow
 						render.SetMaterial(GlowSprite)
-						render.DrawSprite(SelfPos, Siz, Siz, Color(R, G, B, 128))
+						cam.IgnoreZ(true)
+							render.DrawSprite(SelfPos, Siz, Siz, Color(R, G, B, 128))
+						cam.IgnoreZ(false)
+						
+						render.SetStencilEnable(false)
 					end
 				end
 			end
