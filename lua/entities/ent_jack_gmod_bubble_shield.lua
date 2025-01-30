@@ -307,7 +307,7 @@ if SERVER then
 elseif CLIENT then
 	local BubbleGlowSprite = Material("sprites/mat_jack_gmod_bubbleshieldglow")
 	local GlowSprite = Material("sprites/mat_jack_basicglow")
-	local BeamMat = Material("cable/physbeam")--"cable/crystal_beam1")
+	local BeamMat = Material("cable/physbeam")--"cable/crystal_beam1")--
 	--local WireMat = Material("models/wireframe")
 	local MASK_COLOR = Color(0, 0, 0, 0)
 
@@ -330,6 +330,34 @@ elseif CLIENT then
 		local FT = FrameTime()
 		self.ShieldGrow = Lerp(CurTime() - self.ShieldGrowEnd, 0, 1)
 		self.BeamScroll = (self.BeamScroll - FT * 2) % 1 -- (self.BeamScroll or 0)
+	end
+
+	local function RenderShieldBeam(self, beamColor)
+		local SelfPos = self:GetPos()
+		local Epos = EyePos()
+		--
+		local ShieldGrade = self:GetSizeClass()
+		local BeamWidth = 20
+		local BeamColor = beamColor
+		local SelfUp = self:GetUp()
+		local Time = CurTime()
+		local EmitPos = SelfPos + SelfUp * 78
+		local Extent = SelfUp * (self.ShieldRadius - 78) * .95 + Vector(math.sin(Time) * 10, math.cos(Time) * 10, 0)
+		local Scroll = self.BeamScroll
+
+		--render.SetColorMaterial()
+		render.SetMaterial(BeamMat)
+		render.StartBeam(5)
+			render.AddBeam(EmitPos, 5, Scroll, BeamColor)
+			for i = 1, 3 do
+				local ThisBeamWidth = BeamWidth * i
+				render.AddBeam(EmitPos + Extent * (i / 4) - SelfUp * (ThisBeamWidth / 2), ThisBeamWidth, Scroll + (i / 4), BeamColor)
+			end
+			render.AddBeam(EmitPos + Extent, BeamWidth * ShieldGrade, Scroll + 1, BeamColor)
+		render.EndBeam()
+		render.SetMaterial(GlowSprite)
+		render.DrawSprite(EmitPos + (Epos - EmitPos):GetNormalized() * 4, 30, 30, BeamColor)
+		render.DrawSprite(EmitPos + Extent, BeamWidth * 4 * ShieldGrade, 30 * ShieldGrade, BeamColor)
 	end
 
 	function ENT:DrawTranslucent(flags)
@@ -367,6 +395,7 @@ elseif CLIENT then
 					local Eang = EyeAngles()
 					render.SetMaterial(BubbleGlowSprite)
 					render.DrawSprite(Epos + Eang:Forward() * 10, 45 * FoV, 35, Color(R, G, B, 200))
+					RenderShieldBeam(self, Color(R, G, B, 128))
 				else
 					local ShieldDiameter = self.ShieldRadius * 2
 					local ShieldPie = self.ShieldRadius * math.pi
@@ -421,31 +450,11 @@ elseif CLIENT then
 						end
 					cam.End2D()
 					render.SetViewPort(0, 0, oldW, oldH)--]]
+					cam.IgnoreZ(true)
+						RenderShieldBeam(self, Color(R, G, B, 128))
+					cam.IgnoreZ(false)
 					render.SetStencilEnable(false)
 				end
-
-				local ShieldGrade = self:GetSizeClass()
-				local BeamWidth = 20
-				local BeamColor = Color(R, G, B, 128)
-				local SelfUp = self:GetUp()
-				local Time = CurTime()
-				local EmitPos = SelfPos + SelfUp * 78
-				local Extent = SelfUp * (self.ShieldRadius - 78) * .95 + Vector(math.sin(Time) * 10, math.cos(Time) * 10, 0)
-				local Scroll = self.BeamScroll
-
-				--render.SetColorMaterial()
-				render.SetMaterial(BeamMat)
-				render.StartBeam(5)
-					render.AddBeam(EmitPos, 5, Scroll, BeamColor)
-					for i = 1, 3 do
-						local ThisBeamWidth = BeamWidth * i
-						render.AddBeam(EmitPos + Extent * (i / 4) - SelfUp * (ThisBeamWidth / 2), ThisBeamWidth, Scroll + (i / 4), BeamColor)
-					end
-					render.AddBeam(EmitPos + Extent, BeamWidth * ShieldGrade, Scroll + 1, BeamColor)
-				render.EndBeam()
-				render.SetMaterial(GlowSprite)
-				render.DrawSprite(EmitPos + (Epos - EmitPos):GetNormalized() * 4, 30, 30, Color(R, G, B, 255))
-				render.DrawSprite(EmitPos + Extent, BeamWidth * 4 * ShieldGrade, 30 * ShieldGrade, BeamColor)
 			end
 		end
 	end
