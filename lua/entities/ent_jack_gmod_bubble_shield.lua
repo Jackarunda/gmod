@@ -364,7 +364,7 @@ if CLIENT then
 
 			if (Strength > .2 or math.Rand(0, 1) > .1) then
 				if Dist < self.ShieldRadius * 1.01 * self.ShieldGrow then
-local Eang = EyeAngles()
+					local Eang = EyeAngles()
 					render.SetMaterial(BubbleGlowSprite)
 					render.DrawSprite(Epos + Eang:Forward() * 10, 45 * FoV, 35, Color(R, G, B, 200))
 				else
