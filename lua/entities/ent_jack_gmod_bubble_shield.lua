@@ -39,7 +39,6 @@ hook.Add("EntityTakeDamage", "JMOD_SHIELDEXPLOSION", function( target, dmginfo )
 	if FinalDamagePos == vector_origin then
 		FinalDamagePos = dmginfo:GetDamagePosition()
 	end
-	--print(target, FinalDamagePos)
 	if (FinalDamagePos:DistToSqr(Shield:GetPos()) > Shield.ShieldRadiusSqr) then
 		return true
 	end
@@ -137,6 +136,8 @@ end
 function ENT:SetupDataTables()
 	self:NetworkVar("Bool", 0, "AmInnerShield")
 	self:NetworkVar("Int", 1, "SizeClass")
+	self:NetworkVar("Float", 0, "Strength")
+	self:NetworkVar("Float", 1, "MaxStrength")
 end
 
 function ENT:ImpactTrace(tr, dmgType)
@@ -174,7 +175,6 @@ if SERVER then
 		if not(self:GetAmInnerShield()) then
 			-- Inner shield is for prop blocking
 			self.InnerShield = ents.Create("ent_jack_gmod_bubble_shield")
-			self:DeleteOnRemove(self.InnerShield)
 			self.InnerShield:SetAmInnerShield(true)
 			self.InnerShield.OuterShield = self
 			self.InnerShield.Projector = self.Projector
@@ -188,6 +188,11 @@ if SERVER then
 			self.InnerShield:Activate()
 		end
 		--]]
+		if not(IsValid(self.Projector)) then -- todo: if we have no emitter, die
+			local Strength = 100
+			self:SetMaxStrength(Strength)
+			self:SetStrength(Strength)
+		end
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
@@ -196,6 +201,9 @@ if SERVER then
 
 	function ENT:OnTakeDamage(dmginfo)
 		local DmgPos = dmginfo:GetDamagePosition()
+		local Attacker = dmginfo:GetAttacker()
+		local Inflictor = dmginfo:GetInflictor()
+		local DmgAmt = dmginfo:GetDamage()
 		local SelfPos = self:GetPos()
 		local Vec = DmgPos - SelfPos
 		local Dir = Vec:GetNormalized()
@@ -206,8 +214,6 @@ if SERVER then
 		if IsBullet then
 			local ShotOrigin = DmgPos
 
-			local Attacker = dmginfo:GetAttacker()
-			local Inflictor = dmginfo:GetInflictor()
 			if IsValid(Attacker) and Attacker.GetShootPos then
 				ShotOrigin = Attacker:GetShootPos()
 			elseif IsValid(Inflictor) then
@@ -258,6 +264,15 @@ if SERVER then
 			})
 		end
 		--]]
+
+		-- finally, we actually take the damage
+		local CurStrength = self:GetStrength()
+		local AmtToLose = DmgAmt
+		local AmtRemaining = CurStrength - AmtToLose
+		self:SetStrength(AmtRemaining)
+		if (AmtRemaining <= 0) then
+			self:Break()
+		end
 	end
 
 	function ENT:Think()
@@ -277,14 +292,17 @@ if SERVER then
 		end
 	end
 
-	function ENT:OnRemove()
-		--print("Removed Inner Shield", self:GetAmInnerShield())
-		SafeRemoveEntity(self.InnerShield)
-		SafeRemoveEntity(self.OuterShield)
+	function ENT:Break()
+		local Eff = EffectData()
+		Eff:SetEntity(self)
+		util.Effect("propspawn", Eff, true, true)
+		self:Remove()
 	end
-end
 
-if CLIENT then
+	function ENT:OnRemove()
+		SafeRemoveEntity(self.InnerShield)
+	end
+elseif CLIENT then
 	local GlowSprite = Material("sprites/mat_jack_gmod_bubbleshieldglow")
 	local WireMat = Material("models/wireframe")
 	local SHPERE_COLOR = Color(0, 0, 0, 0)
@@ -295,7 +313,6 @@ if CLIENT then
 		self:SetRenderMode(RENDERMODE_GLOW)
 		self.Mat = Material("models/jmod/icosphere_shield")
 		-- Initializing some values
-		self.ShieldStrength = 1
 		self.ShieldGrow = 0
 		self.ShieldGrowEnd = CurTime() + .5
 		self.ShieldRadius = self.ShieldRadii[ShieldGrade]
@@ -321,7 +338,8 @@ if CLIENT then
 		self:SetRenderAngles(ShieldAng)
 		local RefractAmt = (math.sin(CurTime() * 3) / 2 + .5) * .045 + .005
 		self.Mat:SetFloat("$refractamount", RefractAmt)
-		if (self.ShieldStrength > .2 or math.Rand(0, 1) > .1) then
+		local Strength = self:GetStrength() / self:GetMaxStrength()
+		if (Strength > .2 or math.Rand(0, 1) > .1) then
 			local MacTheMatrix = Matrix()
 			MacTheMatrix:Scale(Vector(self.ShieldGrow, self.ShieldGrow, self.ShieldGrow) * ShieldModulate)
 			self:EnableMatrix("RenderMultiply", MacTheMatrix)
@@ -331,12 +349,12 @@ if CLIENT then
 			local OffsetVec = Epos - SelfPos
 			local Dist = OffsetVec:Length()
 			local FoV = 1 / (LocalPlayer():GetFOV() / 180)
-			local R, G, B = JMod.GoodBadColor(self.ShieldStrength)
+			local R, G, B = JMod.GoodBadColor(Strength)
 			R = math.Clamp(R + 30, 0, 255)
 			G = math.Clamp(G + 30, 0, 255)
 			B = math.Clamp(B + 30, 0, 255)
 
-			if (self.ShieldStrength > .2 or math.Rand(0, 1) > .1) then
+			if (Strength > .2 or math.Rand(0, 1) > .1) then
 				if Dist < self.ShieldRadius * 1.03 * self.ShieldGrow then
 					local Eang = EyeAngles()
 					render.SetMaterial(GlowSprite)

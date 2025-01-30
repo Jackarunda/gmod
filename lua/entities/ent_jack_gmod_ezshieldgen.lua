@@ -148,6 +148,11 @@ if(SERVER)then
 		self.Shield:SetPos(Pos)
 		self.Shield.Projector = self
 		self.Shield:SetSizeClass(self:GetGrade())
+
+		local ShieldStrength = 1000 -- todo: based on grade
+		self.Shield:SetMaxStrength(ShieldStrength)
+		self.Shield:SetStrength(ShieldStrength)
+
 		self.Shield:Spawn()
 		self.Shield:Initialize()
 	end
