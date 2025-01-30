@@ -304,7 +304,7 @@ if SERVER then
 		SafeRemoveEntity(self.InnerShield)
 	end
 
-if CLIENT then
+elseif CLIENT then
 	local BubbleGlowSprite = Material("sprites/mat_jack_gmod_bubbleshieldglow")
 	local GlowSprite = Material("sprites/mat_jack_basicglow")
 	local BeamMat = Material("cable/physbeam")--"cable/crystal_beam1")
