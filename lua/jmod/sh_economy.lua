@@ -773,6 +773,14 @@ function JMod.GetSalvageYield(ent)
 	if table.HasValue(BlacklistedGroups, bit.band(ent:GetCollisionGroup(), BlacklistedBor)) then return {}, "cannot salvage: bad collision group" end
 	if ent:IsWorld() then return {}, "can't salvage the world" end
 
+	if ent:GetClass() == "ent_jack_gmod_ezcompactbox" then
+		if IsValid(ent:GetContents()) then
+			ent = ent:GetContents()
+		else
+			return {}, "cannot salvage: no contents"
+		end
+	end
+
 	local PhysNum = ent:GetPhysicsObjectCount()
 	local Phys = ent:GetPhysicsObject()
 
@@ -875,6 +883,7 @@ function JMod.GetSalvageYield(ent)
 		if ent.LVS and ent.ExplodedAlready then
 			Results[k] = Results[k] * .5
 		end
+		if Results[k] <= 0 then Results[k] = nil end
 	end
 
 	if ent.IsJackyEZmachine then
