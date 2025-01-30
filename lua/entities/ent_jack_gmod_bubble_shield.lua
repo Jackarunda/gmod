@@ -8,7 +8,7 @@ ENT.AdminSpawnable = false
 ENT.Model = "models/jmod/giant_hollow_sphere_1.mdl"
 ENT.PhysgunDisabled = true
 ENT.ShieldRadii = {
-	[1] = 240,
+	[1] = 235,
 	[2] = 300,
 	[3] = 375,
 	[4] = 468,
@@ -23,47 +23,25 @@ function ENT:GravGunPunt(ply)
 	return false
 end
 
---[[
-hook.Remove("EntityFireBullets", "JMOD_SHIELDBULLETS", function(ent, data) 
-	local ShieldBubbles = ents.FindByClass("ent_jack_gmod_bubble_shield")
-	if #ShieldBubbles > 0 then
-		for k, v in ipairs(ShieldBubbles) do
-			--if v:GetAmInnerShield() then
-				if data.Src:DistToSqr(v:GetPos()) < v.ShieldRadiusSqr then
-					local EdgeTr = util.TraceLine(
-						{start = data.Src, 
-						endpos = data.Src + data.Dir * data.Distance,
-						mask = MASK_SOLID,
-						filter = {ent}
-					})
-					if EdgeTr.Entity == v then
-						data.Src = EdgeTr.HitPos + EdgeTr.Normal * 40
-						return true
-					end
-				else
-
-				end
-			--end
-		end
-	end
-end)
---]]
 hook.Add("EntityTakeDamage", "JMOD_SHIELDEXPLOSION", function( target, dmginfo )
 	if target:GetClass() == "ent_jack_gmod_bubble_shield" then return end
 	local Shield = NULL
 	for _, shield in ipairs(ents.FindByClass("ent_jack_gmod_bubble_shield")) do
-		if target:GetPos():DistToSqr(shield:GetPos()) < shield.ShieldRadiusSqr then
+		local Mins, Maxes = target:GetCollisionBounds()
+		local TargetCenter = target:LocalToWorld(target:OBBCenter())
+		if util.IsBoxIntersectingSphere(Mins, Maxes, shield:GetPos() - TargetCenter, shield.ShieldRadius) then
 			Shield = shield
 			break
 		end
 	end
 	if not IsValid(Shield) then return end
-	local FinalDamagePos = dmginfo:GetDamagePosition()
+	local FinalDamagePos = dmginfo:GetReportedPosition()
 	if FinalDamagePos == vector_origin then
 		FinalDamagePos = dmginfo:GetDamagePosition()
 	end
+	--print(target, FinalDamagePos)
 	if (FinalDamagePos:DistToSqr(Shield:GetPos()) > Shield.ShieldRadiusSqr) then
-		--return true
+		return true
 	end
 end)
 
@@ -174,8 +152,6 @@ if SERVER then
 		self.ShieldRadiusSqr = self.ShieldRadius * self.ShieldRadius
 
 		self:SetModel("models/jmod/giant_hollow_sphere_"..tostring(ShieldGrade)..".mdl")
-		--self:SetMaterial("models/mat_jack_gmod_hexshield1")
-		--self:SetMaterial("models/jmod/icosphere_shield")
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)
 		self:SetSolid(SOLID_VPHYSICS)
@@ -313,80 +289,10 @@ if CLIENT then
 	local WireMat = Material("models/wireframe")
 	local SHPERE_COLOR = Color(0, 0, 0, 0)
 
-	hook.Add("PostDrawTranslucentRenderables", "JMOD_DRAWBUBBLESHIELD", function(bDrawingDepth, bDrawingSkybox, isDraw3DSkybox)
-		if bDrawingSkybox then return end
-		for _, v in ipairs(ents.FindByClass("ent_jack_gmod_bubble_shield")) do
-			if not v:GetAmInnerShield() then
-				local SelfPos = v:GetPos()
-				local Epos = EyePos()
-				local OffsetVec = Epos - SelfPos
-				local Dist = OffsetVec:Length()
-				local FoV = 1 / (LocalPlayer():GetFOV() / 100)
-				local R, G, B = JMod.GoodBadColor(v.ShieldStrength)
-				R = math.Clamp(R + 30, 0, 255)
-				G = math.Clamp(G + 30, 0, 255)
-				B = math.Clamp(B + 30, 0, 255)
-				if (v.ShieldStrength > .2 or math.Rand(0, 1) > .1) then
-					if Dist < v.ShieldRadius * 1.03 * v.ShieldGrow then
-						local Eang = EyeAngles()
-						render.SetMaterial(GlowSprite)
-						cam.IgnoreZ(true)
-							render.DrawSprite(Epos + Eang:Forward() * 10, 45 * FoV, 35, Color(R, G, B, 200))
-						cam.IgnoreZ(false)
-					else
-						local ShieldRadius = v.ShieldRadius
-						local ShieldDiameter = ShieldRadius * 2
-						local ShieldPie = ShieldRadius * math.pi
-						local DistToEdge = Dist - ShieldRadius
-						local DistFrac = math.Clamp(ShieldPie - DistToEdge, 0, ShieldPie) / ShieldPie
-						local ClosenessCompensation = (ShieldPie * 1.15) * DistFrac ^ (math.pi ^ 2)
-						--print(ClosenessCompensation)
-						--print(DistFrac)
-
-						-- Set up the stencil op with safe values
-						render.SetStencilEnable(true)
-						render.ClearStencil()
-						render.SetStencilTestMask(255)
-						render.SetStencilWriteMask(255)
-						-- We want to keep only the pixels that pass the depth check
-						render.SetStencilReferenceValue(1)
-						render.SetStencilPassOperation(STENCILOPERATION_REPLACE)
-						render.SetStencilZFailOperation(STENCILOPERATION_ZERO)
-						render.SetStencilFailOperation(STENCILOPERATION_ZERO)
-						-- Pass everything and just check depth
-						render.SetStencilCompareFunction(STENCILCOMPARISONFUNCTION_ALWAYS)
-						-- Setup the mask with a color material
-						render.SetColorMaterial()
-						-- Perspective offset is for helping with making it look more like the glow is coming from the edge of the shield.
-						local PerspectiveOffset = OffsetVec:GetNormalized() * (ShieldRadius * .1)
-						-- We are drawing it completely invisible becasue it's a mask
-						-- There might be another way to do this, but this works for now
-						render.DrawSphere(SelfPos - PerspectiveOffset, ShieldRadius * v.ShieldGrow * 1.1, 50, 50, SHPERE_COLOR)
-						-- Now we are drawing the effects, so we don't really want to modify the stencil buffer mask
-						-- We won't bother with the depth test because we are going to be ignoring Z anyway
-						render.SetStencilFailOperation(STENCILOPERATION_KEEP)
-						-- Typical equuator function for finding what's on the mask
-						render.SetStencilCompareFunction(STENCILCOMPARISONFUNCTION_EQUAL)
-						-- Now we are going to draw the glow
-						local Siz = (ShieldDiameter * 1.15 + ClosenessCompensation) * v.ShieldGrow
-						render.SetMaterial(GlowSprite)
-						cam.IgnoreZ(true)
-							render.DrawSprite(SelfPos, Siz, Siz, Color(R, G, B, 128))
-						cam.IgnoreZ(false)
-						
-						render.SetStencilEnable(false)
-					end
-				end
-			end
-		end
-	end)
-
 	function ENT:Initialize()
 		local ShieldGrade = self:GetSizeClass()
 
 		self:SetRenderMode(RENDERMODE_GLOW)
-		--self.Bubble1 = JMod.MakeModel(self, "models/jmod/giant_hollow_dome.mdl", "models/mat_jack_gmod_hexshield1")
-		self.Bubble1 = JMod.MakeModel(self, "models/jmod/giant_hollow_sphere_"..tostring(ShieldGrade)..".mdl")
 		self.Mat = Material("models/jmod/icosphere_shield")
 		-- Initializing some values
 		self.ShieldStrength = 1
@@ -420,7 +326,66 @@ if CLIENT then
 			MacTheMatrix:Scale(Vector(self.ShieldGrow, self.ShieldGrow, self.ShieldGrow) * ShieldModulate)
 			self:EnableMatrix("RenderMultiply", MacTheMatrix)
 			self:DrawModel()
-			--JMod.RenderModel(self.Bubble1, SelfPos, ShieldAng, Vector(self.ShieldGrow, self.ShieldGrow, self.ShieldGrow) * ShieldModulate, Vector(1, 1, 1), self.Mat)
+			-- STENCILS!
+			local Epos = EyePos()
+			local OffsetVec = Epos - SelfPos
+			local Dist = OffsetVec:Length()
+			local FoV = 1 / (LocalPlayer():GetFOV() / 180)
+			local R, G, B = JMod.GoodBadColor(self.ShieldStrength)
+			R = math.Clamp(R + 30, 0, 255)
+			G = math.Clamp(G + 30, 0, 255)
+			B = math.Clamp(B + 30, 0, 255)
+
+			if (self.ShieldStrength > .2 or math.Rand(0, 1) > .1) then
+				if Dist < self.ShieldRadius * 1.03 * self.ShieldGrow then
+					local Eang = EyeAngles()
+					render.SetMaterial(GlowSprite)
+					cam.IgnoreZ(true)
+						render.DrawSprite(Epos + Eang:Forward() * 10, 45 * FoV, 35, Color(R, G, B, 200))
+					cam.IgnoreZ(false)
+				else
+					local ShieldDiameter = self.ShieldRadius * 2
+					local ShieldPie = self.ShieldRadius * math.pi
+					local DistToEdge = Dist - self.ShieldRadius
+					local DistFrac = math.Clamp(ShieldPie - DistToEdge, 0, ShieldPie) / ShieldPie
+					local ClosenessCompensation = (ShieldPie * 1.15) * DistFrac ^ (math.pi ^ 2)
+					--print(ClosenessCompensation)
+					--print(DistFrac)
+
+					-- Set up the stencil op with safe values
+					render.SetStencilEnable(true)
+					render.ClearStencil()
+					render.SetStencilTestMask(255)
+					render.SetStencilWriteMask(255)
+					-- We want to keep only the pixels that pass the depth check
+					render.SetStencilReferenceValue(1)
+					render.SetStencilPassOperation(STENCILOPERATION_REPLACE)
+					render.SetStencilZFailOperation(STENCILOPERATION_ZERO)
+					render.SetStencilFailOperation(STENCILOPERATION_ZERO)
+					-- Pass everything and just check depth
+					render.SetStencilCompareFunction(STENCILCOMPARISONFUNCTION_ALWAYS)
+					-- Setup the mask with a color material
+					render.SetColorMaterial()
+					-- Perspective offset is for helping with making it look more like the glow is coming from the edge of the shield.
+					local PerspectiveOffset = OffsetVec:GetNormalized() * (self.ShieldRadius * .18)
+					-- We are drawing it completely invisible becasue it's a mask
+					-- There might be another way to do this, but this works for now
+					render.DrawSphere(SelfPos - PerspectiveOffset, self.ShieldRadius * self.ShieldGrow * 1.2, 50, 50, SHPERE_COLOR)
+					-- Now we are drawing the effects, so we don't really want to modify the stencil buffer mask
+					-- We won't bother with the depth test because we are going to be ignoring Z anyway
+					render.SetStencilFailOperation(STENCILOPERATION_KEEP)
+					-- Typical equator function for finding what's on the mask
+					render.SetStencilCompareFunction(STENCILCOMPARISONFUNCTION_EQUAL)
+					-- Now we are going to draw the glow
+					local Siz = (ShieldDiameter * 1.2 + ClosenessCompensation) * self.ShieldGrow
+					render.SetMaterial(GlowSprite)
+					cam.IgnoreZ(true)
+						render.DrawSprite(SelfPos, Siz, Siz, Color(R, G, B, 128))
+					cam.IgnoreZ(false)
+					
+					render.SetStencilEnable(false)
+				end
+			end
 		end
 	end
 	language.Add("ent_jack_gmod_bubble_shield", "Bubble Shield")
