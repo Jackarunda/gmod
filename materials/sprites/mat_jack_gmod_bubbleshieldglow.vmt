@@ -4,7 +4,7 @@
 	"$spriteorigin" "[ 0.50 0.50 ]"
 	"$basetexture" "sprites/tex_jack_gmod_bubbleshieldglow"
 	"$spriterendermode" "5"
-	"$ignorez" "0"
+	"$ignorez" "1"
 	"$model" "0"
 	"$nocull" "1"
 }

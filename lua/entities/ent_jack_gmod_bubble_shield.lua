@@ -8,7 +8,7 @@ ENT.AdminSpawnable = false
 ENT.Model = "models/jmod/giant_hollow_sphere_1.mdl"
 ENT.PhysgunDisabled = true
 ENT.ShieldRadii = {
-	[1] = 235,
+	[1] = 240,
 	[2] = 300,
 	[3] = 375,
 	[4] = 468,
@@ -149,6 +149,7 @@ if SERVER then
 		if self:GetSizeClass() < 1 then self:SetSizeClass(1) end
 		local ShieldGrade = self:GetSizeClass()
 		self.ShieldRadius = self.ShieldRadii[ShieldGrade]
+		self.ShieldRadius = self.ShieldRadius - (self.ShieldRadius / 48)
 		self.ShieldRadiusSqr = self.ShieldRadius * self.ShieldRadius
 
 		self:SetModel("models/jmod/giant_hollow_sphere_"..tostring(ShieldGrade)..".mdl")
@@ -285,9 +286,11 @@ if SERVER then
 end
 
 if CLIENT then
-	local GlowSprite = Material("sprites/mat_jack_gmod_bubbleshieldglow")
-	local WireMat = Material("models/wireframe")
-	local SHPERE_COLOR = Color(0, 0, 0, 0)
+	local BubbleGlowSprite = Material("sprites/mat_jack_gmod_bubbleshieldglow")
+	local GlowSprite = Material("sprites/mat_jack_basicglow")
+	local BeamMat = Material("cable/physbeam")--"cable/crystal_beam1")
+	--local WireMat = Material("models/wireframe")
+	local MASK_COLOR = Color(0, 0, 0, 0)
 
 	function ENT:Initialize()
 		local ShieldGrade = self:GetSizeClass()
@@ -297,16 +300,18 @@ if CLIENT then
 		-- Initializing some values
 		self.ShieldStrength = 1
 		self.ShieldGrow = 0
-		self.ShieldGrowEnd = CurTime() + .5
+		self.ShieldGrowEnd = CurTime() + .25
 		self.ShieldRadius = self.ShieldRadii[ShieldGrade]
 		self.ShieldRadiusSqr = self.ShieldRadius * self.ShieldRadius
 		--
 		self:EnableCustomCollisions(true)
+		self.BeamScroll = 0
 	end
 
 	function ENT:Think()
 		local FT = FrameTime()
 		self.ShieldGrow = Lerp(CurTime() - self.ShieldGrowEnd, 0, 1)
+		self.BeamScroll = (self.BeamScroll - FT * 2) % 1 -- (self.BeamScroll or 0)
 	end
 
 	function ENT:DrawTranslucent(flags)
@@ -317,10 +322,13 @@ if CLIENT then
 		local SelfPos, SelfAng = self:GetPos(), self:GetAngles()
 		local ShieldModulate = .995 + (math.sin(CurTime() * .5) - 0.015) * .005
 		local ShieldAng = SelfAng:GetCopy()
+		--
 		ShieldAng:RotateAroundAxis(ShieldAng:Up(), FT)
 		self:SetRenderAngles(ShieldAng)
+		--
 		local RefractAmt = (math.sin(CurTime() * 3) / 2 + .5) * .045 + .005
 		self.Mat:SetFloat("$refractamount", RefractAmt)
+
 		if (self.ShieldStrength > .2 or math.Rand(0, 1) > .1) then
 			local MacTheMatrix = Matrix()
 			MacTheMatrix:Scale(Vector(self.ShieldGrow, self.ShieldGrow, self.ShieldGrow) * ShieldModulate)
@@ -330,27 +338,25 @@ if CLIENT then
 			local Epos = EyePos()
 			local OffsetVec = Epos - SelfPos
 			local Dist = OffsetVec:Length()
-			local FoV = 1 / (LocalPlayer():GetFOV() / 180)
 			local R, G, B = JMod.GoodBadColor(self.ShieldStrength)
 			R = math.Clamp(R + 30, 0, 255)
 			G = math.Clamp(G + 30, 0, 255)
 			B = math.Clamp(B + 30, 0, 255)
 
 			if (self.ShieldStrength > .2 or math.Rand(0, 1) > .1) then
-				if Dist < self.ShieldRadius * 1.03 * self.ShieldGrow then
+				if Dist < self.ShieldRadius * 1.01 * self.ShieldGrow then
 					local Eang = EyeAngles()
-					render.SetMaterial(GlowSprite)
-					cam.IgnoreZ(true)
-						render.DrawSprite(Epos + Eang:Forward() * 10, 45 * FoV, 35, Color(R, G, B, 200))
-					cam.IgnoreZ(false)
+					local FoV = 1 / (render.GetViewSetup().fov / 180)
+					render.SetMaterial(BubbleGlowSprite)
+					render.DrawSprite(Epos + Eang:Forward() * 10, 45 * FoV, 35, Color(R, G, B, 200))
 				else
 					local ShieldDiameter = self.ShieldRadius * 2
 					local ShieldPie = self.ShieldRadius * math.pi
 					local DistToEdge = Dist - self.ShieldRadius
 					local DistFrac = math.Clamp(ShieldPie - DistToEdge, 0, ShieldPie) / ShieldPie
 					local ClosenessCompensation = (ShieldPie * 1.15) * DistFrac ^ (math.pi ^ 2)
-					--print(ClosenessCompensation)
-					--print(DistFrac)
+					local SizeInPix = render.ComputePixelDiameterOfSphere(SelfPos, self.ShieldRadius)
+					--print(DistFrac, ClosenessCompensation)
 
 					-- Set up the stencil op with safe values
 					render.SetStencilEnable(true)
@@ -367,24 +373,61 @@ if CLIENT then
 					-- Setup the mask with a color material
 					render.SetColorMaterial()
 					-- Perspective offset is for helping with making it look more like the glow is coming from the edge of the shield.
-					local PerspectiveOffset = OffsetVec:GetNormalized() * (self.ShieldRadius * .18)
+					local ShieldSizeOffset = .05
+					local PerspectiveOffset = OffsetVec:GetNormalized() * (self.ShieldRadius * ShieldSizeOffset)
 					-- We are drawing it completely invisible becasue it's a mask
 					-- There might be another way to do this, but this works for now
-					render.DrawSphere(SelfPos - PerspectiveOffset, self.ShieldRadius * self.ShieldGrow * 1.2, 50, 50, SHPERE_COLOR)
+					render.DrawSphere(SelfPos - PerspectiveOffset, self.ShieldRadius * (1 + ShieldSizeOffset + .01) * self.ShieldGrow, 50, 50, MASK_COLOR)
 					-- Now we are drawing the effects, so we don't really want to modify the stencil buffer mask
 					-- We won't bother with the depth test because we are going to be ignoring Z anyway
 					render.SetStencilFailOperation(STENCILOPERATION_KEEP)
 					-- Typical equator function for finding what's on the mask
 					render.SetStencilCompareFunction(STENCILCOMPARISONFUNCTION_EQUAL)
 					-- Now we are going to draw the glow
-					local Siz = (ShieldDiameter * 1.2 + ClosenessCompensation) * self.ShieldGrow
-					render.SetMaterial(GlowSprite)
-					cam.IgnoreZ(true)
-						render.DrawSprite(SelfPos, Siz, Siz, Color(R, G, B, 128))
-					cam.IgnoreZ(false)
-					
+					--
+					local Siz = (ShieldDiameter * 1.1 + ClosenessCompensation) * self.ShieldGrow
+					local SizPix = (ShieldDiameter * 1.1 + (SizeInPix * DistFrac)) * self.ShieldGrow
+					render.SetMaterial(BubbleGlowSprite)
+					render.DrawSprite(SelfPos, Siz, Siz, Color(R, G, B, 128))
+					--render.DrawSprite(SelfPos, SizPix, SizPix, Color(R, G, B, 128))--]]
+					--[[
+					local PosData = SelfPos:ToScreen()
+					local oldW, oldH = ScrW(), ScrH()
+					render.SetViewPort(0, 0, oldW, oldH)
+					cam.Start2D()
+					local W, H = ScrW(), ScrH()
+						if PosData.visible then
+							surface.SetMaterial(BubbleGlowSprite)
+							surface.SetDrawColor(R, G, B, 128)
+							surface.DrawTexturedRect(PosData.x - SizeInPix / 2, PosData.y - SizeInPix / 2, SizeInPix, SizeInPix)
+						end
+					cam.End2D()
+					render.SetViewPort(0, 0, oldW, oldH)--]]
 					render.SetStencilEnable(false)
 				end
+
+				local ShieldGrade = self:GetSizeClass()
+				local BeamWidth = 20
+				local BeamColor = Color(R, G, B, 128)
+				local SelfUp = self:GetUp()
+				local Time = CurTime()
+				local EmitPos = SelfPos + SelfUp * 78
+				local Extent = SelfUp * (self.ShieldRadius - 78) * .95 + Vector(math.sin(Time) * 10, math.cos(Time) * 10, 0)
+				local Scroll = self.BeamScroll
+
+				--render.SetColorMaterial()
+				render.SetMaterial(BeamMat)
+				render.StartBeam(5)
+					render.AddBeam(EmitPos, 5, Scroll, BeamColor)
+					for i = 1, 3 do
+						local ThisBeamWidth = BeamWidth * i
+						render.AddBeam(EmitPos + Extent * (i / 4) - SelfUp * (ThisBeamWidth / 2), ThisBeamWidth, Scroll + (i / 4), BeamColor)
+					end
+					render.AddBeam(EmitPos + Extent, BeamWidth * ShieldGrade, Scroll + 1, BeamColor)
+				render.EndBeam()
+				render.SetMaterial(GlowSprite)
+				render.DrawSprite(EmitPos + (Epos - EmitPos):GetNormalized() * 4, 30, 30, Color(R, G, B, 255))
+				render.DrawSprite(EmitPos + Extent, BeamWidth * 4 * ShieldGrade, 30 * ShieldGrade, BeamColor)
 			end
 		end
 	end
