@@ -38,7 +38,7 @@ end
 ---
 if SERVER then
 	function ENT:CustomInit()
-		self:SetResource(9e9)
+		self:SetResource(5000)
 	end
 
 	function ENT:CustomThink()
@@ -55,16 +55,11 @@ if SERVER then
 		if AltPressed then
 			local Wep = activator:GetActiveWeapon()
 			if IsValid(Wep) and Wep.TryLoadResource then
-				local Used = {}
 				for _, res in pairs(JMod.EZ_RESOURCE_TYPES) do
-					local Consumed = Wep:TryLoadResource(res, Count)
+					local Consumed = Wep:TryLoadResource(res, 9e9)
 					if Consumed > 0 then
-						Used[res] = (Used[res] or 0) + Consumed
+						JMod.ResourceEffect(res, self:LocalToWorld(self:OBBCenter()), activator:LocalToWorld(activator:OBBCenter()), Consumed / self.MaxResource, 1, 1)
 					end
-				end
-
-				for res, used in pairs(Used) do
-					JMod.ResourceEffect(res, self:LocalToWorld(self:OBBCenter()), activator:LocalToWorld(activator:OBBCenter()), used / self.MaxResource, 1, 1)
 				end
 			end
 		else
@@ -76,6 +71,33 @@ if SERVER then
 			end
 		end
 	end
+
+	function ENT:PhysicsCollide(data, physobj)
+		if self.Loaded then return end
+
+		if data.DeltaTime > 0.2 then
+			local Time = CurTime()
+
+			if data.HitEntity.EZconsumes and (self.NextLoad < Time) and (self:IsPlayerHolding() or JMod.Config.ResourceEconomy.ForceLoadAllResources) then
+				for _, res in pairs(JMod.EZ_RESOURCE_TYPES) do
+					local Used = data.HitEntity:TryLoadResource(res, 9e9)
+
+					if Used > 0 then
+						JMod.ResourceEffect(res, self:LocalToWorld(self:OBBCenter()), data.HitEntity:LocalToWorld(data.HitEntity:OBBCenter()), Used / self.MaxResource, 1, 1)
+					end
+				end
+			end
+
+			if (data.Speed > 80) and self and self.ImpactNoise1 then
+				self:EmitSound(self.ImpactNoise1)
+
+				if self.ImpactNoise2 then
+					self:EmitSound(self.ImpactNoise2)
+				end
+			end
+		end
+	end
+
 elseif CLIENT then
     local drawvec, drawang = Vector(0, 3.5, 1), Angle(-90, 0, 90)
 	function ENT:Draw()
