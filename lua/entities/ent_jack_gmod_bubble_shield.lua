@@ -391,7 +391,7 @@ elseif CLIENT then
 			B = math.Clamp(B + 30, 0, 255)
 
 			if (Strength > .2 or math.Rand(0, 1) > .1) then
-				if Dist < self.ShieldRadius * 1.01 * self.ShieldGrow then
+				if Dist < self.ShieldRadius * 1.03 * self.ShieldGrow then
 					local Eang = EyeAngles()
 					render.SetMaterial(BubbleGlowSprite)
 					render.DrawSprite(Epos + Eang:Forward() * 10, 45 * FoV, 35, Color(R, G, B, 200))
@@ -450,10 +450,13 @@ elseif CLIENT then
 						end
 					cam.End2D()
 					render.SetViewPort(0, 0, oldW, oldH)--]]
-					cam.IgnoreZ(true)
-						RenderShieldBeam(self, Color(R, G, B, 128))
-					cam.IgnoreZ(false)
 					render.SetStencilEnable(false)
+				end
+				if (Dist < self.ShieldRadius * 1.05) and (Dist > self.ShieldRadius * .99) then
+					local Ply = LocalPlayer()
+					if (Ply.EZvisionBlur or 0) < .5 then
+						Ply.EZvisionBlur = math.Clamp((Ply.EZvisionBlur or 0) + .5, 0, 75)
+					end
 				end
 			end
 		end
