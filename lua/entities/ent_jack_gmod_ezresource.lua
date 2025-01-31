@@ -66,7 +66,7 @@ if SERVER then
 
 	function ENT:Initialize()
 		if self.Models then
-			self:SetModal(table.Random(self.Models))
+			self:SetModel(table.Random(self.Models))
 		else
 			self:SetModel(self.Model)
 		end
