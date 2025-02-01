@@ -10,8 +10,8 @@ ENT.Spawnable = true
 ENT.AdminSpawnable = true
 ---
 ENT.JModPreferredCarryAngles = Angle(0, -90, 0)
-ENT.EZRackOffset = Vector(0, 0, 10)
-ENT.EZRackAngles = Angle(0, -90, 0)
+ENT.EZrackOffset = Vector(0, 0, 10)
+ENT.EZrackAngles = Angle(0, -90, 0)
 ENT.EZbombBaySize = 6
 ---
 ENT.Model = "models/hunter/blocks/cube025x125x025.mdl"

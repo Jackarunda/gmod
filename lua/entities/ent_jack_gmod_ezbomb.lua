@@ -9,8 +9,8 @@ ENT.Spawnable = true
 ENT.AdminSpawnable = true
 ---
 ENT.JModPreferredCarryAngles = Angle(0, -90, 0)
-ENT.EZRackOffset = Vector(0, 0, 20)
-ENT.EZRackAngles = Angle(0, -90, 0)
+ENT.EZrackOffset = Vector(0, 0, 20)
+ENT.EZrackAngles = Angle(0, -90, 0)
 ENT.EZbombBaySize = 12
 ---
 ENT.EZbomb = true
@@ -80,6 +80,7 @@ if SERVER then
 		self:SetState(STATE_OFF)
 		self.LastUse = 0
 		self.FreefallTicks = 0
+		self.LastAreoDragAmount = 0
 
 		self:SetupWire()
 	end
@@ -119,8 +120,8 @@ if SERVER then
 				filter = {self}
 			})
 
-			if SkyTr.HitSky and not(self:IsPlayerHolding() or constraint.HasConstraints(self)) then
-				local NewPos, Iteration, NewVel = self:FindNextEmptySpace(data.OurOldVelocity)
+			if SkyTr.HitSky and not(self:IsPlayerHolding() or constraint.HasConstraints(self) or not self:GetPhysicsObject():IsMotionEnabled()) then
+				local NewPos, TravelTime, NewVel = self:FindNextEmptySpace(data.OurOldVelocity)
 
 				if NewPos then
 					timer.Simple(0, function()
@@ -130,7 +131,7 @@ if SERVER then
 							self:GetPhysicsObject():EnableMotion(false)
 						end
 					end)
-					timer.Simple(Iteration, function()
+					timer.Simple(TravelTime, function()
 						if IsValid(self) then
 							self:SetNoDraw(false)
 							self:SetNotSolid(false)
@@ -168,7 +169,7 @@ if SERVER then
 		local Grav = physenv.GetGravity()
 
 		for i = 1, 100 do
-			Pos = Pos + vel / 2
+			Pos = Pos + ((vel / 2) / math.max(self.LastAreoDragAmount, 1))
 
 			if util.IsInWorld(Pos) then
 				local SkyTr = util.TraceLine({

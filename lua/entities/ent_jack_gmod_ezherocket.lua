@@ -9,8 +9,8 @@ ENT.Spawnable = true
 ENT.AdminSpawnable = true
 ---
 ENT.JModPreferredCarryAngles = Angle(0, -90, 0)
-ENT.EZRackOffset = Vector(0, -1.5, -2.5)
-ENT.EZRackAngles = Angle(0, 0, 0)
+ENT.EZrackOffset = Vector(0, -1.5, -2.5)
+ENT.EZrackAngles = Angle(0, 0, 0)
 ENT.EZrocket = true
 ---
 local STATE_BROKEN, STATE_OFF, STATE_ARMED, STATE_LAUNCHED = -1, 0, 1, 2

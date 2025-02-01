@@ -18,6 +18,7 @@ function JMod.AeroDrag(ent, forward, mult, spdReq)
 	Phys:ApplyForceOffset(Vel * Mass / 6 * mult, Pos + forward)
 	Phys:ApplyForceOffset(-Vel * Mass / 6 * mult, Pos - forward)
 	Phys:AddAngleVelocity(-Phys:GetAngleVelocity() * Mass / 1000)
+	ent.LastAreoDragAmount = mult
 end
 
 -- this causes an object to rotate to point and fly to a point you give it

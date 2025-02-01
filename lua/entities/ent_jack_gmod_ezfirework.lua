@@ -10,8 +10,8 @@ ENT.AdminSpawnable = true
 ---
 ENT.JModHighlyFlammableFunc = "Launch"
 ENT.JModPreferredCarryAngles = Angle(90, 0, 0)
-ENT.EZRackOffset = Vector(0, -1.5, -2)
-ENT.EZRackAngles = Angle(0, 0, 0)
+ENT.EZrackOffset = Vector(0, -1.5, -2)
+ENT.EZrackAngles = Angle(0, 0, 0)
 ENT.EZrocket = true
 ENT.UsableMats = {MAT_DIRT, MAT_FOLIAGE, MAT_SAND, MAT_SLOSH, MAT_GRASS, MAT_SNOW}
 ---
