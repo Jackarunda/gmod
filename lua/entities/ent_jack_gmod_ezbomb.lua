@@ -106,25 +106,87 @@ if SERVER then
 
 	function ENT:PhysicsCollide(data, physobj)
 		if not IsValid(self) then return end
+		local SelfPos = self:GetPos()
 
 		if data.DeltaTime > 0.2 then
 			if data.Speed > 50 then
 				self:EmitSound("Canister.ImpactHard")
 			end
 
+			local SkyTr = util.TraceLine({
+				start = SelfPos,
+				endpos = SelfPos + data.OurOldVelocity,
+				filter = {self}
+			})
+
+			if SkyTr.HitSky and not(self:IsPlayerHolding() or constraint.HasConstraints(self)) then
+				local NewPos, Iteration, NewVel = self:FindNextEmptySpace(data.OurOldVelocity)
+
+				if NewPos then
+					timer.Simple(0, function()
+						if IsValid(self) then
+							self:SetNoDraw(true)
+							self:SetNotSolid(true)
+							self:GetPhysicsObject():EnableMotion(false)
+						end
+					end)
+					timer.Simple(Iteration, function()
+						if IsValid(self) then
+							self:SetNoDraw(false)
+							self:SetNotSolid(false)
+							self:SetPos(NewPos)
+							self:SetAngles(NewVel:Angle())
+							self:GetPhysicsObject():EnableMotion(true)
+							self:GetPhysicsObject():SetVelocity(NewVel)
+						end
+					end)
+				else
+					SafeRemoveEntityDelayed(self, 0)
+				end
+
+				return
+			end
+
 			if (data.Speed > self.DetSpeed) and (self:GetState() == STATE_ARMED) then
-				timer.Simple(0, function() 
+				timer.Simple(0, function()
 					if IsValid(self) then 
 						self:Detonate() 
-					end 
+					end
 				end)
 
 				return
 			end
 
-			if data.Speed > self.Durability * 10 then
+			if (data.Speed > self.Durability * 10) then
 				self:Break()
 			end
+		end
+	end
+
+	function ENT:FindNextEmptySpace(vel)
+		local Pos = self:GetPos()
+		local Grav = physenv.GetGravity()
+
+		for i = 1, 100 do
+			Pos = Pos + vel / 2
+
+			if util.IsInWorld(Pos) then
+				local SkyTr = util.TraceLine({
+					start = Pos,
+					endpos = Pos - vel,
+					filter = {self},
+					mask = MASK_SOLID_BRUSHONLY
+				})
+				if SkyTr.HitSky then
+
+					Pos = SkyTr.HitPos + (SkyTr.Normal * -10)
+					debugoverlay.Cross(Pos, 5, 2, Color(255, 0, 0), true)
+					return Pos, i / 2, vel
+				end
+			else
+				debugoverlay.Cross(Pos, 5, 2, Color(0, 255, 200), true)
+			end
+			vel = vel + Grav / 2
 		end
 	end
 
@@ -168,9 +230,8 @@ if SERVER then
 			JMod.SetEZowner(self, activator)
 
 			if Time - self.LastUse < .2 then
-				self:SetState(STATE_ARMED)
+				self:Arm(activator)
 				self:EmitSound("snds_jack_gmod/bomb_arm.ogg", 70, 120)
-				self.EZdroppableBombArmedTime = CurTime()
 				JMod.Hint(activator, self.DetType)
 			else
 				JMod.Hint(activator, "double tap to arm")
@@ -190,6 +251,14 @@ if SERVER then
 
 			self.LastUse = Time
 		end
+	end
+
+	function ENT:Arm(activator)
+		if not IsValid(JMod.GetEZowner(self)) then
+			JMod.SetEZowner(self, activator)
+		end
+		self:SetState(STATE_ARMED)
+		self.EZdroppableBombArmedTime = CurTime()
 	end
 
 	function ENT:Detonate()
@@ -291,6 +360,7 @@ if SERVER then
 		--end
 		--end
 		--end
+		--self:FindNextEmptySpace(-self:GetRight() * 2000)
 		if self.AeroDragThink then
 			return self:AeroDragThink()
 		else
