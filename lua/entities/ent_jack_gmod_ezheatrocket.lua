@@ -185,9 +185,10 @@ if SERVER then
 			PeirceDmg:SetAttacker(Att)
 			PeirceDmg:SetInflictor(self)
 			PeirceDmg:SetDamageType(DMG_SNIPER)
-			PeirceDmg:SetDamage(1500 * math.Rand(.8, 1.2))
-			PeirceDmg:SetDamagePosition(SelfPos)
-			PeirceDmg:SetDamageForce(Dir * 5000 * math.Rand(.8, 1.2))
+			PeirceDmg:SetDamage(5000 * math.Rand(.8, 1.2))
+			PeirceDmg:SetReportedPosition(SelfPos)
+			PeirceDmg:SetDamagePosition(BlastTr.HitPos)
+			PeirceDmg:SetDamageForce(Dir * 20000 * math.Rand(.8, 1.2))
 			BlastTr.Entity:TakeDamageInfo(PeirceDmg)
 		end
 
