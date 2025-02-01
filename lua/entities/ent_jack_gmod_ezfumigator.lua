@@ -95,13 +95,7 @@ if SERVER then
 		self:EmitSound("snd_jack_pinpull.ogg", 60, 100)
 		self:EmitSound("snd_jack_spoonfling.ogg", 60, 100)
 		self:SetState(STATE_TICKING)
-
-		timer.Simple(5, function()
-			if IsValid(self) then
-				self:EmitSound("snd_jack_sminepop.ogg", 70, 120)
-				self:SetState(STATE_VENTING)
-			end
-		end)
+		self.VentTime = CurTime() + 5
 	end
 
 	function ENT:Use(activator)
@@ -156,6 +150,12 @@ if SERVER then
 
 		if State == STATE_TICKING then
 			self:EmitSound("snd_jack_metallicclick.ogg", 50, 100)
+			self.VentTime = (self.VentTime or Time + 5)
+
+			if self.VentTime < Time then
+				self:EmitSound("snd_jack_sminepop.ogg", 70, 120)
+				self:SetState(STATE_VENTING)
+			end
 			self:NextThink(Time + 1)
 
 			return true
