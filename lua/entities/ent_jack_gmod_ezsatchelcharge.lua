@@ -57,6 +57,7 @@ if SERVER then
 		self:EmitSound("weapons/c4/c4_plant.wav", 60, 80)
 		self:SetState(JMod.EZ_STATE_PRIMED)
 		self.Plunger:SetParent(nil)
+		self.Plunger:SetNotSolid(false)
 		local NoCollide = constraint.NoCollide(self, self.Plunger, 0, 0, true)
 		timer.Simple(.5, function()
 			if IsValid(NoCollide) then NoCollide:Remove() end
