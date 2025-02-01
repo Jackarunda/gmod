@@ -177,11 +177,11 @@ if SERVER then
 		util.BlastDamageInfo(BlastDmg, SelfPos + Dir * 30, 200)
 
 		local BlastTr = util.QuickTrace(SelfPos + Dir * 20, Dir * 100, self)
-		debugoverlay.Line(SelfPos, BlastTr.HitPos, 3, Color(255, 0, 0), true)
+		--debugoverlay.Line(SelfPos, BlastTr.HitPos, 3, Color(255, 0, 0), true)
 
-		if BlastTr.Hit and IsValid(BlastTr.Entity) then
-			debugoverlay.Cross(BlastTr.HitPos, 5, 5, Color(251, 255, 0), true)
-			local PeirceDmg = DamageInfo()
+		if BlastTr.Hit and (BlastTr.HitWorld or IsValid(BlastTr.Entity)) then
+			--debugoverlay.Cross(BlastTr.HitPos, 5, 5, Color(251, 255, 0), true)
+			--[[local PeirceDmg = DamageInfo()
 			PeirceDmg:SetAttacker(Att)
 			PeirceDmg:SetInflictor(self)
 			PeirceDmg:SetDamageType(DMG_SNIPER)
@@ -189,7 +189,8 @@ if SERVER then
 			PeirceDmg:SetReportedPosition(SelfPos)
 			PeirceDmg:SetDamagePosition(BlastTr.HitPos)
 			PeirceDmg:SetDamageForce(Dir * 20000 * math.Rand(.8, 1.2))
-			BlastTr.Entity:TakeDamageInfo(PeirceDmg)
+			BlastTr.Entity:TakeDamageInfo(PeirceDmg)--]]
+			JMod.RicPenBullet(self, SelfPos, Dir, 8000, true, false, 1, .5)
 		end
 
 		for k, ent in pairs(ents.FindInSphere(SelfPos, 200)) do

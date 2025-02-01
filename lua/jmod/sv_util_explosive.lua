@@ -459,7 +459,7 @@ function JMod.RicPenBullet(ent, pos, dir, dmg, doBlasts, wreckShit, num, penMul,
 	end
 	
 	if doBlasts and not DontStop then
-		util.BlastDamage(ent, Attacker, IPos + TNorm * 2, dmg / 6, dmg / 4)
+		util.BlastDamage(ent, Attacker, IPos + TNorm * 2, math.min(300, dmg / 6), math.min(500, dmg / 4))
 
 		timer.Simple(0, function()
 			local Tr = util.QuickTrace(IPos + TNorm, -TNorm * 20)
@@ -523,7 +523,7 @@ function JMod.RicPenBullet(ent, pos, dir, dmg, doBlasts, wreckShit, num, penMul,
 				})
 
 				if doBlasts then
-					util.BlastDamage(ent, Attacker, SearchPos + AVec * 2, dmg / 4, dmg / 4)
+					util.BlastDamage(ent, Attacker, SearchPos + AVec * 2, math.min(300, dmg / 4), math.min(500, dmg / 4))
 
 					timer.Simple(0, function()
 						local Tr = util.QuickTrace(SearchPos + AVec, -AVec * 20)
