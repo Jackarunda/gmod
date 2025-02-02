@@ -1,0 +1,8 @@
+"UnlitGeneric"
+{
+	// Original shader: BaseTimesVertexColorAlphaBlend
+	"$basetexture" "effects/jmod/splash2"
+	"$vertexcolor" "1"
+	"$vertexalpha" "1"
+	"$translucent" "1"
+}

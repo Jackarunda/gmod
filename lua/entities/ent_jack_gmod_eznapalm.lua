@@ -252,7 +252,7 @@ elseif CLIENT then
 		self.SpawnTime = CurTime()
 	end
 
-	local GlowSprite, SplachSprite = Material("mat_jack_gmod_glowsprite"), Material("effects/splash1")
+	local GlowSprite, SplachSprite = Material("mat_jack_gmod_glowsprite"), Material("effects/jmod/splash2")
 
 	function ENT:Think()
 		self.Burnin = self:GetBurning()

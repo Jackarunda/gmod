@@ -972,7 +972,7 @@ end)
 -- note that the song's beat is about .35 seconds
 
 -- Liquid Effects
-local WaterSprite, FireSprite = Material("effects/splash1"), Material("effects/fire_cloud1")
+local WaterSprite, FireSprite = Material("effects/jmod/splash2"), Material("effects/fire_cloud1")
 local RainbowSprite, RainbowCol = Material("effects/mat_jack_gmod_rainbow"), Color(255, 255, 255, 20)
 
 JMod.ParticleSpecs = {
@@ -1045,7 +1045,7 @@ JMod.ParticleSpecs = {
 		end,
 		particleDrawFunc = function(self, size, col)
 			render.SetMaterial(WaterSprite)
-			render.DrawSprite(self.pos, size * 2, size * 2, col)
+			render.DrawSprite(self.pos + Vector(0, 0, -size * .5), size * 2, size * 2, col)
 		end,
 		impactFunc = function(self, normal)
 			local Splach = EffectData()

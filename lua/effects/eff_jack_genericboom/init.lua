@@ -33,16 +33,8 @@ function EFFECT:Init(data)
 		local emitter = ParticleEmitter(vOffset)
 
 		for i = 0, 400 do
-			local Sprite
+			local Sprite = "effects/jmod/splash2"
 			local Rand = math.random(1, 3)
-
-			if Rand == 1 then
-				Sprite = "effects/splash1"
-			elseif Rand == 2 then
-				Sprite = "effects/splash2"
-			elseif Rand == 3 then
-				Sprite = "effects/splash4"
-			end
 
 			local Vec = Vector(math.Rand(-80, 80), math.Rand(-80, 80), 0) * Scayul
 			local Dist = Vec:Length()
@@ -64,16 +56,8 @@ function EFFECT:Init(data)
 		end
 
 		for i = 0, 300 do
-			local Sprite
+			local Sprite = "effects/jmod/splash2"
 			local Rand = math.random(1, 3)
-
-			if Rand == 1 then
-				Sprite = "effects/splash1"
-			elseif Rand == 2 then
-				Sprite = "effects/splash2"
-			elseif Rand == 3 then
-				Sprite = "effects/splash4"
-			end
 
 			local Vec = Vector(math.Rand(-80, 80), math.Rand(-80, 80), 0) * Scayul
 			local Dist = Vec:Length()

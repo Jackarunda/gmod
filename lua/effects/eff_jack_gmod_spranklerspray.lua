@@ -8,7 +8,7 @@ function EFFECT:Init(data)
 	local emitter = ParticleEmitter(self.Pos)
 
 	for i = 1, 20 * self.Scl do
-		local Sprite = table.Random({"effects/splash1", "effects/splash2", "effects/splash4"})
+		local Sprite = table.Random({"effects/jmod/splash2"})
 
 		local particle = emitter:Add(Sprite, self.Pos)
 		particle:SetVelocity(self.Dir * math.random(400, 500) + VectorRand() * math.random(0, 10))

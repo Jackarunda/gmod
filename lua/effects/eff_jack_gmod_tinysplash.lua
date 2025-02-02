@@ -11,7 +11,7 @@ function EFFECT:Init(data)
 	local emitter = ParticleEmitter(self.Pos)
 
 	for i = 1, 2 do
-		local Sprite = table.Random({"effects/splash1", "effects/splash2", "effects/splash4"})
+		local Sprite = table.Random({"effects/jmod/splash2"})
 		local particle = emitter:Add(Sprite, self.Pos)
 		particle:SetVelocity(VectorRand() * math.Rand(0, 30) * self.Scale + Vector(0, 0, math.Rand(20, 40) * self.Scale))
 		particle:SetCollide(false)
