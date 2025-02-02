@@ -409,9 +409,9 @@ elseif(CLIENT)then
 		local State, Grade, Time = self:GetState(), self:GetGrade(), CurTime()
 		local FT = FrameTime()
 		if State > 1 then
-			self.OpenAmt = math.Clamp(self.OpenAmt - FT * 1.3, 0, 1) --Lerp(FT*2,self.OpenAmt,0)
+			self.OpenAmt = math.Clamp((self.OpenAmt or 0) - FT * 1.3, 0, 1) --Lerp(FT*2,self.OpenAmt,0)
 		else
-			self.OpenAmt = math.Clamp(self.OpenAmt + FT * 1.3, 0, 1) --Lerp(FT*2,self.OpenAmt,1)
+			self.OpenAmt = math.Clamp((self.OpenAmt or 0) + FT * 1.3, 0, 1) --Lerp(FT*2,self.OpenAmt,1)
 		end
 
 		if (State == STATE_WORKING) then

@@ -714,7 +714,7 @@ elseif(CLIENT)then
 		if self.ClientOnly then 
 			self:SetNextClientThink(CurTime() + 1)
 
-			return 
+			return true
 		end
 		self.StaticPerfSpecs.BaseClass=nil
 		self.DynamicPerfSpecs.BaseClass=nil
