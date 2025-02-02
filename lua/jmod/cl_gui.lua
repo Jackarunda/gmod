@@ -2148,8 +2148,8 @@ net.Receive("JMod_ModifyConnections", function()
 	List:Dock(FILL)
 	List:SetMultiSelect(false)
 	List:AddColumn("Machine")
-	List:AddColumn("EntID")
-	List:AddColumn("Status")
+	List:AddColumn("EntID"):SetMaxWidth(35)
+	List:AddColumn("Status"):SetMaxWidth(100)
 
 	for _, connection in ipairs(Connections) do
 		local Line = List:AddLine(connection.DisplayName, connection.Index)

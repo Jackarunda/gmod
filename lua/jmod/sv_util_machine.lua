@@ -159,19 +159,21 @@ function JMod.RemoveResourceConnection(machine, connected)
 			end
 		end
 
-		if JMod.ConnectionValid(machine, connected, cable) then
-			cable.Constraint:Remove()
+		if (connected == cable.Ent1) or (connected == cable.Ent2) then 
+			if JMod.ConnectionValid(machine, connected, cable) then
+				cable.Constraint:Remove()
 
-			return true
-		else
-			for key, con in pairs(machine.Constraints) do
-				if (con.Type == "JModResourceCable") and (con.Ent1 == connected) or (con.Ent2 == connected) then
-					machine.Constraints[key] = nil
+				return true
+			else
+				for key, con in pairs(machine.Constraints) do
+					if (con.Type == "JModResourceCable") and (con.Ent1 == connected) or (con.Ent2 == connected) then
+						machine.Constraints[key] = nil
 
-					return true
+						return true
+					end
 				end
-			end
-		end 
+			end 
+		end
 	end
 
 	return IsValid(connected) and false or true
