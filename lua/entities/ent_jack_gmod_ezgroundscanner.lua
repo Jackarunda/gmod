@@ -97,7 +97,7 @@ if(SERVER)then
 			elseif (State == JMod.EZ_STATE_OFF) then
 				self:TurnOn(activator)
 			elseif (State == JMod.EZ_STATE_ON) then
-				self:TurnOff()
+				self:TurnOff(activator)
 			end
 		else
 			activator:PickupObject(self)
@@ -148,7 +148,6 @@ if(SERVER)then
 
 			return
 		elseif(State == JMod.EZ_STATE_ON)then
-			if (self:GetElectricity() <= 0) then self:TurnOff() return end
 			self:ConsumeElectricity(.3)
 			if(self:CanScan())then
 				self:SetProgress(math.Clamp(self:GetProgress() + self.ScanSpeed^1.5/3, 0, 100))

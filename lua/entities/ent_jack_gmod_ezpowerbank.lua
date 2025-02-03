@@ -88,108 +88,11 @@ if SERVER then
 		self.EZconnections = self.EZconnections or {}
 
 		if (State == JMod.EZ_STATE_ON) then
-			self:DistributePower()
+			JMod.DistributePower(self)
 		end
 
 		self:NextThink(Time + 1)
 		return true
-	end
-
-	--[[function ENT:DistributePower()
-		for entID, cable in pairs(self.EZconnections) do
-			local SelfPower = self:GetElectricity()
-			local Ent, Cable = Entity(entID), cable
-
-			if not IsValid(Ent) or not IsValid(Cable) then
-				JMod.RemoveResourceConnection(self, entID)
-			elseif Ent.EZpowerProducer then
-				if SelfPower <= (self.MaxElectricity * .5) then
-					Ent:TurnOn(nil, true)
-				end
-			elseif (SelfPower >= 1) and Ent.EZpowerBank then
-				local EntPower = Ent:GetElectricity()
-				local ChargeDiff = SelfPower - EntPower
-				if (ChargeDiff >= 1) then
-					local PowerTaken = math.min(Ent:TryLoadResource(JMod.EZ_RESOURCE_TYPES.POWER, ChargeDiff / 2), SelfPower)
-					Ent.NextRefillTime = 0
-					self:SetElectricity(SelfPower - PowerTaken)
-				end
-			elseif Ent.IsJackyEZcrate and (Ent.GetResourceType and ((Ent:GetResourceType() == JMod.EZ_RESOURCE_TYPES.POWER) or (Ent:GetResourceType() == "generic"))) then
-				local EntPower = Ent:GetEZsupplies(JMod.EZ_RESOURCE_TYPES.POWER) or 0
-				if SelfPower > (self.MaxElectricity * .9) then
-					local PowerGiven = math.min(Ent:TryLoadResource(JMod.EZ_RESOURCE_TYPES.POWER, SelfPower - (self.MaxElectricity * .9)), SelfPower)
-					Ent.NextRefillTime = 0
-					self:SetElectricity(SelfPower - PowerGiven)
-				elseif SelfPower <= (self.MaxElectricity * .5) and (EntPower >= 1) then
-					local PowerTaken = self:TryLoadResource(JMod.EZ_RESOURCE_TYPES.POWER, math.min(EntPower, self.MaxElectricity))
-					Ent:SetEZsupplies(JMod.EZ_RESOURCE_TYPES.POWER, EntPower - PowerTaken)
-				end
-			elseif (SelfPower >= 1) and not(Ent.IsJackyEZcrate) and Ent.EZconsumes and table.HasValue(Ent.EZconsumes, JMod.EZ_RESOURCE_TYPES.POWER) then
-				local EntPower = (Ent.GetEZsupplies and Ent:GetEZsupplies(JMod.EZ_RESOURCE_TYPES.POWER)) or (Ent.GetElectricity and Ent:GetElectricity()) or Ent.Electricity or 0
-				local MaxElec = Ent.MaxElectricity or Ent.MaxResource or 100
-				if (MaxElec - EntPower) > MaxElec * .1 then
-					local PowerTaken = math.min(Ent:TryLoadResource(JMod.EZ_RESOURCE_TYPES.POWER, SelfPower), SelfPower)
-					Ent.NextRefillTime = 0
-					self:SetElectricity(SelfPower - PowerTaken)
-				end
-				if (EntPower >= 1) and Ent.EZstayOn and Ent:GetState() == JMod.EZ_STATE_OFF then
-					Ent:TurnOn()
-				end
-			elseif SelfPower >= 1 then
-				JMod.RemoveResourceConnection(self, entID)
-			end
-		end
-		if self:GetElectricity() > self.MaxElectricity then
-			self:ProduceResource()
-		end
-		self.PowerFlow = self:GetElectricity()
-	end--]]
-
-	function ENT:DistributePower()
-		for _, cable in pairs(constraint.FindConstraints(self, "JModResourceCable")) do
-			local SelfPower = self:GetElectricity()
-			local Ent = cable.Ent1 ~= self and cable.Ent1 or cable.Ent2
-			if Ent.EZpowerProducer then
-				if SelfPower <= (self.MaxElectricity * .5) then
-					Ent:TurnOn(nil, true)
-				end
-			elseif (SelfPower >= 1) and Ent.EZpowerBank then
-				local EntPower = Ent:GetElectricity()
-				local ChargeDiff = SelfPower - EntPower
-				if (ChargeDiff >= 1) then
-					local PowerTaken = math.min(Ent:TryLoadResource(JMod.EZ_RESOURCE_TYPES.POWER, ChargeDiff / 2), SelfPower)
-					Ent.NextRefillTime = 0
-					self:SetElectricity(SelfPower - PowerTaken)
-				end
-			elseif Ent.IsJackyEZcrate and (Ent.GetResourceType and ((Ent:GetResourceType() == JMod.EZ_RESOURCE_TYPES.POWER) or (Ent:GetResourceType() == "generic"))) then
-				local EntPower = Ent:GetEZsupplies(JMod.EZ_RESOURCE_TYPES.POWER) or 0
-				if SelfPower > (self.MaxElectricity * .9) then
-					local PowerGiven = math.min(Ent:TryLoadResource(JMod.EZ_RESOURCE_TYPES.POWER, SelfPower - (self.MaxElectricity * .9)), SelfPower)
-					Ent.NextRefillTime = 0
-					self:SetElectricity(SelfPower - PowerGiven)
-				elseif SelfPower <= (self.MaxElectricity * .5) and (EntPower >= 1) then
-					local PowerTaken = self:TryLoadResource(JMod.EZ_RESOURCE_TYPES.POWER, math.min(EntPower, self.MaxElectricity))
-					Ent:SetEZsupplies(JMod.EZ_RESOURCE_TYPES.POWER, EntPower - PowerTaken)
-				end
-			elseif (SelfPower >= 1) and not(Ent.IsJackyEZcrate) and Ent.EZconsumes and table.HasValue(Ent.EZconsumes, JMod.EZ_RESOURCE_TYPES.POWER) then
-				local EntPower = (Ent.GetEZsupplies and Ent:GetEZsupplies(JMod.EZ_RESOURCE_TYPES.POWER)) or (Ent.GetElectricity and Ent:GetElectricity()) or Ent.Electricity or 0
-				local MaxElec = Ent.MaxElectricity or Ent.MaxResource or 100
-				if (MaxElec - EntPower) > MaxElec * .1 then
-					local PowerTaken = math.min(Ent:TryLoadResource(JMod.EZ_RESOURCE_TYPES.POWER, SelfPower), SelfPower)
-					Ent.NextRefillTime = 0
-					self:SetElectricity(SelfPower - PowerTaken)
-				end
-				if (EntPower >= 1) and Ent.EZstayOn and Ent:GetState() == JMod.EZ_STATE_OFF then
-					Ent:TurnOn()
-				end
-			elseif SelfPower >= 1 then
-				JMod.RemoveResourceConnection(self, entID)
-			end
-		end
-		if self:GetElectricity() > self.MaxElectricity then
-			self:ProduceResource()
-		end
-		self.PowerFlow = self:GetElectricity()
 	end
 
 	function ENT:ProduceResource(activator)
