@@ -107,20 +107,22 @@ if SERVER then
 
 	function ENT:PhysicsCollide(data, physobj)
 		if not IsValid(self) then return end
-		local SelfPos = self:GetPos()
+		local SelfPos = self:LocalToWorld(self:OBBCenter())
 
 		if data.DeltaTime > 0.2 then
 			if data.Speed > 50 then
 				self:EmitSound("Canister.ImpactHard")
 			end
 
-			local SkyTr = util.TraceLine({
+			local WorldTr = util.TraceLine({
 				start = SelfPos,
 				endpos = SelfPos + data.OurOldVelocity,
 				filter = {self}
 			})
 
-			if SkyTr.HitSky and not(self:IsPlayerHolding() or constraint.HasConstraints(self) or not self:GetPhysicsObject():IsMotionEnabled()) then
+			local Constrained = self:IsPlayerHolding() or constraint.HasConstraints(self) or not self:GetPhysicsObject():IsMotionEnabled()
+
+			if WorldTr.HitSky and not(Constrained) then
 				local NewPos, TravelTime, NewVel = self:FindNextEmptySpace(data.OurOldVelocity)
 
 				if NewPos then
@@ -148,17 +150,60 @@ if SERVER then
 				return
 			end
 
-			if (data.Speed > self.DetSpeed) and (self:GetState() == STATE_ARMED) then
+			local DetTime = 0
+			--print(data.Speed * physobj:GetMass())
+			local OurSpeed = data.OurOldVelocity:Length()
+			local Mass = physobj:GetMass()
+			local SurfaceData = util.GetSurfaceData(WorldTr.SurfaceProps)
+			local Hardness = (SurfaceData and SurfaceData.hardnessFactor) or 1
+			local OurNoseDir = -self:GetRight()
+			local AngleDiff = (OurNoseDir):Dot(-WorldTr.HitNormal)--:Dot(data.OurOldVelocity:GetNormalized())
+			--print("Pen Force Diff:", OurSpeed * Mass - Hardness * 300000)
+
+			if WorldTr.HitWorld and not(Constrained) and (AngleDiff > .75) and (OurSpeed * Mass > Hardness * 500000) then
+				DetTime = math.Rand(.5, 2)
+
 				timer.Simple(0, function()
+					if IsValid(self) then
+						local Eff = EffectData()
+						Eff:SetOrigin(WorldTr.HitPos)
+						Eff:SetScale(10)
+						Eff:SetNormal(WorldTr.HitNormal)
+						util.Effect("eff_jack_sminebury", Eff, true, true)
+						--
+						local OldAngle = self:GetAngles()
+						local BuryAngle = data.OurOldVelocity:Angle()
+						BuryAngle:RotateAroundAxis(BuryAngle:Right(), self.JModPreferredCarryAngles.p)
+						BuryAngle:RotateAroundAxis(BuryAngle:Up(), self.JModPreferredCarryAngles.y)
+						BuryAngle:RotateAroundAxis(BuryAngle:Forward(), self.JModPreferredCarryAngles.r)
+						BuryAngle = LerpAngle(Hardness - .2, BuryAngle, OldAngle)
+						self:SetAngles(BuryAngle)
+						local StickOffSet = self:GetPos() - self:WorldSpaceCenter()
+						--print(StickOffSet)
+						self:SetPos(WorldTr.HitPos - StickOffSet + WorldTr.HitNormal * 10)
+						--
+						--[[local EmptySpaceTr = util.QuickTrace(self:LocalToWorld(self:OBBCenter()) + OurNoseDir * 100, -OurNoseDir * 200, {self})
+						if not EmptySpaceTr.StartSolid and not EmptySpaceTr.HitSky and EmptySpaceTr.Hit then
+							timer.Simple(DetTime + .1, function()
+								JMod.Sploom(JMod.GetEZowner(self), WorldTr.HitPos, 100)
+							end)
+							self:SetPos(EmptySpaceTr.HitPos + EmptySpaceTr.Normal * -EmptySpaceTr.Fraction * 100)
+						else
+							self:GetPhysicsObject():EnableMotion(false)
+						end--]]
+						self:GetPhysicsObject():EnableMotion(false)
+					end
+				end)
+			end
+			
+			if (self:GetState() == STATE_ARMED) and (data.Speed > self.DetSpeed) and (math.random(1, 1000) < 999) then
+				timer.Simple(DetTime, function()
 					if IsValid(self) then 
-						self:Detonate() 
+						self:Detonate()
 					end
 				end)
 
-				return
-			end
-
-			if (data.Speed > self.Durability * 10) then
+			elseif (data.Speed > self.Durability * 10) then
 				self:Break()
 			end
 		end
@@ -200,7 +245,7 @@ if SERVER then
 			JMod.DamageSpark(self)
 		end
 
-		SafeRemoveEntityDelayed(self, 10)
+		--SafeRemoveEntityDelayed(self, 10)
 	end
 
 	function ENT:OnTakeDamage(dmginfo)
@@ -211,10 +256,10 @@ if SERVER then
 
 		self:TakePhysicsDamage(dmginfo)
 
-		if JMod.LinCh(dmginfo:GetDamage(), self.Durability * .5, self.Durability) then
+		if JMod.LinCh(dmginfo:GetDamage(), self.Durability * .75, self.Durability) then
 			local Pos, State = self:GetPos(), self:GetState()
 
-			if State == STATE_ARMED and not(dmginfo:IsBulletDamage()) then
+			if State == STATE_ARMED and not dmginfo:IsBulletDamage() then
 				JMod.SetEZowner(self, dmginfo:GetAttacker())
 				self:Detonate()
 			else
@@ -362,6 +407,15 @@ if SERVER then
 		--end
 		--end
 		--self:FindNextEmptySpace(-self:GetRight() * 2000)
+
+		if self:GetState() == STATE_BROKEN then
+			JMod.DamageSpark(self)
+
+			self:NextThink(CurTime() + 2)
+
+			return true
+		end
+
 		if self.AeroDragThink then
 			return self:AeroDragThink()
 		else

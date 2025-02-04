@@ -8,7 +8,7 @@ ENT.PrintName = "EZ Big Bomb"
 ENT.Spawnable = true
 ENT.AdminSpawnable = true
 ---
-ENT.JModPreferredCarryAngles = Angle(90, 0, 0)
+ENT.JModPreferredCarryAngles = Angle(0, -90, 0)
 ENT.EZrackOffset = Vector(0, 0, 30)
 ENT.EZrackAngles = Angle(0, 0, 90)
 ENT.EZbombBaySize = 33
