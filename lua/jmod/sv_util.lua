@@ -366,6 +366,13 @@ function JMod.EZprogressTask(ent, pos, deconstructor, task, mult)
 
 	if not IsValid(ent) then return "Invalid Ent" end
 
+	local CancelTaskMessage = hook.Run("JMod_EZprogressTask", ent, pos, deconstructor, task, mult)
+
+	if CancelTaskMessage ~= nil then
+
+		return CancelTaskMessage
+	end
+
 	if task == "mining" then
 		local DepositKey = JMod.GetDepositAtPos(ent, pos)
 		local DepositInfo = JMod.NaturalResourceTable[DepositKey]
