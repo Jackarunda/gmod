@@ -360,6 +360,8 @@ elseif CLIENT then
 		render.DrawSprite(EmitPos + Extent, BeamWidth * 4 * ShieldGrade, 30 * ShieldGrade, BeamColor)
 	end
 
+	local BubbleBlur = 0
+
 	function ENT:DrawTranslucent(flags)
 		if self:GetAmInnerShield() then
 			return
@@ -452,14 +454,39 @@ elseif CLIENT then
 					render.SetViewPort(0, 0, oldW, oldH)--]]
 					render.SetStencilEnable(false)
 				end
-				if (Dist < self.ShieldRadius * 1.05) and (Dist > self.ShieldRadius * .99) then
-					local Ply = LocalPlayer()
-					if (Ply.EZvisionBlur or 0) < .5 then
-						Ply.EZvisionBlur = math.Clamp((Ply.EZvisionBlur or 0) + .5, 0, 75)
-					end
+				-- blur the player's vision if his eyes are intersecting the shield
+				local BlurDistRange, BlurDistBegin = self.ShieldRadius * .1, self.ShieldRadius * .95
+				local BlurDistEnd = BlurDistBegin + BlurDistRange
+				local DistDiff = math.abs(Dist - self.ShieldRadius)
+				if (Dist > BlurDistBegin) and (Dist < BlurDistEnd) then
+					BubbleBlur = ((1 - (DistDiff / BlurDistRange)) - .5) * 2
+				else
+					BubbleBlur = 0
 				end
 			end
 		end
 	end
+
+	local blurMaterial = Material('pp/bokehblur')
+
+	hook.Add("RenderScreenspaceEffects", "JMod_BubbleShieldScreenSpace", function()
+		if (BubbleBlur > 0) then
+			if GetConVar("jmod_cl_blurry_menus"):GetBool() then
+				render.UpdateScreenEffectTexture()
+				blurMaterial:SetTexture("$BASETEXTURE", render.GetScreenEffectTexture())
+				blurMaterial:SetTexture("$DEPTHTEXTURE", render.GetResolvedFullFrameDepth())
+				blurMaterial:SetFloat("$size", (BubbleBlur * 30))
+				blurMaterial:SetFloat("$focus", 1)
+				blurMaterial:SetFloat("$focusradius", 1)
+				render.SetMaterial(blurMaterial)
+				render.DrawScreenQuad()
+			else
+				-- We grey out the screen for potato users
+				surface.SetDrawColor(100, 120, 100, math.min(255 * BubbleBlur, 240))
+				surface.DrawRect(-1, -1, ScrW() + 2, ScrH() + 2)
+			end
+		end
+	end)
+
 	language.Add("ent_jack_gmod_bubble_shield", "Bubble Shield")
 end
