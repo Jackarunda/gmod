@@ -161,6 +161,18 @@ if SERVER then
 		end
 	end
 
+	function ENT:NearbyBoxes()
+		if not self.Boxes then return 1 end
+		local Nearby = 1
+		for _, box in ipairs(self.Boxes) do
+			if IsValid(box) and (self:GetPos():Distance(box:GetPos()) <= 500 * #self.Boxes) then
+				Nearby = Nearby + 1
+			end
+		end
+
+		return Nearby
+	end
+
 	function ENT:Unpackage()
 		if self.Unpackaging then return end
 		self.Unpackaging = true
@@ -174,10 +186,8 @@ if SERVER then
 				else
 					if self.Boxes then
 						local AllTogether = true
-						for _, v in ipairs(self.Boxes) do
-							if not(IsValid(v)) or not(self:GetPos():Distance(v:GetPos()) <= 500 * #self.Boxes) then
-								AllTogether = false
-							end
+						if self:NearbyBoxes() == #self.Boxes then
+							AllTogether = false
 						end
 						if AllTogether then
 							self:ReleaseItem()
@@ -240,26 +250,61 @@ if SERVER then
 
 		if IsValid(Contents) then
 			Contents:SetPos(self:GetPos())
-			self:NextThink(CurTime() + 1)
-
-			return true
-		elseif self.Boxes then
-			for i = 1, #self.Boxes do
-				if not IsValid(self.Boxes[i]) then
-					self:Remove()
-
-					break
-				end
-			end
 		else
 			self:Remove()
 		end
+
+		if self.Boxes then
+			for i = 1, #self.Boxes do
+				--[[if not IsValid(self.Boxes[i]) then
+					local pos = self:GetPos()
+					local Yield, Message = self:GetSalvageYield()
+
+					if #table.GetKeys(Yield) <= 0 then
+						self:Remove()
+					else
+						local i = 0
+						for k, v in pairs(Yield) do
+							JMod.MachineSpawnResource(self, k, v, self:WorldToLocal(pos + VectorRand() * 40), Angle(0, 0, 0), Vector(0, 0, 100), 200)
+							i = i + 1
+						end
+						self.Salvaged = true
+						self:Remove()
+					end
+				end--]]
+				if not IsValid(self.Boxes[i]) then
+					self:Remove()
+				end
+			end
+		end
+
+		self:NextThink(CurTime() + 1)
+
+		return true
 	end
 
 	function ENT:OnRemove()
 		local Contents = self:GetContents()
-
-		if IsValid(Contents) then
+		if self.Boxes and (#self.Boxes > 1) then
+			--[[for i, box in ipairs(self.Boxes) do
+				if IsValid(box) then
+					if box.Boxes then
+						local OurKey = table.KeyFromValue(box.Boxes, self)
+						if OurKey then
+							table.remove(box.Boxes, OurKey)
+						else
+							table.remove(self.Boxes, i)
+						end
+					else
+						table.remove(self.Boxes, i)
+					end
+				else
+					table.remove(self.Boxes, i)
+				end
+			end
+			print(tostring(self) .. " Has " .. tostring(#self.Boxes) .. " boxes")--]]
+		elseif IsValid(Contents) then
+			print("Removing contents")
 			Contents:Remove()
 		end
 	end
