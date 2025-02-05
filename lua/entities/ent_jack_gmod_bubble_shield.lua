@@ -16,35 +16,12 @@ ENT.ShieldRadii = {
 }
 ENT.mmRHAe = 100 -- for ArcCW, hinders bullet penetration of the shield
 ENT.DisableDuplicator =	true
---
 ENT.JMod_NapalmBounce = true
 
 function ENT:GravGunPunt(ply)
 	return false
 end
 
-hook.Add("EntityTakeDamage", "JMOD_SHIELDEXPLOSION", function( target, dmginfo )
-	if target:GetClass() == "ent_jack_gmod_bubble_shield" then return end
-	local Shield = NULL
-	for _, shield in ipairs(ents.FindByClass("ent_jack_gmod_bubble_shield")) do
-		local Mins, Maxes = target:GetCollisionBounds()
-		local TargetCenter = target:LocalToWorld(target:OBBCenter())
-		if util.IsBoxIntersectingSphere(Mins, Maxes, shield:GetPos() - TargetCenter, shield.ShieldRadius) then
-			Shield = shield
-			break
-		end
-	end
-	if not IsValid(Shield) then return end
-	local FinalDamagePos = dmginfo:GetReportedPosition()
-	if FinalDamagePos == vector_origin then
-		FinalDamagePos = dmginfo:GetDamagePosition()
-	end
-	if (FinalDamagePos:DistToSqr(Shield:GetPos()) > Shield.ShieldRadiusSqr) then
-		return true
-	end
-end)
-
---
 hook.Add("ShouldCollide", "JMOD_SHIELDCOLLISION", function(ent1, ent2)
 	local snc1 = ent1.ShouldNotCollide
 	if snc1 and snc1(ent1, ent2) then return false end
@@ -54,7 +31,6 @@ hook.Add("ShouldCollide", "JMOD_SHIELDCOLLISION", function(ent1, ent2)
 end)
 
 function ENT:ShouldNotCollide(ent)
-	--print(ent)
 	if ent:IsPlayer() then
 		return true
 	end
@@ -67,32 +43,11 @@ function ENT:ShouldNotCollide(ent)
 	return false
 end
 
---]]
+--[[
 function ENT:TestCollision(startpos, delta, isbox, extents, mask)
 	local SelfPos = self:GetPos()
 	local EndPos = startpos + delta
 	local TestNorm = (startpos - (EndPos)):GetNormalized()
-	--local OurNorm = (SelfPos - startpos):GetNormalized()
-
-	--[[if (bit.band(mask, MASK_SHOT) == MASK_SHOT) then
-		local RandColServer, RandColorClient = Color(0, math.random(0, 255), 255), Color(255, math.random(0, 255), 0)
-		local WhereCameFrom = EndPos + TestNorm * 10
-		if CLIENT then
-			if isbox then
-				debugoverlay.Box(EndPos, -extents, extents, 2, RandColorClient, false)
-			else
-				debugoverlay.Cross(EndPos, 2, 2, RandColorClient, true)
-				debugoverlay.Line(EndPos, startpos, 2, RandColorClient, true)
-			end
-		else
-			if isbox then
-				debugoverlay.Box(EndPos, -extents, extents, 2, RandColServer, false)
-			else
-				debugoverlay.Cross(EndPos, 2, 2, RandColServer, true)
-				debugoverlay.Line(EndPos, startpos, 2, RandColServer	, true)
-			end
-		end
-	end--]]
 
 	if isbox then
 		local PointsToCheck = {
@@ -106,23 +61,15 @@ function ENT:TestCollision(startpos, delta, isbox, extents, mask)
 		}
 		for i, point in ipairs(PointsToCheck) do
 			if SelfPos:DistToSqr(point) < self.ShieldRadiusSqr then
-				--print("Box")
-
 				return false
 			end
 		end
 	else
 		if SelfPos:DistToSqr(startpos) < self.ShieldRadiusSqr then
-
 			return false
 		end
 	end
 
-	if SERVER then
-		--debugoverlay.Cross(startpos, 2, 5, Color(255, 153, 0), true)
-		--debugoverlay.Line(EndPos, startpos, 3, Color(96, 255, 3), true)
-	end
-	--
 	if bit.band(mask, MASK_SHOT) == MASK_SHOT then
 		return {
 			Fraction = 0
@@ -138,10 +85,6 @@ function ENT:SetupDataTables()
 	self:NetworkVar("Int", 1, "SizeClass")
 	self:NetworkVar("Float", 0, "Strength")
 	self:NetworkVar("Float", 1, "MaxStrength")
-end
-
-function ENT:ImpactTrace(tr, dmgType)
-	return true
 end
 
 if SERVER then
@@ -161,6 +104,7 @@ if SERVER then
 		self:DrawShadow(false)
 		self:SetRenderMode(RENDERMODE_GLOW)
 		self:AddEFlags(EFL_NO_DISSOLVE)
+		self:SetCollisionGroup(COLLISION_GROUP_NONE)
 
 		local phys = self:GetPhysicsObject()
 
@@ -171,10 +115,12 @@ if SERVER then
 		phys:EnableMotion(false)
 		phys:SetMaterial("solidmetal")
 
-		--
+		-- todo: we gotta weld
+
 		self:EnableCustomCollisions(true)
 		if not(self:GetAmInnerShield()) then
 			-- Inner shield is for prop blocking
+			--[[
 			self.InnerShield = ents.Create("ent_jack_gmod_bubble_shield")
 			self.InnerShield:SetAmInnerShield(true)
 			self.InnerShield.OuterShield = self
@@ -187,8 +133,9 @@ if SERVER then
 			self.InnerShield:SetCustomCollisionCheck(true)
 			self.InnerShield:CollisionRulesChanged()
 			self.InnerShield:Activate()
+			--]]
 		end
-		--]]
+
 		if not(IsValid(self.Projector)) then -- todo: if we have no emitter, die
 			local Strength = 100
 			self:SetMaxStrength(Strength)
@@ -201,79 +148,36 @@ if SERVER then
 	end
 
 	function ENT:OnTakeDamage(dmginfo)
-		local DmgPos = dmginfo:GetDamagePosition()
-		local Attacker = dmginfo:GetAttacker()
-		local Inflictor = dmginfo:GetInflictor()
 		local DmgAmt = dmginfo:GetDamage()
+
+		if dmginfo:GetDamageForce():Length() > 10 then
+			self:AbsorbImpactEffect(dmginfo)
+		end
+
+		local CurStrength = self:GetStrength()
+		local AmtToLose = DmgAmt
+		local AmtRemaining = CurStrength - AmtToLose
+		-- self:SetStrength(AmtRemaining)
+		if (AmtRemaining <= 0) then
+			--self:Break()
+		end
+	end
+
+	function ENT:AbsorbImpactEffect(dmginfo, pos, severity)
+		local DmgPos = pos or dmginfo:GetDamagePosition()
+		local DmgAmt = severity or dmginfo:GetDamage()
 		local SelfPos = self:GetPos()
 		local Vec = DmgPos - SelfPos
 		local Dir = Vec:GetNormalized()
 		local Scale = (dmginfo:GetDamage() / 30) ^ .5
+
+		local Ripple = EffectData()
+		Ripple:SetOrigin(DmgPos)
+		Ripple:SetScale(Scale)
+		Ripple:SetNormal(Dir)
+		util.Effect("eff_jack_gmod_refractripple", Ripple, true, true)
 		---
-		-- This is to stop stuff like fire from causing ripples on the shield in weird places
-		local IsBullet = dmginfo:IsBulletDamage()
-		if IsBullet then
-			local ShotOrigin = DmgPos
-
-			if IsValid(Attacker) and Attacker.GetShootPos then
-				ShotOrigin = Attacker:GetShootPos()
-			elseif IsValid(Inflictor) then
-				ShotOrigin = dmginfo:GetInflictor():GetPos()
-			end
-
-			local ShieldTr = util.TraceLine({
-				start = ShotOrigin,
-				endpos = DmgPos,
-				filter = {Attacker, Inflictor},
-				mask = MASK_SOLID
-			})
-			if ShieldTr.Hit and IsValid(ShieldTr.Entity) and ShieldTr.Entity:GetClass() == "ent_jack_gmod_bubble_shield" then
-				DmgPos = ShieldTr.HitPos
-				Dir = ShieldTr.HitNormal
-			end
-		end
-		
-		if IsBullet or dmginfo:IsExplosionDamage() or dmginfo:GetDamageForce():Length() > 10 then
-			local Ripple = EffectData()
-			Ripple:SetEntity(self)
-			Ripple:SetOrigin(DmgPos)
-			Ripple:SetScale(Scale)
-			Ripple:SetNormal(Dir)
-			util.Effect("eff_jack_gmod_refractripple", Ripple, true, true)
-			---
-			sound.Play("snds_jack_gmod/ez_bubbleshield_hits/"..math.random(1, 7)..".ogg", DmgPos, 65, math.random(90, 110))
-		end
-		---
-		--print(dmginfo:GetAttacker())
-		--[[ -- attempted bullet ricochet, but this crashes the game
-		if (dmginfo:IsBulletDamage() and true) then
-			local Dmg = dmginfo:GetDamage()
-			local DmgForce = dmginfo:GetDamageForce()
-			local DmgDir = DmgForce:GetNormalized()
-			local DmgDirAng = DmgDir:Angle()
-			DmgDirAng:RotateAroundAxis(Dir, 180)
-			---
-			self:FireBullets({
-				Src = DmgPos,
-				Dir = Dir,
-				Tracer = 1,
-				Num = 1,
-				Spread = Vector(0,0,0),
-				Damage = Dmg,
-				Force = DmgForce,
-				Attacker = dmginfo:GetAttacker()
-			})
-		end
-		--]]
-
-		-- finally, we actually take the damage
-		local CurStrength = self:GetStrength()
-		local AmtToLose = DmgAmt
-		local AmtRemaining = CurStrength - AmtToLose
-		self:SetStrength(AmtRemaining)
-		if (AmtRemaining <= 0) then
-			self:Break()
-		end
+		sound.Play("snds_jack_gmod/ez_bubbleshield_hits/"..math.random(1, 7)..".ogg", DmgPos, 65, math.random(90, 110))
 	end
 
 	function ENT:Think()
@@ -305,6 +209,12 @@ if SERVER then
 	end
 
 elseif CLIENT then
+	--[[
+	function ENT:ImpactTrace(tr, dmgType)
+		return true
+	end
+	--]]
+
 	local BubbleGlowSprite = Material("sprites/mat_jack_gmod_bubbleshieldglow")
 	local GlowSprite = Material("sprites/mat_jack_basicglow")
 	local BeamMat = Material("cable/physbeam")--"cable/crystal_beam1")--
@@ -360,13 +270,16 @@ elseif CLIENT then
 		render.DrawSprite(EmitPos + Extent, BeamWidth * 4 * ShieldGrade, 30 * ShieldGrade, BeamColor)
 	end
 
+	local BubbleBlur = 0
+
 	function ENT:DrawTranslucent(flags)
 		if self:GetAmInnerShield() then
 			return
 		end
+
 		local FT = FrameTime()
 		local SelfPos, SelfAng = self:GetPos(), self:GetAngles()
-		local ShieldModulate = .995 + (math.sin(CurTime() * .5) - 0.015) * .005
+		local ShieldModulate = 1--.995 + (math.sin(CurTime() * .5) - 0.015) * .005 -- for debugging
 		local ShieldAng = SelfAng:GetCopy()
 		--
 		ShieldAng:RotateAroundAxis(ShieldAng:Up(), FT)
@@ -452,14 +365,39 @@ elseif CLIENT then
 					render.SetViewPort(0, 0, oldW, oldH)--]]
 					render.SetStencilEnable(false)
 				end
-				if (Dist < self.ShieldRadius * 1.05) and (Dist > self.ShieldRadius * .99) then
-					local Ply = LocalPlayer()
-					if (Ply.EZvisionBlur or 0) < .5 then
-						Ply.EZvisionBlur = math.Clamp((Ply.EZvisionBlur or 0) + .5, 0, 75)
-					end
+				-- blur the player's vision if his eyes are intersecting the shield
+				local BlurDistRange, BlurDistBegin = self.ShieldRadius * .1, self.ShieldRadius * .95
+				local BlurDistEnd = BlurDistBegin + BlurDistRange
+				local DistDiff = math.abs(Dist - self.ShieldRadius)
+				if (Dist > BlurDistBegin) and (Dist < BlurDistEnd) then
+					BubbleBlur = ((1 - (DistDiff / BlurDistRange)) - .5) * 2
+				else
+					BubbleBlur = 0
 				end
 			end
 		end
 	end
+
+	local blurMaterial = Material('pp/bokehblur')
+
+	hook.Add("RenderScreenspaceEffects", "JMod_BubbleShieldScreenSpace", function()
+		if (BubbleBlur > 0) then
+			if GetConVar("jmod_cl_blurry_menus"):GetBool() then
+				render.UpdateScreenEffectTexture()
+				blurMaterial:SetTexture("$BASETEXTURE", render.GetScreenEffectTexture())
+				blurMaterial:SetTexture("$DEPTHTEXTURE", render.GetResolvedFullFrameDepth())
+				blurMaterial:SetFloat("$size", (BubbleBlur * 30))
+				blurMaterial:SetFloat("$focus", 1)
+				blurMaterial:SetFloat("$focusradius", 1)
+				render.SetMaterial(blurMaterial)
+				render.DrawScreenQuad()
+			else
+				-- We grey out the screen for potato users
+				surface.SetDrawColor(100, 120, 100, math.min(255 * BubbleBlur, 240))
+				surface.DrawRect(-1, -1, ScrW() + 2, ScrH() + 2)
+			end
+		end
+	end)
+
 	language.Add("ent_jack_gmod_bubble_shield", "Bubble Shield")
 end
