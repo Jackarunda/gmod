@@ -237,15 +237,17 @@ if SERVER then
 	end
 
 	function ENT:Break()
-		if self:GetState() == STATE_BROKEN then return end
+		if self:GetState() == STATE_BROKEN then 
+			SafeRemoveEntityDelayed(self, 10)
+			
+			return 
+		end
 		self:SetState(STATE_BROKEN)
 		self:EmitSound("snd_jack_turretbreak.ogg", 70, math.random(80, 120))
 
 		for i = 1, 20 do
 			JMod.DamageSpark(self)
 		end
-
-		--SafeRemoveEntityDelayed(self, 10)
 	end
 
 	function ENT:OnTakeDamage(dmginfo)

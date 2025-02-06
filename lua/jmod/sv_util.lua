@@ -318,6 +318,7 @@ local SpriteResourceTypes = {JMod.EZ_RESOURCE_TYPES.GAS, JMod.EZ_RESOURCE_TYPES.
 
 function JMod.ResourceEffect(typ, fromPoint, toPoint, amt, spread, scale, upSpeed)
 	--print("Type: " .. tostring(typ) .. " From point: " .. tostring(fromPoint) .. " Amount: " .. amt)
+	if typ == nil then return end
 	amt = (amt and math.Clamp(amt, 0, 1)) or 1
 	spread = spread or 1
 	scale = scale or 1

@@ -98,6 +98,40 @@ if SERVER then
 		end
 	end
 
+	function ENT:UseEffect(pos, ent, destructive)
+		if destructive and not self.Sploomd then
+			local Resources = 100
+			self.Sploomd = true
+			local Blam = EffectData()
+			Blam:SetOrigin(pos)
+			Blam:SetScale(5 * (Resources / 200))
+			util.Effect("eff_jack_plastisplosion", Blam, true, true)
+			util.ScreenShake(pos, 99999, 99999, 1, 750 * 5)
+
+			for i = 1, 2 do
+				sound.Play("BaseExplosionEffect.Sound", pos, 120, math.random(90, 110))
+			end
+
+			for i = 1, 2 do
+				sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".wav", pos + VectorRand() * 1000, 140, math.random(90, 110))
+			end
+
+			timer.Simple(.1, function()
+				local MeltBlast = DamageInfo()
+				MeltBlast:SetInflictor(game.GetWorld())
+				MeltBlast:SetAttacker(game.GetWorld())
+				MeltBlast:SetDamage(Resources * 5)
+				MeltBlast:SetDamageType(DMG_DISSOLVE)
+				util.BlastDamageInfo(MeltBlast, pos, Resources * 8)
+				for k, v in pairs(ents.FindInSphere(pos, Resources * 5)) do 
+					if v:GetClass() == "npc_strider" then
+						v:Fire("break")
+					end
+				end
+			end)
+		end
+	end
+
 elseif CLIENT then
     local drawvec, drawang = Vector(0, 3.5, 1), Angle(-90, 0, 90)
 	function ENT:Draw()
