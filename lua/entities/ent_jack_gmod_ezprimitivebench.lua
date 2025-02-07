@@ -56,7 +56,7 @@ if(SERVER)then
 		self:SetProgress(0)
 		self:SetOre(0)
 		self:SetOreType("generic")
-		self.MaxOre = 30
+		self.MaxOre = 50
 		self.NextEffThink = 0
 		self.NextSmeltThink = 0
 		self.NextEnvThink = 0
@@ -436,7 +436,7 @@ if(SERVER)then
 elseif(CLIENT)then
 	function ENT:CustomInit()
 		--self.Camera=JMod.MakeModel(self,"models/props_combine/combinecamera001.mdl")
-		self.MaxOre = 30
+		self.MaxOre = 50
 		--models/props_interiors/pot02a.mdl
 		--models/props_junk/garbage_metalcan002a.mdl
 	end
