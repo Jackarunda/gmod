@@ -48,7 +48,6 @@ if(SERVER)then
 		self.NextUseTime = 0
 		self.NextEffThink = 0
 		self.NextEnvThink = 0
-		self.SoundLoop = CreateSound(self, "snds_jack_gmod/ezbhg_hum.wav")
 		if self.SpawnFull then
 			self:SetGas(self.MaxGas)
 			self:SetUranium(self.MaxUranium)
@@ -85,6 +84,9 @@ if(SERVER)then
 			self:SetState(STATE_ON)
 			timer.Simple(.8, function()
 				if IsValid(self) and (self:GetState() == STATE_ON) then
+					if not self.SoundLoop then
+						self.SoundLoop = CreateSound(self, "snds_jack_gmod/ezbhg_hum.wav")
+					end
 					self.SoundLoop:Play()
 					self.SoundLoop:SetSoundLevel(70)
 					self.SoundLoop:ChangeVolume(.9)
