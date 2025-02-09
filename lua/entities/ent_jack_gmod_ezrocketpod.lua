@@ -13,7 +13,7 @@ ENT.EZcolorable = true
 ENT.EZlowFragPlease = true
 ENT.EZbuoyancy = .3
 ENT.RocketDisplaySpecs = {
-	["ent_jack_gmod_ezbigrocket"] = {
+	["ent_jack_gmod_ezheavyrocket"] = {
 		mdl = "models/jmod/explosives/ez_hrocket.mdl",
 		siz = 1,
 		pos = Vector(0, 0, 0),
@@ -188,14 +188,21 @@ if SERVER then
 
 		local PodAngle = Ang:GetCopy()
 		--PodAngle:RotateAroundAxis(Ford, 30)
-		PodAngle:RotateAroundAxis(Ford, 60 * (slotNum - 1))
+		PodAngle:RotateAroundAxis(Ford, -60 * (slotNum - 1))
 		PodAngle:RotateAroundAxis(PodAngle:Right(), -LaunchedRocket.JModPreferredCarryAngles.p)
 		PodAngle:RotateAroundAxis(PodAngle:Up(), LaunchedRocket.JModPreferredCarryAngles.y)
-		LaunchedRocket:SetPos(Pos + PodAngle:Up() * 10 + Ford * 40)
+		LaunchedRocket:SetPos(Pos + PodAngle:Up() * 10 + Ford * 60)
 		LaunchedRocket:SetAngles(PodAngle)
 		JMod.SetEZowner(LaunchedRocket, ply)
 		LaunchedRocket:Spawn()
 		LaunchedRocket:Activate()
+
+		local Nocollider = constraint.NoCollide(self, LaunchedRocket, 0, 0, true)
+		timer.Simple(1, function()
+			if IsValid(LaunchedRocket) then
+				constraint.RemoveConstraints(LaunchedRocket, "NoCollide")
+			end
+		end)
 		
 		timer.Simple(0, function()
 			if IsValid(LaunchedRocket) then
@@ -206,8 +213,6 @@ if SERVER then
 					LaunchedRocket:SetState(1)
 					if LaunchedRocket.Launch then
 						LaunchedRocket:Launch(ply)
-						local Nocollider = constraint.NoCollide(self, LaunchedRocket, 0, 0)
-						constraint.RemoveConstraints(LaunchedRocket, "NoCollide")
 					end
 				else
 					LaunchedRocket:SetState(0)

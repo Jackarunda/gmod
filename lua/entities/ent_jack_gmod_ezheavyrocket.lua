@@ -5,7 +5,7 @@ ENT.Author = "Jackarunda"
 ENT.Category = "JMod - EZ Explosives"
 ENT.Information = "glhfggwpezpznore"
 ENT.PrintName = "EZ Heavy Rocket"
-ENT.Spawnable = false
+ENT.Spawnable = true
 ENT.AdminSpawnable = true
 ---
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
@@ -46,7 +46,7 @@ if SERVER then
 
 		---
 		timer.Simple(.01, function()
-			self:GetPhysicsObject():SetMass(40)
+			self:GetPhysicsObject():SetMass(50)
 			self:GetPhysicsObject():Wake()
 			self:GetPhysicsObject():EnableDrag(false)
 		end)
@@ -116,7 +116,7 @@ if SERVER then
 		self:TakePhysicsDamage(dmginfo)
 
 		if JMod.LinCh(dmginfo:GetDamage(), 60, 120) then
-			if math.random(1, 3) == 1 then
+			if math.random(1, 5) == 1 then
 				self:Break()
 			else
 				JMod.SetEZowner(self, dmginfo:GetAttacker())
@@ -149,50 +149,50 @@ if SERVER then
 		end
 	end
 
-	function ENT:Detonate()
-		if self.NextDet > CurTime() then return end
-		if self.Exploded then return end
-		self.Exploded = true
-		local SelfPos, Att, Dir = self:GetPos() + Vector(0, 0, 30), JMod.GetEZowner(self), self:GetForward()
-		JMod.Sploom(Att, SelfPos, 300)
-		---
-		util.ScreenShake(SelfPos, 1000, 3, 2, 1500)
-		self:EmitSound("snd_jack_fragsplodeclose.ogg", 90, 100)
-		---
-		util.BlastDamage(game.GetWorld(), Att, SelfPos + Vector(0, 0, 50), 250, 200)
+	function ENT:Think()
+		if istable(WireLib) then
+			WireLib.TriggerOutput(self, "State", self:GetState())
+			WireLib.TriggerOutput(self, "Fuel", self.FuelLeft)
+		end
 
-		for k, ent in pairs(ents.FindInSphere(SelfPos, 200)) do
-			if ent:GetClass() == "npc_helicopter" then
-				ent:Fire("selfdestruct", "", math.Rand(0, 2))
+		local Phys = self:GetPhysicsObject()
+		JMod.AeroDrag(self, self:GetForward(), 1)
+
+		if self:GetState() == STATE_LAUNCHED then
+			local SelfPos = self:WorldSpaceCenter()
+			local FlightDir = self:GetForward()
+			if IsValid(self.Target) then
+				local DiffToTarget = (self.Target:WorldSpaceCenter()) - SelfPos
+				local Dist = DiffToTarget:Length()
+				local OurVel = self:GetVelocity()
+				local TheirVel = self.Target:GetVelocity()
+				local LeadDir = TheirVel:GetNormalized()
+				local AimVector = self.Target:WorldSpaceCenter() + LeadDir * (((Dist * 12) / (OurVel:Length() * 12)) * TheirVel:Length()) --* .5
+				local AimDir = (AimVector - SelfPos):GetNormalized()
+				local CurForward = self:GetForward()
+				FlightDir = LerpVector(.5, CurForward, AimDir)
+				if Dist < 400 then
+					self:Detonate()
+				end
+			end
+
+			if self.FuelLeft > 0 then
+				Phys:ApplyForceCenter(FlightDir * 20000 + self.UpLift)
+				Phys:ApplyTorqueCenter(self:GetForward() * 20)
+				self.FuelLeft = self.FuelLeft - 1
+				---
+				local Eff = EffectData()
+				Eff:SetOrigin(self:GetPos())
+				Eff:SetNormal(-self:GetForward())
+				Eff:SetScale(4)
+				util.Effect("eff_jack_gmod_ezexhaust", Eff, true, true)
+				--util.Effect("eff_jack_gmod_rockettrail", Eff, true, true)
 			end
 		end
 
-		---
-		JMod.WreckBuildings(self, SelfPos, 4)
-		JMod.BlastDoors(self, SelfPos, 4)
+		self:NextThink(CurTime() + .05)
 
-		---
-		timer.Simple(.2, function()
-			local Tr = util.QuickTrace(SelfPos - Dir * 100, Dir * 300)
-
-			if Tr.Hit then
-				util.Decal("Scorch", Tr.HitPos + Tr.HitNormal, Tr.HitPos - Tr.HitNormal)
-			end
-		end)
-
-		---
-		self:Remove()
-		local Ang = self:GetAngles()
-		Ang:RotateAroundAxis(Ang:Forward(), -90)
-
-		timer.Simple(.1, function()
-			ParticleEffect("50lb_air", SelfPos - Dir * 20, Ang)
-			ParticleEffect("50lb_air", SelfPos - Dir * 50, Ang)
-			ParticleEffect("50lb_air", SelfPos - Dir * 80, Ang)
-		end)
-	end
-
-	function ENT:OnRemove()
+		return true
 	end
 
 	--
@@ -210,7 +210,7 @@ if SERVER then
 		local Eff = EffectData()
 		Eff:SetOrigin(self:GetPos())
 		Eff:SetNormal(-self:GetForward())
-		Eff:SetScale(4)
+		Eff:SetScale(1)
 		util.Effect("eff_jack_gmod_rocketthrust", Eff, true, true)
 
 		---
@@ -233,50 +233,71 @@ if SERVER then
 		---
 		timer.Simple(.5, function()
 			if IsValid(self) then
-				self:GetPhysicsObject():ApplyTorqueCenter(self:GetForward() * 2000)
+				self:GetPhysicsObject():ApplyTorqueCenter(self:GetForward() * 2500)
 				self:SetBodygroup(1, 1)
 			end
 		end)
+
+		for k, v in pairs(ents.FindInCone(self:GetPos(), self:GetForward(), 50000, 0.707)) do
+			if JMod.ShouldAttack(self, v, true, false) then
+				self.Target = v
+
+				break
+			end
+		end
 	end
 
 	function ENT:EZdetonateOverride(detonator)
 		self:Detonate()
 	end
 
-	function ENT:Think()
-		if istable(WireLib) then
-			WireLib.TriggerOutput(self, "State", self:GetState())
-			WireLib.TriggerOutput(self, "Fuel", self.FuelLeft)
-		end
+	function ENT:Detonate()
+		if self.NextDet > CurTime() then return end
+		if self.Exploded then return end
+		self.Exploded = true
+		local SelfPos, Att, Dir = self:GetPos() + self:GetForward() * 50, JMod.GetEZowner(self), self:GetForward()
+		JMod.Sploom(Att, SelfPos, 300)
+		JMod.FragSplosion(self, SelfPos, 50, 35, 1000, Att, Dir, .45, nil, false)
+		---
+		util.ScreenShake(SelfPos, 1000, 3, 2, 1500)
+		self:EmitSound("snd_jack_fragsplodeclose.ogg", 90, 100)
+		---
+		util.BlastDamage(game.GetWorld(), Att, SelfPos + Vector(0, 0, 50), 250, 200)
 
-		local Phys = self:GetPhysicsObject()
-		JMod.AeroDrag(self, self:GetForward(), 1)
-
-		if self:GetState() == STATE_LAUNCHED then
-			if self.FuelLeft > 0 then
-				Phys:ApplyForceCenter(self:GetForward() * 20000 + self.UpLift)
-				self.FuelLeft = self.FuelLeft - 2.5
-				---
-				local Eff = EffectData()
-				Eff:SetOrigin(self:GetPos())
-				Eff:SetNormal(-self:GetForward())
-				Eff:SetScale(1)
-				util.Effect("eff_jack_gmod_rockettrail", Eff, true, true)
-			end
-			
-			for k, v in pairs(ents.FindInCone(self:GetPos(), self:GetForward(), 200, 0.707)) do
-				if JMod.ShouldAttack(self, v, false, false) then
-					self:Detonate()
-
-					break
-				end
+		for k, ent in pairs(ents.FindInSphere(SelfPos, 400)) do
+			if ent:GetClass() == "npc_helicopter" then
+				ent:Fire("selfdestruct", "", math.Rand(0, 2))
 			end
 		end
 
-		self:NextThink(CurTime() + .05)
+		---
+		JMod.WreckBuildings(self, SelfPos, 4)
+		JMod.BlastDoors(self, SelfPos, 4)
 
-		return true
+		---
+		timer.Simple(.2, function()
+			local Tr = util.QuickTrace(SelfPos - Dir * 100, Dir * 300)
+
+			if Tr.Hit then
+				util.Decal("Scorch", Tr.HitPos + Tr.HitNormal, Tr.HitPos - Tr.HitNormal)
+			end
+		end)
+
+		---
+		self:Remove()
+		local Ang = self:GetAngles()
+		Ang:RotateAroundAxis(Ang:Right(), -90)
+
+		timer.Simple(.1, function()
+			ParticleEffect("100lb_air", SelfPos - Dir * 20, Ang)
+			ParticleEffect("100lb_air", SelfPos - Dir * 50, Ang)
+			ParticleEffect("100lb_air", SelfPos - Dir * 80, Ang)
+		end)
 	end
+
+	function ENT:OnRemove()
+	end
+
 elseif CLIENT then
 	function ENT:Initialize()
 		self:SetModel("models/jmod/explosives/ez_hrocket.mdl")
