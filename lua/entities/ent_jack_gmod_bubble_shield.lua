@@ -23,6 +23,13 @@ function ENT:GravGunPunt(ply)
 	return false
 end
 
+function ENT:CanTool(ply, trace, mode, tool, button)
+
+	if (mode == "remover") then return true end
+
+	return false
+end
+
 hook.Add("EntityTakeDamage", "JMOD_SHIELDEXPLOSION", function( target, dmginfo )
 	if target:GetClass() == "ent_jack_gmod_bubble_shield" then return end
 	local Shield = NULL
@@ -72,27 +79,6 @@ function ENT:TestCollision(startpos, delta, isbox, extents, mask)
 	local SelfPos = self:GetPos()
 	local EndPos = startpos + delta
 	local TestNorm = (startpos - (EndPos)):GetNormalized()
-	--local OurNorm = (SelfPos - startpos):GetNormalized()
-
-	--[[if (bit.band(mask, MASK_SHOT) == MASK_SHOT) then
-		local RandColServer, RandColorClient = Color(0, math.random(0, 255), 255), Color(255, math.random(0, 255), 0)
-		local WhereCameFrom = EndPos + TestNorm * 10
-		if CLIENT then
-			if isbox then
-				debugoverlay.Box(EndPos, -extents, extents, 2, RandColorClient, false)
-			else
-				debugoverlay.Cross(EndPos, 2, 2, RandColorClient, true)
-				debugoverlay.Line(EndPos, startpos, 2, RandColorClient, true)
-			end
-		else
-			if isbox then
-				debugoverlay.Box(EndPos, -extents, extents, 2, RandColServer, false)
-			else
-				debugoverlay.Cross(EndPos, 2, 2, RandColServer, true)
-				debugoverlay.Line(EndPos, startpos, 2, RandColServer	, true)
-			end
-		end
-	end--]]
 
 	if isbox then
 		local PointsToCheck = {
@@ -118,15 +104,15 @@ function ENT:TestCollision(startpos, delta, isbox, extents, mask)
 		end
 	end
 
-	if SERVER then
-		--debugoverlay.Cross(startpos, 2, 5, Color(255, 153, 0), true)
-		--debugoverlay.Line(EndPos, startpos, 3, Color(96, 255, 3), true)
-	end
 	--
-	if bit.band(mask, MASK_SHOT) == MASK_SHOT then
-		return {
-			Fraction = 0
-		}
+	if (bit.band(mask, MASK_SHOT) == MASK_SHOT) then
+		local Frac1, Frac2 = util.IntersectRayWithSphere(startpos, delta, self:GetPos(), self.ShieldRadius)
+		--debugoverlay.Line(startpos, startpos + delta * (Frac1 or 1), 10, Color(255, 0, 0, 255), true)
+		if Frac1 then
+			return {
+				Fraction = Frac1
+			}
+		end
 	end
 
 	return true
