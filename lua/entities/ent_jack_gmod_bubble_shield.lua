@@ -200,7 +200,7 @@ if SERVER then
 		---
 		-- This is to stop stuff like fire from causing ripples on the shield in weird places
 		local IsBullet = dmginfo:IsBulletDamage()
-		if IsBullet then
+		if DmgPos:Distance(SelfPos) > (self.ShieldRadius + 10) then
 			local ShotOrigin = DmgPos
 			--debugoverlay.Cross(ShotOrigin, 2, 5, Color(255, 0, 0), true)
 			--debugoverlay.Line(ShotOrigin, DmgPos, 5, Color(255, 0, 0), true)
@@ -213,9 +213,11 @@ if SERVER then
 				end
 			elseif IsValid(Inflictor) then
 				ShotOrigin = Inflictor:GetPos()
-				if Inflictor.GetAttachment then
+				if Inflictor:GetAttachment(1) then
 					ShotOrigin = Inflictor:GetAttachment(1).Pos
 				end
+			else
+				ShotOrigin = DmgPos + SplashDir
 			end
 			local IncomingVec = DmgPos - ShotOrigin
 
