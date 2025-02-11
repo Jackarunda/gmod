@@ -106,10 +106,11 @@ function ENT:TestCollision(startpos, delta, isbox, extents, mask)
 
 	--
 	if (bit.band(mask, MASK_SHOT) == MASK_SHOT) then
-		local Frac1, Frac2 = util.IntersectRayWithSphere(startpos, delta, self:GetPos(), self.ShieldRadius)
+		local Frac1, Frac2 = util.IntersectRayWithSphere(startpos, delta, SelfPos, self.ShieldRadius)
 		--debugoverlay.Line(startpos, startpos + delta * (Frac1 or 1), 10, Color(255, 0, 0, 255), true)
-		if Frac1 then
+		if Frac1 and Frac2 then
 			return {
+				HitPos = startpos + delta * (Frac1 or 1),
 				Fraction = Frac1
 			}
 		end
@@ -191,40 +192,45 @@ if SERVER then
 		local Attacker = dmginfo:GetAttacker()
 		local Inflictor = dmginfo:GetInflictor()
 		local DmgAmt = dmginfo:GetDamage()
+		local DmgForce = dmginfo:GetDamageForce()
 		local SelfPos = self:GetPos()
-		local Vec = DmgPos - SelfPos
-		local Dir = Vec:GetNormalized()
+		local DmgPosOffset = DmgPos - SelfPos
+		local SplashDir = DmgPosOffset:GetNormalized()
 		local Scale = (dmginfo:GetDamage() / 30) ^ .5
 		---
 		-- This is to stop stuff like fire from causing ripples on the shield in weird places
 		local IsBullet = dmginfo:IsBulletDamage()
 		if IsBullet then
 			local ShotOrigin = DmgPos
-
-			if IsValid(Attacker) and Attacker.GetShootPos then
-				ShotOrigin = Attacker:GetShootPos()
+			--debugoverlay.Cross(ShotOrigin, 2, 5, Color(255, 0, 0), true)
+			--debugoverlay.Line(ShotOrigin, DmgPos, 5, Color(255, 0, 0), true)
+			
+			local dmgGun = dmginfo:GetWeapon()
+			if IsValid(dmgGun) then
+				ShotOrigin = dmgGun:GetPos()
+				if dmgGun:GetAttachment(1) then
+					ShotOrigin = dmgGun:GetAttachment(1).Pos
+				end
 			elseif IsValid(Inflictor) then
-				ShotOrigin = dmginfo:GetInflictor():GetPos()
+				ShotOrigin = Inflictor:GetPos()
+				if Inflictor.GetAttachment then
+					ShotOrigin = Inflictor:GetAttachment(1).Pos
+				end
 			end
+			local IncomingVec = DmgPos - ShotOrigin
 
-			local ShieldTr = util.TraceLine({
-				start = ShotOrigin,
-				endpos = DmgPos,
-				filter = {Attacker, Inflictor},
-				mask = MASK_SOLID
-			})
-			if ShieldTr.Hit and IsValid(ShieldTr.Entity) and ShieldTr.Entity:GetClass() == "ent_jack_gmod_bubble_shield" then
-				DmgPos = ShieldTr.HitPos
-				Dir = ShieldTr.HitNormal
+			local Frac1, Frac2 = util.IntersectRayWithSphere(ShotOrigin, IncomingVec, SelfPos, self.ShieldRadius)
+			if Frac1 then
+				DmgPos = ShotOrigin + IncomingVec * Frac1
 			end
 		end
 		
-		if IsBullet or dmginfo:IsExplosionDamage() or dmginfo:GetDamageForce():Length() > 10 then
+		if IsBullet or dmginfo:IsExplosionDamage() or DmgForce:Length() > 10 then
 			local Ripple = EffectData()
 			Ripple:SetEntity(self)
 			Ripple:SetOrigin(DmgPos)
 			Ripple:SetScale(Scale)
-			Ripple:SetNormal(Dir)
+			Ripple:SetNormal(SplashDir)
 			util.Effect("eff_jack_gmod_refractripple", Ripple, true, true)
 			---
 			sound.Play("snds_jack_gmod/ez_bubbleshield_hits/"..math.random(1, 7)..".ogg", DmgPos, 65, math.random(90, 110))
@@ -371,6 +377,7 @@ elseif CLIENT then
 			-- STENCILS!
 			local Epos = EyePos()
 			local OffsetVec = Epos - SelfPos
+			local OffsetNorm = OffsetVec:GetNormalized()
 			local Dist = OffsetVec:Length()
 			local FoV = 1 / (render.GetViewSetup().fov / 180)
 			local R, G, B = JMod.GoodBadColor(Strength)
@@ -390,8 +397,11 @@ elseif CLIENT then
 					local DistToEdge = Dist - self.ShieldRadius
 					local DistFrac = math.Clamp(ShieldPie - DistToEdge, 0, ShieldPie) / ShieldPie
 					local ClosenessCompensation = (ShieldPie * 1.15) * DistFrac ^ (math.pi ^ 2)
-					local SizeInPix = render.ComputePixelDiameterOfSphere(SelfPos, self.ShieldRadius)
-					--print(DistFrac, ClosenessCompensation)
+					--print(DistFrac)
+					--local TestPoint = SelfPos + Vector(0, 0, self.ShieldRadius)
+					--debugoverlay.Cross(TestPoint, 5, 1, Color(255, 255, 255), true)
+					--debugoverlay.Line(Epos, TestPoint, 1, Color(255, 255, 255), true)
+					--print(Dist / ShieldPie)
 
 					-- Set up the stencil op with safe values
 					render.SetStencilEnable(true)
@@ -409,7 +419,7 @@ elseif CLIENT then
 					render.SetColorMaterial()
 					-- Perspective offset is for helping with making it look more like the glow is coming from the edge of the shield.
 					local ShieldSizeOffset = .05
-					local PerspectiveOffset = OffsetVec:GetNormalized() * (self.ShieldRadius * ShieldSizeOffset)
+					local PerspectiveOffset = OffsetNorm * (self.ShieldRadius * ShieldSizeOffset)
 					-- We are drawing it completely invisible becasue it's a mask
 					-- There might be another way to do this, but this works for now
 					render.DrawSphere(SelfPos - PerspectiveOffset, self.ShieldRadius * (1 + ShieldSizeOffset + .01) * self.ShieldGrow, 50, 50, MASK_COLOR)
@@ -421,23 +431,22 @@ elseif CLIENT then
 					-- Now we are going to draw the glow
 					--
 					local Siz = (ShieldDiameter * 1.1 + ClosenessCompensation) * self.ShieldGrow
-					local SizPix = (ShieldDiameter * 1.1 + (SizeInPix * DistFrac)) * self.ShieldGrow
 					render.SetMaterial(BubbleGlowSprite)
 					render.DrawSprite(SelfPos, Siz, Siz, Color(R, G, B, 128))
-					--render.DrawSprite(SelfPos, SizPix, SizPix, Color(R, G, B, 128))--]]
+					--
+					--local OffsetDist = OffsetNorm * (DistFrac * self.ShieldRadius)
+					--local TrigSiz = ShieldDiameter + math.sqrt((self.ShieldRadius ^ 2) - (OffsetDist:Length() ^ 2)) * 2
+					--debugoverlay.Cross(SelfPos + OffsetDist, 2, 5, Color(255, 0, 0), true)
+					--render.DrawSprite(SelfPos + OffsetDist, TrigSiz, TrigSiz, Color(R, G, B, 128))
 					--[[
-					local PosData = SelfPos:ToScreen()
-					local oldW, oldH = ScrW(), ScrH()
-					render.SetViewPort(0, 0, oldW, oldH)
-					cam.Start2D()
-					local W, H = ScrW(), ScrH()
-						if PosData.visible then
-							surface.SetMaterial(BubbleGlowSprite)
-							surface.SetDrawColor(R, G, B, 128)
-							surface.DrawTexturedRect(PosData.x - SizeInPix / 2, PosData.y - SizeInPix / 2, SizeInPix, SizeInPix)
-						end
-					cam.End2D()
-					render.SetViewPort(0, 0, oldW, oldH)--]]
+					local Alignment = EyeAngles():Forward():Dot(-OffsetNorm)
+					--print(Alignment)
+					local PixSize = render.ComputePixelDiameterOfSphere(SelfPos, self.ShieldRadius) * math.abs(Alignment)
+					local FovFrac = (render.GetViewSetup().fov / 180)
+					local RenderPos = Epos - (OffsetNorm) * DistToEdge --/ FovFrac
+					debugoverlay.Cross(RenderPos, 2, 5, Color(255, 0, 0), true)
+					render.DrawSprite(RenderPos, PixSize, PixSize, Color(R, G, B, 128))
+					--]]
 					render.SetStencilEnable(false)
 				end
 				-- blur the player's vision if his eyes are intersecting the shield
