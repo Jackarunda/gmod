@@ -64,8 +64,8 @@ function EFFECT:Render()
 		FinalNorm = (FinalPos - self.Entity:GetPos()):GetNormalized()
 	end
 	render.SetMaterial(Spark)
-	render.DrawSprite(FinalPos + FinalNorm, 10 * Frac, 10 * Frac, color_white)
+	render.DrawSprite(FinalPos - FinalNorm, 10 * Frac, 10 * Frac, color_white)
 	render.SetMaterial(self.Mat)
-	render.DrawQuadEasy(FinalPos + FinalNorm, FinalNorm, self.Size * self.Scale, self.Size * self.Scale, color_white)
+	render.DrawQuadEasy(FinalPos - FinalNorm, FinalNorm, self.Size * self.Scale, self.Size * self.Scale, color_white)
 	return
 end

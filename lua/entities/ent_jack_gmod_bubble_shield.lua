@@ -14,7 +14,7 @@ ENT.ShieldRadii = {
 	[4] = 468,
 	[5] = 585
 }
-ENT.mmRHAe = 100 -- for ArcCW, hinders bullet penetration of the shield
+ENT.mmRHAe = 500 -- for ArcCW, hinders bullet penetration of the shield
 ENT.DisableDuplicator =	true
 --
 ENT.JMod_NapalmBounce = true
@@ -188,24 +188,28 @@ if SERVER then
 	end
 
 	function ENT:OnTakeDamage(dmginfo)
+		local SelfPos = self:GetPos()
 		local DmgPos = dmginfo:GetDamagePosition()
+		local DmgDist = DmgPos:Distance(SelfPos)
+		
+		if (DmgDist < (self.ShieldRadius - 10)) then return end -- don't take damage from inside
+
 		local Attacker = dmginfo:GetAttacker()
 		local Inflictor = dmginfo:GetInflictor()
 		local DmgAmt = dmginfo:GetDamage()
 		local DmgForce = dmginfo:GetDamageForce()
-		local SelfPos = self:GetPos()
 		local DmgPosOffset = DmgPos - SelfPos
 		local SplashDir = DmgPosOffset:GetNormalized()
 		local Scale = (dmginfo:GetDamage() / 30) ^ .5
 		---
 		-- This is to stop stuff like fire from causing ripples on the shield in weird places
 		local IsBullet = dmginfo:IsBulletDamage()
-		if DmgPos:Distance(SelfPos) > (self.ShieldRadius + 10) then
+		if DmgDist > (self.ShieldRadius + 10) then
 			local ShotOrigin = DmgPos
 			--debugoverlay.Cross(ShotOrigin, 2, 5, Color(255, 0, 0), true)
 			--debugoverlay.Line(ShotOrigin, DmgPos, 5, Color(255, 0, 0), true)
 			
-			local dmgGun = dmginfo:GetWeapon()
+			local dmgGun = dmginfo.GetWeapon and dmginfo:GetWeapon()
 			if IsValid(dmgGun) then
 				ShotOrigin = dmgGun:GetPos()
 				if dmgGun:GetAttachment(1) then
@@ -261,12 +265,14 @@ if SERVER then
 		--]]
 
 		-- finally, we actually take the damage
-		local CurStrength = self:GetStrength()
-		local AmtToLose = DmgAmt
-		local AmtRemaining = CurStrength - AmtToLose
-		self:SetStrength(AmtRemaining)
-		if (AmtRemaining <= 0) then
-			self:Break()
+		if (true) then
+			local CurStrength = self:GetStrength()
+			local AmtToLose = DmgAmt / 100
+			local AmtRemaining = CurStrength - AmtToLose
+			self:SetStrength(AmtRemaining)
+			if (AmtRemaining <= 0) then
+				self:Break()
+			end
 		end
 	end
 
