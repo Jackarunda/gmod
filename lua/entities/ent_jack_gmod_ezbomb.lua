@@ -114,89 +114,97 @@ if SERVER then
 				self:EmitSound("Canister.ImpactHard")
 			end
 
-			local WorldTr = util.TraceLine({
-				start = SelfPos,
-				endpos = SelfPos + data.OurOldVelocity,
-				filter = {self}
-			})
-
-			local Constrained = self:IsPlayerHolding() or constraint.HasConstraints(self) or not self:GetPhysicsObject():IsMotionEnabled()
-
-			if WorldTr.HitSky and not(Constrained) then
-				local NewPos, TravelTime, NewVel = self:FindNextEmptySpace(data.OurOldVelocity)
-
-				if NewPos then
-					timer.Simple(0, function()
-						if IsValid(self) then
-							self:SetNoDraw(true)
-							self:SetNotSolid(true)
-							self:GetPhysicsObject():EnableMotion(false)
-						end
-					end)
-					timer.Simple(TravelTime, function()
-						if IsValid(self) then
-							self:SetNoDraw(false)
-							self:SetNotSolid(false)
-							self:SetPos(NewPos)
-							self:SetAngles(NewVel:Angle())
-							self:GetPhysicsObject():EnableMotion(true)
-							self:GetPhysicsObject():SetVelocity(NewVel)
-						end
-					end)
-				else
-					SafeRemoveEntityDelayed(self, 0)
-				end
-
-				return
-			end
-
 			local DetTime = 0
-			--print(data.Speed * physobj:GetMass())
-			local OurSpeed = data.OurOldVelocity:Length()
-			local Mass = physobj:GetMass()
-			local SurfaceData = util.GetSurfaceData(WorldTr.SurfaceProps)
-			local Hardness = (SurfaceData and SurfaceData.hardnessFactor) or 1
-			local OurNoseDir = -self:GetRight()
-			local AngleDiff = (OurNoseDir):Dot(-WorldTr.HitNormal)--:Dot(data.OurOldVelocity:GetNormalized())
-			--print("Pen Force Diff:", OurSpeed * Mass - Hardness * 300000)
 
-			if WorldTr.HitWorld and not(Constrained) and (AngleDiff > .75) and (OurSpeed * Mass > Hardness * 500000) then
-				DetTime = math.Rand(.5, 2)
+			if data.HitEntity == game.GetWorld() then
+				local WorldTr = util.TraceLine({
+					start = SelfPos,
+					endpos = SelfPos + data.OurOldVelocity,
+					filter = {self}
+				})--]]
 
-				timer.Simple(0, function()
-					if IsValid(self) then
-						local Eff = EffectData()
-						Eff:SetOrigin(WorldTr.HitPos)
-						Eff:SetScale(10)
-						Eff:SetNormal(WorldTr.HitNormal)
-						util.Effect("eff_jack_sminebury", Eff, true, true)
-						--
-						local OldAngle = self:GetAngles()
-						local BuryAngle = data.OurOldVelocity:Angle()
-						BuryAngle:RotateAroundAxis(BuryAngle:Right(), self.JModPreferredCarryAngles.p)
-						BuryAngle:RotateAroundAxis(BuryAngle:Up(), self.JModPreferredCarryAngles.y)
-						BuryAngle:RotateAroundAxis(BuryAngle:Forward(), self.JModPreferredCarryAngles.r)
-						BuryAngle = LerpAngle(Hardness - .2, BuryAngle, OldAngle)
-						self:SetAngles(BuryAngle)
-						local StickOffSet = self:GetPos() - self:WorldSpaceCenter()
-						--print(StickOffSet)
-						self:SetPos(WorldTr.HitPos - StickOffSet + WorldTr.HitNormal * 10)
-						--
-						--[[local EmptySpaceTr = util.QuickTrace(self:LocalToWorld(self:OBBCenter()) + OurNoseDir * 100, -OurNoseDir * 200, {self})
-						if not EmptySpaceTr.StartSolid and not EmptySpaceTr.HitSky and EmptySpaceTr.Hit then
-							timer.Simple(DetTime + .1, function()
-								JMod.Sploom(JMod.GetEZowner(self), WorldTr.HitPos, 100)
-							end)
-							self:SetPos(EmptySpaceTr.HitPos + EmptySpaceTr.Normal * -EmptySpaceTr.Fraction * 100)
-						else
-							self:GetPhysicsObject():EnableMotion(false)
-						end--]]
-						self:GetPhysicsObject():EnableMotion(false)
+				local Constrained = self:IsPlayerHolding() or constraint.HasConstraints(self) or not self:GetPhysicsObject():IsMotionEnabled()
+
+				if WorldTr.HitSky and not(Constrained) then
+					local NewPos, TravelTime, NewVel = self:FindNextEmptySpace(data.OurOldVelocity)
+
+					if NewPos then
+						timer.Simple(0, function()
+							if IsValid(self) then
+								self:SetNoDraw(true)
+								self:SetNotSolid(true)
+								self:GetPhysicsObject():EnableMotion(false)
+							end
+						end)
+						timer.Simple(TravelTime, function()
+							if IsValid(self) then
+								self:SetNoDraw(false)
+								self:SetNotSolid(false)
+								self:SetPos(NewPos)
+								self:SetAngles(NewVel:Angle())
+								self:GetPhysicsObject():EnableMotion(true)
+								self:GetPhysicsObject():SetVelocity(NewVel)
+							end
+						end)
+					else
+						SafeRemoveEntityDelayed(self, 0)
 					end
-				end)
+
+					return
+				end--]]
+
+				--print(data.Speed * physobj:GetMass())
+				local OurSpeed = data.OurOldVelocity:Length()
+				local Mass = physobj:GetMass()
+				local SurfaceData = util.GetSurfaceData(WorldTr.SurfaceProps)
+				local Hardness = (SurfaceData and SurfaceData.hardnessFactor) or 1
+				local OurNoseDir = -self:GetRight()
+				local AngleDiff = (OurNoseDir):Dot(-WorldTr.HitNormal)
+				--print("Pen Force Diff:", (OurSpeed * Mass) - (Hardness * 1000000))
+
+				if WorldTr.HitWorld and not(Constrained) and (AngleDiff > .75) and (OurSpeed * Mass > Hardness * 1000000) then
+					DetTime = math.Rand(.5, 2)
+
+					timer.Simple(0.1, function()
+						if IsValid(self) then
+							local Eff = EffectData()
+							Eff:SetOrigin(WorldTr.HitPos)
+							Eff:SetScale(10)
+							Eff:SetNormal(WorldTr.HitNormal)
+							util.Effect("eff_jack_sminebury", Eff, true, true)
+							--
+							local OldAngle = self:GetAngles()
+							local BuryAngle = data.OurOldVelocity:Angle()
+							BuryAngle:RotateAroundAxis(BuryAngle:Right(), self.JModPreferredCarryAngles.p)
+							BuryAngle:RotateAroundAxis(BuryAngle:Up(), self.JModPreferredCarryAngles.y)
+							BuryAngle:RotateAroundAxis(BuryAngle:Forward(), self.JModPreferredCarryAngles.r)
+							BuryAngle = LerpAngle(Hardness - .2, BuryAngle, OldAngle)
+							self:SetAngles(BuryAngle)
+							local StickOffSet = self:GetPos() - self:WorldSpaceCenter()
+							--print(StickOffSet)
+							self:SetPos(WorldTr.HitPos - StickOffSet + WorldTr.HitNormal * 10)
+							--
+							--[[local EmptySpaceTr = util.QuickTrace(self:LocalToWorld(self:OBBCenter()) + OurNoseDir * 100, -OurNoseDir * 200, {self})
+							if not EmptySpaceTr.StartSolid and not EmptySpaceTr.HitSky and EmptySpaceTr.Hit then
+								timer.Simple(DetTime + .1, function()
+									JMod.Sploom(JMod.GetEZowner(self), WorldTr.HitPos, 100)
+								end)
+								self:SetPos(EmptySpaceTr.HitPos + EmptySpaceTr.Normal * -EmptySpaceTr.Fraction * 100)
+							else
+								self:GetPhysicsObject():EnableMotion(false)
+							end--]]
+							self:GetPhysicsObject():EnableMotion(false)
+						end
+					end)
+
+					if math.random(1, 1000) == 1 then
+						-- A small chance for the bomb to not go off.
+						return
+					end
+				end
 			end
 			
-			if (self:GetState() == STATE_ARMED) and (data.Speed > self.DetSpeed) and (math.random(1, 1000) < 999) then
+			if (self:GetState() == STATE_ARMED) and (data.Speed > self.DetSpeed) then
 				timer.Simple(DetTime, function()
 					if IsValid(self) then 
 						self:Detonate()
