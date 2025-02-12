@@ -404,7 +404,7 @@ elseif CLIENT then
 					local ShieldPie = self.ShieldRadius * math.pi
 					local DistToEdge = Dist - self.ShieldRadius
 					local DistFrac = math.Clamp(ShieldPie - Dist, 0, ShieldPie) / ShieldPie
-					local SizeMult = 1.1 + 3.14 * ((DistFrac + .2) ^ math.pi)
+					local SizeMult = 1.1 --+ 3.14 * (DistFrac ^ math.pi * 2)
 					local MoveMult = self.ShieldRadius * ((DistFrac + .2) ^ math.pi)
 					--print(SizeMult, MoveMult)
 
@@ -435,7 +435,7 @@ elseif CLIENT then
 					render.SetStencilCompareFunction(STENCILCOMPARISONFUNCTION_EQUAL)
 					-- Now we are going to draw the glow
 					--
-					local Siz = ShieldDiameter * 1.1 * self.ShieldGrow
+					local Siz = ShieldDiameter * SizeMult * self.ShieldGrow
 					render.SetMaterial(BubbleGlowSprite)
 					render.DrawSprite(SelfPos + OffsetNorm * MoveMult, Siz, Siz, Color(R, G, B, 128))
 					render.SetStencilEnable(false)
