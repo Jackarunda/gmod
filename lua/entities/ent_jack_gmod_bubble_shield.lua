@@ -14,7 +14,7 @@ ENT.ShieldRadii = {
 	[4] = 468,
 	[5] = 585
 }
-ENT.mmRHAe = 500 -- for ArcCW, hinders bullet penetration of the shield
+ENT.mmRHAe = 1000 -- for ArcCW, hinders bullet penetration of the shield
 ENT.DisableDuplicator =	true
 --
 ENT.JMod_NapalmBounce = true
@@ -403,13 +403,10 @@ elseif CLIENT then
 					local ShieldDiameter = self.ShieldRadius * 2
 					local ShieldPie = self.ShieldRadius * math.pi
 					local DistToEdge = Dist - self.ShieldRadius
-					local DistFrac = math.Clamp(ShieldPie - DistToEdge, 0, ShieldPie) / ShieldPie
-					local ClosenessCompensation = (ShieldPie * 1.15) * DistFrac ^ (math.pi ^ 2)
-					--print(DistFrac)
-					--local TestPoint = SelfPos + Vector(0, 0, self.ShieldRadius)
-					--debugoverlay.Cross(TestPoint, 5, 1, Color(255, 255, 255), true)
-					--debugoverlay.Line(Epos, TestPoint, 1, Color(255, 255, 255), true)
-					--print(Dist / ShieldPie)
+					local DistFrac = math.Clamp(ShieldPie - Dist, 0, ShieldPie) / ShieldPie
+					local SizeMult = 1.1 + 3.14 * ((DistFrac + .2) ^ math.pi)
+					local MoveMult = self.ShieldRadius * ((DistFrac + .2) ^ math.pi)
+					--print(SizeMult, MoveMult)
 
 					-- Set up the stencil op with safe values
 					render.SetStencilEnable(true)
@@ -438,23 +435,9 @@ elseif CLIENT then
 					render.SetStencilCompareFunction(STENCILCOMPARISONFUNCTION_EQUAL)
 					-- Now we are going to draw the glow
 					--
-					local Siz = (ShieldDiameter * 1.1 + ClosenessCompensation) * self.ShieldGrow
+					local Siz = ShieldDiameter * 1.1 * self.ShieldGrow
 					render.SetMaterial(BubbleGlowSprite)
-					render.DrawSprite(SelfPos, Siz, Siz, Color(R, G, B, 128))
-					--
-					--local OffsetDist = OffsetNorm * (DistFrac * self.ShieldRadius)
-					--local TrigSiz = ShieldDiameter + math.sqrt((self.ShieldRadius ^ 2) - (OffsetDist:Length() ^ 2)) * 2
-					--debugoverlay.Cross(SelfPos + OffsetDist, 2, 5, Color(255, 0, 0), true)
-					--render.DrawSprite(SelfPos + OffsetDist, TrigSiz, TrigSiz, Color(R, G, B, 128))
-					--[[
-					local Alignment = EyeAngles():Forward():Dot(-OffsetNorm)
-					--print(Alignment)
-					local PixSize = render.ComputePixelDiameterOfSphere(SelfPos, self.ShieldRadius) * math.abs(Alignment)
-					local FovFrac = (render.GetViewSetup().fov / 180)
-					local RenderPos = Epos - (OffsetNorm) * DistToEdge --/ FovFrac
-					debugoverlay.Cross(RenderPos, 2, 5, Color(255, 0, 0), true)
-					render.DrawSprite(RenderPos, PixSize, PixSize, Color(R, G, B, 128))
-					--]]
+					render.DrawSprite(SelfPos + OffsetNorm * MoveMult, Siz, Siz, Color(R, G, B, 128))
 					render.SetStencilEnable(false)
 				end
 				-- blur the player's vision if his eyes are intersecting the shield
