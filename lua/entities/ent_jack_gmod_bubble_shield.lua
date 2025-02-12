@@ -184,14 +184,16 @@ if SERVER then
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
-		--
+		-- todo
+		--DoHitEffect()
+		--TakeDamage()
 	end
 
 	function ENT:OnTakeDamage(dmginfo)
 		local SelfPos = self:GetPos()
 		local DmgPos = dmginfo:GetDamagePosition()
 		local DmgDist = DmgPos:Distance(SelfPos)
-		
+
 		if (DmgDist < (self.ShieldRadius - 10)) then return end -- don't take damage from inside
 
 		local Attacker = dmginfo:GetAttacker()
@@ -201,14 +203,14 @@ if SERVER then
 		local DmgPosOffset = DmgPos - SelfPos
 		local SplashDir = DmgPosOffset:GetNormalized()
 		local Scale = (dmginfo:GetDamage() / 30) ^ .5
-		---
+
 		-- This is to stop stuff like fire from causing ripples on the shield in weird places
 		local IsBullet = dmginfo:IsBulletDamage()
 		if DmgDist > (self.ShieldRadius + 10) then
 			local ShotOrigin = DmgPos
 			--debugoverlay.Cross(ShotOrigin, 2, 5, Color(255, 0, 0), true)
 			--debugoverlay.Line(ShotOrigin, DmgPos, 5, Color(255, 0, 0), true)
-			
+
 			local dmgGun = dmginfo.GetWeapon and dmginfo:GetWeapon()
 			if IsValid(dmgGun) then
 				ShotOrigin = dmgGun:GetPos()
@@ -230,16 +232,11 @@ if SERVER then
 				DmgPos = ShotOrigin + IncomingVec * Frac1
 			end
 		end
-		
+
 		if IsBullet or dmginfo:IsExplosionDamage() or DmgForce:Length() > 10 then
-			local Ripple = EffectData()
-			Ripple:SetEntity(self)
-			Ripple:SetOrigin(DmgPos)
-			Ripple:SetScale(Scale)
-			Ripple:SetNormal(SplashDir)
-			util.Effect("eff_jack_gmod_refractripple", Ripple, true, true)
-			---
-			sound.Play("snds_jack_gmod/ez_bubbleshield_hits/"..math.random(1, 7)..".ogg", DmgPos, 65, math.random(90, 110))
+			if (DmgDist < self.ShieldRadius + 10) then -- don't
+				self:DoHitEffect(DmgPos, Scale, SplashDir)
+			end
 		end
 		---
 		--print(dmginfo:GetAttacker())
@@ -264,15 +261,16 @@ if SERVER then
 		end
 		--]]
 
-		-- finally, we actually take the damage
-		if (true) then
-			local CurStrength = self:GetStrength()
-			local AmtToLose = DmgAmt / 100
-			local AmtRemaining = CurStrength - AmtToLose
-			self:SetStrength(AmtRemaining)
-			if (AmtRemaining <= 0) then
-				self:Break()
-			end
+		if (false) then TakeDamage(DmgAmt) end
+	end
+
+	function ENT:TakeDamage(amt)
+		local CurStrength = self:GetStrength()
+		local AmtToLose = amt / 100
+		local AmtRemaining = CurStrength - AmtToLose
+		self:SetStrength(AmtRemaining)
+		if (AmtRemaining <= 0) then
+			self:Break()
 		end
 	end
 
@@ -294,6 +292,7 @@ if SERVER then
 	end
 
 	function ENT:Break()
+		-- todo
 		local Eff = EffectData()
 		Eff:SetEntity(self)
 		util.Effect("propspawn", Eff, true, true)
@@ -304,6 +303,24 @@ if SERVER then
 		SafeRemoveEntity(self.InnerShield)
 	end
 
+	function ENT:DoHitEffect(pos, scale, normal)
+		local Ripple = EffectData()
+		Ripple:SetEntity(self)
+		Ripple:SetOrigin(pos)
+		Ripple:SetScale(scale)
+		Ripple:SetNormal(normal)
+		util.Effect("eff_jack_gmod_refractripple", Ripple, true, true)
+		---
+		local snd = "snds_jack_gmod/ez_bubbleshield_hits/light_"..math.random(1, 3)..".ogg"
+		local pitch = math.random(90, 110)
+		local lvl = 65
+		if (scale >= 2) then
+			snd = "snds_jack_gmod/ez_bubbleshield_hits/heavy_"..math.random(1, 3)..".ogg"
+			lvl = 75
+		end
+		sound.Play(snd, pos, lvl, pitch)
+		sound.Play(snd, self:GetPos() + Vector(0, 0, 30), lvl, pitch)
+	end
 elseif CLIENT then
 	local BubbleGlowSprite = Material("sprites/mat_jack_gmod_bubbleshieldglow")
 	local GlowSprite = Material("sprites/mat_jack_basicglow")
