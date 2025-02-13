@@ -175,8 +175,9 @@ concommand.Add("jmod_debug", function(ply, cmd, args)
 	--]]
 	---[[
 	local EffData = EffectData()
-	EffData:SetOrigin(ply:GetShootPos() + ply:GetAimVector() * 2000)
-	util.Effect("eff_jack_gmod_firework", EffData, true, true)
+	EffData:SetOrigin(ply:GetShootPos() + ply:GetAimVector() * 500)
+	EffData:SetScale(240)
+	util.Effect("eff_jack_gmod_bubbleshieldburst", EffData, true, true)
 	--]]
 	--print(JMod.GetHoliday())
 	--JMod.DebugArrangeEveryone(ply)

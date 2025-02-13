@@ -104,8 +104,9 @@ end
 --]]
 
 function ENT:SetupDataTables()
-	self:NetworkVar("Bool", 0, "AmInnerShield")
 	self:NetworkVar("Int", 1, "SizeClass")
+	self:NetworkVar("Bool", 0, "AmInnerShield")
+	self:NetworkVar("Bool", 1, "AmBreaking")
 	self:NetworkVar("Float", 0, "Strength")
 	self:NetworkVar("Float", 1, "MaxStrength")
 end
@@ -122,7 +123,6 @@ if SERVER then
 		self.ShieldRadius = self.ShieldRadii[ShieldGrade]
 		self.ShieldRadius = self.ShieldRadius - (self.ShieldRadius / 48)
 		self.ShieldRadiusSqr = self.ShieldRadius * self.ShieldRadius
-		self.Broken = false
 
 		self:SetModel("models/jmod/giant_hollow_sphere_"..tostring(ShieldGrade)..".mdl")
 		self:PhysicsInit(SOLID_VPHYSICS)
@@ -160,6 +160,7 @@ if SERVER then
 			self.InnerShield:Activate()
 		end
 
+		self:SetAmBreaking(false)
 		if not(IsValid(self.Projector)) then -- todo: if we have no emitter, die
 			local Strength = 100
 			self:SetMaxStrength(Strength)
@@ -268,14 +269,21 @@ if SERVER then
 	function ENT:TakeShieldDamage(amt)
 		local CurStrength = self:GetStrength()
 		local AmtToLose = amt / 80
-		local AmtRemaining = CurStrength - AmtToLose
+		local AmtRemaining = math.Clamp(CurStrength - AmtToLose, .1, self:GetMaxStrength())
 		-- jprint(AmtToLose)
 		self:SetStrength(AmtRemaining)
 		if IsValid(self.OuterShield) then self.OuterShield:SetStrength(AmtRemaining) end
 		if IsValid(self.InnerShield) then self.InnerShield:SetStrength(AmtRemaining) end
-		if (AmtRemaining <= 0) then
+		if (AmtRemaining <= .1) then
 			self:Break()
 		end
+	end
+
+	function ENT:AcceptRecharge(amt)
+		local NewStrength = math.Clamp(self:GetStrength() + amt, .1, self:GetMaxStrength())
+		self:SetStrength(NewStrength)
+		if IsValid(self.OuterShield) then self.OuterShield:SetStrength(NewStrength) end
+		if IsValid(self.InnerShield) then self.InnerShield:SetStrength(NewStrength) end
 	end
 
 	function ENT:Think()
@@ -296,13 +304,23 @@ if SERVER then
 	end
 
 	function ENT:Break()
-		-- todo
+		if (self:GetAmBreaking()) then return end
+		self:SetAmBreaking(true)
+		if IsValid(self.OuterShield) then self.OuterShield:SetAmBreaking(true) end
+		if IsValid(self.InnerShield) then self.InnerShield:SetAmBreaking(true) end
 		local Eff = EffectData()
-		Eff:SetEntity(self)
-		util.Effect("propspawn", Eff, true, true)
-		if IsValid(self.OuterShield) then self.OuterShield:Remove() end
-		if IsValid(self.InnerShield) then self.InnerShield:Remove() end
-		self:Remove()
+		Eff:SetOrigin(self:GetPos())
+		Eff:SetScale(self.ShieldRadius)
+		util.Effect("eff_jack_gmod_bubbleshieldburst", Eff, true, true)
+		timer.Simple(.333, function()
+			if (IsValid(self)) then
+				self:EmitSound("snds_jack_gmod/bubble_shield_break.ogg", 80, 100)
+				sound.Play("snds_jack_gmod/bubble_shield_break.ogg", self:GetPos() + vector_up, 80, 100)
+				if IsValid(self.OuterShield) then self.OuterShield:Remove() end
+				if IsValid(self.InnerShield) then self.InnerShield:Remove() end
+				self:Remove()
+			end
+		end)
 	end
 
 	function ENT:OnRemove()
@@ -358,7 +376,6 @@ elseif CLIENT then
 	local function RenderShieldBeam(self, beamColor)
 		local SelfPos = self:GetPos()
 		local Epos = EyePos()
-		--
 		local ShieldGrade = self:GetSizeClass()
 		local BeamWidth = 20
 		local BeamColor = beamColor
@@ -367,7 +384,6 @@ elseif CLIENT then
 		local EmitPos = SelfPos + SelfUp * 78
 		local Extent = SelfUp * (self.ShieldRadius - 78) * .95 + Vector(math.sin(Time) * 10, math.cos(Time) * 10, 0)
 		local Scroll = self.BeamScroll
-
 		--render.SetColorMaterial()
 		render.SetMaterial(BeamMat)
 		render.StartBeam(5)
@@ -384,11 +400,8 @@ elseif CLIENT then
 	end
 
 	local BubbleBlur = 0
-
 	function ENT:DrawTranslucent(flags)
-		if self:GetAmInnerShield() then
-			return
-		end
+		if self:GetAmInnerShield() then return end
 		local FT = FrameTime()
 		local SelfPos, SelfAng = self:GetPos(), self:GetAngles()
 		local ShieldModulate = .995 + (math.sin(CurTime() * .5) - 0.015) * .005
@@ -398,11 +411,19 @@ elseif CLIENT then
 		self:SetRenderAngles(ShieldAng)
 		--
 		local RefractAmt = (math.sin(CurTime() * 3) / 2 + .5) * .045 + .005
-		self.Mat:SetFloat("$refractamount", RefractAmt)
-		local Strength = self:GetStrength() / self:GetMaxStrength()
-		if (Strength > .2 or math.Rand(0, 1) > .1) then
+		local Strength = self:GetStrength()
+		local StrengthFrac = Strength / self:GetMaxStrength()
+		if (StrengthFrac > .15 or math.Rand(0, 1) > .1) then
+			local Xmod, Ymod, Zmod = 1, 1, 1
+			if (self:GetAmBreaking()) then
+				Xmod = math.Rand(.95, 1.05)
+				Ymod = math.Rand(.95, 1.05)
+				Zmod = math.Rand(.95, 1.05)
+				RefractAmt = .5
+			end
+			self.Mat:SetFloat("$refractamount", RefractAmt)
 			local MacTheMatrix = Matrix()
-			MacTheMatrix:Scale(Vector(self.ShieldGrow, self.ShieldGrow, self.ShieldGrow) * ShieldModulate)
+			MacTheMatrix:Scale(Vector(self.ShieldGrow * Xmod, self.ShieldGrow * Ymod, self.ShieldGrow * Zmod) * ShieldModulate)
 			self:EnableMatrix("RenderMultiply", MacTheMatrix)
 			self:DrawModel()
 			-- STENCILS!
@@ -411,68 +432,65 @@ elseif CLIENT then
 			local OffsetNorm = OffsetVec:GetNormalized()
 			local Dist = OffsetVec:Length()
 			local FoV = 1 / (render.GetViewSetup().fov / 180)
-			local R, G, B = JMod.GoodBadColor(Strength)
+			local R, G, B = JMod.GoodBadColor(StrengthFrac)
 			R = math.Clamp(R + 30, 0, 255)
 			G = math.Clamp(G + 30, 0, 255)
 			B = math.Clamp(B + 30, 0, 255)
 			local GlowColor = Color(R, G, B, 128)
+			if Dist < self.ShieldRadius * 1.03 * self.ShieldGrow then
+				local Eang = EyeAngles()
+				render.SetMaterial(BubbleGlowSprite)
+				render.DrawSprite(Epos + Eang:Forward() * 10, 45 * FoV * Xmod, 35 * Ymod, GlowColor)
+				RenderShieldBeam(self, GlowColor)
+			else
+				local ShieldDiameter = self.ShieldRadius * 2
+				local ShieldPie = self.ShieldRadius * math.pi
+				local DistToEdge = Dist - self.ShieldRadius
+				local DistFrac = math.Clamp(ShieldPie - Dist, 0, ShieldPie) / ShieldPie
+				local SizeMult = 1.1 --+ 3.14 * (DistFrac ^ math.pi * 2)
+				local MoveMult = self.ShieldRadius * ((DistFrac + .2) ^ math.pi)
+				--print(SizeMult, MoveMult)
 
-			if (Strength > .2 or math.Rand(0, 1) > .1) then
-				if Dist < self.ShieldRadius * 1.03 * self.ShieldGrow then
-					local Eang = EyeAngles()
-					render.SetMaterial(BubbleGlowSprite)
-					render.DrawSprite(Epos + Eang:Forward() * 10, 45 * FoV, 35, GlowColor)
-					RenderShieldBeam(self, GlowColor)
-				else
-					local ShieldDiameter = self.ShieldRadius * 2
-					local ShieldPie = self.ShieldRadius * math.pi
-					local DistToEdge = Dist - self.ShieldRadius
-					local DistFrac = math.Clamp(ShieldPie - Dist, 0, ShieldPie) / ShieldPie
-					local SizeMult = 1.1 --+ 3.14 * (DistFrac ^ math.pi * 2)
-					local MoveMult = self.ShieldRadius * ((DistFrac + .2) ^ math.pi)
-					--print(SizeMult, MoveMult)
-
-					-- Set up the stencil op with safe values
-					render.SetStencilEnable(true)
-					render.ClearStencil()
-					render.SetStencilTestMask(255)
-					render.SetStencilWriteMask(255)
-					-- We want to keep only the pixels that pass the depth check
-					render.SetStencilReferenceValue(1)
-					render.SetStencilPassOperation(STENCILOPERATION_REPLACE)
-					render.SetStencilZFailOperation(STENCILOPERATION_ZERO)
-					render.SetStencilFailOperation(STENCILOPERATION_ZERO)
-					-- Pass everything and just check depth
-					render.SetStencilCompareFunction(STENCILCOMPARISONFUNCTION_ALWAYS)
-					-- Setup the mask with a color material
-					render.SetColorMaterial()
-					-- Perspective offset is for helping with making it look more like the glow is coming from the edge of the shield.
-					local ShieldSizeOffset = .05
-					local PerspectiveOffset = OffsetNorm * (self.ShieldRadius * ShieldSizeOffset)
-					-- We are drawing it completely invisible becasue it's a mask
-					-- There might be another way to do this, but this works for now
-					render.DrawSphere(SelfPos - PerspectiveOffset, self.ShieldRadius * (1 + ShieldSizeOffset + .01) * self.ShieldGrow, 50, 50, MASK_COLOR)
-					-- Now we are drawing the effects, so we don't really want to modify the stencil buffer mask
-					-- We won't bother with the depth test because we are going to be ignoring Z anyway
-					render.SetStencilFailOperation(STENCILOPERATION_KEEP)
-					-- Typical equator function for finding what's on the mask
-					render.SetStencilCompareFunction(STENCILCOMPARISONFUNCTION_EQUAL)
-					-- Now we are going to draw the glow
-					--
-					local Siz = ShieldDiameter * SizeMult * self.ShieldGrow
-					render.SetMaterial(BubbleGlowSprite)
-					render.DrawSprite(SelfPos + OffsetNorm * MoveMult, Siz, Siz, GlowColor)
-					render.SetStencilEnable(false)
-				end
-				-- blur the player's vision if his eyes are intersecting the shield
-				local BlurDistRange, BlurDistBegin = self.ShieldRadius * .1, self.ShieldRadius * .95
-				local BlurDistEnd = BlurDistBegin + BlurDistRange
-				local DistDiff = math.abs(Dist - self.ShieldRadius)
-				if (Dist > BlurDistBegin) and (Dist < BlurDistEnd) then
-					BubbleBlur = ((1 - (DistDiff / BlurDistRange)) - .5) * 2
-				else
-					BubbleBlur = 0
-				end
+				-- Set up the stencil op with safe values
+				render.SetStencilEnable(true)
+				render.ClearStencil()
+				render.SetStencilTestMask(255)
+				render.SetStencilWriteMask(255)
+				-- We want to keep only the pixels that pass the depth check
+				render.SetStencilReferenceValue(1)
+				render.SetStencilPassOperation(STENCILOPERATION_REPLACE)
+				render.SetStencilZFailOperation(STENCILOPERATION_ZERO)
+				render.SetStencilFailOperation(STENCILOPERATION_ZERO)
+				-- Pass everything and just check depth
+				render.SetStencilCompareFunction(STENCILCOMPARISONFUNCTION_ALWAYS)
+				-- Setup the mask with a color material
+				render.SetColorMaterial()
+				-- Perspective offset is for helping with making it look more like the glow is coming from the edge of the shield.
+				local ShieldSizeOffset = .05
+				local PerspectiveOffset = OffsetNorm * (self.ShieldRadius * ShieldSizeOffset)
+				-- We are drawing it completely invisible becasue it's a mask
+				-- There might be another way to do this, but this works for now
+				render.DrawSphere(SelfPos - PerspectiveOffset, self.ShieldRadius * (1 + ShieldSizeOffset + .01) * self.ShieldGrow, 50, 50, MASK_COLOR)
+				-- Now we are drawing the effects, so we don't really want to modify the stencil buffer mask
+				-- We won't bother with the depth test because we are going to be ignoring Z anyway
+				render.SetStencilFailOperation(STENCILOPERATION_KEEP)
+				-- Typical equator function for finding what's on the mask
+				render.SetStencilCompareFunction(STENCILCOMPARISONFUNCTION_EQUAL)
+				-- Now we are going to draw the glow
+				--
+				local Siz = ShieldDiameter * SizeMult * self.ShieldGrow
+				render.SetMaterial(BubbleGlowSprite)
+				render.DrawSprite(SelfPos + OffsetNorm * MoveMult, Siz * Xmod, Siz * Ymod, GlowColor)
+				render.SetStencilEnable(false)
+			end
+			-- blur the player's vision if his eyes are intersecting the shield
+			local BlurDistRange, BlurDistBegin = self.ShieldRadius * .1, self.ShieldRadius * .95
+			local BlurDistEnd = BlurDistBegin + BlurDistRange
+			local DistDiff = math.abs(Dist - self.ShieldRadius)
+			if (Dist > BlurDistBegin) and (Dist < BlurDistEnd) then
+				BubbleBlur = ((1 - (DistDiff / BlurDistRange)) - .5) * 2
+			else
+				BubbleBlur = 0
 			end
 		end
 	end

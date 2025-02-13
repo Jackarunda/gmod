@@ -1,0 +1,61 @@
+﻿local Flash = Material("sprites/mat_jack_basicglow")
+function EFFECT:Init(data)
+	local Pos, Siz = data:GetOrigin(), data:GetScale()
+	local Scl = Siz / 240
+	self.Pos = Pos
+	local Time = CurTime()
+	local Emitter = ParticleEmitter(Pos)
+	local Particles = {}
+	for i = 1, 4000 do
+		timer.Simple(i / 12000, function()
+			local MyPos = Pos + VectorRand():GetNormalized() * Siz * 1.05
+			local particle = Emitter:Add("sprites/mat_jack_basicglow", MyPos)
+			if (particle) then
+				particle:SetVelocity(Vector(0, 0, 0))
+				particle:SetAirResistance(500)
+				particle:SetGravity(Vector(0, 0, 0))
+				particle:SetDieTime(math.Rand(1, 2))
+				particle:SetStartAlpha(255)
+				particle:SetEndAlpha(0)
+				particle:SetStartSize(math.Rand(5, 20) * Scl)
+				particle:SetEndSize(0)
+				particle:SetRoll(math.Rand(-3, 3))
+				particle:SetRollDelta(math.Rand(-3, 3))
+				particle:SetLighting(false)
+				particle:SetColor(255, 255, 255)
+				particle:SetCollide(true)
+				table.insert(Particles, particle)
+			end
+			if (i == 4000) then
+				for k, v in pairs(Particles) do
+					v:SetStartSize(math.Rand(2, 10) * Scl)
+					v:SetVelocity(VectorRand() * math.Rand(0, 1000))
+					v:SetGravity(VectorRand() * math.Rand(0, 1000))
+				end
+				Emitter:Finish()
+			end
+		end)
+	end
+end
+function EFFECT:Think()
+	-- return self.DieTime > CurTime()
+	return false
+end
+function EFFECT:Render()
+	--[[
+	local Time = CurTime()
+	if (self.DieTime > Time) then
+		render.SetMaterial(Flash)
+		if (self.FlashTime > Time) then
+			local Dir = (self.Pos - EyePos()):GetNormalized()
+			render.DrawSprite(self.Pos - Dir * 100, 1000, 1000, Color(255, 200, 150, 255))
+		end
+		if (self.CrackleTime < Time) then
+			render.DrawSprite(self.Pos + VectorRand() * math.random(1, 750), 100, 100, Color(255, 200, 75, 255))
+			render.DrawSprite(self.Pos + VectorRand() * math.random(1, 750), 50, 50, Color(255, 255, 255, 255))
+		end
+		return true
+	end
+	--]]
+	return false
+end
