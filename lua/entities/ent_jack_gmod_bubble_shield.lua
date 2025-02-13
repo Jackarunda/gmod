@@ -143,6 +143,7 @@ if SERVER then
 		self.ShieldRadius = self.ShieldRadii[ShieldGrade]
 		self.ShieldRadius = self.ShieldRadius - (self.ShieldRadius / 48)
 		self.ShieldRadiusSqr = self.ShieldRadius * self.ShieldRadius
+		self.Broken = false
 
 		self:SetModel("models/jmod/giant_hollow_sphere_"..tostring(ShieldGrade)..".mdl")
 		self:PhysicsInit(SOLID_VPHYSICS)
@@ -163,6 +164,7 @@ if SERVER then
 		phys:SetMaterial("solidmetal")
 
 		self:EnableCustomCollisions(true)
+
 		if not(self:GetAmInnerShield()) then
 			-- Inner shield is for prop blocking
 			self.InnerShield = ents.Create("ent_jack_gmod_bubble_shield")
@@ -222,7 +224,7 @@ if SERVER then
 		local DmgAmt = dmginfo:GetDamage()
 		local DmgForce = dmginfo:GetDamageForce()
 		local DmgPosOffset = DmgPos - SelfPos
-		local SplashDir = DmgPosOffset:GetNormalized()
+		local HitNormal = DmgPosOffset:GetNormalized()
 		local Scale = (dmginfo:GetDamage() / 30) ^ .5
 
 		-- This is to stop stuff like fire from causing ripples on the shield in weird places
@@ -244,7 +246,7 @@ if SERVER then
 					ShotOrigin = Inflictor:GetAttachment(1).Pos
 				end
 			else
-				ShotOrigin = DmgPos + SplashDir
+				ShotOrigin = DmgPos + HitNormal
 			end
 			local IncomingVec = DmgPos - ShotOrigin
 
@@ -258,28 +260,26 @@ if SERVER then
 			if (DmgDist > (self.ShieldRadius + 10)) then -- this was probably an explosive
 				DmgPos = SelfPos + (DmgPosOffset:GetNormalized() * self.ShieldRadius)
 			end
-			self:DoHitEffect(DmgPos, Scale, SplashDir)
+			self:DoHitEffect(DmgPos, Scale, HitNormal)
 		end
 
-		--print(dmginfo:GetAttacker())
-		--[[ -- attempted bullet ricochet, but this crashes the game
-		if (dmginfo:IsBulletDamage() and true) then
-			local Dmg = dmginfo:GetDamage()
-			local DmgForce = dmginfo:GetDamageForce()
-			local DmgDir = DmgForce:GetNormalized()
-			local DmgDirAng = DmgDir:Angle()
-			DmgDirAng:RotateAroundAxis(Dir, 180)
-			---
-			self:FireBullets({
-				Src = DmgPos,
-				Dir = Dir,
-				Tracer = 1,
-				Num = 1,
-				Spread = Vector(0,0,0),
-				Damage = Dmg,
-				Force = DmgForce,
-				Attacker = dmginfo:GetAttacker()
-			})
+		---[[ -- trying to ricochet bullets ALWAYS crashes the game
+		if (IsBullet and math.Rand(0, 1) >= .25) then
+			timer.Simple(0, function()
+				if (IsValid(self)) then
+					self:FireBullets({
+						Src = DmgPos + HitNormal * 10,
+						Dir = HitNormal,
+						Tracer = 1,
+						Num = 1,
+						Spread = Vector(0, 0, 0),
+						Damage = DmgAmt * math.Rand(.75, .95),
+						Force = 2,
+						Attacker = Attacker,
+						IgnoreEntity = self.InnerShield
+					})
+				end
+			end)
 		end
 		--]]
 
