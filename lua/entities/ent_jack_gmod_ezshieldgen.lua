@@ -25,27 +25,23 @@ ENT.DynamicPerfSpecs = {
 	ChargeSpeed = 5
 }
 ENT.EZconsumes = {
-	JMod.EZ_RESOURCE_TYPES.POWER
+	JMod.EZ_RESOURCE_TYPES.POWER,
+	JMod.EZ_RESOURCE_TYPES.BASICPARTS
 }
 
 function ENT:CustomSetupDataTables()
-	self:NetworkVar("Float", 1, "Electricity")
-	self:NetworkVar("Float", 2, "ShieldStrength")
-	self:NetworkVar("Float", 3, "ShieldProgress")
+	self:NetworkVar("Float", 1, "ShieldStrength")
+	self:NetworkVar("Float", 2, "ShieldProgress")
 end
 
 local STATE_BROKEN, STATE_OFF, STATE_CHARGING, STATE_ON = -1, 0, 1, 2
 
 if(SERVER)then
 	function ENT:CustomInit()
-		self:SetElectricity(0)
 		self:SetShieldStrength(0)
 		self:SetShieldProgress(0)
 		self.NextUseTime = 0
 		self.NextEffThink = 0
-		if self.SpawnFull then
-			self:SetElectricity(self.MaxElectricity)
-		end
 		self.Established = {
 			Pos = nil,
 			Norm = nil,
@@ -153,12 +149,11 @@ if(SERVER)then
 		self.Shield.Projector = self
 		self.Shield:SetSizeClass(self:GetGrade())
 
-		local ShieldStrength = 1000 -- todo: based on grade
+		local ShieldStrength = 1000 * self.MaxShieldStrength -- todo: based on grade
 		self.Shield:SetMaxStrength(ShieldStrength)
 		self.Shield:SetStrength(ShieldStrength)
 
 		self.Shield:Spawn()
-		self.Shield:Initialize()
 	end
 
 	function ENT:ShieldBreak()
@@ -188,6 +183,15 @@ if(SERVER)then
 				self:ShieldBreak()
 			else
 				-- slowly recharge the shield's strength for extra electricity consumption
+				local MaxShieldStrength = 1000 * self.MaxShieldStrength
+				local ShieldStrength = self.Shield:GetStrength()
+				local StrengthDiff = MaxShieldStrength - ShieldStrength
+				local StrengthToGive = math.Clamp(StrengthDiff, 0, 20)
+				local NewStrength = math.Clamp(ShieldStrength + StrengthToGive, 0, MaxShieldStrength)
+				self.Shield:SetStrength(NewStrength)
+				self.Shield.InnerShield:SetStrength(NewStrength)
+				self:ConsumeElectricity(StrengthToGive * .02)
+				self:SetShieldStrength(NewStrength)
 			end
 		elseif (State == STATE_CHARGING) then
 			local Progress = self:GetShieldProgress()
@@ -212,6 +216,7 @@ elseif(CLIENT)then
 	function ENT:CustomInit()
 		self:DrawShadow(true)
 		self.BaseGear = JMod.MakeModel(self, "models/Mechanics/gears/gear24x6.mdl")
+		self.Plate = JMod.MakeModel(self, "models/hunter/plates/plate1x2.mdl")
 	end
 
 	function ENT:Draw()
@@ -234,18 +239,25 @@ elseif(CLIENT)then
 			self.BaseGear:SetMaterial(JMod.EZ_GRADE_MATS[Grade]:GetName())
 			JMod.RenderModel(self.BaseGear, BasePos - Up * 100, SelfAng)
 		end
+		if (self.Plate) then
+			self.Plate:SetMaterial(JMod.EZ_GRADE_MATS[Grade]:GetName())
+			local PlateAng = SelfAng:GetCopy()
+			PlateAng:RotateAroundAxis(Up, 90)
+			PlateAng:RotateAroundAxis(Forward, 45)
+			JMod.RenderModel(self.Plate, BasePos - Up * 46 + Right * 10, PlateAng, Vector(.3, .25, .5))
+		end
 
 		if DetailDraw then
 			if Closeness < 20000 and State == STATE_ON then
 				local DisplayAng = SelfAng:GetCopy()
-				DisplayAng:RotateAroundAxis(DisplayAng:Right(), 0)
-				DisplayAng:RotateAroundAxis(DisplayAng:Up(), 0)
+				--DisplayAng:RotateAroundAxis(DisplayAng:Right(), 0)
+				--DisplayAng:RotateAroundAxis(DisplayAng:Up(), 0)
 				DisplayAng:RotateAroundAxis(DisplayAng:Forward(), 45)
 				local Opacity = math.random(50, 150)
 				local ShieldAmt = self:GetShieldStrength()
 				local ElecAmt = self:GetElectricity()
 
-				cam.Start3D2D(SelfPos - Forward * 15 + Right * 8 - Up * 40, DisplayAng, .06)
+				cam.Start3D2D(SelfPos - Forward * 15 + Right * 8 - Up * 42, DisplayAng, .06)
 				surface.SetDrawColor(10, 10, 10, Opacity + 50)
 				local RankX, RankY = 300, 30
 				surface.DrawRect(RankX, RankY, 128, 128)

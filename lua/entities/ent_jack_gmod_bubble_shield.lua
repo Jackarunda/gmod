@@ -92,9 +92,12 @@ function ENT:TestCollision(startpos, delta, isbox, extents, mask)
 		local Frac1, Frac2 = util.IntersectRayWithSphere(startpos, delta, SelfPos, self.ShieldRadius)
 		--debugoverlay.Line(startpos, startpos + delta * (Frac1 or 1), 10, Color(255, 0, 0, 255), true)
 		if Frac1 and Frac2 then
+			local HitPos = startpos + delta * (Frac1 or 1)
+			local HitNorm = (HitPos - SelfPos):GetNormalized()
 			return {
 				HitPos = startpos + delta * (Frac1 or 1),
-				Fraction = Frac1
+				Fraction = Frac1,
+				Normal = HitNorm
 			}
 		end
 	end
@@ -162,9 +165,13 @@ if SERVER then
 
 		self:SetAmBreaking(false)
 		if not(IsValid(self.Projector)) then -- todo: if we have no emitter, die
-			local Strength = 100
+			local Strength = 1000
 			self:SetMaxStrength(Strength)
 			self:SetStrength(Strength)
+		elseif not(self:GetAmInnerShield()) then
+			local Strength = self:GetMaxStrength()
+			self.InnerShield:SetMaxStrength(Strength)
+			self.InnerShield:SetStrength(Strength)
 		end
 	end
 
@@ -268,7 +275,7 @@ if SERVER then
 
 	function ENT:TakeShieldDamage(amt)
 		local CurStrength = self:GetStrength()
-		local AmtToLose = amt / 80
+		local AmtToLose = amt ^ .5
 		local AmtRemaining = math.Clamp(CurStrength - AmtToLose, .1, self:GetMaxStrength())
 		-- jprint(AmtToLose)
 		self:SetStrength(AmtRemaining)
@@ -300,6 +307,17 @@ if SERVER then
 		end
 		if self:IsOnFire() then
 			self:Extinguish()
+		end
+		local CurStrength = self:GetStrength()
+		if CurStrength <= 0 then
+			self:Break()
+		else
+			local NewStrength = math.Clamp(CurStrength - .02, 0, self:GetMaxStrength())
+			self:SetStrength(NewStrength)
+
+			self:NextThink(CurTime())
+
+			return true
 		end
 	end
 
@@ -338,6 +356,7 @@ if SERVER then
 
 	function ENT:OnRemove()
 		SafeRemoveEntity(self.InnerShield)
+		SafeRemoveEntity(self.OuterShield)
 	end
 
 	function ENT:DoHitEffect(pos, scale, normal)
@@ -382,7 +401,7 @@ elseif CLIENT then
 
 	function ENT:Think()
 		local FT = FrameTime()
-		self.ShieldGrow = Lerp(CurTime() - self.ShieldGrowEnd, 0, 1)
+		self.ShieldGrow = Lerp(math.ease.OutExpo(CurTime() - self.ShieldGrowEnd), 0, 1)
 		self.BeamScroll = (self.BeamScroll - FT * 2) % 1 -- (self.BeamScroll or 0)
 	end
 
