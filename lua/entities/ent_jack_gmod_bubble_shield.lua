@@ -61,19 +61,24 @@ hook.Add("ShouldCollide", "JMOD_SHIELDCOLLISION", function(ent1, ent2)
 end)
 
 function ENT:ShouldNotCollide(ent)
-	if ent:IsPlayer() then
-		return true
-	end
-	local TheirVel = ent:GetVelocity()
+	if ent:IsPlayer() then return true end
+	
 	local InsideShield = ent:GetPos():DistToSqr(self:GetPos()) < self.ShieldRadiusSqr
-	if InsideShield or TheirVel:Length() < 500 then
-		return true
-	end
+	if InsideShield then return true end
 
+	local Time = CurTime()
+	if (ent.JMod_BubbleShieldPassTime and ent.JMod_BubbleShieldPassTime > Time) then return false end
+
+	local TheirSpeed, TheirPhys, MaxSpeed = ent:GetVelocity():Length(), ent:GetPhysicsObject(), 500
+	if (IsValid(TheirPhys) and TheirPhys.GetMass) then
+		if (TheirPhys:GetMass() > 250) then MaxSpeed = 200 end
+	end
+	if (TheirSpeed < MaxSpeed) then return true end
+
+	ent.JMod_BubbleShieldPassTime = Time + 3
 	return false
 end
 
---]]
 function ENT:TestCollision(startpos, delta, isbox, extents, mask)
 	local SelfPos = self:GetPos()
 	local EndPos = startpos + delta
@@ -157,7 +162,6 @@ if SERVER then
 		phys:EnableMotion(false)
 		phys:SetMaterial("solidmetal")
 
-		--
 		self:EnableCustomCollisions(true)
 		if not(self:GetAmInnerShield()) then
 			-- Inner shield is for prop blocking
@@ -174,7 +178,7 @@ if SERVER then
 			self.InnerShield:CollisionRulesChanged()
 			self.InnerShield:Activate()
 		end
-		--]]
+
 		if not(IsValid(self.Projector)) then -- todo: if we have no emitter, die
 			local Strength = 100
 			self:SetMaxStrength(Strength)
@@ -183,21 +187,27 @@ if SERVER then
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
-		if (data.DeltaTime < .3) then return end
-		jprint(CurTime())
+		if (data.DeltaTime < .1) then return end
 		-- kinetic energy: .5*m*v^2
+		if not (IsValid(data.HitObject)) then return end
 		local Mass = data.HitObject:GetMass()
 		local KE = .5 * Mass * data.Speed ^ 2
 		self:DoHitEffect(data.HitPos, math.Clamp(KE / 20000000, .5, 5), data.HitNormal)
-		-- todo: bounce with 99% energy conservation
+
+		-- boing
 		local Norm = (data.HitPos - self:GetPos()):GetNormalized()
 		timer.Simple(0, function()
 			if (IsValid(data.HitObject)) then
-				data.HitObject:ApplyForceCenter(Norm * 300 * Mass)
+				data.HitObject:SetVelocity(Norm * data.Speed * .9)
 			end
 		end)
-		-- todo: no damage if the object is being held (no physgun minging)
-		self:TakeShieldDamage(KE / 600000)
+
+		if (data.DeltaTime < .3) then return end
+
+		-- no physgun minging
+		if not (data.HitEntity.IsPlayerHolding and data.HitEntity:IsPlayerHolding()) then
+			self:TakeShieldDamage(KE / 600000)
+		end
 	end
 
 	function ENT:OnTakeDamage(dmginfo)
@@ -280,7 +290,7 @@ if SERVER then
 		local CurStrength = self:GetStrength()
 		local AmtToLose = amt / 80
 		local AmtRemaining = CurStrength - AmtToLose
-		jprint(AmtToLose)
+		-- jprint(AmtToLose)
 		self:SetStrength(AmtRemaining)
 		if IsValid(self.OuterShield) then self.OuterShield:SetStrength(AmtRemaining) end
 		if IsValid(self.InnerShield) then self.InnerShield:SetStrength(AmtRemaining) end
