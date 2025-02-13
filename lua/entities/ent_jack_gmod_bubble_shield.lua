@@ -30,27 +30,6 @@ function ENT:CanTool(ply, trace, mode, tool, button)
 	return false
 end
 
-hook.Add("EntityTakeDamage", "JMOD_SHIELDEXPLOSION", function( target, dmginfo )
-	if target:GetClass() == "ent_jack_gmod_bubble_shield" then return end
-	local Shield = NULL
-	for _, shield in ipairs(ents.FindByClass("ent_jack_gmod_bubble_shield")) do
-		local Mins, Maxes = target:GetCollisionBounds()
-		local TargetCenter = target:LocalToWorld(target:OBBCenter())
-		if util.IsBoxIntersectingSphere(Mins, Maxes, shield:GetPos() - TargetCenter, shield.ShieldRadius) then
-			Shield = shield
-			break
-		end
-	end
-	if not IsValid(Shield) then return end
-	local FinalDamagePos = dmginfo:GetReportedPosition()
-	if FinalDamagePos == vector_origin then
-		FinalDamagePos = dmginfo:GetDamagePosition()
-	end
-	if (FinalDamagePos:DistToSqr(Shield:GetPos()) > Shield.ShieldRadiusSqr) then
-		return true
-	end
-end)
-
 --
 hook.Add("ShouldCollide", "JMOD_SHIELDCOLLISION", function(ent1, ent2)
 	local snc1 = ent1.ShouldNotCollide
