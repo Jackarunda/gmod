@@ -426,13 +426,14 @@ elseif CLIENT then
 			R = math.Clamp(R + 30, 0, 255)
 			G = math.Clamp(G + 30, 0, 255)
 			B = math.Clamp(B + 30, 0, 255)
+			local GlowColor = Color(R, G, B, 128)
 
 			if (Strength > .2 or math.Rand(0, 1) > .1) then
 				if Dist < self.ShieldRadius * 1.03 * self.ShieldGrow then
 					local Eang = EyeAngles()
 					render.SetMaterial(BubbleGlowSprite)
-					render.DrawSprite(Epos + Eang:Forward() * 10, 45 * FoV, 35, Color(R, G, B, 200))
-					RenderShieldBeam(self, Color(R, G, B, 128))
+					render.DrawSprite(Epos + Eang:Forward() * 10, 45 * FoV, 35, GlowColor)
+					RenderShieldBeam(self, GlowColor)
 				else
 					local ShieldDiameter = self.ShieldRadius * 2
 					local ShieldPie = self.ShieldRadius * math.pi
@@ -471,7 +472,7 @@ elseif CLIENT then
 					--
 					local Siz = ShieldDiameter * SizeMult * self.ShieldGrow
 					render.SetMaterial(BubbleGlowSprite)
-					render.DrawSprite(SelfPos + OffsetNorm * MoveMult, Siz, Siz, Color(R, G, B, 128))
+					render.DrawSprite(SelfPos + OffsetNorm * MoveMult, Siz, Siz, GlowColor)
 					render.SetStencilEnable(false)
 				end
 				-- blur the player's vision if his eyes are intersecting the shield
