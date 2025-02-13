@@ -61,7 +61,6 @@ hook.Add("ShouldCollide", "JMOD_SHIELDCOLLISION", function(ent1, ent2)
 end)
 
 function ENT:ShouldNotCollide(ent)
-	--print(ent)
 	if ent:IsPlayer() then
 		return true
 	end
@@ -184,19 +183,21 @@ if SERVER then
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
-		if (data.DeltaTime < .1) then return end
+		if (data.DeltaTime < .3) then return end
+		jprint(CurTime())
 		-- kinetic energy: .5*m*v^2
 		local Mass = data.HitObject:GetMass()
 		local KE = .5 * Mass * data.Speed ^ 2
 		self:DoHitEffect(data.HitPos, math.Clamp(KE / 20000000, .5, 5), data.HitNormal)
-		-- boing
+		-- todo: bounce with 99% energy conservation
 		local Norm = (data.HitPos - self:GetPos()):GetNormalized()
 		timer.Simple(0, function()
 			if (IsValid(data.HitObject)) then
 				data.HitObject:ApplyForceCenter(Norm * 300 * Mass)
 			end
 		end)
-		self:TakeShieldDamage(KE / 400000)
+		-- todo: no damage if the object is being held (no physgun minging)
+		self:TakeShieldDamage(KE / 600000)
 	end
 
 	function ENT:OnTakeDamage(dmginfo)
@@ -249,7 +250,7 @@ if SERVER then
 			end
 			self:DoHitEffect(DmgPos, Scale, SplashDir)
 		end
-		---
+
 		--print(dmginfo:GetAttacker())
 		--[[ -- attempted bullet ricochet, but this crashes the game
 		if (dmginfo:IsBulletDamage() and true) then
@@ -279,7 +280,7 @@ if SERVER then
 		local CurStrength = self:GetStrength()
 		local AmtToLose = amt / 80
 		local AmtRemaining = CurStrength - AmtToLose
-		-- jprint(AmtToLose)
+		jprint(AmtToLose)
 		self:SetStrength(AmtRemaining)
 		if IsValid(self.OuterShield) then self.OuterShield:SetStrength(AmtRemaining) end
 		if IsValid(self.InnerShield) then self.InnerShield:SetStrength(AmtRemaining) end
