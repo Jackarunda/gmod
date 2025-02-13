@@ -180,7 +180,10 @@ if SERVER then
 		local Norm = (data.HitPos - self:GetPos()):GetNormalized()
 		timer.Simple(0, function()
 			if (IsValid(data.HitObject)) then
-				data.HitObject:SetVelocity(Norm * data.Speed * .9)
+				local IncomingDir = data.TheirOldVelocity:GetNormalized():Angle()
+				IncomingDir:RotateAroundAxis(Norm, 180)
+				local OutgoingDir = -(IncomingDir:Forward())
+				data.HitObject:SetVelocity(OutgoingDir * data.Speed * .9)
 			end
 		end)
 
@@ -243,13 +246,15 @@ if SERVER then
 			self:DoHitEffect(DmgPos, Scale, HitNormal)
 		end
 
-		---[[ -- trying to ricochet bullets ALWAYS crashes the game
 		if (IsBullet and math.Rand(0, 1) >= .25) then
 			timer.Simple(0, function()
 				if (IsValid(self)) then
+					local IncomingDir = DmgForce:GetNormalized():Angle()
+					IncomingDir:RotateAroundAxis(HitNormal, 180)
+					local OutgoingDir = -(IncomingDir:Forward())
 					self:FireBullets({
-						Src = DmgPos + HitNormal * 10,
-						Dir = HitNormal,
+						Src = DmgPos + HitNormal * 5,
+						Dir = OutgoingDir,
 						Tracer = 1,
 						Num = 1,
 						Spread = Vector(0, 0, 0),
@@ -261,7 +266,6 @@ if SERVER then
 				end
 			end)
 		end
-		--]]
 
 		self:TakeShieldDamage(DmgAmt)
 	end
