@@ -184,9 +184,19 @@ if SERVER then
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
-		-- todo
-		--DoHitEffect()
-		--TakeDamage()
+		if (data.DeltaTime < .1) then return end
+		-- kinetic energy: .5*m*v^2
+		local Mass = data.HitObject:GetMass()
+		local KE = .5 * Mass * data.Speed ^ 2
+		self:DoHitEffect(data.HitPos, math.Clamp(KE / 20000000, .5, 5), data.HitNormal)
+		-- boing
+		local Norm = (data.HitPos - self:GetPos()):GetNormalized()
+		timer.Simple(0, function()
+			if (IsValid(data.HitObject)) then
+				data.HitObject:ApplyForceCenter(Norm * 300 * Mass)
+			end
+		end)
+		self:TakeShieldDamage(KE / 400000)
 	end
 
 	function ENT:OnTakeDamage(dmginfo)
@@ -234,9 +244,10 @@ if SERVER then
 		end
 
 		if IsBullet or dmginfo:IsExplosionDamage() or DmgForce:Length() > 10 then
-			if (DmgDist < self.ShieldRadius + 10) then -- don't
-				self:DoHitEffect(DmgPos, Scale, SplashDir)
+			if (DmgDist > (self.ShieldRadius + 10)) then -- this was probably an explosive
+				DmgPos = SelfPos + (DmgPosOffset:GetNormalized() * self.ShieldRadius)
 			end
+			self:DoHitEffect(DmgPos, Scale, SplashDir)
 		end
 		---
 		--print(dmginfo:GetAttacker())
@@ -261,14 +272,17 @@ if SERVER then
 		end
 		--]]
 
-		if (false) then TakeDamage(DmgAmt) end
+		self:TakeShieldDamage(DmgAmt)
 	end
 
-	function ENT:TakeDamage(amt)
+	function ENT:TakeShieldDamage(amt)
 		local CurStrength = self:GetStrength()
-		local AmtToLose = amt / 100
+		local AmtToLose = amt / 80
 		local AmtRemaining = CurStrength - AmtToLose
+		-- jprint(AmtToLose)
 		self:SetStrength(AmtRemaining)
+		if IsValid(self.OuterShield) then self.OuterShield:SetStrength(AmtRemaining) end
+		if IsValid(self.InnerShield) then self.InnerShield:SetStrength(AmtRemaining) end
 		if (AmtRemaining <= 0) then
 			self:Break()
 		end
@@ -296,6 +310,8 @@ if SERVER then
 		local Eff = EffectData()
 		Eff:SetEntity(self)
 		util.Effect("propspawn", Eff, true, true)
+		if IsValid(self.OuterShield) then self.OuterShield:Remove() end
+		if IsValid(self.InnerShield) then self.InnerShield:Remove() end
 		self:Remove()
 	end
 
