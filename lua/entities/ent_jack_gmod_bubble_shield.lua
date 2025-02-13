@@ -308,14 +308,27 @@ if SERVER then
 		self:SetAmBreaking(true)
 		if IsValid(self.OuterShield) then self.OuterShield:SetAmBreaking(true) end
 		if IsValid(self.InnerShield) then self.InnerShield:SetAmBreaking(true) end
+		local SelfPos = self:GetPos()
 		local Eff = EffectData()
-		Eff:SetOrigin(self:GetPos())
+		Eff:SetOrigin(SelfPos)
 		Eff:SetScale(self.ShieldRadius)
 		util.Effect("eff_jack_gmod_bubbleshieldburst", Eff, true, true)
 		timer.Simple(.333, function()
 			if (IsValid(self)) then
 				self:EmitSound("snds_jack_gmod/bubble_shield_break.ogg", 80, 100)
-				sound.Play("snds_jack_gmod/bubble_shield_break.ogg", self:GetPos() + vector_up, 80, 100)
+				sound.Play("snds_jack_gmod/bubble_shield_break.ogg", SelfPos + vector_up, 80, 100)
+				for k, v in pairs(ents.GetAll()) do
+					if (v.TakeDamageInfo and v ~= self and v ~= self.InnerShield and v ~= self.OuterShield and v ~= self.Projector and v:GetPos():Distance(SelfPos) < self.ShieldRadius) then
+						local Dmg = DamageInfo()
+						Dmg:SetAttacker(game.GetWorld())
+						Dmg:SetInflictor(self)
+						Dmg:SetDamage(5)
+						Dmg:SetDamageType(DMG_SHOCK)
+						Dmg:SetDamageForce(Vector(0, 0, -10000))
+						Dmg:SetDamagePosition(v:GetPos())
+						v:TakeDamageInfo(Dmg)
+					end
+				end
 				if IsValid(self.OuterShield) then self.OuterShield:Remove() end
 				if IsValid(self.InnerShield) then self.InnerShield:Remove() end
 				self:Remove()
@@ -419,7 +432,7 @@ elseif CLIENT then
 				Xmod = math.Rand(.95, 1.05)
 				Ymod = math.Rand(.95, 1.05)
 				Zmod = math.Rand(.95, 1.05)
-				RefractAmt = .5
+				RefractAmt = .3
 			end
 			self.Mat:SetFloat("$refractamount", RefractAmt)
 			local MacTheMatrix = Matrix()

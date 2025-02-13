@@ -8,7 +8,7 @@ function EFFECT:Init(data)
 	local Particles = {}
 	for i = 1, 4000 do
 		timer.Simple(i / 12000, function()
-			local MyPos = Pos + VectorRand():GetNormalized() * Siz * 1.05
+			local MyPos = Pos + VectorRand():GetNormalized() * Siz * 1.02
 			local particle = Emitter:Add("sprites/mat_jack_basicglow", MyPos)
 			if (particle) then
 				particle:SetVelocity(Vector(0, 0, 0))
