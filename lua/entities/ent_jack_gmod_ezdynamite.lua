@@ -116,27 +116,29 @@ if SERVER then
 		local Dude = activator or activatorAgain
 		JMod.SetEZowner(self, Dude)
 		local Time = CurTime()
+		local Alt = JMod.IsAltUsing(Dude)
 
 		if tobool(onOff) then
 			local State = self:GetState()
 			if State < 0 then return end
-			local Alt = JMod.IsAltUsing(Dude)
 
 			if State == JMod.EZ_STATE_OFF and Alt then
 				self:Arm()
 				JMod.Hint(Dude, "fuse")
 			end
 
-			constraint.RemoveConstraints(self, "Weld")
-			self.StuckStick = nil
-			self.StuckTo = nil
+			if not Alt then
+				constraint.RemoveConstraints(self, "Weld")
+				self.StuckStick = nil
+				self.StuckTo = nil
+			end
 			JMod.ThrowablePickup(Dude, self, 500, 250)
 
 			if not Alt then
 				JMod.Hint(Dude, "arm")
 			end
 		else
-			if self:IsPlayerHolding() and (self.NextStick < Time) then
+			if self:IsPlayerHolding() and (self.NextStick < Time) and not(Alt) then
 				self:Plant(Dude)
 			end
 		end
