@@ -75,14 +75,11 @@ function ENT:TestCollision(startpos, delta, isbox, extents, mask)
 		}
 		for i, point in ipairs(PointsToCheck) do
 			if SelfPos:DistToSqr(point) < self.ShieldRadiusSqr then
-				--print("Box")
-
 				return false
 			end
 		end
 	else
 		if SelfPos:DistToSqr(startpos) < self.ShieldRadiusSqr then
-
 			return false
 		end
 	end
@@ -279,7 +276,7 @@ if SERVER then
 
 	function ENT:TakeShieldDamage(amt)
 		local CurStrength = self:GetStrength()
-		local AmtToLose = amt ^ .5
+		local AmtToLose = amt / 80
 		local AmtRemaining = math.Clamp(CurStrength - AmtToLose, .1, self:GetMaxStrength())
 		-- jprint(AmtToLose)
 		self:SetStrength(AmtRemaining)
