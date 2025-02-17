@@ -95,7 +95,7 @@ function ENT:TestCollision(startpos, delta, isbox, extents, mask)
 			local HitPos = startpos + delta * (Frac1 or 1)
 			local HitNorm = (HitPos - SelfPos):GetNormalized()
 			return {
-				HitPos = startpos + delta * (Frac1 or 1),
+				HitPos = HitPos + HitNorm * 1,
 				Fraction = Frac1,
 				Normal = HitNorm
 			}
