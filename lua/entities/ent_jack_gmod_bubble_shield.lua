@@ -215,17 +215,25 @@ if SERVER then
 		local Scale = (dmginfo:GetDamage() / 30) ^ .5
 
 		-- This is to stop stuff like fire from causing ripples on the shield in weird places
+		local DmgGun = dmginfo.GetWeapon and dmginfo:GetWeapon()
 		local IsBullet = dmginfo:IsBulletDamage()
+		
+		if IsValid(Attacker) and Attacker.GetActiveWeapon and (DmgGun == Attacker) then
+			local TheirWep = Attacker:GetActiveWeapon()
+			if IsValid(TheirWep) then
+				DmgGun = TheirWep
+			end
+		end
+
 		if DmgDist > (self.ShieldRadius + 10) then
 			local ShotOrigin = DmgPos
 			--debugoverlay.Cross(ShotOrigin, 2, 5, Color(255, 0, 0), true)
 			--debugoverlay.Line(ShotOrigin, DmgPos, 5, Color(255, 0, 0), true)
 
-			local dmgGun = dmginfo.GetWeapon and dmginfo:GetWeapon()
-			if IsValid(dmgGun) then
-				ShotOrigin = dmgGun:GetPos()
-				if dmgGun:GetAttachment(1) then
-					ShotOrigin = dmgGun:GetAttachment(1).Pos
+			if IsValid(DmgGun) then
+				ShotOrigin = DmgGun:GetPos()
+				if DmgGun:GetAttachment(1) then
+					ShotOrigin = DmgGun:GetAttachment(1).Pos
 				end
 			elseif IsValid(Inflictor) then
 				ShotOrigin = Inflictor:GetPos()
@@ -250,7 +258,8 @@ if SERVER then
 			self:DoHitEffect(DmgPos, Scale, HitNormal)
 		end
 
-		if (IsBullet and math.Rand(0, 1) >= .25) then
+		local IsRicochetHandled = IsValid(DmgGun) and DmgGun.ArcCW or false
+		if not IsRicochetHandled and (IsBullet and math.Rand(0, 1) >= .25) then
 			timer.Simple(0, function()
 				if (IsValid(self)) then
 					local IncomingDir = DmgForce:GetNormalized():Angle()
