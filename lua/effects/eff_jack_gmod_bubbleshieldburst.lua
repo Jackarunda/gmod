@@ -1,8 +1,7 @@
 ﻿local Flash = Material("sprites/mat_jack_basicglow")
 function EFFECT:Init(data)
-	local Pos, Siz = data:GetOrigin(), data:GetScale()
+	local Pos, Siz = data:GetOrigin() - Vector(0, 0, 30), data:GetScale()
 	local Scl = Siz / 240
-	self.Pos = Pos
 	local Time = CurTime()
 	local Emitter = ParticleEmitter(Pos)
 	local Particles = {}
@@ -38,24 +37,8 @@ function EFFECT:Init(data)
 	end
 end
 function EFFECT:Think()
-	-- return self.DieTime > CurTime()
 	return false
 end
 function EFFECT:Render()
-	--[[
-	local Time = CurTime()
-	if (self.DieTime > Time) then
-		render.SetMaterial(Flash)
-		if (self.FlashTime > Time) then
-			local Dir = (self.Pos - EyePos()):GetNormalized()
-			render.DrawSprite(self.Pos - Dir * 100, 1000, 1000, Color(255, 200, 150, 255))
-		end
-		if (self.CrackleTime < Time) then
-			render.DrawSprite(self.Pos + VectorRand() * math.random(1, 750), 100, 100, Color(255, 200, 75, 255))
-			render.DrawSprite(self.Pos + VectorRand() * math.random(1, 750), 50, 50, Color(255, 255, 255, 255))
-		end
-		return true
-	end
-	--]]
 	return false
 end

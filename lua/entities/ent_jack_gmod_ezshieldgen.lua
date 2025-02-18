@@ -17,29 +17,29 @@ ENT.SpawnHeight = 1
 ENT.EZcolorable = true
 --
 ENT.StaticPerfSpecs = {
-	--
+	ElectricityToShieldStrengthConversion = .05
 }
 ENT.DynamicPerfSpecs = {
 	MaxElectricity = 100,
-	MaxShieldStrength = 1,
-	ChargeSpeed = 5
+	MaxCoolant = 100,
+	MaxShieldStrengthMult = 1
 }
 ENT.EZconsumes = {
 	JMod.EZ_RESOURCE_TYPES.POWER,
-	JMod.EZ_RESOURCE_TYPES.BASICPARTS
+	JMod.EZ_RESOURCE_TYPES.BASICPARTS,
+	JMod.EZ_RESOURCE_TYPES.COOLANT
 }
 
 function ENT:CustomSetupDataTables()
-	self:NetworkVar("Float", 1, "ShieldStrength")
-	self:NetworkVar("Float", 2, "ShieldProgress")
+	self:NetworkVar("Float", 1, "ShieldChargeProgress")
+	self:NetworkVar("Float", 2, "Coolant")
 end
 
 local STATE_BROKEN, STATE_OFF, STATE_CHARGING, STATE_ON = -1, 0, 1, 2
 
 if(SERVER)then
 	function ENT:CustomInit()
-		self:SetShieldStrength(0)
-		self:SetShieldProgress(0)
+		self:SetShieldChargeProgress(0)
 		self.NextUseTime = 0
 		self.NextEffThink = 0
 		self.Established = {
@@ -87,7 +87,8 @@ if(SERVER)then
 						self.Established.Norm = Tr.HitNormal
 						self.Established.Anchor = Tr.Entity
 						self.Established.OnWorld = false
-						local Welded = constraint.Weld(self, Tr.Entity, 0, 0, 0, true)
+						self:GetPhysicsObject():SetVelocity(Vector(0, 0, 0))
+						self:GetPhysicsObject():EnableMotion(false)
 						return true
 					end
 				end
@@ -101,7 +102,7 @@ if(SERVER)then
 		if (self:GetElectricity() > 0) then
 			self.NextUseTime = CurTime() + 1
 			if (self:EstablishSelf(activator)) then
-				self:EmitSound("snds_jack_gmod/electrical_start_charge.ogg", 60, 100 * self.ChargeSpeed)
+				self:EmitSound("snds_jack_gmod/electrical_start_charge.ogg", 60, 100)
 				self:SetState(STATE_CHARGING)
 				self.BaseSoundLoop = CreateSound(self, "snds_jack_gmod/electric_machine_low_hum_loop.wav")
 				self.BaseSoundLoop:SetSoundLevel(65)
@@ -109,7 +110,7 @@ if(SERVER)then
 				self.BaseSoundLoop:SetSoundLevel(65)
 			else
 				self:EmitSound("buttons/button10.wav", 60, 100)
-				-- todo: hint as to why we can't start
+				JMod.Hint(activator, "shield genny base")
 			end
 		else
 			self.NextUseTime = CurTime() + 1
@@ -124,20 +125,18 @@ if(SERVER)then
 		if self.BaseSoundLoop then self.BaseSoundLoop:Stop() end
 		self:EmitSound("snds_jack_gmod/electrical_forced_shut_off.ogg", 70, 100)
 		self:SetState(STATE_OFF)
-		self:SetShieldProgress(0)
-		self:SetShieldStrength(0)
+		self:SetShieldChargeProgress(0)
 	end
 
 	function ENT:OnRemove()
 		if self.BaseSoundLoop then self.BaseSoundLoop:Stop() end
 		if self.ShieldSoundLoop then self.ShieldSoundLoop:Stop() end
-		if (IsValid(self.Shield)) then self.Shield:Remove() end
+		if (IsValid(self.Shield)) then self.Shield:Break() end
 	end
 
 	function ENT:EstablishShield()
 		if (self:GetState() == STATE_ON) then return end
 		self:SetState(STATE_ON)
-		self:SetShieldStrength(self.MaxShieldStrength)
 		self.ShieldSoundLoop = CreateSound(self, "snds_jack_gmod/bubble_shield_start_loop.wav")
 		self.ShieldSoundLoop:SetSoundLevel(75)
 		self.ShieldSoundLoop:Play()
@@ -149,20 +148,20 @@ if(SERVER)then
 		self.Shield.Projector = self
 		self.Shield:SetSizeClass(self:GetGrade())
 
-		local ShieldStrength = 1000 * self.MaxShieldStrength -- todo: based on grade
+		local ShieldStrength = 1000 * self.MaxShieldStrengthMult -- todo: based on grade
 		self.Shield:SetMaxStrength(ShieldStrength)
 		self.Shield:SetStrength(ShieldStrength)
 
 		self.Shield:Spawn()
+		self.Shield:Activate()
 	end
 
 	function ENT:ShieldBreak()
 		if (self:GetState() ~= STATE_ON) then return end
 		if self.ShieldSoundLoop then self.ShieldSoundLoop:Stop() end
-		self:EmitSound("snds_jack_gmod/bubble_shield_break.ogg", 80, 100)
-		if (IsValid(self.Shield)) then self.Shield:Remove() end
+		if (IsValid(self.Shield)) then self.Shield:Break() end
 		self:SetState(STATE_CHARGING)
-		self:SetShieldProgress(0)
+		self:SetShieldChargeProgress(0)
 	end
 
 	function ENT:OnBreak()
@@ -172,34 +171,30 @@ if(SERVER)then
 
 	function ENT:Think()
 		local Time, State, Grade = CurTime(), self:GetState(), self:GetGrade()
-
-		--print(State, "elec", self:GetElectricity(), "prog", self:GetShieldProgress(), "streng", self:GetShieldStrength())
-
 		self:UpdateWireOutputs()
-
 		if (State == STATE_ON) then
-			--self:ConsumeElectricity(.1)
 			if not (IsValid(self.Shield)) then
 				self:ShieldBreak()
 			else
-				-- slowly recharge the shield's strength for extra electricity consumption
-				local MaxShieldStrength = 1000 * self.MaxShieldStrength
-				local ShieldStrength = self.Shield:GetStrength()
-				local StrengthDiff = MaxShieldStrength - ShieldStrength
-				local StrengthToGive = math.Clamp(StrengthDiff, 0, 20)
-				local NewStrength = math.Clamp(ShieldStrength + StrengthToGive, 0, MaxShieldStrength)
-				self.Shield:SetStrength(NewStrength)
-				self.Shield.InnerShield:SetStrength(NewStrength)
-				self:ConsumeElectricity(StrengthToGive * .02)
-				self:SetShieldStrength(NewStrength)
+				local CurCoolant, MaxChargingCapability = self:GetCoolant(), 5
+				if (CurCoolant > 0) then MaxChargingCapability = 10 end
+				local Accepted = self.Shield:AcceptRecharge(MaxChargingCapability)
+				jprint("added", Accepted, "coolnt", CurCoolant, "elec", self:GetElectricity(), "str", self.Shield:GetStrength())
+				if (Accepted > 0) then
+					self:ConsumeElectricity(Accepted * self.ElectricityToShieldStrengthConversion)
+					if (Accepted > 5) then -- high-power mode, push it to the limit
+						self:SetCoolant(math.Clamp(CurCoolant - math.Rand(.8, 1.2), 0, self.MaxCoolant))
+					end
+				end
 			end
 		elseif (State == STATE_CHARGING) then
-			local Progress = self:GetShieldProgress()
-			if (Progress >= 100) then
+			local Progress = self:GetShieldChargeProgress()
+			if (Progress >= 1000 * self.MaxShieldStrengthMult) then
 				self:EstablishShield()
 			else
-				self:SetShieldProgress(Progress + 5 * self.ChargeSpeed)
-				self:ConsumeElectricity(1 * self.ChargeSpeed)
+				local ChargeAmt = 20
+				self:SetShieldChargeProgress(Progress + ChargeAmt)
+				self:ConsumeElectricity(ChargeAmt * self.ElectricityToShieldStrengthConversion)
 			end
 		end
 
@@ -211,7 +206,6 @@ if(SERVER)then
 		local Time = CurTime()
 		self.NextUseTime = Time + math.Rand(0, 3)
 	end
-
 elseif(CLIENT)then
 	function ENT:CustomInit()
 		self:DrawShadow(true)
@@ -254,7 +248,6 @@ elseif(CLIENT)then
 				--DisplayAng:RotateAroundAxis(DisplayAng:Up(), 0)
 				DisplayAng:RotateAroundAxis(DisplayAng:Forward(), 45)
 				local Opacity = math.random(50, 150)
-				local ShieldAmt = self:GetShieldStrength()
 				local ElecAmt = self:GetElectricity()
 
 				cam.Start3D2D(SelfPos - Forward * 15 + Right * 8 - Up * 42, DisplayAng, .06)
@@ -262,8 +255,6 @@ elseif(CLIENT)then
 				local RankX, RankY = 300, 30
 				surface.DrawRect(RankX, RankY, 128, 128)
 				JMod.StandardRankDisplay(Grade, RankX + 62, RankY + 68, 118, Opacity + 50)
-				draw.SimpleTextOutlined("SHIELD STRENGTH", "JMod-Display", 200, 0, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-				draw.SimpleTextOutlined(tostring(math.Round(ShieldAmt)), "JMod-Display", 200, 30, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 				draw.SimpleTextOutlined("ELECTRICITY", "JMod-Display", 200, 90, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 				draw.SimpleTextOutlined(tostring(math.Round(ElecAmt)), "JMod-Display", 200, 120, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 				cam.End3D2D()

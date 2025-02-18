@@ -328,6 +328,10 @@ JMod.Hints = {
 		RepeatCount = 10,
 		Time = 2
 	},
+	["shield genny base"] = {
+		LangKey = "hint shield genny base",
+		RepeatCount = 10
+	},
 	["double tap to disarm"] = {
 		LangKey = "hint double tap to disarm",
 		RepeatCount = 10,

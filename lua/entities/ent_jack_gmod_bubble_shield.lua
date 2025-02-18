@@ -4,7 +4,7 @@ ENT.Base = "base_anim"
 ENT.PrintName = "Bubble Shield"
 ENT.Author = "Jackarunda"
 ENT.Spawnable = false
-ENT.AdminSpawnable = false
+ENT.AdminOnly = false
 ENT.Model = "models/jmod/giant_hollow_sphere_1.mdl"
 ENT.PhysgunDisabled = true
 ENT.ShieldRadii = {
@@ -24,13 +24,10 @@ function ENT:GravGunPunt(ply)
 end
 
 function ENT:CanTool(ply, trace, mode, tool, button)
-
 	if (mode == "remover") then return true end
-
 	return false
 end
 
---
 hook.Add("ShouldCollide", "JMOD_SHIELDCOLLISION", function(ent1, ent2)
 	local snc1 = ent1.ShouldNotCollide
 	if snc1 and snc1(ent1, ent2) then return false end
@@ -84,10 +81,9 @@ function ENT:TestCollision(startpos, delta, isbox, extents, mask)
 		end
 	end
 
-	--
 	if (bit.band(mask, MASK_SHOT) == MASK_SHOT) then
 		local Frac1, Frac2 = util.IntersectRayWithSphere(startpos, delta, SelfPos, self.ShieldRadius)
-		--debugoverlay.Line(startpos, startpos + delta * (Frac1 or 1), 10, Color(255, 0, 0, 255), true)
+		-- debugoverlay.Line(startpos, startpos + delta * (Frac1 or 1), 10, Color(255, 0, 0, 255), true)
 		if Frac1 and Frac2 then
 			local HitPos = startpos + delta * (Frac1 or 1)
 			local HitNorm = (HitPos - SelfPos):GetNormalized()
@@ -101,7 +97,6 @@ function ENT:TestCollision(startpos, delta, isbox, extents, mask)
 
 	return true
 end
---]]
 
 function ENT:SetupDataTables()
 	self:NetworkVar("Int", 1, "SizeClass")
@@ -117,7 +112,6 @@ end
 
 if SERVER then
 	function ENT:Initialize()
-		-- Initializing some values
 		if self:GetSizeClass() < 1 then self:SetSizeClass(1) end
 		local ShieldGrade = self:GetSizeClass()
 		self.ShieldRadius = self.ShieldRadii[ShieldGrade]
@@ -144,31 +138,32 @@ if SERVER then
 
 		self:EnableCustomCollisions(true)
 
+		self:SetAmBreaking(false)
+		if not(IsValid(self.Projector)) then -- for debugging
+			local Strength = 1000
+			self:SetMaxStrength(Strength)
+			self:SetStrength(Strength)
+		end
+
 		if not(self:GetAmInnerShield()) then
-			-- Inner shield is for prop blocking
+			-- inner shield is for prop blocking
 			self.InnerShield = ents.Create("ent_jack_gmod_bubble_shield")
 			self.InnerShield:SetAmInnerShield(true)
 			self.InnerShield.OuterShield = self
 			self.InnerShield.Projector = self.Projector
 			self.InnerShield:SetSizeClass(self:GetSizeClass())
 			self.InnerShield:SetPos(self:GetPos() - Vector(0, 0, 10))
+
+			local Strength = self:GetMaxStrength()
+			self.InnerShield:SetMaxStrength(Strength)
+			self.InnerShield:SetStrength(Strength)
+
 			self.InnerShield:Spawn()
 			self.InnerShield:SetModelScale(.9, 0.001)
 			self.InnerShield:SetCollisionGroup(COLLISION_GROUP_NONE)
 			self.InnerShield:SetCustomCollisionCheck(true)
 			self.InnerShield:CollisionRulesChanged()
 			self.InnerShield:Activate()
-		end
-
-		self:SetAmBreaking(false)
-		if not(IsValid(self.Projector)) then -- todo: if we have no emitter, die
-			local Strength = 1000
-			self:SetMaxStrength(Strength)
-			self:SetStrength(Strength)
-		elseif not(self:GetAmInnerShield()) then
-			local Strength = self:GetMaxStrength()
-			self.InnerShield:SetMaxStrength(Strength)
-			self.InnerShield:SetStrength(Strength)
 		end
 	end
 
@@ -283,24 +278,27 @@ if SERVER then
 		self:TakeShieldDamage(DmgAmt)
 	end
 
-	function ENT:TakeShieldDamage(amt)
+	function ENT:TakeShieldDamage(amt, mult)
+		mult = mult or .125
 		local CurStrength = self:GetStrength()
-		local AmtToLose = amt / 80
+		local AmtToLose = amt * mult
 		local AmtRemaining = math.Clamp(CurStrength - AmtToLose, .1, self:GetMaxStrength())
-		-- jprint(AmtToLose)
+		-- jprint(AmtRemaining)
 		self:SetStrength(AmtRemaining)
 		if IsValid(self.OuterShield) then self.OuterShield:SetStrength(AmtRemaining) end
 		if IsValid(self.InnerShield) then self.InnerShield:SetStrength(AmtRemaining) end
-		if (AmtRemaining <= .1) then
-			self:Break()
-		end
+		if (AmtRemaining <= .1) then self:Break() end
 	end
 
 	function ENT:AcceptRecharge(amt)
-		local NewStrength = math.Clamp(self:GetStrength() + amt, .1, self:GetMaxStrength())
+		local Cur, Max = self:GetStrength(), self:GetMaxStrength()
+		local MaxAcceptable = Max - Cur
+		local Accepted = math.min(amt, MaxAcceptable)
+		local NewStrength = Cur + Accepted
 		self:SetStrength(NewStrength)
 		if IsValid(self.OuterShield) then self.OuterShield:SetStrength(NewStrength) end
 		if IsValid(self.InnerShield) then self.InnerShield:SetStrength(NewStrength) end
+		return Accepted
 	end
 
 	function ENT:Think()
@@ -315,36 +313,38 @@ if SERVER then
 			self:GetPhysicsObject():SetVelocity(Vector(0, 0, 0))
 			self:GetPhysicsObject():EnableMotion(false)
 		end
-		if self:IsOnFire() then
-			self:Extinguish()
+		if self:IsOnFire() then self:Extinguish() end
+		if not self:GetAmInnerShield() then
+			-- "leak" strength so that the projector must consume energy to maintain us
+			self:TakeShieldDamage(2, 1)
 		end
-		local CurStrength = self:GetStrength()
-		if CurStrength <= 0 then
-			self:Break()
-		else
-			local NewStrength = math.Clamp(CurStrength - .02, 0, self:GetMaxStrength())
-			self:SetStrength(NewStrength)
-
-			self:NextThink(CurTime())
-
-			return true
-		end
+		self:NextThink(CurTime() + 1)
+		return true
 	end
 
 	function ENT:Break()
 		if (self:GetAmBreaking()) then return end
+		self:SetStrength(.1)
 		self:SetAmBreaking(true)
-		if IsValid(self.OuterShield) then self.OuterShield:SetAmBreaking(true) end
-		if IsValid(self.InnerShield) then self.InnerShield:SetAmBreaking(true) end
-		local SelfPos = self:GetPos()
-		local Eff = EffectData()
-		Eff:SetOrigin(SelfPos)
-		Eff:SetScale(self.ShieldRadius)
-		util.Effect("eff_jack_gmod_bubbleshieldburst", Eff, true, true)
+		if IsValid(self.OuterShield) then
+			self.OuterShield:SetStrength(.1)
+			self.OuterShield:SetAmBreaking(true)
+		end
+		if IsValid(self.InnerShield) then
+			self.InnerShield:SetStrength(.1)
+			self.InnerShield:SetAmBreaking(true)
+		end
+		local SelfPos, Radius = self:GetPos(), self.ShieldRadius
+		timer.Simple(0, function()
+			local Eff = EffectData()
+			Eff:SetOrigin(SelfPos + Vector(0, 0, 30))
+			Eff:SetScale(Radius)
+			util.Effect("eff_jack_gmod_bubbleshieldburst", Eff, true, true)
+		end)
 		timer.Simple(.333, function()
 			if (IsValid(self)) then
 				self:EmitSound("snds_jack_gmod/bubble_shield_break.ogg", 80, 100)
-				sound.Play("snds_jack_gmod/bubble_shield_break.ogg", SelfPos + vector_up, 80, 100)
+				sound.Play("snds_jack_gmod/bubble_shield_break.ogg", SelfPos + Vector(0, 0, 30), 80, 100)
 				for k, v in pairs(ents.GetAll()) do
 					if (v.TakeDamageInfo and v ~= self and v ~= self.InnerShield and v ~= self.OuterShield and v ~= self.Projector and v:GetPos():Distance(SelfPos) < self.ShieldRadius) then
 						local Dmg = DamageInfo()

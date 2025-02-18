@@ -240,6 +240,7 @@
 	["hint ent_jack_gmod_ezshovel"] = "Dig up sand and dirt to use for crafting, or whack your enemies",
 	["hint ent_jack_gmod_ezbucket"] = "Gather water at water deposits",
 	["hint ent_jack_gmod_ezaxe"] = "Chop down EZ trees with this bute, or become a homicidal-maniac",
+	["hint shield genny base"] = "Shield generator must be on the world or a big heavy frozen prop",
 	--commands
 	["command jmod_cl_reloadconfig"] = "re-reads the lua client config from harddrive to ingame memory",
 	["command jmod_debug_showgasparticles"] = "causes gas and fallout particles to render as white balls",
