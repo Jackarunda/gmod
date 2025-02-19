@@ -17,7 +17,7 @@ ENT.SpawnHeight = 1
 ENT.EZcolorable = true
 --
 ENT.StaticPerfSpecs = {
-	ElectricityToShieldStrengthConversion = .05
+	ElectricityToShieldStrengthConversion = .045
 }
 ENT.DynamicPerfSpecs = {
 	MaxElectricity = 100,
@@ -48,6 +48,7 @@ if(SERVER)then
 			Anchor = nil, -- entity
 			OnWorld = false
 		}
+		self.NextAlarm = 0
 	end
 
 	function ENT:Use(activator)
@@ -62,7 +63,7 @@ if(SERVER)then
 			return
 		elseif State == STATE_OFF then
 			self:TurnOn(activator)
-		elseif State == STATE_ON then
+		elseif State == STATE_ON or State == STATE_CHARGING then
 			self:TurnOff()
 		end
 	end
@@ -131,7 +132,10 @@ if(SERVER)then
 	function ENT:OnRemove()
 		if self.BaseSoundLoop then self.BaseSoundLoop:Stop() end
 		if self.ShieldSoundLoop then self.ShieldSoundLoop:Stop() end
-		if (IsValid(self.Shield)) then self.Shield:Break() end
+		local Shield = self.Shield
+		timer.Simple(0, function()
+			if (IsValid(Shield)) then Shield:Break() end
+		end)
 	end
 
 	function ENT:EstablishShield()
@@ -169,21 +173,35 @@ if(SERVER)then
 		if self.BaseSoundLoop then self.BaseSoundLoop:Stop() end
 	end
 
+	function ENT:Alarm()
+		self:EmitSound("snds_jack_gmod/klaxon_alarm_short.ogg", 80, 100)
+		local Eff = EffectData()
+		Eff:SetOrigin(self:GetPos() - Vector(0, 0, 40))
+		util.Effect("eff_jack_gmod_redflash", Eff, true, true)
+	end
+
 	function ENT:Think()
 		local Time, State, Grade = CurTime(), self:GetState(), self:GetGrade()
 		self:UpdateWireOutputs()
 		if (State == STATE_ON) then
+			if (self:GetPhysicsObject():IsMotionEnabled()) then self:TurnOff() return end
 			if not (IsValid(self.Shield)) then
 				self:ShieldBreak()
 			else
-				local CurCoolant, MaxChargingCapability = self:GetCoolant(), 5
-				if (CurCoolant > 0) then MaxChargingCapability = 10 end
+				local CurCoolant, MaxChargingCapability = self:GetCoolant(), 2.5
+				if (CurCoolant > 0) then MaxChargingCapability = 5 end
 				local Accepted = self.Shield:AcceptRecharge(MaxChargingCapability)
-				jprint("added", Accepted, "coolnt", CurCoolant, "elec", self:GetElectricity(), "str", self.Shield:GetStrength())
+				-- jprint("added", Accepted, "coolnt", CurCoolant, "elec", self:GetElectricity(), "str", self.Shield:GetStrength())
 				if (Accepted > 0) then
 					self:ConsumeElectricity(Accepted * self.ElectricityToShieldStrengthConversion)
 					if (Accepted > 5) then -- high-power mode, push it to the limit
-						self:SetCoolant(math.Clamp(CurCoolant - math.Rand(.8, 1.2), 0, self.MaxCoolant))
+						self:SetCoolant(math.Clamp(CurCoolant - math.Rand(.4, .6), 0, self.MaxCoolant))
+					end
+				end
+				if (((self:GetElectricity() / self.MaxElectricity) < .2) or (self.Shield:GetStrength() < 100)) then
+					if (self.NextAlarm < Time) then
+						self.NextAlarm = Time + .25
+						self:Alarm()
 					end
 				end
 			end
@@ -192,13 +210,13 @@ if(SERVER)then
 			if (Progress >= 1000 * self.MaxShieldStrengthMult) then
 				self:EstablishShield()
 			else
-				local ChargeAmt = 20
+				local ChargeAmt = 10
 				self:SetShieldChargeProgress(Progress + ChargeAmt)
 				self:ConsumeElectricity(ChargeAmt * self.ElectricityToShieldStrengthConversion)
 			end
 		end
 
-		self:NextThink(Time + .5)
+		self:NextThink(Time + .25)
 		return true
 	end
 
@@ -242,21 +260,26 @@ elseif(CLIENT)then
 		end
 
 		if DetailDraw then
-			if Closeness < 20000 and State == STATE_ON then
+			if Closeness < 20000 and State > 0 then
 				local DisplayAng = SelfAng:GetCopy()
 				--DisplayAng:RotateAroundAxis(DisplayAng:Right(), 0)
 				--DisplayAng:RotateAroundAxis(DisplayAng:Up(), 0)
 				DisplayAng:RotateAroundAxis(DisplayAng:Forward(), 45)
 				local Opacity = math.random(50, 150)
 				local ElecAmt = self:GetElectricity()
+				local CoolAmt = self:GetCoolant()
+				local ChargeAmt = self:GetShieldChargeProgress()
 
 				cam.Start3D2D(SelfPos - Forward * 15 + Right * 8 - Up * 42, DisplayAng, .06)
 				surface.SetDrawColor(10, 10, 10, Opacity + 50)
 				local RankX, RankY = 300, 30
 				surface.DrawRect(RankX, RankY, 128, 128)
 				JMod.StandardRankDisplay(Grade, RankX + 62, RankY + 68, 118, Opacity + 50)
-				draw.SimpleTextOutlined("ELECTRICITY", "JMod-Display", 200, 90, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-				draw.SimpleTextOutlined(tostring(math.Round(ElecAmt)), "JMod-Display", 200, 120, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+				draw.SimpleTextOutlined("ELECTRICITY", "JMod-Display", 190, -10, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+				draw.SimpleTextOutlined(tostring(math.Round(ElecAmt)), "JMod-Display", 190, 20, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+				draw.SimpleTextOutlined("COOLANT", "JMod-Display", 190, 60, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+				draw.SimpleTextOutlined(tostring(math.Round(CoolAmt)), "JMod-Display", 190, 90, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+				if (State == STATE_CHARGING) then draw.SimpleTextOutlined("Charging... "..tostring(math.Round(ChargeAmt)), "JMod-Display", 190, 150, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity)) end
 				cam.End3D2D()
 			end
 		end
