@@ -443,6 +443,9 @@ function JMod.RicPenBullet(ent, pos, dir, dmg, doBlasts, wreckShit, num, penMul,
 
 	if not initialTrace.Hit or initialTrace.HitSky then return end
 	local AVec, IPos, TNorm, SMul = initialTrace.Normal, initialTrace.HitPos, initialTrace.HitNormal, SurfaceHardness[initialTrace.MatType] or .99
+	
+	if not util.IsInWorld(IPos) then return end
+
 	local DontStop = false
 	if (util.GetSurfacePropName(initialTrace.SurfaceProps) == "chainlink") and math.Rand(0, 1) < SMul then
 		DontStop = true
@@ -455,7 +458,7 @@ function JMod.RicPenBullet(ent, pos, dir, dmg, doBlasts, wreckShit, num, penMul,
 			Eff:SetScale(.2)
 		end
 		Eff:SetNormal(TNorm)
-		util.Effect("eff_jack_gmod_efpburst", Eff, true, true)
+		util.Effect("eff_jack_gmod_efpburst", Eff, true)
 	end
 	
 	if doBlasts and not DontStop then
