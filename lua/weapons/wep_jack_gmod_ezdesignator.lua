@@ -8,8 +8,8 @@ SWEP.UseHands = true
 SWEP.DrawAmmo = false
 SWEP.DrawCrosshair = false
 SWEP.EZdroppable = true
-SWEP.ViewModel = "models/saraphines/binoculars/binoculars_sniper/binoculars_sniper.mdl"
-SWEP.WorldModel = "models/saraphines/binoculars/binoculars_sniper/binoculars_sniper.mdl"
+SWEP.ViewModel = "models/weapons/c_slam.mdl"--"models/saraphines/binoculars/binoculars_sniper/binoculars_sniper.mdl"
+SWEP.WorldModel = "models/props_combine/combine_binocular03.mdl"--"models/saraphines/binoculars/binoculars_sniper/binoculars_sniper.mdl"
 SWEP.ViewModelFOV = 40
 SWEP.Slot = 0
 SWEP.SlotPos = 5
@@ -23,9 +23,14 @@ SWEP.Secondary.DefaultClip = -1
 SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = "none"
 SWEP.ShowWorldModel = false
+SWEP.SCKPreDrawViewModel = true
+SWEP.EZconsumes = {
+	JMod.EZ_RESOURCE_TYPES.POWER
+}
+SWEP.MaxElectricity = 10
 
 SWEP.WElements = {
-	["designator"] = {
+	--[[["designator"] = {
 		type = "Model",
 		model = "models/saraphines/binoculars/binoculars_sniper/binoculars_sniper.mdl",
 		bone = "ValveBiped.Bip01_R_Hand",
@@ -38,12 +43,44 @@ SWEP.WElements = {
 		material = "",
 		skin = 0,
 		bodygroup = {}
+	},--]]
+	["designator"] = {
+		type = "Model",
+		model = "models/props_combine/combine_binocular03.mdl",
+		bone = "ValveBiped.Bip01_R_Hand",
+		rel = "",
+		pos = Vector(4, 6, -3.5),
+		angle = Angle(0, -5, 20),
+		size = Vector(.8, .8, .8),
+		color = Color(255, 255, 255, 255),
+		surpresslightning = false,
+		material = "",
+		skin = 0,
+		bodygroup = {}
+	}
+}
+
+SWEP.VElements = {
+	["element_name"] = { 
+		type = "Model", 
+		model = "models/props_combine/combine_binocular03.mdl", 
+		bone = "ValveBiped.Bip01_R_Hand", 
+		rel = "", 
+		pos = Vector(5, 3.4, -0.6), 
+		angle = Angle(134, 41, 0), 
+		size = Vector(0.8, 0.8, 0.8), 
+		color = Color(255, 255, 255, 255), 
+		surpresslightning = false, 
+		material = "", 
+		skin = 0, 
+		bodygroup = {} 
 	}
 }
 
 function SWEP:Initialize()
-	self:SetHoldType("camera")
+	self:SetHoldType("slam")
 	self:SCKInitialize()
+	self.SCKPreDrawViewModel = false
 	self:Deploy()
 end
 
@@ -53,7 +90,55 @@ function SWEP:SetupDataTables()
 	self:NetworkVar("Bool", 1, "Lasing")
 end
 
+function SWEP:GetEZsupplies(resourceType)
+	local AvailableResources = {
+		[JMod.EZ_RESOURCE_TYPES.POWER] = math.floor(self:GetElectricity()),
+	}
+	if resourceType then
+		if AvailableResources[resourceType] and AvailableResources[resourceType] > 0 then
+			return AvailableResources[resourceType]
+		else
+			return nil
+		end
+	else
+		return AvailableResources
+	end
+end
+
+function SWEP:SetEZsupplies(typ, amt, setter)
+	if not SERVER then  return end
+	local ResourceSetMethod = self["Set"..JMod.EZ_RESOURCE_TYPE_METHODS[typ]]
+	if ResourceSetMethod then
+		ResourceSetMethod(self, amt)
+	end
+end
+
 function SWEP:PreDrawViewModel(vm, wep, ply)
+	if not self.SCKPreDrawViewModel then
+		vm:SetMaterial("engine/occlusionproxy") -- Hide that view model with hacky material
+	else
+		vm:SetMaterial()
+	end
+end
+
+function SWEP:TryLoadResource(typ, amt)
+	if amt < 1 then return 0 end
+	local Accepted = 0
+
+	for _, v in pairs(self.EZconsumes) do
+		if typ == v then
+			local CurAmt = self:GetEZsupplies(typ) or 0
+			local Take = math.min(amt, self.MaxElectricity - CurAmt)
+			
+			if Take > 0 then
+				self:SetEZsupplies(typ, CurAmt + Take)
+				sound.Play("snd_jack_turretbatteryload.ogg", self:GetPos(), 65, math.random(90, 110))
+				Accepted = Take
+			end
+		end
+	end
+
+	return Accepted
 end
 
 --
@@ -103,7 +188,7 @@ function SWEP:PrimaryAttack()
 			local Elec = self:GetElectricity()
 
 			if Elec > 0 then
-				self:SetElectricity(Elec - .075)
+				self:SetElectricity(Elec - .05)
 			end
 		end
 
@@ -119,18 +204,6 @@ function SWEP:SecondaryAttack()
 	if self.Owner:KeyDown(IN_SPEED) then return end
 	if CLIENT then return end
 
-	if self.Owner:KeyDown(JMod.Config.General.AltFunctionKey) then
-		local Kit = ents.Create("ent_jack_gmod_ezdesignator")
-		Kit:SetPos(self.Owner:GetShootPos() + self.Owner:GetAimVector() * 20)
-		Kit:SetAngles(self.Owner:GetAimVector():Angle())
-		Kit:Spawn()
-		Kit:Activate()
-		Kit:GetPhysicsObject():SetVelocity(self.Owner:GetVelocity())
-		Kit.Electricity = self:GetElectricity()
-		self:Remove()
-
-		return
-	end
 end
 
 function SWEP:OnRemove()
@@ -138,8 +211,16 @@ function SWEP:OnRemove()
 end
 
 function SWEP:Holster(wep)
+	-- Not calling OnRemove to keep the models
 	self:SCKHolster()
-	self:OnRemove()
+
+	if IsValid(self.Owner) and CLIENT and self.Owner:IsPlayer() then
+		local vm = self.Owner:GetViewModel()
+
+		if IsValid(vm) then
+			vm:SetMaterial("")
+		end
+	end
 
 	return true
 end
@@ -161,10 +242,30 @@ end
 function SWEP:Think()
 	local Time = CurTime()
 
+	if self.Owner:KeyDown(IN_ATTACK2) then
+		self:SetHoldType("camera")
+	else
+		self:SetHoldType("slam")
+	end
+
 	if self.Owner:KeyDown(IN_ATTACK) and self.Owner:KeyDown(IN_ATTACK2) and (self:GetElectricity() > 0) then
 		self:SetLasing(true)
 	else
 		self:SetLasing(false)
+	end
+end
+
+function SWEP:OnDrop()
+	local Owner = self.EZdropper
+	if IsValid(Owner) then
+		local Kit = ents.Create("ent_jack_gmod_ezdesignator")
+		Kit:SetPos(Owner:GetShootPos() + Owner:GetAimVector() * 20)
+		Kit:SetAngles(Owner:GetAimVector():Angle())
+		Kit:Spawn()
+		Kit:Activate()
+		Kit:GetPhysicsObject():SetVelocity(Owner:GetVelocity())
+		Kit.Electricity = self:GetElectricity()
+		self:Remove()
 	end
 end
 

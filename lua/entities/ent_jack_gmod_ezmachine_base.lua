@@ -222,7 +222,7 @@ if(SERVER)then
 		if self.GetProgress then
 			WireLib.TriggerOutput(self, "Progress", self:GetProgress())
 		end
-		for _, typ in pairs(self.EZconsumes) do
+		for _, typ in ipairs(self.EZconsumes) do
 			if typ == JMod.EZ_RESOURCE_TYPES.BASICPARTS then
 				WireLib.TriggerOutput(self, "Durability", self.Durability)
 			else
@@ -461,7 +461,7 @@ if(SERVER)then
 		if (amt <= 0) then return 0 end
 		local Time = CurTime()
 		if (self.NextRefillTime > Time) or (typ == "generic") then return 0 end
-		for _,v in pairs(self.EZconsumes)do
+		for _, v in pairs(self.EZconsumes)do
 			if(typ == v)then
 				local Accepted = 0
 				if(typ == JMod.EZ_RESOURCE_TYPES.POWER)then

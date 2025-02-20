@@ -6,7 +6,7 @@ ENT.Category = "JMod - EZ Misc."
 ENT.Information = "glhfggwpezpznore"
 ENT.PrintName = "EZ Target Designator"
 ENT.NoSitAllowed = true
-ENT.Spawnable = false -- todo: make spawnable when i figure out the proportional guidance code
+ENT.Spawnable = true -- todo: make spawnable when i figure out the proportional guidance code
 ENT.AdminSpawnable = false
 ---
 ENT.JModPreferredCarryAngles = Angle(0, 90, 0)
@@ -31,7 +31,7 @@ if SERVER then
 	end
 
 	function ENT:Initialize()
-		self:SetModel("models/saraphines/binoculars/binoculars_sniper/binoculars_sniper.mdl")
+		self:SetModel("models/props_combine/combine_binocular03.mdl")--"models/saraphines/binoculars/binoculars_sniper/binoculars_sniper.mdl")
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)
 		self:SetSolid(SOLID_VPHYSICS)
