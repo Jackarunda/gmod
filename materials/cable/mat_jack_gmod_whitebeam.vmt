@@ -1,0 +1,8 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "cable\tex_jack_gmod_whitebeam"
+	"$nocull"	   1
+	"$MinLight"	   .1
+	"$MaxLight"	   1
+	"$additive"    1
+}

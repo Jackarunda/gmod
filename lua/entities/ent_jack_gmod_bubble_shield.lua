@@ -98,10 +98,12 @@ function ENT:TestCollision(startpos, delta, isbox, extents, mask)
 	return true
 end
 
+local STATE_BREAKING, STATE_COLLAPSING, STATE_IDLING, STATE_GROWING = -2, -1, 0, 1
+
 function ENT:SetupDataTables()
 	self:NetworkVar("Int", 1, "SizeClass")
+	self:NetworkVar("Int", 2, "State")
 	self:NetworkVar("Bool", 0, "AmInnerShield")
-	self:NetworkVar("Bool", 1, "AmBreaking")
 	self:NetworkVar("Float", 0, "Strength")
 	self:NetworkVar("Float", 1, "MaxStrength")
 end
@@ -138,7 +140,11 @@ if SERVER then
 
 		self:EnableCustomCollisions(true)
 
-		self:SetAmBreaking(false)
+		self:SetState(STATE_GROWING)
+		timer.Simple(2, function()
+			if (IsValid(self)) then self:SetState(STATE_IDLING) end
+		end)
+
 		if not(IsValid(self.Projector)) then -- for debugging
 			local Strength = 1000
 			self:SetMaxStrength(Strength)
@@ -279,7 +285,7 @@ if SERVER then
 	end
 
 	function ENT:TakeShieldDamage(amt, mult)
-		mult = mult or .125
+		mult = mult or .125 -- default low mult gives the shield its toughness
 		local CurStrength = self:GetStrength()
 		local AmtToLose = amt * mult
 		local AmtRemaining = math.Clamp(CurStrength - AmtToLose, .1, self:GetMaxStrength())
@@ -323,45 +329,53 @@ if SERVER then
 	end
 
 	function ENT:Break()
-		if (self:GetAmBreaking()) then return end
-		self:SetStrength(.1)
-		self:SetAmBreaking(true)
-		if IsValid(self.OuterShield) then
-			self.OuterShield:SetStrength(.1)
-			self.OuterShield:SetAmBreaking(true)
-		end
-		if IsValid(self.InnerShield) then
-			self.InnerShield:SetStrength(.1)
-			self.InnerShield:SetAmBreaking(true)
-		end
-		local SelfPos, Radius = self:GetPos(), self.ShieldRadius
-		timer.Simple(0, function()
-			local Eff = EffectData()
-			Eff:SetOrigin(SelfPos + Vector(0, 0, 30))
-			Eff:SetScale(Radius)
-			util.Effect("eff_jack_gmod_bubbleshieldburst", Eff, true, true)
-		end)
-		timer.Simple(.333, function()
-			if (IsValid(self)) then
-				self:EmitSound("snds_jack_gmod/bubble_shield_break.ogg", 80, 100)
-				sound.Play("snds_jack_gmod/bubble_shield_break.ogg", SelfPos + Vector(0, 0, 30), 80, 100)
-				for k, v in pairs(ents.GetAll()) do
-					if (v.TakeDamageInfo and v ~= self and v ~= self.InnerShield and v ~= self.OuterShield and v ~= self.Projector and v:GetPos():Distance(SelfPos) < self.ShieldRadius) then
-						local Dmg = DamageInfo()
-						Dmg:SetAttacker(game.GetWorld())
-						Dmg:SetInflictor(self)
-						Dmg:SetDamage(5)
-						Dmg:SetDamageType(DMG_SHOCK)
-						Dmg:SetDamageForce(Vector(0, 0, -10000))
-						Dmg:SetDamagePosition(v:GetPos())
-						v:TakeDamageInfo(Dmg)
-					end
-				end
-				if IsValid(self.OuterShield) then self.OuterShield:Remove() end
-				if IsValid(self.InnerShield) then self.InnerShield:Remove() end
-				self:Remove()
+		if (self:GetState() < 0) then return end
+		local ControlledCollapse = IsValid(self.Projector) and self.Projector:GetElectricity() > 0 and self.Projector:GetState() >= 0 and self:GetStrength() > 50
+		if (ControlledCollapse) then
+			self:SetState(STATE_COLLAPSING)
+			if IsValid(self.OuterShield) then self.OuterShield:SetState(STATE_COLLAPSING) end
+			if IsValid(self.InnerShield) then self.InnerShield:SetState(STATE_COLLAPSING) end
+			timer.Simple(.333, function()
+				if (IsValid(self)) then self:Remove() end
+			end)
+		else
+			self:SetStrength(.1)
+			self:SetState(STATE_BREAKING)
+			if IsValid(self.OuterShield) then
+				self.OuterShield:SetStrength(.1)
+				self.OuterShield:SetState(STATE_BREAKING)
 			end
-		end)
+			if IsValid(self.InnerShield) then
+				self.InnerShield:SetStrength(.1)
+				self.InnerShield:SetState(STATE_BREAKING)
+			end
+			local SelfPos, Radius = self:GetPos(), self.ShieldRadius
+			timer.Simple(0, function()
+				local Eff = EffectData()
+				Eff:SetOrigin(SelfPos + Vector(0, 0, 30))
+				Eff:SetScale(Radius)
+				util.Effect("eff_jack_gmod_bubbleshieldburst", Eff, true, true)
+			end)
+			timer.Simple(.333, function()
+				if (IsValid(self)) then
+					self:EmitSound("snds_jack_gmod/bubble_shield_break.ogg", 80, 100)
+					sound.Play("snds_jack_gmod/bubble_shield_break.ogg", SelfPos + Vector(0, 0, 30), 80, 100)
+					for k, v in pairs(ents.GetAll()) do
+						if (v.TakeDamageInfo and v ~= self and v ~= self.InnerShield and v ~= self.OuterShield and v ~= self.Projector and v:GetPos():Distance(SelfPos) < self.ShieldRadius) then
+							local Dmg = DamageInfo()
+							Dmg:SetAttacker(game.GetWorld())
+							Dmg:SetInflictor(self)
+							Dmg:SetDamage(math.random(5, 50))
+							Dmg:SetDamageType(DMG_SHOCK)
+							Dmg:SetDamageForce(Vector(0, 0, -10000))
+							Dmg:SetDamagePosition(v:GetPos())
+							v:TakeDamageInfo(Dmg)
+						end
+					end
+					self:Remove()
+				end
+			end)
+		end
 	end
 
 	function ENT:OnRemove()
@@ -380,7 +394,7 @@ if SERVER then
 		local snd = "snds_jack_gmod/ez_bubbleshield_hits/light_"..math.random(1, 3)..".ogg"
 		local pitch = math.random(90, 110)
 		local lvl = 65
-		if (scale >= 2) then
+		if (scale >= 1.5) then
 			snd = "snds_jack_gmod/ez_bubbleshield_hits/heavy_"..math.random(1, 3)..".ogg"
 			lvl = 75
 		end
@@ -390,8 +404,7 @@ if SERVER then
 elseif CLIENT then
 	local BubbleGlowSprite = Material("sprites/mat_jack_gmod_bubbleshieldglow")
 	local GlowSprite = Material("sprites/mat_jack_basicglow")
-	local BeamMat = Material("cable/physbeam")--"cable/crystal_beam1")--
-	--local WireMat = Material("models/wireframe")
+	local BeamMat = Material("cable/mat_jack_gmod_whitebeam")
 	local MASK_COLOR = Color(0, 0, 0, 0)
 
 	function ENT:Initialize()
@@ -401,7 +414,6 @@ elseif CLIENT then
 		self.Mat = Material("models/jmod/icosphere_shield")
 		-- Initializing some values
 		self.ShieldGrow = 0
-		self.ShieldGrowEnd = CurTime() + .25
 		self.ShieldRadius = self.ShieldRadii[ShieldGrade]
 		self.ShieldRadiusSqr = self.ShieldRadius * self.ShieldRadius
 		--
@@ -410,8 +422,14 @@ elseif CLIENT then
 	end
 
 	function ENT:Think()
-		local FT = FrameTime()
-		self.ShieldGrow = Lerp(math.ease.OutExpo(CurTime() - self.ShieldGrowEnd), 0, 1)
+		local FT, State = FrameTime(), self:GetState()
+		if (State == STATE_GROWING) then
+			self.ShieldGrow = Lerp(FT * 4, self.ShieldGrow, 1)
+		elseif (State == STATE_COLLAPSING) then
+			self.ShieldGrow = Lerp(FT * 6, self.ShieldGrow, .01)
+		else
+			self.ShieldGrow = 1
+		end
 		self.BeamScroll = (self.BeamScroll - FT * 2) % 1 -- (self.BeamScroll or 0)
 	end
 
@@ -420,32 +438,32 @@ elseif CLIENT then
 		local Epos = EyePos()
 		local ShieldGrade = self:GetSizeClass()
 		local BeamWidth = 20
-		local BeamColor = beamColor
 		local SelfUp = self:GetUp()
 		local Time = CurTime()
 		local EmitPos = SelfPos + SelfUp * 78
 		local Extent = SelfUp * (self.ShieldRadius - 78) * .95 + Vector(math.sin(Time) * 10, math.cos(Time) * 10, 0)
 		local Scroll = self.BeamScroll
-		--render.SetColorMaterial()
+		-- render.SetColorMaterial()
 		render.SetMaterial(BeamMat)
+		-- render.DrawBeam(EmitPos, Extent, 5, 0, 1, beamColor)
 		render.StartBeam(5)
-			render.AddBeam(EmitPos, 5, Scroll, BeamColor)
+			render.AddBeam(EmitPos, 5, Scroll, beamColor)
 			for i = 1, 3 do
 				local ThisBeamWidth = BeamWidth * i
-				render.AddBeam(EmitPos + Extent * (i / 4) - SelfUp * (ThisBeamWidth / 2), ThisBeamWidth, Scroll + (i / 4), BeamColor)
+				render.AddBeam(EmitPos + Extent * (i / 4) - SelfUp * (ThisBeamWidth / 2), ThisBeamWidth, Scroll + (i / 4), Color(200, 20, 20))
 			end
-			render.AddBeam(EmitPos + Extent, BeamWidth * ShieldGrade, Scroll + 1, BeamColor)
+			render.AddBeam(EmitPos + Extent, BeamWidth * ShieldGrade, Scroll + 1, beamColor)
 		render.EndBeam()
 		render.SetMaterial(GlowSprite)
-		render.DrawSprite(EmitPos + (Epos - EmitPos):GetNormalized() * 4, 30, 30, BeamColor)
-		render.DrawSprite(EmitPos + Extent, BeamWidth * 4 * ShieldGrade, 30 * ShieldGrade, BeamColor)
+		render.DrawSprite(EmitPos + (Epos - EmitPos):GetNormalized() * 4, 30, 30, beamColor)
+		render.DrawSprite(EmitPos + Extent, BeamWidth * 4 * ShieldGrade, 30 * ShieldGrade, beamColor)
 	end
 
 	local BubbleBlur = 0
 	function ENT:DrawTranslucent(flags)
 		if self:GetAmInnerShield() then return end
 		local FT = FrameTime()
-		local SelfPos, SelfAng = self:GetPos(), self:GetAngles()
+		local SelfPos, SelfAng, State = self:GetPos(), self:GetAngles(), self:GetState()
 		local ShieldModulate = .995 + (math.sin(CurTime() * .5) - 0.015) * .005
 		local ShieldAng = SelfAng:GetCopy()
 		--
@@ -457,7 +475,7 @@ elseif CLIENT then
 		local StrengthFrac = Strength / self:GetMaxStrength()
 		if (StrengthFrac > .15 or math.Rand(0, 1) > .1) then
 			local Xmod, Ymod, Zmod = 1, 1, 1
-			if (self:GetAmBreaking()) then
+			if (State == STATE_BREAKING) then
 				Xmod = math.Rand(.95, 1.05)
 				Ymod = math.Rand(.95, 1.05)
 				Zmod = math.Rand(.95, 1.05)
@@ -475,9 +493,9 @@ elseif CLIENT then
 			local Dist = OffsetVec:Length()
 			local FoV = 1 / (render.GetViewSetup().fov / 180)
 			local R, G, B = JMod.GoodBadColor(StrengthFrac)
-			R = math.Clamp(R + 30, 0, 255)
-			G = math.Clamp(G + 30, 0, 255)
-			B = math.Clamp(B + 30, 0, 255)
+			R = 255--math.Clamp(R + 30, 0, 255)
+			G = 0--math.Clamp(G + 30, 0, 255)
+			B = 0--math.Clamp(B + 30, 0, 255)
 			local GlowColor = Color(R, G, B, 128)
 			if Dist < self.ShieldRadius * 1.03 * self.ShieldGrow then
 				local Eang = EyeAngles()
