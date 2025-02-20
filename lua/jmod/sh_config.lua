@@ -13,7 +13,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda & Friends",
-			Version = 52
+			Version = 53
 		},
 		General = {
 			Hints = true,
@@ -942,6 +942,19 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				category = "Machines",
 				craftingType = "toolbox",
 				description = "Produces Power from Fuel. Very noisy."
+			},
+			["EZ Bubble Shield Generator"] = {
+				results = "ent_jack_gmod_ezshieldgen",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS] = 100,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 100,
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 100,
+					[JMod.EZ_RESOURCE_TYPES.COPPER] = 400
+				},
+				sizeScale = 1,
+				category = "Machines",
+				craftingType = "toolbox",
+				description = "Projects a forcefield that stops all incoming attacks. The most advanced machine ever produced by J.I."
 			},
 			["EZ Bomb Bay"] = {
 				results = "ent_jack_gmod_ezbombbay",

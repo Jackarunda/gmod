@@ -394,7 +394,7 @@ if SERVER then
 		local snd = "snds_jack_gmod/ez_bubbleshield_hits/light_"..math.random(1, 3)..".ogg"
 		local pitch = math.random(90, 110)
 		local lvl = 65
-		if (scale >= 2) then
+		if (scale >= 1.5) then
 			snd = "snds_jack_gmod/ez_bubbleshield_hits/heavy_"..math.random(1, 3)..".ogg"
 			lvl = 75
 		end
@@ -404,8 +404,7 @@ if SERVER then
 elseif CLIENT then
 	local BubbleGlowSprite = Material("sprites/mat_jack_gmod_bubbleshieldglow")
 	local GlowSprite = Material("sprites/mat_jack_basicglow")
-	local BeamMat = Material("cable/physbeam")--"cable/crystal_beam1")--
-	--local WireMat = Material("models/wireframe")
+	local BeamMat = Material("cable/mat_jack_gmod_whitebeam")
 	local MASK_COLOR = Color(0, 0, 0, 0)
 
 	function ENT:Initialize()
@@ -439,25 +438,25 @@ elseif CLIENT then
 		local Epos = EyePos()
 		local ShieldGrade = self:GetSizeClass()
 		local BeamWidth = 20
-		local BeamColor = beamColor
 		local SelfUp = self:GetUp()
 		local Time = CurTime()
 		local EmitPos = SelfPos + SelfUp * 78
 		local Extent = SelfUp * (self.ShieldRadius - 78) * .95 + Vector(math.sin(Time) * 10, math.cos(Time) * 10, 0)
 		local Scroll = self.BeamScroll
-		--render.SetColorMaterial()
+		-- render.SetColorMaterial()
 		render.SetMaterial(BeamMat)
+		-- render.DrawBeam(EmitPos, Extent, 5, 0, 1, beamColor)
 		render.StartBeam(5)
-			render.AddBeam(EmitPos, 5, Scroll, BeamColor)
+			render.AddBeam(EmitPos, 5, Scroll, beamColor)
 			for i = 1, 3 do
 				local ThisBeamWidth = BeamWidth * i
-				render.AddBeam(EmitPos + Extent * (i / 4) - SelfUp * (ThisBeamWidth / 2), ThisBeamWidth, Scroll + (i / 4), BeamColor)
+				render.AddBeam(EmitPos + Extent * (i / 4) - SelfUp * (ThisBeamWidth / 2), ThisBeamWidth, Scroll + (i / 4), Color(200, 20, 20))
 			end
-			render.AddBeam(EmitPos + Extent, BeamWidth * ShieldGrade, Scroll + 1, BeamColor)
+			render.AddBeam(EmitPos + Extent, BeamWidth * ShieldGrade, Scroll + 1, beamColor)
 		render.EndBeam()
 		render.SetMaterial(GlowSprite)
-		render.DrawSprite(EmitPos + (Epos - EmitPos):GetNormalized() * 4, 30, 30, BeamColor)
-		render.DrawSprite(EmitPos + Extent, BeamWidth * 4 * ShieldGrade, 30 * ShieldGrade, BeamColor)
+		render.DrawSprite(EmitPos + (Epos - EmitPos):GetNormalized() * 4, 30, 30, beamColor)
+		render.DrawSprite(EmitPos + Extent, BeamWidth * 4 * ShieldGrade, 30 * ShieldGrade, beamColor)
 	end
 
 	local BubbleBlur = 0
@@ -494,9 +493,9 @@ elseif CLIENT then
 			local Dist = OffsetVec:Length()
 			local FoV = 1 / (render.GetViewSetup().fov / 180)
 			local R, G, B = JMod.GoodBadColor(StrengthFrac)
-			R = math.Clamp(R + 30, 0, 255)
-			G = math.Clamp(G + 30, 0, 255)
-			B = math.Clamp(B + 30, 0, 255)
+			R = 255--math.Clamp(R + 30, 0, 255)
+			G = 0--math.Clamp(G + 30, 0, 255)
+			B = 0--math.Clamp(B + 30, 0, 255)
 			local GlowColor = Color(R, G, B, 128)
 			if Dist < self.ShieldRadius * 1.03 * self.ShieldGrow then
 				local Eang = EyeAngles()

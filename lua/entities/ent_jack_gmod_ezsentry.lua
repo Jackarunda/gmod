@@ -829,7 +829,7 @@ if(SERVER)then
 				local Exude = EffectData()
 				Exude:SetOrigin(ShootPos)
 				Exude:SetStart(self:GetVelocity())
-				util.Effect("eff_jack_heatshimmer", Exude)
+				util.Effect("eff_jack_gmod_sentryoverheat", Exude)
 			end
 
 			local CoolinAmt, Kewlant, Severity = self.Cooling / 3, self:GetCoolant(), self.Heat / 300

@@ -49,6 +49,7 @@ if(SERVER)then
 			OnWorld = false
 		}
 		self.NextAlarm = 0
+		self.Temperature = 0
 	end
 
 	function ENT:Use(activator)
@@ -181,24 +182,35 @@ if(SERVER)then
 	end
 
 	function ENT:Think()
-		local Time, State, Grade = CurTime(), self:GetState(), self:GetGrade()
+		local Time, State, Grade, CurCoolant = CurTime(), self:GetState(), self:GetGrade(), self:GetCoolant()
 		self:UpdateWireOutputs()
+		if (self.Temperature > 25) then
+			local Cool = (CurCoolant > 1 and 1) or 2
+			local Eff = EffectData()
+			Eff:SetOrigin(self:GetPos() - Vector(0, 0, 60))
+			Eff:SetScale(self.Temperature / 100)
+			Eff:SetColor(Cool)
+			util.Effect("eff_jack_gmod_shieldgenoverheat", Eff, true, true)
+		end
+		self.Temperature = math.Clamp(self.Temperature ^ .995 - .1, 0, 100)
 		if (State == STATE_ON) then
+			if (self:WaterLevel() > 0) then self:TurnOff() return end
 			if (self:GetPhysicsObject():IsMotionEnabled()) then self:TurnOff() return end
 			if not (IsValid(self.Shield)) then
 				self:ShieldBreak()
 			else
-				local CurCoolant, MaxChargingCapability = self:GetCoolant(), 2.5
+				local MaxChargingCapability = 2.5
 				if (CurCoolant > 0) then MaxChargingCapability = 5 end
 				local Accepted = self.Shield:AcceptRecharge(MaxChargingCapability)
 				-- jprint("added", Accepted, "coolnt", CurCoolant, "elec", self:GetElectricity(), "str", self.Shield:GetStrength())
 				if (Accepted > 0) then
 					self:ConsumeElectricity(Accepted * self.ElectricityToShieldStrengthConversion)
-					if (Accepted > 5) then -- high-power mode, push it to the limit
+					if (Accepted > 2) then self.Temperature = self.Temperature + 1.5 end
+					if (Accepted > 4) then -- high-power mode, push it to the limit
 						self:SetCoolant(math.Clamp(CurCoolant - math.Rand(.4, .6), 0, self.MaxCoolant))
 					end
 				end
-				if (((self:GetElectricity() / self.MaxElectricity) < .2) or (self.Shield:GetStrength() < 100)) then
+				if (((self:GetElectricity() / self.MaxElectricity) < .15) or (self.Shield:GetStrength() < 100)) then
 					if (self.NextAlarm < Time) then
 						self.NextAlarm = Time + .25
 						self:Alarm()
@@ -210,7 +222,12 @@ if(SERVER)then
 			if (Progress >= 1000 * self.MaxShieldStrengthMult) then
 				self:EstablishShield()
 			else
-				local ChargeAmt = 10
+				local ChargeAmt, CurCoolant = 10, self:GetCoolant()
+				if (CurCoolant > 0) then
+					self:SetCoolant(math.Clamp(CurCoolant - math.Rand(.4, .8), 0, self.MaxCoolant))
+					ChargeAmt = 20
+				end
+				self.Temperature = self.Temperature + 1
 				self:SetShieldChargeProgress(Progress + ChargeAmt)
 				self:ConsumeElectricity(ChargeAmt * self.ElectricityToShieldStrengthConversion)
 			end
@@ -237,7 +254,7 @@ elseif(CLIENT)then
 		local Grade = self:GetGrade()
 		---
 		local BasePos = SelfPos
-		local Obscured = false--util.TraceLine({start = EyePos(), endpos = BasePos, filter = {LocalPlayer(), self}, mask = MASK_OPAQUE}).Hit
+		local Obscured = false -- util.TraceLine({start = EyePos(), endpos = BasePos, filter = {LocalPlayer(), self}, mask = MASK_OPAQUE}).Hit
 		local Closeness = LocalPlayer():GetFOV() * (EyePos():Distance(SelfPos))
 		local DetailDraw = Closeness < 1200000 -- cutoff point is 400 units when the fov is 90 degrees
 		---

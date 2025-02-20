@@ -1,8 +1,8 @@
 "VertexLitGeneric"
 {
-	"$basetexture"		"cable\tex_jack_gmod_chain"
-	"$nocull"			1
-	"$MinLight"		.1
-	"$MaxLight"		1
-	"$translucent" "1"
+	"$basetexture" "cable\tex_jack_gmod_chain"
+	"$nocull"	   1
+	"$MinLight"	   .1
+	"$MaxLight"	   1
+	"$translucent" 1
 }
