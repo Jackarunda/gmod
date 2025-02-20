@@ -136,7 +136,7 @@ if SERVER then
 				self:EmitSound("snds_jack_gmod/bomb_arm.ogg", 60, 120)
 				self:SetState(STATE_ARMED)
 				self.EZlaunchableWeaponArmedTime = CurTime()
-				JMod.Hint(activator, "remote guidance")
+				--JMod.Hint(activator, "remote guidance")
 			else
 				activator:PickupObject(self)
 				JMod.Hint(activator, "arm")

@@ -209,7 +209,7 @@ if SERVER then
 	function ENT:Launch()
 		if self:GetState() ~= STATE_ARMED then return end
 		self:SetState(STATE_LAUNCHED)
-		self.UpLift = Vector(0, 0, GetConVar("sv_gravity"):GetFloat() * 2)
+		self.UpLift = Vector(0, 0, GetConVar("sv_gravity"):GetFloat() * 1)
 		local Phys = self:GetPhysicsObject()
 		constraint.RemoveAll(self)
 		Phys:EnableMotion(true)
