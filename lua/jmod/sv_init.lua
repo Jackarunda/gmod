@@ -744,25 +744,29 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 			if playa.EZarmor and playa:Alive() then
 				if playa.EZarmor.effects.nightVision then
 					for id, armorData in pairs(playa.EZarmor.items) do
-						local Info = JMod.ArmorTable[armorData.name]
+						if armorData.chrg then
+							local Info = JMod.ArmorTable[armorData.name]
 
-						if Info.eff and Info.eff.nightVision then
-							armorData.chrg.power = math.Clamp(armorData.chrg.power - JMod.Config.Armor.ChargeDepletionMult / 10, 0, 9e9)
+							if Info.eff and Info.eff.nightVision then
+								armorData.chrg.power = math.Clamp(armorData.chrg.power - JMod.Config.Armor.ChargeDepletionMult / 10, 0, 9e9)
 
-							if armorData.chrg.power <= Info.chrg.power * .25 then
-								JMod.EZarmorWarning(playa, "Night vision charge is low ("..tostring(armorData.chrg.power).."/"..tostring(Info.chrg.power)..")")
+								if armorData.chrg.power <= Info.chrg.power * .25 then
+									JMod.EZarmorWarning(playa, "Night vision charge is low ("..tostring(armorData.chrg.power).."/"..tostring(Info.chrg.power)..")")
+								end
 							end
 						end
 					end
 				elseif playa.EZarmor.effects.thermalVision then
 					for id, armorData in pairs(playa.EZarmor.items) do
-						local Info = JMod.ArmorTable[armorData.name]
+						if armorData.chrg then
+							local Info = JMod.ArmorTable[armorData.name]
 
-						if Info.eff and Info.eff.thermalVision then
-							armorData.chrg.power = math.Clamp(armorData.chrg.power - JMod.Config.Armor.ChargeDepletionMult / 10, 0, 9e9)
+							if Info.eff and Info.eff.thermalVision then
+								armorData.chrg.power = math.Clamp(armorData.chrg.power - JMod.Config.Armor.ChargeDepletionMult / 10, 0, 9e9)
 
-							if armorData.chrg.power <= Info.chrg.power * .25 then
-								JMod.EZarmorWarning(playa, "Thermal vision charge is low ("..tostring(armorData.chrg.power).."/"..tostring(Info.chrg.power)..")")
+								if armorData.chrg.power <= Info.chrg.power * .25 then
+									JMod.EZarmorWarning(playa, "Thermal vision charge is low ("..tostring(armorData.chrg.power).."/"..tostring(Info.chrg.power)..")")
+								end
 							end
 						end
 					end
@@ -1055,7 +1059,24 @@ concommand.Add("jmod_debug_parachute", function(ply, cmd, args)
 		Ent:SetNW2Bool("EZparachuting", true)
 		Ent.EZparachute = Chute
 	end
-end, nil, "Apply's an EZ parachute to an entity")
+end, nil, "Applies an EZ parachute to an entity")
+
+concommand.Add("jmod_debug_shieldbubble", function(ply, cmd, args) 
+	if IsValid(ply) and not ply:IsSuperAdmin() then return end
+	local Tr = ply:GetEyeTrace()
+	local Ent = Tr.Entity
+	local Shieldbubble = ents.Create("ent_jack_gmod_bubble_shield")
+	local SizeClass = tonumber(SizeClass)
+	if SizeClass then
+		Shieldbubble:SetSizeClass(SizeClass)
+	end
+	Shieldbubble:SetPos(Tr.HitPos)
+	if IsValid(Ent) then
+		Shieldbubble.Projector = Ent
+	end
+	Shieldbubble:Spawn()
+	Shieldbubble:Activate()
+end, nil, "Applies an EZ shield to an entity with optional grade")
 
 hook.Add("PlayerLeaveVehicle", "JMOD_LEAVEVEHICLE", function(ply, veh)
 	if veh.EZvehicleEjectPos then
