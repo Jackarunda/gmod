@@ -346,9 +346,9 @@ JMod.ArmorTable = {
 			ang = Angle(100, 0, 90)
 		}
 	},
-	/*["Glasses"] = {
-		PrintName = "Glasses",
-		mdl = "models/jmod/glasses_classic.mdl", -- csgo misc?
+	["SunGlasses"] = {
+		PrintName = "Glasses-Sun",
+		mdl = "models/jmod/glasses_classic_sun.mdl", -- csgo misc?
 		slots = {
 			eyes = 1
 		},
@@ -357,12 +357,12 @@ JMod.ArmorTable = {
 		siz = Vector(1, 1, 1),
 		pos = Vector(2, 2.4, 0.1),
 		ang = Angle(-80, 0, -90),
-		mskmat = "mats_jack_gmod_sprites/glasses",
+		mskmat = "mats_jack_gmod_sprites/glasses_sun.png",--"mats_jack_gmod_sprites/glasses",
 		wgt = 1,
 		dur = 2,
 		ent = "ent_jack_gmod_ezarmor_glasses",
 		eff = {
-			glasses = true
+			flashresistant = true
 		},
 		--[[tgl = {
 			eff = {},
@@ -372,7 +372,42 @@ JMod.ArmorTable = {
 			pos = Vector(1.5, -2.5, .1),
 			ang = Angle(100, 0, 90)
 		}--]]
-	},*/
+	},
+	["Advanced-Helmet"] = {
+		PrintName = "Helmet-Advanced",
+		mdl = "models/haloreach/jarinehelmet.mdl", -- reach
+		slots = {
+			head = .8
+		},
+		bdg = {
+			[1] = 0,
+			[2] = 2
+		},
+		eff = {
+			tacticalVision = true
+		},
+		chrg = {
+			power = 30
+		},
+		tgl = {
+			slots = {
+				head = .8
+			},
+			bdg = {
+				[1] = 0,
+				[2] = 0
+			},
+			eff = {}
+		},
+		def = BasicArmorProtectionProfile,
+		bon = "ValveBiped.Bip01_Head1",
+		siz = Vector(1.05, 1, 1.05),
+		pos = Vector(6.5, -67.5, 0),
+		ang = Angle(-85, 0, -90),
+		wgt = 15,
+		dur = 300,
+		ent = "ent_jack_gmod_ezarmor_ahead"
+	},
 	["Light-Helmet"] = {
 		PrintName = "Helmet-Light",
 		mdl = "models/player/helmet_achhc_black/achhc_black.mdl", -- tarkov

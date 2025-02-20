@@ -4,6 +4,7 @@ JMod.NukeFlashRange = 0
 JMod.NukeFlashIntensity = 1
 JMod.NukeFlashSmokeEndTime = 0
 JMod.Wind = JMod.Wind or Vector(0, 0, 0)
+JMod.EZscannerDangers = {}
 
 surface.CreateFont("JMod-Display", {
 	font = "Arial",
@@ -306,6 +307,7 @@ local ThermalGlowMat = Material("models/debug/debugwhite")
 
 hook.Add("PostDrawTranslucentRenderables", "JMOD_POSTDRAWTRANSLUCENTRENDERABLES", function()
 	local Time = CurTime()
+	local ply = LocalPlayer()
 
 	if Time > NextSlamScan then
 		NextSlamScan = Time + .5
@@ -339,6 +341,29 @@ hook.Add("PostDrawTranslucentRenderables", "JMOD_POSTDRAWTRANSLUCENTRENDERABLES"
 						render.DrawQuadEasy(trace.HitPos, trace.HitNormal, 15, 15, Color(255, 0, 0, 100), 0)
 						render.DrawQuadEasy(trace.HitPos, trace.HitNormal, 7, 7, Color(255, 255, 255, 100), 0)
 					end
+				end
+			end
+		end
+	end
+
+	table.Empty(JMod.EZscannerDangers)
+
+	local SightPos = ply:GetShootPos()
+	local TraceSetup = {
+		start = SightPos,
+		endpos = SightPos + EyeAngles():Forward() * 1000,
+		mask = MASK_BLOCKLOS_AND_NPCS,
+		filter = ply
+	}
+	for k, ent in ipairs(ents.FindInSphere(SightPos, 1000)) do
+		if IsValid(ent) and ent.EZscannerDanger then
+			TraceSetup.endpos = ent:GetPos()
+			TraceSetup.filter = {ply, ent}
+			local SightTrace = util.TraceLine(TraceSetup)
+			if not SightTrace.Hit then
+				local PosToScreen = ent:LocalToWorld(ent:OBBCenter()):ToScreen()
+				if PosToScreen.visible then
+					table.insert(JMod.EZscannerDangers, PosToScreen)
 				end
 			end
 		end

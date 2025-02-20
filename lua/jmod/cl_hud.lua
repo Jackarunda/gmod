@@ -110,6 +110,26 @@ hook.Add("HUDPaintBackground", "JMOD_HUDBG", function()
 	end
 end)
 
+local DangerMat = Material("ez_misc_icons/warning.png")
+
+hook.Add("HUDPaint", "JMod_HUDPaint", function()
+	local ply = LocalPlayer()
+	local W, H, FT = ScrW(), ScrH(), FrameTime()
+	local Alive, ThirdPerson = ply:Alive(), ply:ShouldDrawLocalPlayer()
+
+	if Alive and ply.EZarmor then
+		local ArmorEffects = ply.EZarmor.effects
+		
+		if ArmorEffects and ArmorEffects.tacticalVision then
+			render.SetMaterial(DangerMat)
+			for _, info in ipairs(JMod.EZscannerDangers) do
+				local PosX, PosY = info.x, info.y
+				render.DrawScreenQuadEx(PosX - 16, PosY - 16, 32, 32)
+			end
+		end
+	end
+end)
+
 local function DrawNoise(amt, alpha)
 	local W, H = ScrW(), ScrH()
 
@@ -315,17 +335,13 @@ hook.Add("RenderScreenspaceEffects", "JMOD_SCREENSPACE", function()
 				if not ply.EZflashbanged then
 					BlurScreen()
 				end
-			else
-				if GogglesWereOn then
-					GogglesWereOn = false
-					GoggleDarkness = 100
-				end
-			end
-		else
-			if GogglesWereOn then
+			elseif GogglesWereOn then
 				GogglesWereOn = false
 				GoggleDarkness = 100
 			end
+		elseif GogglesWereOn then
+			GogglesWereOn = false
+			GoggleDarkness = 100
 		end
 
 		if GoggleDarkness > 0 then
