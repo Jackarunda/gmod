@@ -364,11 +364,12 @@ JMod.ArmorTable = {
 		eff = {
 			flashresistant = true
 		},
-		--[[tgl = {
+		tgl = {
 			eff = {},
 			slots = {
 				eyes = 0
 			},
+			mskmat = "",
 			pos = Vector(1.5, -2.5, .1),
 			ang = Angle(100, 0, 90)
 		}--]]
@@ -377,33 +378,36 @@ JMod.ArmorTable = {
 		PrintName = "Helmet-Advanced",
 		mdl = "models/haloreach/jarinehelmet.mdl", -- reach
 		slots = {
-			head = .8
+			head = .9
 		},
 		bdg = {
 			[1] = 0,
 			[2] = 2
 		},
 		eff = {
-			tacticalVision = true
+			tacticalVision = true,
+			earPro = true
 		},
 		chrg = {
 			power = 30
 		},
 		tgl = {
 			slots = {
-				head = .8
+				head = .9
 			},
 			bdg = {
 				[1] = 0,
 				[2] = 0
 			},
-			eff = {}
+			eff = {
+				earPro = true
+			}
 		},
 		def = BasicArmorProtectionProfile,
 		bon = "ValveBiped.Bip01_Head1",
 		siz = Vector(1.05, 1, 1.05),
-		pos = Vector(6.5, -67.5, 0),
-		ang = Angle(-85, 0, -90),
+		pos = Vector(.5, .6, 0),
+		ang = Angle(-80, 0, -90),
 		wgt = 15,
 		dur = 300,
 		ent = "ent_jack_gmod_ezarmor_ahead"
