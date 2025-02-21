@@ -351,19 +351,41 @@ hook.Add("PostDrawTranslucentRenderables", "JMOD_POSTDRAWTRANSLUCENTRENDERABLES"
 	local SightPos = ply:GetShootPos()
 	local TraceSetup = {
 		start = SightPos,
-		endpos = SightPos + EyeAngles():Forward() * 1000,
-		mask = MASK_BLOCKLOS_AND_NPCS,
-		filter = ply
+		endpos = SightPos + ply:GetAimVector() * 1500,
+		mask = MASK_OPAQUE_AND_NPCS,
+		filter = {ply}
 	}
-	for k, ent in ipairs(ents.FindInSphere(SightPos, 1000)) do
-		if IsValid(ent) and ent.EZscannerDanger then
-			TraceSetup.endpos = ent:GetPos()
-			TraceSetup.filter = {ply, ent}
-			local SightTrace = util.TraceLine(TraceSetup)
-			if not SightTrace.Hit then
-				local PosToScreen = ent:LocalToWorld(ent:OBBCenter()):ToScreen()
-				if PosToScreen.visible then
-					table.insert(JMod.EZscannerDangers, PosToScreen)
+	if ply:InVehicle() then
+		table.insert(TraceSetup.filter, ply:GetVehicle())
+		if IsValid(ply:GetVehicle():GetParent()) then
+			table.insert(TraceSetup.filter, ply:GetVehicle():GetParent())
+		end
+	end
+	local SightTrace = util.TraceLine(TraceSetup)
+
+	for k, ent in ipairs(ents.FindInSphere(SightPos, 1500)) do
+		if IsValid(ent) then
+			if ent.EZscannerDanger then
+				local TestPos = ent:LocalToWorld(ent:OBBCenter())
+				TraceSetup.endpos = TestPos
+				table.insert(TraceSetup.filter, ent)
+				local SightTrace = util.TraceLine(TraceSetup)
+				if not SightTrace.Hit then
+					local PosToScreen = TestPos:ToScreen()
+					if PosToScreen.visible then
+						table.insert(JMod.EZscannerDangers, PosToScreen)
+					end
+				end
+			elseif ent ~= ply and ent.LookupAttachment and ent:GetAttachment(ent:LookupAttachment("eyes")) then
+				local AngPos = ent:GetAttachment(ent:LookupAttachment("eyes")) 
+				TraceSetup.endpos = AngPos.Pos
+				table.insert(TraceSetup.filter, ent)
+				local SightTrace = util.TraceLine(TraceSetup)
+				if not SightTrace.Hit then
+					local PosToScreen = AngPos.Pos:ToScreen()
+					if PosToScreen.visible then
+						table.insert(JMod.EZscannerDangers, PosToScreen)
+					end
 				end
 			end
 		end

@@ -110,7 +110,7 @@ hook.Add("HUDPaintBackground", "JMOD_HUDBG", function()
 	end
 end)
 
-local DangerMat = Material("ez_misc_icons/warning.png")
+local DangerMat = Material("ez_misc_icons/scout_marker.png", "ignorez")
 
 hook.Add("HUDPaint", "JMod_HUDPaint", function()
 	local ply = LocalPlayer()
@@ -122,6 +122,7 @@ hook.Add("HUDPaint", "JMod_HUDPaint", function()
 		
 		if ArmorEffects and ArmorEffects.tacticalVision then
 			render.SetMaterial(DangerMat)
+			--render.SetColorModulation(2, 0, 0)
 			for _, info in ipairs(JMod.EZscannerDangers) do
 				local PosX, PosY = info.x, info.y
 				render.DrawScreenQuadEx(PosX - 16, PosY - 16, 32, 32)
