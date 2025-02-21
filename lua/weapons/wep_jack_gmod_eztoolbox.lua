@@ -309,7 +309,7 @@ function SWEP:SetEZsupplies(typ, amt, setter)
 	end
 end
 
-function SWEP:DetermineBuildPos()
+function SWEP:DetermineBuildPos(zOffset)
 	local BuildInfo = self.EZpreview or {sizeScale = 1}
 	BuildInfo.SpawnAngles = BuildInfo.SpawnAngles or Angle(0, 0, 0)
 	local Ent, Pos, Norm = self:WhomIlookinAt(math.max((BuildInfo.sizeScale or self.CurrentBuildSize) * 30, 100))
@@ -361,13 +361,15 @@ function SWEP:DetermineBuildPos()
 		Norm = FloorTrace.HitNormal
 	end
 
+	if (zOffset) then Pos = Pos + Vector(0, 0, zOffset) end
+
 	return Ent, Pos, Norm, SpawnAngle + Angle(0, self.Owner:GetAngles().y, 0)
 end
 
 function SWEP:BuildItem(selectedBuild)
 	local Built = false
-	local Ent, Pos, Norm, SpawnAngle = self:DetermineBuildPos()
 	local BuildInfo = self.Craftables[selectedBuild]
+	local Ent, Pos, Norm, SpawnAngle = self:DetermineBuildPos(BuildInfo.buildZoffset)
 	if not BuildInfo then return end
 	local MaxElecConsume, MaxGasConsume = 40, 30
 	if not(self:GetElectricity() >= math.min(4 * (BuildInfo.sizeScale or 1), MaxElecConsume)) or not(self:GetGas() >= math.min(3 * (BuildInfo.sizeScale or 1), MaxGasConsume)) then
