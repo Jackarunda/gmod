@@ -1036,7 +1036,9 @@ hook.Add("PostPlayerDeath", "JMod_PostPlayerDeath", function(ply)
 	ply.EZirradiated = nil
 	ply.JMod_WillAsplode = nil
 	ply.EZvirus = nil
-	ply.EZblastShock = nil
+	if ply:GetNW2Float("EZblastShock", 0) > 0 then
+		ply:SetNW2Float("EZblastShock", 0)
+	end
 end)
 
 concommand.Add("jmod_debug_parachute", function(ply, cmd, args) 
