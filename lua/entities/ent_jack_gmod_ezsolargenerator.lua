@@ -158,13 +158,13 @@ if(SERVER)then
 				if(string.find(MapName,word))then SkyMod=mult break end
 			end
 		end
-		local HitAmount, StartPos = 0, self:GetPos()
+		local HitAmount, StartPos = 0, self:LocalToWorld(self:OBBCenter())
 		for i = 1, 10 do
-			for j = 1, 10 do
+			for j = 1, 5 do
 				local Dir = self:LocalToWorldAngles(Angle(260 - j*8, -10 + i*2, 0)):Forward()
 				local Tr = util.TraceLine({start = StartPos, endpos = StartPos + Dir * 9e9, filter = {self}, mask = MASK_SOLID})
 				if (Tr.HitSky) then
-					HitAmount = HitAmount + 0.01
+					HitAmount = HitAmount + 0.02
 				end
 			end
 		end
@@ -253,7 +253,7 @@ if(SERVER)then
 
 	function ENT:OnPostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
-		ent.NextUse = Time + math.Rand(0, 3)
+		ent.NextUse = 0
 	end
 
 elseif CLIENT then
@@ -277,7 +277,10 @@ elseif CLIENT then
 		---
 		if((not(DetailDraw))and(Obscured))then return end -- if player is far and sentry is obscured, draw nothing
 		if(Obscured)then DetailDraw=false end -- if obscured, at least disable details
-		if(State==STATE_BROKEN)then DetailDraw=false PanelDraw=false end -- look incomplete to indicate damage, save on gpu comp too
+		if(State==STATE_BROKEN)then 
+			DetailDraw=false 
+			PanelDraw=false 
+		end -- look incomplete to indicate damage, save on gpu comp too
 		---
 		self:DrawModel()
 		---
@@ -288,7 +291,7 @@ elseif CLIENT then
 		local PanelAng=SelfAng:GetCopy()
 		PanelAng:RotateAroundAxis(Right, 60)
 		if(PanelDraw)then
-			JMod.RenderModel(self.SolarCellModel,BasePos-Forward+Right*.5,PanelAng)
+			JMod.RenderModel(self.SolarCellModel,BasePos-Forward+Right*.5,PanelAng,nil,"models/mat_jack_gmod_solarcells")
 		end
 
 		if DetailDraw then
