@@ -32,7 +32,7 @@ if SERVER then
 			if v:IsNPC() then
 				v.EZNPCincapacitate = Time + math.Rand(3, 6)
 			end
-			if v:IsPlayer() and v:Alive() and JMod.ClearLoS(self, v, false, 10) then
+			if v:IsPlayer() and v:Alive() and JMod.ClearLoS(self, v, false, 10) and not JMod.PlyHasArmorEff(v, "earPro") then
 				local AlreadyBLasted = v:GetNW2Float("EZblastShock", 0)
 				local BlastAmount = 200
 				if JMod.PlyHasArmorEff(v, "earPro") then

@@ -4,6 +4,7 @@ JMod.NukeFlashRange = 0
 JMod.NukeFlashIntensity = 1
 JMod.NukeFlashSmokeEndTime = 0
 JMod.Wind = JMod.Wind or Vector(0, 0, 0)
+JMod.EZscannerDangers = {}
 
 surface.CreateFont("JMod-Display", {
 	font = "Arial",
@@ -306,6 +307,7 @@ local ThermalGlowMat = Material("models/debug/debugwhite")
 
 hook.Add("PostDrawTranslucentRenderables", "JMOD_POSTDRAWTRANSLUCENTRENDERABLES", function()
 	local Time = CurTime()
+	local ply = LocalPlayer()
 
 	if Time > NextSlamScan then
 		NextSlamScan = Time + .5
@@ -343,6 +345,70 @@ hook.Add("PostDrawTranslucentRenderables", "JMOD_POSTDRAWTRANSLUCENTRENDERABLES"
 			end
 		end
 	end
+
+	table.Empty(JMod.EZscannerDangers)
+	local IDwhitelist = JMod.Config.Armor.ScoutIDwhitelist or {}
+
+	local SightPos = ply:GetShootPos()
+	local TraceSetup = {
+		start = SightPos,
+		endpos = SightPos + ply:GetAimVector() * 1500,
+		mask = MASK_OPAQUE_AND_NPCS,
+		filter = {ply}
+	}
+
+	if ply:InVehicle() then
+		table.insert(TraceSetup.filter, ply:GetVehicle())
+		if IsValid(ply:GetVehicle():GetParent()) then
+			table.insert(TraceSetup.filter, ply:GetVehicle():GetParent())
+		end
+	end
+	local SightTrace = util.TraceLine(TraceSetup)
+
+	for k, ent in ipairs(ents.FindInSphere(SightPos, 1500)) do
+		if IsValid(ent) then
+			local IsOnIDlist = false
+			local EntClass = ent:GetClass()
+			for _, class in pairs(IDwhitelist) do
+				if EntClass == class then
+					IsOnIDlist = true
+
+					break
+				elseif string.EndsWith(class, "*") and string.find(EntClass, string.TrimRight(class, "*")) then
+					IsOnIDlist = true
+				end
+			end
+
+			if ent.EZscannerDanger or IsOnIDlist and not ent:GetNoDraw() then
+				local TestPos = ent:LocalToWorld(ent:OBBCenter())
+				TraceSetup.endpos = TestPos
+				table.insert(TraceSetup.filter, ent)
+				local SightTrace = util.TraceLine(TraceSetup)
+				if not SightTrace.Hit then
+					local DangerInfo = TestPos:ToScreen()
+					DangerInfo.text = ent.PrintName or (ent.GetPrintName and language.GetPhrase(ent:GetPrintName())) or "???"
+					if ent.GetState and ent:GetState() == JMod.EZ_STATE_ARMED then
+						DangerInfo.danger = true
+					end
+					if DangerInfo.visible then
+						table.insert(JMod.EZscannerDangers, DangerInfo)
+					end
+				end
+			elseif ent ~= ply and ent.LookupAttachment and ent:GetAttachment(ent:LookupAttachment("eyes")) then
+				local AngPos = ent:GetAttachment(ent:LookupAttachment("eyes")) 
+				TraceSetup.endpos = AngPos.Pos
+				table.insert(TraceSetup.filter, ent)
+				local SightTrace = util.TraceLine(TraceSetup)
+				if not SightTrace.Hit then
+					local DangerInfo = AngPos.Pos:ToScreen()
+					DangerInfo.text = "Head"
+					if DangerInfo.visible then
+						table.insert(JMod.EZscannerDangers, DangerInfo)
+					end
+				end
+			end
+		end
+	end
 end)
 
 net.Receive("JMod_LuaConfigSync", function(dataLength)
@@ -357,6 +423,7 @@ net.Receive("JMod_LuaConfigSync", function(dataLength)
 	JMod.Config.QoL = table.FullCopy(Payload.QoL)
 	JMod.Config.ResourceEconomy = {MaxResourceMult = Payload.MaxResourceMult}
 	JMod.Config.Explosives = {Flashbang = Payload.Flashbang}
+	JMod.Config.Armor = {ScoutIDwhitelist = table.FullCopy(Payload.ScoutIDwhitelist)}
 
 	if tobool(net.ReadBit()) then
 		for k, v in player.Iterator() do
