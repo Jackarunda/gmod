@@ -25,7 +25,8 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 			ProtectionMult = 1,
 			DegradationMult = 1,
 			ChargeDepletionMult = 1,
-			WeightMult = 1
+			WeightMult = 1,
+			ScoutIDwhitelist = {"mine*", "nade*", "frag*", "gmod_wire_trigger", "gmod_wire_target_finder"}
 		},
 		Tools = {
 			Medkit = {
@@ -2469,6 +2470,17 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				craftingType = "workbench",
 				description = "Well-rounded helmet with balanced protection and weight."
 			},
+			["EZ Advanced Helmet"] = {
+				results = JMod.ArmorTable["Advanced-Helmet"].ent,
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 30,
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = 30,
+					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 10
+				},
+				category = "Apparel",
+				craftingType = "workbench",
+				description = "A medium weight helmet with an in-built target ID system, doesn't take up face slots."
+			},
 			["EZ Medium Torso Armor"] = {
 				results = JMod.ArmorTable["Medium-Vest"].ent,
 				craftingReqs = {
@@ -2524,6 +2536,15 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				category = "Apparel",
 				craftingType = "workbench",
 				description = "See at night, be blinded by bright light."
+			},
+			["EZ Sunglasses"] = {
+				results = JMod.ArmorTable["SunGlasses"].ent,
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 10,
+				},
+				category = "Apparel",
+				craftingType = "workbench",
+				description = "Protects your eyes against most bright flashes. Also has drip."
 			},
 			["EZ Left Calf Armor"] = {
 				results = JMod.ArmorTable["Left-Calf"].ent,
@@ -2909,9 +2930,8 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					JMod.Config = util.JSONToTable(FileContents)
 					print("JMOD: config file loaded")
 				else
-					file.Write("jmod_config_old.txt", FileContents)
 					print("JMOD: old config version: " .. tostring(Existing.Info.Version) .. ", new config version: " .. tostring(NewConfig.Info.Version))
-					print("JMOD: config versions do not match, writing old config to 'jmod_config_old.txt'...")
+					forceNew = true
 				end
 			else
 				print("JMOD: unable to compare versions!! (check config layout)")

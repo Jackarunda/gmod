@@ -453,7 +453,6 @@ local function PopulateItems(parent, items, typ, motherFrame, entity, enableFunc
 	Scroll:SetSize(W - 20, H - 20)
 	Scroll:SetPos(10, 10)
 	---
-	local Pos, Range = entity:GetPos(), 150
 	local AlphabetizedItemNames = table.GetKeys(items)
 	table.sort(AlphabetizedItemNames, function(a, b) return a < b end)
 
@@ -1497,6 +1496,7 @@ end
 
 --Item Inventory
 local function CreateInvButton(parent, itemTable, x, y, w, h, scrollFrame, invEnt)
+	if not scrollFrame then return end
 	if not(itemTable and IsValid(itemTable.ent)) then
 		net.Start("JMod_ItemInventory")
 			net.WriteString("missing")
@@ -1677,6 +1677,12 @@ local function CreateInvButton(parent, itemTable, x, y, w, h, scrollFrame, invEn
 			Butt:SetSize(floop - 10, ButtonTall)
 			Butt:SetText(option.title)
 
+			function Butt:DoRightClick()
+				option.actionFunc(itemTable)
+				Dropdown:Remove()
+				Buttalony:Remove()
+				scrollFrame:InvalidateLayout(false)
+			end
 			function Butt:DoClick()
 				option.actionFunc(itemTable)
 				if IsValid(parent) then
@@ -1690,6 +1696,7 @@ local function CreateInvButton(parent, itemTable, x, y, w, h, scrollFrame, invEn
 end
 
 local function CreateResButton(parent, resourceType, amt, x, y, w, h, scrollFrame, invEnt)
+	if not scrollFrame then return end
 	local Buttalony, Ply = vgui.Create("DButton", scrollFrame), LocalPlayer()
 	Buttalony:SetText("")
 	Buttalony:SetSize(w, h)
@@ -1720,30 +1727,41 @@ local function CreateResButton(parent, resourceType, amt, x, y, w, h, scrollFram
 			OpenDropdown:Remove()
 		end
 
-		local frame = vgui.Create("DFrame")
-		frame:SetSize(350, 160)
-		frame:SetTitle("Resource drop amount")
-		frame:Center()
-		frame:MakePopup()
+		local DropFrame = vgui.Create("DFrame")
+		DropFrame:SetSize(350, 160)
+		DropFrame:SetTitle("Resource drop amount")
+		DropFrame:Center()
+		DropFrame:MakePopup()
 
-		function frame:Paint(w, h)
+		function DropFrame:Paint(w, h)
 			BlurBackground(self)
 		end
 
-		local amtSlide = vgui.Create("DNumSlider", frame)
+		local amtSlide = vgui.Create("DNumSlider", DropFrame)
 		amtSlide:SetText(string.upper(resourceType))
 		amtSlide:SetSize(280, 20)
-		amtSlide:SetPos((frame:GetWide() - amtSlide:GetWide()) / 2, 30)
+		amtSlide:SetPos((DropFrame:GetWide() - amtSlide:GetWide()) / 2, 30)
 		amtSlide:SetMin(0)
 		amtSlide:SetMax(amt)
 		amtSlide:SetValue(((JMod.Config.ResourceEconomy and JMod.Config.ResourceEconomy.MaxResourceMult) or 1) * 100)
 		amtSlide:SetDecimals(0)
 
-		local apply = vgui.Create("DButton", frame)
+		local apply = vgui.Create("DButton", DropFrame)
 		apply:SetSize(100, 30)
-		apply:SetPos((frame:GetWide() - apply:GetWide()) / 2, 75)
+		apply:SetPos((DropFrame:GetWide() - apply:GetWide()) / 2, 75)
 		apply:SetText("DROP")
 
+		apply.DoRightClick = function()
+			net.Start("JMod_ItemInventory")
+				net.WriteString("drop_res")
+				net.WriteUInt(amtSlide:GetValue(), 12)
+				net.WriteString(resourceType)
+				net.WriteEntity(invEnt)
+			net.SendToServer()
+			DropFrame:Close()
+			Buttalony:Remove()
+			scrollFrame:InvalidateLayout(false)
+		end
 		apply.DoClick = function()
 			net.Start("JMod_ItemInventory")
 				net.WriteString("drop_res")
@@ -1751,18 +1769,30 @@ local function CreateResButton(parent, resourceType, amt, x, y, w, h, scrollFram
 				net.WriteString(resourceType)
 				net.WriteEntity(invEnt)
 			net.SendToServer()
-			frame:Close()
+			DropFrame:Close()
 			if IsValid(parent) then
 				parent:Close()
 			end
 		end
 
 		if invEnt == Ply then
-			local stow = vgui.Create("DButton", frame)
+			local stow = vgui.Create("DButton", DropFrame)
 			stow:SetSize(100, 30)
-			stow:SetPos((frame:GetWide() - apply:GetWide()) / 2, 120)
+			stow:SetPos((DropFrame:GetWide() - apply:GetWide()) / 2, 120)
 			stow:SetText("STOW")
 
+			stow.DoRightClick = function()
+				net.Start("JMod_ItemInventory")
+					net.WriteString("stow_res")
+					net.WriteUInt(amtSlide:GetValue(), 12)
+					net.WriteString(resourceType)
+					net.WriteEntity(Ply:GetEyeTrace().Entity)
+					net.WriteEntity(invEnt)
+				net.SendToServer()
+				DropFrame:Close()
+				Buttalony:Remove()
+				scrollFrame:InvalidateLayout(false)
+			end
 			stow.DoClick = function()
 				net.Start("JMod_ItemInventory")
 					net.WriteString("stow_res")
@@ -1771,16 +1801,29 @@ local function CreateResButton(parent, resourceType, amt, x, y, w, h, scrollFram
 					net.WriteEntity(Ply:GetEyeTrace().Entity)
 					net.WriteEntity(invEnt)
 				net.SendToServer()
-				frame:Close()
+				DropFrame:Close()
 				if IsValid(parent) then
 					parent:Close()
 				end
 			end
 		else
-			local tek = vgui.Create("DButton", frame)
+			local tek = vgui.Create("DButton", DropFrame)
 			tek:SetSize(100, 30)
-			tek:SetPos((frame:GetWide() - apply:GetWide()) / 2, 120)
+			tek:SetPos((DropFrame:GetWide() - apply:GetWide()) / 2, 120)
 			tek:SetText("TAKE")
+
+			tek.DoRightClick = function()
+				net.Start("JMod_ItemInventory")
+					net.WriteString("take_res")
+					net.WriteUInt(amtSlide:GetValue(), 12)
+					net.WriteString(resourceType)
+					net.WriteEntity(invEnt)
+					net.WriteEntity(invEnt)
+				net.SendToServer()
+				DropFrame:Close()
+				Buttalony:Remove()
+				scrollFrame:InvalidateLayout(false)
+			end
 
 			tek.DoClick = function()
 				net.Start("JMod_ItemInventory")
@@ -1790,18 +1833,19 @@ local function CreateResButton(parent, resourceType, amt, x, y, w, h, scrollFram
 					net.WriteEntity(invEnt)
 					net.WriteEntity(invEnt)
 				net.SendToServer()
-				frame:Close()
+				DropFrame:Close()
 				if IsValid(parent) then
 					parent:Close()
 				end
 			end
 		end
 
-		OpenDropdown = frame
+		OpenDropdown = DropFrame
 	end
 end
 
 local CurrentJModInvScreen = nil
+local CurrentJModInvEnt = nil
 local JModInventoryMenu = function(PlyModel, itemTable)
 	local Ply = LocalPlayer()
 	--[[if IsValid(PlyModel) then
@@ -1998,6 +2042,7 @@ local JModInventoryMenu = function(PlyModel, itemTable)
 
 	CurrentSelectionMenu = motherFrame
 	CurrentJModInvScreen = motherFrame
+	CurrentJModInvEnt = LocalPlayer()
 
 	local ModifiedMenu = hook.Run("JMod_ModifyInventoryScreen", motherFrame) -- Thinking about this for special item functions
 
@@ -2012,6 +2057,65 @@ list.Set("DesktopWindows", "JMod Inventory Button", {
 	end
 })
 
+local JModItemInventoryMenu = function(invEnt, newInv, customOffset)
+	local frame = vgui.Create("DFrame")
+	frame:SetSize(210, 315)
+	frame:SetTitle((invEnt.PrintName or tostring(invEnt) or "Player"))
+	if customOffset then
+		frame:SetPos(ScrW() * customOffset.x - frame:GetWide()/2, ScrH() * customOffset.y - frame:GetTall()/2)
+	else
+		frame:Center()
+	end
+	frame:MakePopup()
+	--frame:SetKeyboardInputEnabled(false)
+
+	frame.OnClose = function()
+		if OpenDropdown then
+			OpenDropdown:Remove()
+		end
+		frame = nil
+	end
+
+	frame.Paint = function(self, w, h)
+		BlurBackground(self)
+	end
+
+	local scrollPanel = vgui.Create("DScrollPanel", frame, "ItemScroller")
+	scrollPanel:SetSize(200, 270)
+	scrollPanel:SetPos(5, 30)
+
+	local Status = vgui.Create("DLabel", frame, "InventoryStatus")
+	Status:SetSize(200, 10)
+	Status:SetPos(2, 300)
+
+	function frame:UpdateItemInventory(invEnt, newInv)
+		self:SetTitle((invEnt.PrintName or tostring(invEnt) or "Player"))
+		if not scrollPanel then return end
+
+		scrollPanel:Clear()
+
+		local ShownItems = 0
+		if newInv then
+			for k, v in ipairs(newInv.items) do
+				CreateInvButton(self, v, (ShownItems % 4 * 50), (math.floor(ShownItems/4) * 50), 50, 50, scrollPanel, invEnt)
+				ShownItems = ShownItems + 1
+			end
+			if newInv.EZresources then
+				for k, v in pairs(newInv.EZresources) do
+					CreateResButton(self, k, v, (ShownItems % 4 * 50), (math.floor(ShownItems/4) * 50), 50, 50, scrollPanel, invEnt)
+					ShownItems = ShownItems + 1
+				end
+			end
+		end
+		
+		Status:SetText("Inventory Space: " .. tostring(invEnt.JModInv.volume) .. "/" .. tostring(invEnt.JModInv.maxVolume))
+	end
+
+	frame:UpdateItemInventory(invEnt, newInv)
+
+	return frame
+end
+
 net.Receive("JMod_ItemInventory", function(len, sender) -- for when we pick up stuff with JMOD HANDS
 	local invEnt = net.ReadEntity()
 	local command = net.ReadString()
@@ -2021,6 +2125,7 @@ net.Receive("JMod_ItemInventory", function(len, sender) -- for when we pick up s
 	if not(IsValid(invEnt)) then 
 		invEnt = Ply
 	end
+	local NonPlyInv = (invEnt ~= Ply)
 
 	if newInv and istable(newInv) and next(newInv) then
 		invEnt.JModInv = newInv
@@ -2029,55 +2134,22 @@ net.Receive("JMod_ItemInventory", function(len, sender) -- for when we pick up s
 	if not (command or isstring(command)) then return end
 
 	if command == "open_menu" then
+		if IsValid(CurrentJModInvScreen) then return end
 		if IsValid(CurrentSelectionMenu) then return end
-		local frame = vgui.Create("DFrame")
-		frame:SetSize(210, 315)
-		frame:SetTitle((invEnt.PrintName or invEnt:GetClass() or "Player"))
-		frame:Center()
-		frame:MakePopup()
-		--frame:SetKeyboardInputEnabled(false)
 
-		frame.OnClose = function()
-			if OpenDropdown then
-				OpenDropdown:Remove()
-			end
-			frame = nil
-		end
-
-		frame.Paint = function(self, w, h)
-			BlurBackground(self)
-		end
-
-		function frame:UpdateItemInventory(invEnt, newInv)
-			local scrollPanel = vgui.Create("DScrollPanel", self)
-			scrollPanel:SetSize(200, 270)
-			scrollPanel:SetPos(5, 30)
-			
-			local ShownItems = 0
-			if newInv then
-				for k, v in ipairs(newInv.items) do
-					CreateInvButton(self, v, (ShownItems % 4 * 50), (math.floor(ShownItems/4) * 50), 50, 50, scrollPanel, invEnt)
-					ShownItems = ShownItems + 1
-				end
-				if newInv.EZresources then
-					for k, v in pairs(newInv.EZresources) do
-						CreateResButton(self, k, v, (ShownItems % 4 * 50), (math.floor(ShownItems/4) * 50), 50, 50, scrollPanel, invEnt)
-						ShownItems = ShownItems + 1
-					end
-				end
-			end
-			local Status = vgui.Create("DLabel", self)
-			Status:SetSize(200, 10)
-			Status:SetPos(2, 300)
-			Status:SetText("Current Inventory Space: " .. tostring(invEnt.JModInv.volume) .. "/" .. tostring(invEnt.JModInv.maxVolume))
-		end
-
-		frame:UpdateItemInventory(invEnt, newInv)
+		local frame = JModItemInventoryMenu(invEnt, newInv)
 
 		CurrentJModInvScreen = frame
+		CurrentJModInvEnt = invEnt
 	elseif command == "update" then
-		if IsValid(CurrentJModInvScreen) then
-			CurrentJModInvScreen:UpdateItemInventory(invEnt, newInv)
+		if IsValid(CurrentJModInvScreen) then 
+			if IsValid(CurrentJModInvEnt) then 
+				if (CurrentJModInvEnt == invEnt) then
+					CurrentJModInvScreen:UpdateItemInventory(invEnt, newInv)
+				end
+			else
+				CurrentJModInvScreen:Close()
+			end
 		end
 	elseif command == "take_res" then
 		if OpenDropdown then

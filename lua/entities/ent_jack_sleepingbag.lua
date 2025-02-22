@@ -30,11 +30,13 @@ if SERVER then
 	end
 
 	function ENT:Initialize()
-		self.State = STATE_ROLLED
-		self:SetModel(MODEL_ROLLED)
-		self:PhysicsInit(SOLID_VPHYSICS)
-		self:SetMoveType(MOVETYPE_VPHYSICS)
-		self:SetSolid(SOLID_VPHYSICS)
+		self.State = self.State or STATE_ROLLED
+		if (self.State == STATE_ROLLED)then
+			self:RollUp()
+		else
+			self:Unroll()
+		end
+
 		self:SetUseType(SIMPLE_USE)
 
 		local Phys = self:GetPhysicsObject()
@@ -68,6 +70,7 @@ if SERVER then
 		self.Pod:SetNoDraw(true)
 		self.Pod:SetCollisionGroup(COLLISION_GROUP_IN_VEHICLE)
 		self.Pod:Fire("lock")
+		
 	end
 	
 	function ENT:RollUp()
@@ -186,10 +189,11 @@ if SERVER then
 	end
 
 	function ENT:OnRemove()
-		if(IsValid(self.EZowner))then self.EZowner.JModSpawnPointEntity=nil end
 		if(self.Pod)then -- machines with seats
-		  if(IsValid(self.Pod) and IsValid(self.Pod:GetDriver()))then
-				self.Pod:GetDriver():ExitVehicle()
+			if (IsValid(self.Pod)) then
+				if IsValid(self.Pod:GetDriver()) then
+					self.Pod:GetDriver():ExitVehicle()
+				end
 				self.Pod:Remove()
 			end
 		end

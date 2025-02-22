@@ -6,7 +6,7 @@ ENT.Category = "JMod - EZ Misc."
 ENT.Information = "glhfggwpezpznore"
 ENT.PrintName = "EZ Target Designator"
 ENT.NoSitAllowed = true
-ENT.Spawnable = true -- todo: make spawnable when i figure out the proportional guidance code
+ENT.Spawnable = false -- todo: make spawnable when i figure out the proportional guidance code
 ENT.AdminSpawnable = false
 ---
 ENT.JModPreferredCarryAngles = Angle(0, 90, 0)
