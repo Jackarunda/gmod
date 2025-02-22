@@ -45,7 +45,6 @@
 				Particle:SetLighting(false)
 			end
 		end
-		print(Scayul)
 		for i = 0, 15 * Scayul do
 			local Col, Sprt = 20, "sprites/mat_jack_smoke"..tostring(math.random(1, 3))
 			if (Typ == 1) then

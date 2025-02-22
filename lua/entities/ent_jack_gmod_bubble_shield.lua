@@ -218,8 +218,7 @@ if SERVER then
 		-- This is to stop stuff like fire from causing ripples on the shield in weird places
 		local DmgGun = dmginfo.GetWeapon and dmginfo:GetWeapon()
 		local IsBullet = dmginfo:IsBulletDamage()
-		
-		if IsValid(Attacker) and Attacker.GetActiveWeapon and (DmgGun == Attacker) then
+		if IsValid(Attacker) and Attacker.GetActiveWeapon and (DmgGun == nil or DmgGun == Attacker) then
 			local TheirWep = Attacker:GetActiveWeapon()
 			if IsValid(TheirWep) then
 				DmgGun = TheirWep
@@ -228,8 +227,8 @@ if SERVER then
 
 		if DmgDist > (self.ShieldRadius + 10) then
 			local ShotOrigin = DmgPos
-			--debugoverlay.Cross(ShotOrigin, 2, 5, Color(255, 0, 0), true)
-			--debugoverlay.Line(ShotOrigin, DmgPos, 5, Color(255, 0, 0), true)
+			-- debugoverlay.Cross(ShotOrigin, 2, 5, Color(255, 0, 0), true)
+			-- debugoverlay.Line(ShotOrigin, DmgPos, 5, Color(255, 0, 0), true)
 
 			if IsValid(DmgGun) then
 				ShotOrigin = DmgGun:GetPos()
@@ -267,7 +266,7 @@ if SERVER then
 					IncomingDir:RotateAroundAxis(HitNormal, 180)
 					local OutgoingDir = -(IncomingDir:Forward())
 					self:FireBullets({
-						Src = DmgPos + HitNormal * 5,
+						Src = DmgPos + HitNormal * 15,
 						Dir = OutgoingDir,
 						Tracer = 1,
 						Num = 1,
@@ -275,7 +274,7 @@ if SERVER then
 						Damage = DmgAmt * math.Rand(.75, .95),
 						Force = 2,
 						Attacker = Attacker,
-						IgnoreEntity = self.InnerShield
+						IgnoreEntity = self
 					})
 				end
 			end)
@@ -443,16 +442,14 @@ elseif CLIENT then
 		local EmitPos = SelfPos + SelfUp * 78
 		local Extent = SelfUp * (self.ShieldRadius - 78) * .95 + Vector(math.sin(Time) * 10, math.cos(Time) * 10, 0)
 		local Scroll = self.BeamScroll
-		-- render.SetColorMaterial()
 		render.SetMaterial(BeamMat)
-		-- render.DrawBeam(EmitPos, Extent, 5, 0, 1, beamColor)
 		render.StartBeam(5)
-			render.AddBeam(EmitPos, 5, Scroll, beamColor)
-			for i = 1, 3 do
-				local ThisBeamWidth = BeamWidth * i
-				render.AddBeam(EmitPos + Extent * (i / 4) - SelfUp * (ThisBeamWidth / 2), ThisBeamWidth, Scroll + (i / 4), Color(200, 20, 20))
-			end
-			render.AddBeam(EmitPos + Extent, BeamWidth * ShieldGrade, Scroll + 1, beamColor)
+		render.AddBeam(EmitPos, 5, Scroll, beamColor)
+		for i = 1, 3 do
+			local ThisBeamWidth = BeamWidth * i
+			render.AddBeam(EmitPos + Extent * (i / 4) - SelfUp * (ThisBeamWidth / 2), ThisBeamWidth, Scroll + (i / 4), beamColor)
+		end
+		render.AddBeam(EmitPos + Extent, BeamWidth * ShieldGrade, Scroll + 1, beamColor)
 		render.EndBeam()
 		render.SetMaterial(GlowSprite)
 		render.DrawSprite(EmitPos + (Epos - EmitPos):GetNormalized() * 4, 30, 30, beamColor)
@@ -493,9 +490,9 @@ elseif CLIENT then
 			local Dist = OffsetVec:Length()
 			local FoV = 1 / (render.GetViewSetup().fov / 180)
 			local R, G, B = JMod.GoodBadColor(StrengthFrac)
-			R = 255--math.Clamp(R + 30, 0, 255)
-			G = 0--math.Clamp(G + 30, 0, 255)
-			B = 0--math.Clamp(B + 30, 0, 255)
+			R = math.Clamp(R + 30, 0, 255)
+			G = math.Clamp(G + 30, 0, 255)
+			B = math.Clamp(B + 30, 0, 255)
 			local GlowColor = Color(R, G, B, 128)
 			if Dist < self.ShieldRadius * 1.03 * self.ShieldGrow then
 				local Eang = EyeAngles()

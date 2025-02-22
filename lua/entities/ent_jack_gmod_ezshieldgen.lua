@@ -20,7 +20,7 @@ ENT.StaticPerfSpecs = {
 	ElectricityToShieldStrengthConversion = .045
 }
 ENT.DynamicPerfSpecs = {
-	MaxElectricity = 100,
+	MaxElectricity = 200,
 	MaxCoolant = 100,
 	MaxShieldStrengthMult = 1
 }
@@ -153,7 +153,7 @@ if(SERVER)then
 		self.Shield.Projector = self
 		self.Shield:SetSizeClass(self:GetGrade())
 
-		local ShieldStrength = 1000 * self.MaxShieldStrengthMult -- todo: based on grade
+		local ShieldStrength = 1000 * self.MaxShieldStrengthMult ^ 1.5
 		self.Shield:SetMaxStrength(ShieldStrength)
 		self.Shield:SetStrength(ShieldStrength)
 
@@ -192,7 +192,11 @@ if(SERVER)then
 			Eff:SetColor(Cool)
 			util.Effect("eff_jack_gmod_shieldgenoverheat", Eff, true, true)
 		end
-		self.Temperature = math.Clamp(self.Temperature ^ .995 - .1, 0, 100)
+		if (CurCoolant > 0) then
+			self.Temperature = math.Clamp(self.Temperature ^ .99 - .2, 0, 100)
+		else
+			self.Temperature = math.Clamp(self.Temperature ^ .995 - .1, 0, 100)
+		end
 		if (State == STATE_ON) then
 			if (self:WaterLevel() > 0) then self:TurnOff() return end
 			if (self:GetPhysicsObject():IsMotionEnabled()) then self:TurnOff() return end

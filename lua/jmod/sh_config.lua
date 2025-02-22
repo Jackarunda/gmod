@@ -951,7 +951,8 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 100,
 					[JMod.EZ_RESOURCE_TYPES.COPPER] = 400
 				},
-				sizeScale = 1,
+				sizeScale = 3,
+				buildZoffset = 80,
 				category = "Machines",
 				craftingType = "toolbox",
 				description = "Projects a forcefield that stops all incoming attacks. The most advanced machine ever produced by J.I."
