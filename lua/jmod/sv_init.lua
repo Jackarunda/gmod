@@ -741,38 +741,45 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 		NextArmorThink = Time + 2
 
 		for _, playa in PlyIterator, Playas, startingindex do
+
 			if playa.EZarmor and playa:Alive() then
-				if playa.EZarmor.effects.nightVision then
+				local ArmorEffs = playa.EZarmor.effects or {}
+
+				if ArmorEffs.nightVision or ArmorEffs.thermalVision or ArmorEffs.tacticalVision then
 					for id, armorData in pairs(playa.EZarmor.items) do
 						if armorData.chrg then
 							local Info = JMod.ArmorTable[armorData.name]
 
-							if Info.eff and Info.eff.nightVision then
-								armorData.chrg.power = math.Clamp(armorData.chrg.power - JMod.Config.Armor.ChargeDepletionMult / 10, 0, 9e9)
+							if Info.eff then 
+								if Info.eff.nightVision then
+									armorData.chrg.power = math.Clamp(armorData.chrg.power - JMod.Config.Armor.ChargeDepletionMult / 10, 0, 9e9)
 
-								if armorData.chrg.power <= Info.chrg.power * .25 then
-									JMod.EZarmorWarning(playa, "Night vision charge is low ("..tostring(armorData.chrg.power).."/"..tostring(Info.chrg.power)..")")
+									if armorData.chrg.power <= Info.chrg.power * .2 then
+										JMod.EZarmorWarning(playa, "Night vision charge is low ("..tostring(armorData.chrg.power).."/"..tostring(Info.chrg.power)..")")
+									end
 								end
-							end
-						end
-					end
-				elseif playa.EZarmor.effects.thermalVision then
-					for id, armorData in pairs(playa.EZarmor.items) do
-						if armorData.chrg then
-							local Info = JMod.ArmorTable[armorData.name]
 
-							if Info.eff and Info.eff.thermalVision then
-								armorData.chrg.power = math.Clamp(armorData.chrg.power - JMod.Config.Armor.ChargeDepletionMult / 10, 0, 9e9)
+								if Info.eff.thermalVision then
+									armorData.chrg.power = math.Clamp(armorData.chrg.power - JMod.Config.Armor.ChargeDepletionMult / 10, 0, 9e9)
+	
+									if armorData.chrg.power <= Info.chrg.power * .2 then
+										JMod.EZarmorWarning(playa, "Thermal vision charge is low ("..tostring(armorData.chrg.power).."/"..tostring(Info.chrg.power)..")")
+									end
+								end
 
-								if armorData.chrg.power <= Info.chrg.power * .25 then
-									JMod.EZarmorWarning(playa, "Thermal vision charge is low ("..tostring(armorData.chrg.power).."/"..tostring(Info.chrg.power)..")")
+								if Info.eff.tacticalVision then
+									armorData.chrg.power = math.Clamp(armorData.chrg.power - JMod.Config.Armor.ChargeDepletionMult / 10, 0, 9e9)
+	
+									if armorData.chrg.power <= Info.chrg.power * .2 then
+										JMod.EZarmorWarning(playa, "Tactical vision charge is low ("..tostring(armorData.chrg.power).."/"..tostring(Info.chrg.power)..")")
+									end
 								end
 							end
 						end
 					end
 				end
 
-				if playa.EZarmor.effects.scuba then
+				if ArmorEffs.scuba then
 					for id, armorData in pairs(playa.EZarmor.items) do
 						local Info = JMod.ArmorTable[armorData.name]
 
@@ -786,7 +793,7 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 					end
 				end
 
-				if playa.EZarmor.effects.weapon then
+				if ArmorEffs.weapon then
 					for id, armorData in pairs(playa.EZarmor.items) do
 						local Info = JMod.ArmorTable[armorData.name]
 
@@ -795,6 +802,59 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 								local Sweppy = playa:Give(Info.eff.weapon)
 								playa:SelectWeapon(Sweppy)
 								Sweppy.EZarmorID = id
+							end
+						end
+					end
+				end
+
+				if ArmorEffs.chargeEquipped then
+					for id, armorData in pairs(playa.EZarmor.items) do
+						local Info = JMod.ArmorTable[armorData.name]
+
+						if Info.eff and Info.eff.chargeEquipped then
+							local SubtractCharge = armorData.chrg and armorData.chrg.power
+							
+							local ArmorIDsToCharge = {}
+							for id2, armorData2 in pairs(playa.EZarmor.items) do
+								local Info2 = JMod.ArmorTable[armorData2.name]
+
+								if not(Info2.eff and Info2.eff.chargeEquipped) and armorData2.chrg and armorData2.chrg.power and (armorData2.chrg.power < Info2.chrg.power) then
+									table.insert(ArmorIDsToCharge, id2)
+								end
+							end
+
+							for i = 1, #ArmorIDsToCharge do
+								local id2 = ArmorIDsToCharge[i]
+								local armorData2 = playa.EZarmor.items[id2]
+								local Info2 = JMod.ArmorTable[armorData2.name]
+
+								local ChargeAmount = math.min(Info2.chrg.power - armorData2.chrg.power, armorData.chrg.power)
+
+								armorData2.chrg.power = math.min(armorData2.chrg.power + ChargeAmount, Info2.chrg.power)
+								if SubtractCharge then
+									armorData.chrg.power = math.max(armorData.chrg.power - ChargeAmount, 0)
+								end
+							end
+						end
+					end
+				end
+
+				if ArmorEffs.chargeShield then
+					for id, armorData in pairs(playa.EZarmor.items) do
+						local Info = JMod.ArmorTable[armorData.name]
+
+						if Info.eff and Info.eff.chargeShield then
+							local SubtractCharge = armorData.chrg and armorData.chrg.power
+
+							local PlyArmor, PlyMaxArmor = playa:Armor(), playa:GetMaxArmor()
+							if PlyArmor < PlyMaxArmor then
+								local MissingShields = math.max(PlyMaxArmor - PlyArmor, 0)
+								local AvailablePower = SubtractCharge and armorData.chrg.power or 1
+								local ConversionRatio = .75
+								local AmountToCharge = math.min(AvailablePower * ConversionRatio, MissingShields, 2)
+
+								armorData.chrg.power = math.max(armorData.chrg.power - (AmountToCharge / ConversionRatio), 0)
+								playa:SetArmor(PlyArmor + AmountToCharge)
 							end
 						end
 					end
