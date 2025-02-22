@@ -2927,9 +2927,8 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					JMod.Config = util.JSONToTable(FileContents)
 					print("JMOD: config file loaded")
 				else
-					file.Write("jmod_config_old.txt", FileContents)
 					print("JMOD: old config version: " .. tostring(Existing.Info.Version) .. ", new config version: " .. tostring(NewConfig.Info.Version))
-					print("JMOD: config versions do not match, writing old config to 'jmod_config_old.txt'...")
+					forceNew = true
 				end
 			else
 				print("JMOD: unable to compare versions!! (check config layout)")
