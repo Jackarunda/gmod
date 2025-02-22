@@ -2467,6 +2467,17 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				craftingType = "workbench",
 				description = "Well-rounded helmet with balanced protection and weight."
 			},
+			["EZ Advanced Helmet"] = {
+				results = JMod.ArmorTable["Advanced-Helmet"].ent,
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 30,
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = 30,
+					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 10
+				},
+				category = "Apparel",
+				craftingType = "workbench",
+				description = "A medium weight helmet with an in-built target ID system, doesn't take up face slots."
+			},
 			["EZ Medium Torso Armor"] = {
 				results = JMod.ArmorTable["Medium-Vest"].ent,
 				craftingReqs = {
@@ -2522,6 +2533,15 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				category = "Apparel",
 				craftingType = "workbench",
 				description = "See at night, be blinded by bright light."
+			},
+			["EZ Sunglasses"] = {
+				results = JMod.ArmorTable["SunGlasses"].ent,
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 10,
+				},
+				category = "Apparel",
+				craftingType = "workbench",
+				description = "Protects your eyes against most bright flashes. Also has drip."
 			},
 			["EZ Left Calf Armor"] = {
 				results = JMod.ArmorTable["Left-Calf"].ent,

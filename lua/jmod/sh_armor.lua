@@ -360,7 +360,7 @@ JMod.ArmorTable = {
 		mskmat = "mats_jack_gmod_sprites/glasses_sun.png",--"mats_jack_gmod_sprites/glasses",
 		wgt = .1,
 		dur = 2,
-		ent = "ent_jack_gmod_ezarmor_glasses",
+		ent = "ent_jack_gmod_ezarmor_sunglasses",
 		eff = {
 			flashresistant = true
 		},

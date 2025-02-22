@@ -111,7 +111,7 @@ hook.Add("HUDPaintBackground", "JMOD_HUDBG", function()
 end)
 
 local DangerMat = Material("ez_misc_icons/scout_marker.png", "ignorez")
-local ScoutTextCol = Color(197, 253, 255, 200)
+local ScoutTextCol = Color(219, 197, 255, 200)
 local DangerTextCol = Color(255, 50, 0, 200)
 
 hook.Add("HUDPaint", "JMod_HUDPaint", function()
