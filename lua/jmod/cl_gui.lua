@@ -453,7 +453,6 @@ local function PopulateItems(parent, items, typ, motherFrame, entity, enableFunc
 	Scroll:SetSize(W - 20, H - 20)
 	Scroll:SetPos(10, 10)
 	---
-	local Pos, Range = entity:GetPos(), 150
 	local AlphabetizedItemNames = table.GetKeys(items)
 	table.sort(AlphabetizedItemNames, function(a, b) return a < b end)
 
