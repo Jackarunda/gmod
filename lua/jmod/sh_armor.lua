@@ -358,7 +358,7 @@ JMod.ArmorTable = {
 		pos = Vector(2, 2.4, 0.1),
 		ang = Angle(-80, 0, -90),
 		mskmat = "mats_jack_gmod_sprites/glasses_sun.png",--"mats_jack_gmod_sprites/glasses",
-		wgt = 1,
+		wgt = .1,
 		dur = 2,
 		ent = "ent_jack_gmod_ezarmor_glasses",
 		eff = {
@@ -408,7 +408,7 @@ JMod.ArmorTable = {
 		siz = Vector(1.05, 1, 1.05),
 		pos = Vector(.5, .6, 0),
 		ang = Angle(-80, 0, -90),
-		wgt = 15,
+		wgt = 8,
 		dur = 300,
 		ent = "ent_jack_gmod_ezarmor_ahead"
 	},

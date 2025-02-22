@@ -858,6 +858,7 @@ function JMod.LuaConfigSync(copyArmorOffsets)
 	ToSend.QoL = table.FullCopy(JMod.Config.QoL)
 	ToSend.MaxResourceMult = JMod.Config.ResourceEconomy.MaxResourceMult
 	ToSend.Flashbang = JMod.Config.Explosives.Flashbang
+	ToSend.ScoutIDwhitelist = table.FullCopy(JMod.Config.Armor.ScoutIDwhitelist)
 	net.Start("JMod_LuaConfigSync")
 		net.WriteData(util.Compress(util.TableToJSON(ToSend)))
 	net.Broadcast()

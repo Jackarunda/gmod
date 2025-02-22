@@ -25,7 +25,8 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 			ProtectionMult = 1,
 			DegradationMult = 1,
 			ChargeDepletionMult = 1,
-			WeightMult = 1
+			WeightMult = 1,
+			ScoutIDwhitelist = {"mine*", "nade*", "frag*", "gmod_wire_trigger", "gmod_wire_target_finder"}
 		},
 		Tools = {
 			Medkit = {
