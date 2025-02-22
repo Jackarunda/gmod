@@ -13,7 +13,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda & Friends",
-			Version = 53
+			Version = 54
 		},
 		General = {
 			Hints = true,
@@ -61,6 +61,9 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				Whitelist = {"func_physbox", "func_breakable"},
 				Blacklist = {"func_", "_dynamic"},
 				DamageEnts = {"func_breakable"}
+			},
+			ShieldGen = {
+				ToughnessMult = 1
 			},
 			SpawnMachinesFull = true,
 			SupplyEffectMult = 1,

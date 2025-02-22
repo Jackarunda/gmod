@@ -196,7 +196,7 @@ if SERVER then
 
 		-- no physgun minging
 		if not (data.HitEntity.IsPlayerHolding and data.HitEntity:IsPlayerHolding()) then
-			self:TakeShieldDamage(KE / 600000)
+			self:TakeShieldDamage(KE / 800000)
 		end
 	end
 
@@ -284,7 +284,7 @@ if SERVER then
 	end
 
 	function ENT:TakeShieldDamage(amt, mult)
-		mult = mult or .125 -- default low mult gives the shield its toughness
+		mult = (mult or .1) / JMod.Config.Machines.ShieldGen.ToughnessMult
 		local CurStrength = self:GetStrength()
 		local AmtToLose = amt * mult
 		local AmtRemaining = math.Clamp(CurStrength - AmtToLose, .1, self:GetMaxStrength())
@@ -456,7 +456,6 @@ elseif CLIENT then
 		render.DrawSprite(EmitPos + Extent, BeamWidth * 4 * ShieldGrade, 30 * ShieldGrade, beamColor)
 	end
 
-	local BubbleBlur = 0
 	function ENT:DrawTranslucent(flags)
 		if self:GetAmInnerShield() then return end
 		local FT = FrameTime()
@@ -502,7 +501,6 @@ elseif CLIENT then
 			else
 				local ShieldDiameter = self.ShieldRadius * 2
 				local ShieldPie = self.ShieldRadius * math.pi
-				local DistToEdge = Dist - self.ShieldRadius
 				local DistFrac = math.Clamp(ShieldPie - Dist, 0, ShieldPie) / ShieldPie
 				local SizeMult = 1.1 --+ 3.14 * (DistFrac ^ math.pi * 2)
 				local MoveMult = self.ShieldRadius * ((DistFrac + .2) ^ math.pi)
@@ -540,21 +538,23 @@ elseif CLIENT then
 				render.DrawSprite(SelfPos + OffsetNorm * MoveMult, Siz * Xmod, Siz * Ymod, GlowColor)
 				render.SetStencilEnable(false)
 			end
-			-- blur the player's vision if his eyes are intersecting the shield
-			local BlurDistRange, BlurDistBegin = self.ShieldRadius * .1, self.ShieldRadius * .95
-			local BlurDistEnd = BlurDistBegin + BlurDistRange
-			local DistDiff = math.abs(Dist - self.ShieldRadius)
-			if (Dist > BlurDistBegin) and (Dist < BlurDistEnd) then
-				BubbleBlur = ((1 - (DistDiff / BlurDistRange)) - .5) * 2
-			else
-				BubbleBlur = 0
-			end
 		end
 	end
 
 	local blurMaterial = Material('pp/bokehblur')
 
 	hook.Add("RenderScreenspaceEffects", "JMod_BubbleShieldScreenSpace", function()
+		local BubbleBlur = 0
+		-- blur the player's vision if his eyes are intersecting the shield
+		for k, v in pairs(ents.FindByClass("ent_jack_gmod_bubble_shield")) do
+			local Dist = (EyePos() - v:GetPos()):Length()
+			local BlurDistRange, BlurDistBegin = v.ShieldRadius * .1, v.ShieldRadius * .95
+			local BlurDistEnd = BlurDistBegin + BlurDistRange
+			local DistDiff = math.abs(Dist - v.ShieldRadius)
+			if (Dist > BlurDistBegin) and (Dist < BlurDistEnd) then
+				BubbleBlur = math.max(((1 - (DistDiff / BlurDistRange)) - .5) * 2, BubbleBlur)
+			end
+		end
 		if (BubbleBlur > 0) then
 			if GetConVar("jmod_cl_blurry_menus"):GetBool() then
 				render.UpdateScreenEffectTexture()

@@ -22,7 +22,8 @@ ENT.StaticPerfSpecs = {
 ENT.DynamicPerfSpecs = {
 	MaxElectricity = 200,
 	MaxCoolant = 100,
-	MaxShieldStrengthMult = 1
+	MaxShieldStrengthMult = 1,
+	ChargeMult = 1
 }
 ENT.EZconsumes = {
 	JMod.EZ_RESOURCE_TYPES.POWER,
@@ -153,7 +154,7 @@ if(SERVER)then
 		self.Shield.Projector = self
 		self.Shield:SetSizeClass(self:GetGrade())
 
-		local ShieldStrength = 1000 * self.MaxShieldStrengthMult ^ 1.5
+		local ShieldStrength = 1000 * self.MaxShieldStrengthMult ^ 2
 		self.Shield:SetMaxStrength(ShieldStrength)
 		self.Shield:SetStrength(ShieldStrength)
 
@@ -162,7 +163,6 @@ if(SERVER)then
 	end
 
 	function ENT:ShieldBreak()
-		if (self:GetState() ~= STATE_ON) then return end
 		if self.ShieldSoundLoop then self.ShieldSoundLoop:Stop() end
 		if (IsValid(self.Shield)) then self.Shield:Break() end
 		self:SetState(STATE_CHARGING)
@@ -203,14 +203,14 @@ if(SERVER)then
 			if not (IsValid(self.Shield)) then
 				self:ShieldBreak()
 			else
-				local MaxChargingCapability = 2.5
-				if (CurCoolant > 0) then MaxChargingCapability = 5 end
+				local MaxChargingCapability = 2.5 * self.ChargeMult
+				if (CurCoolant > 0) then MaxChargingCapability = MaxChargingCapability * 2 end
 				local Accepted = self.Shield:AcceptRecharge(MaxChargingCapability)
 				-- jprint("added", Accepted, "coolnt", CurCoolant, "elec", self:GetElectricity(), "str", self.Shield:GetStrength())
 				if (Accepted > 0) then
 					self:ConsumeElectricity(Accepted * self.ElectricityToShieldStrengthConversion)
-					if (Accepted > 2) then self.Temperature = self.Temperature + 1.5 end
-					if (Accepted > 4) then -- high-power mode, push it to the limit
+					if (Accepted > 3) then self.Temperature = self.Temperature + 1.5 end
+					if (Accepted > 6) then -- high-power mode, push it to the limit
 						self:SetCoolant(math.Clamp(CurCoolant - math.Rand(.4, .6), 0, self.MaxCoolant))
 					end
 				end
@@ -223,7 +223,7 @@ if(SERVER)then
 			end
 		elseif (State == STATE_CHARGING) then
 			local Progress = self:GetShieldChargeProgress()
-			if (Progress >= 1000 * self.MaxShieldStrengthMult) then
+			if (Progress >= 1000 * self.MaxShieldStrengthMult ^ 2) then
 				self:EstablishShield()
 			else
 				local ChargeAmt, CurCoolant = 10, self:GetCoolant()
