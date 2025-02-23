@@ -159,9 +159,10 @@ if(SERVER)then
 			end
 		end
 		local HitAmount, StartPos = 0, self:LocalToWorld(self:OBBCenter())
-		for i = 1, 10 do
-			for j = 1, 5 do
-				local Dir = self:LocalToWorldAngles(Angle(260 - j*8, -10 + i*2, 0)):Forward()
+		for i = 1, 5 do
+			for j = 1, 10 do
+				local Dir = self:LocalToWorldAngles(Angle(200 - j*2, -50 + i*16, 0)):Forward()
+				debugoverlay.Line(StartPos, StartPos + Dir * 9e9, 1, Color(255, 0, 0), true)
 				local Tr = util.TraceLine({start = StartPos, endpos = StartPos + Dir * 9e9, filter = {self}, mask = MASK_SOLID})
 				if (Tr.HitSky) then
 					HitAmount = HitAmount + 0.02
@@ -291,7 +292,7 @@ elseif CLIENT then
 		local PanelAng=SelfAng:GetCopy()
 		PanelAng:RotateAroundAxis(Right, 60)
 		if(PanelDraw)then
-			JMod.RenderModel(self.SolarCellModel,BasePos-Forward+Right*.5,PanelAng,nil,"models/mat_jack_gmod_solarcells")
+			JMod.RenderModel(self.SolarCellModel,BasePos-Forward+Right*.5,PanelAng,nil,nil,"models/mat_jack_gmod_solarcells")
 		end
 
 		if DetailDraw then
