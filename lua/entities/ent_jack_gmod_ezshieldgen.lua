@@ -51,6 +51,10 @@ if(SERVER)then
 		}
 		self.NextAlarm = 0
 		self.Temperature = 0
+		if self.SpawnFull then
+			self:SetElectricity(self.MaxElectricity)
+			self:SetCoolant(self.MaxCoolant)
+		end
 	end
 
 	function ENT:Use(activator)
@@ -65,7 +69,7 @@ if(SERVER)then
 			return
 		elseif State == STATE_OFF then
 			self:TurnOn(activator)
-		elseif State == STATE_ON or State == STATE_CHARGING then
+		elseif (State == STATE_ON or State == STATE_CHARGING) and alt then
 			self:TurnOff()
 		end
 	end

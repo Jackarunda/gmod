@@ -162,7 +162,6 @@ if(SERVER)then
 		for i = 1, 5 do
 			for j = 1, 10 do
 				local Dir = self:LocalToWorldAngles(Angle(200 - j*2, -50 + i*16, 0)):Forward()
-				debugoverlay.Line(StartPos, StartPos + Dir * 9e9, 1, Color(255, 0, 0), true)
 				local Tr = util.TraceLine({start = StartPos, endpos = StartPos + Dir * 9e9, filter = {self}, mask = MASK_SOLID})
 				if (Tr.HitSky) then
 					HitAmount = HitAmount + 0.02
