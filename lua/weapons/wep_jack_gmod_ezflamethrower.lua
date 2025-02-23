@@ -290,8 +290,13 @@ function SWEP:PrimaryAttack()
 			if ((State == STATE_FLAMIN) or (State == STATE_SPRAYIN)) then
 				self:Pawnch()
 				self.Owner:ViewPunch(AngleRand() * .002)
-				local FlameTr = util.QuickTrace(FirePos, FireAng:Forward() * 200, self.Owner)
-				FirePos = FlameTr.HitPos
+				local FlameTr = util.TraceLine({
+					start = FirePos,
+					endpos = FirePos + FireAng:Forward() * 200,
+					filter = {self, self.Owner},
+					mask = MASK_SHOT
+				})
+				FirePos = FlameTr.HitPos + FireAng:Forward() * -5
 				local Flame = ents.Create("ent_jack_gmod_eznapalm")
 				Flame:SetPos(FirePos)
 				local FlyAng = (FireAng:Forward() + VectorRand() * .1):Angle()

@@ -119,12 +119,16 @@ if SERVER then
 			end
 
 			if IsValid(Tr.Entity) and Tr.Entity.JMod_NapalmBounce then
-				local OurSpeed = self.CurVel:Length()
+				local OldVel = self.CurVel
+				local OurSpeed = OldVel:Length()
 				local NewVec = Tr.Normal:Angle()
-				NewVec:RotateAroundAxis(Tr.HitNormal, 180)
+				NewVec:RotateAroundAxis(Tr.HitNormal, 180 + math.random(-10, 10))
 				NewVec = NewVec:Forward()
 				self.CurVel = (-NewVec * OurSpeed) / 2
 				self.LifeTime = (self.LifeTime or 1) + .5
+				self:SetPos(Tr.HitPos + OldVel:GetNormalized() * -10)
+				--debugoverlay.Cross(Tr.HitPos, 5, 5, Color(255, 0, 0), true)
+				--debugoverlay.Line(Tr.HitPos, Tr.HitPos + OldVel, 5, Color(255, 255, 0), true)
 			else
 				self:Detonate(Tr)
 			end

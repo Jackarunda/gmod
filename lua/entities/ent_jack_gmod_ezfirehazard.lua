@@ -142,7 +142,12 @@ if SERVER then
 					self:SetPos(FireTracy.HitPos)
 
 					if IsValid(FireTracy.Entity) then
-						self:SetParent(FireTracy.Entity)
+						if FireTracy.Entity.JMod_NapalmBounce then
+							self:Remove()
+						else
+							self:SetParent(FireTracy.Entity)
+							Par = FireTracy.Entity
+						end
 					end
 				end
 
@@ -160,6 +165,7 @@ if SERVER then
 					local TheirPos = v:GetPos()
 
 					if (v:GetClass() == "ent_jack_gmod_ezfirehazard") and (v ~= self) and JMod.ClearLoS(self, v) then
+						Pos = self:GetPos()
 						FireNearby = v.GetHighVisuals and v:GetHighVisuals() or false
 						if (TheirPos:Distance(Pos) < self.Range * 0.5) then
 							local LeftTillMax = (self.MaxIntensity * 2) - self.Intensity
@@ -171,16 +177,21 @@ if SERVER then
 								self.Intensity = self.Intensity + Taken
 								--v.Intensity = TheirIntensity - Taken
 								v:Remove()
-								if not IsValid(self:GetParent()) then
+								if not IsValid(Par) then
 									self:SetPos(Pos + (TheirPos - Pos) * 0.5)
-									debugoverlay.Cross(self:GetPos(), 5, 2, Color(255, 0, 0), true)
+									--debugoverlay.Cross(self:GetPos(), 5, 2, Color(255, 0, 0), true)
 								end
 
 								break
-							elseif not IsValid(self:GetParent()) then
+							elseif not IsValid(Par) then
 								local PlaceToGo = Pos - (TheirPos - Pos) * 0.75 + VectorRand()
-								local MoveTr = util.QuickTrace(Pos, PlaceToGo - Pos, self)
-								debugoverlay.Line(Pos, MoveTr.HitPos, 2, Color(0, 255, 0), true)
+								local MoveTr = util.TraceLine({
+									starpos = Pos, 
+									endpos = PlaceToGo, 
+									filter = self,
+									mask = MASK_SHOT
+								})
+								--debugoverlay.Line(Pos, PlaceToGo, 2, Color(0, 255, 0), true)
 								self:SetPos(MoveTr.HitPos)
 
 								break
