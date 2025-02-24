@@ -4,7 +4,6 @@ JMod.NukeFlashRange = 0
 JMod.NukeFlashIntensity = 1
 JMod.NukeFlashSmokeEndTime = 0
 JMod.Wind = JMod.Wind or Vector(0, 0, 0)
-JMod.EZscannerDangers = {}
 
 surface.CreateFont("JMod-Display", {
 	font = "Arial",
@@ -345,14 +344,50 @@ hook.Add("PostDrawTranslucentRenderables", "JMOD_POSTDRAWTRANSLUCENTRENDERABLES"
 			end
 		end
 	end
+end)
 
-	table.Empty(JMod.EZscannerDangers)
+local function IsOnWhiteList(ent)
 	local IDwhitelist = JMod.Config.Armor.ScoutIDwhitelist or {}
+	local EntClass = ent:GetClass()
+
+	for _, class in pairs(IDwhitelist) do
+		if EntClass == class then
+
+			return true
+		elseif string.EndsWith(class, "*") and string.find(EntClass, string.TrimRight(class, "*")) then
+
+			return true
+		end
+	end
+
+	return false
+end
+
+JMod.EZscannerDangers = {}
+local NextDangerScan, KnownEnts = 0, {}
+local ScanDist = 1500
+
+hook.Add("PostDrawTranslucentRenderables", "JMOD_EZDANGERSCANNING", function(bDepth, bSkybox)
+	if bSkybox then return end
+	if bDepth then return end
+
+	local Time = CurTime()
+	local ply = LocalPlayer()
+
+	if not JMod.PlyHasArmorEff(ply, "tacticalVision") then return end
 
 	local SightPos = ply:GetShootPos()
+
+	if Time > NextDangerScan then
+		NextDangerScan = Time + .5
+		KnownEnts = ents.FindInSphere(SightPos, ScanDist)
+	end
+
+	table.Empty(JMod.EZscannerDangers)
+	
 	local TraceSetup = {
 		start = SightPos,
-		endpos = SightPos + ply:GetAimVector() * 1500,
+		endpos = SightPos + ply:GetAimVector() * ScanDist,
 		mask = MASK_OPAQUE_AND_NPCS,
 		filter = {ply}
 	}
@@ -365,21 +400,9 @@ hook.Add("PostDrawTranslucentRenderables", "JMOD_POSTDRAWTRANSLUCENTRENDERABLES"
 	end
 	local SightTrace = util.TraceLine(TraceSetup)
 
-	for k, ent in ipairs(ents.FindInSphere(SightPos, 1500)) do
+	for _, ent in ipairs(KnownEnts) do
 		if IsValid(ent) then
-			local IsOnIDlist = false
-			local EntClass = ent:GetClass()
-			for _, class in pairs(IDwhitelist) do
-				if EntClass == class then
-					IsOnIDlist = true
-
-					break
-				elseif string.EndsWith(class, "*") and string.find(EntClass, string.TrimRight(class, "*")) then
-					IsOnIDlist = true
-				end
-			end
-
-			if ent.EZscannerDanger or IsOnIDlist and not ent:GetNoDraw() then
+			if ent.EZscannerDanger or IsOnWhiteList(ent) then
 				local TestPos = ent:LocalToWorld(ent:OBBCenter())
 				TraceSetup.endpos = TestPos
 				table.insert(TraceSetup.filter, ent)
@@ -408,7 +431,7 @@ hook.Add("PostDrawTranslucentRenderables", "JMOD_POSTDRAWTRANSLUCENTRENDERABLES"
 				end
 			end
 		end
-	end
+	end 
 end)
 
 net.Receive("JMod_LuaConfigSync", function(dataLength)
