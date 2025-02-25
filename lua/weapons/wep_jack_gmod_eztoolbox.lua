@@ -536,7 +536,7 @@ function SWEP:PrimaryAttack()
 
 				if Grade < 5 then
 					local WorkSpreadMult = JMod.CalcWorkSpreadMult(Ent, Pos)
-					local UpgradeRate = JMod.Config.Tools.Toolbox.UpgradeMult * 1 * math.Round(WorkSpreadMult)
+					local UpgradeRate = JMod.Config.Tools.Toolbox.UpgradeMult * 2 * math.Round(WorkSpreadMult)
 					local RequiredMats = Ent.UpgradeCosts[Grade + 1]
 
 					for resourceType, requiredAmt in pairs(RequiredMats) do
