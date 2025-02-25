@@ -400,6 +400,7 @@ JMod.ArmorTable = {
 				[2] = 0
 			},
 			eff = {
+				tacticalVision = false,
 				earPro = true
 			}
 		},

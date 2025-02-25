@@ -439,9 +439,9 @@ function JMod.PlyHasArmorEff(ply, eff)
 		else
 			return ply.EZarmor.effects
 		end
-	else
-		return false
 	end
+
+	return false
 end
 
 function JMod.IsAdmin(ply)
