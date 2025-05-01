@@ -409,7 +409,7 @@ hook.Add("PostDrawTranslucentRenderables", "JMOD_EZDANGERSCANNING", function(bDe
 				local SightTrace = util.TraceLine(TraceSetup)
 				if not SightTrace.Hit then
 					local DangerInfo = TestPos:ToScreen()
-					DangerInfo.text = ent.PrintName or (ent.GetPrintName and language.GetPhrase(ent:GetPrintName())) or "???"
+					DangerInfo.text = ent.PrintName or (ent.GetPrintName and language.GetPhrase(ent:GetPrintName())) or (ent.GetClass and ent:GetClass()) or "???"
 					if ent.GetState and ent:GetState() == JMod.EZ_STATE_ARMED then
 						DangerInfo.danger = true
 					end
