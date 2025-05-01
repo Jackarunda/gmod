@@ -91,7 +91,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 			DoorBreachResetTimeMult = 1,
 			FragExplosions = true,
 			PropDestroyPower = 1,
-			BombOwnershipLossOnRespawn = false
+			BombOwnershipLossOnRespawn = true
 		},
 		Particles = {
 			VirusSpreadMult = 1,
@@ -111,7 +111,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 			ScroungeCooldownMult = 1,
 			ScroungeDespawnTimeMult = 1,
 			ScroungeResultAmount = 5,
-			ForceLoadAllResources = false,
+			ForceLoadAllResources = true,
 			GrowthSpeedMult = 1,
 			WaterRequirementMult = 1
 		},
@@ -128,7 +128,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 			NukeFlashLightEnabled = false,
 			NiceFire = true,
 			ChangePitchWithHostTimeScale = true,
-			AllowActiveItemsInInventory = false,
+			AllowActiveItemsInInventory = true,
 			SeasonalEventsEnabled = true,
 			InventorySizeMult = 1
 		},
