@@ -1,4 +1,4 @@
-JMod.NukeFlashEndTime = 0
+﻿JMod.NukeFlashEndTime = 0
 JMod.NukeFlashPos = nil
 JMod.NukeFlashRange = 0
 JMod.NukeFlashIntensity = 1
@@ -363,6 +363,18 @@ local function IsOnWhiteList(ent)
 	return false
 end
 
+local function LookupEyes(ent)
+	if not ent.GetAttachment then return false end
+	local class = ent:GetClass()
+	if class == "class C_BaseFlex" then return false end
+
+	local AngPos = ent:GetAttachment(ent:LookupAttachment("eyes"))
+	if AngPos and AngPos.Pos then
+		return AngPos.Pos
+	end
+
+end
+
 JMod.EZscannerDangers = {}
 local NextDangerScan, KnownEnts = 0, {}
 local ScanDist = 1500
@@ -371,13 +383,13 @@ hook.Add("PostDrawTranslucentRenderables", "JMOD_EZDANGERSCANNING", function(bDe
 	if bSkybox then return end
 	if bDepth then return end
 
-	local Time = CurTime()
 	local ply = LocalPlayer()
 
 	if not JMod.PlyHasArmorEff(ply, "tacticalVision") then return end
 
 	local SightPos = ply:GetShootPos()
 
+	local Time = CurTime()
 	if Time > NextDangerScan then
 		NextDangerScan = Time + .5
 		KnownEnts = ents.FindInSphere(SightPos, ScanDist)
@@ -385,11 +397,13 @@ hook.Add("PostDrawTranslucentRenderables", "JMOD_EZDANGERSCANNING", function(bDe
 
 	table.Empty(JMod.EZscannerDangers)
 	
+	local SightTrace = {}
 	local TraceSetup = {
 		start = SightPos,
 		endpos = SightPos + ply:GetAimVector() * ScanDist,
 		mask = MASK_OPAQUE_AND_NPCS,
-		filter = {ply}
+		filter = {ply},
+		output = SightTrace
 	}
 
 	if ply:InVehicle() then
@@ -398,33 +412,39 @@ hook.Add("PostDrawTranslucentRenderables", "JMOD_EZDANGERSCANNING", function(bDe
 			table.insert(TraceSetup.filter, ply:GetVehicle():GetParent())
 		end
 	end
-	local SightTrace = util.TraceLine(TraceSetup)
 
 	for _, ent in ipairs(KnownEnts) do
 		if IsValid(ent) then
-			if ent.EZscannerDanger or IsOnWhiteList(ent) then
+
+			local eyePos = LookupEyes(ent)
+			if ent ~= ply and eyePos then
+				TraceSetup.endpos = eyePos
+				local entFilterKey = table.insert(TraceSetup.filter, ent)
+
+				util.TraceLine(TraceSetup)
+				table.remove(TraceSetup.filter, entFilterKey)
+
+				if not SightTrace.Hit then
+					local DangerInfo = eyePos:ToScreen()
+					DangerInfo.text = "Head"
+					if DangerInfo.visible then
+						table.insert(JMod.EZscannerDangers, DangerInfo)
+					end
+				end
+			elseif ent.EZscannerDanger or IsOnWhiteList(ent) then
 				local TestPos = ent:LocalToWorld(ent:OBBCenter())
 				TraceSetup.endpos = TestPos
-				table.insert(TraceSetup.filter, ent)
-				local SightTrace = util.TraceLine(TraceSetup)
+				local entFilterKey = table.insert(TraceSetup.filter, ent)
+
+				util.TraceLine(TraceSetup)
+				table.remove(TraceSetup.filter, entFilterKey)
+
 				if not SightTrace.Hit then
 					local DangerInfo = TestPos:ToScreen()
 					DangerInfo.text = ent.PrintName or (ent.GetPrintName and language.GetPhrase(ent:GetPrintName())) or (ent.GetClass and ent:GetClass()) or "???"
 					if ent.GetState and ent:GetState() == JMod.EZ_STATE_ARMED then
 						DangerInfo.danger = true
 					end
-					if DangerInfo.visible then
-						table.insert(JMod.EZscannerDangers, DangerInfo)
-					end
-				end
-			elseif ent ~= ply and ent.LookupAttachment and ent:GetAttachment(ent:LookupAttachment("eyes")) then
-				local AngPos = ent:GetAttachment(ent:LookupAttachment("eyes")) 
-				TraceSetup.endpos = AngPos.Pos
-				table.insert(TraceSetup.filter, ent)
-				local SightTrace = util.TraceLine(TraceSetup)
-				if not SightTrace.Hit then
-					local DangerInfo = AngPos.Pos:ToScreen()
-					DangerInfo.text = "Head"
 					if DangerInfo.visible then
 						table.insert(JMod.EZscannerDangers, DangerInfo)
 					end
