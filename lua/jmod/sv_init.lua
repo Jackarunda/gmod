@@ -89,7 +89,7 @@ end
 hook.Add("PlayerSpawn", "JMod_PlayerSpawn", JackaSpawnHook)
 hook.Add("PlayerInitialSpawn", "JMod_PlayerInitialSpawn", function(ply, transit) 
 	JackaSpawnHook(ply, transit) 
-	JMod.LuaConfigSync(false) 
+	JMod.LuaConfigSync(true) 
 end)
 
 hook.Add("PlayerSelectSpawn", "JMod_SleepingBagSpawn", function(ply, transition) 
@@ -900,25 +900,19 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 			WindChange:Normalize()
 		end
 	end
-
-	---
-	if NextSync < Time then
-		NextSync = Time + 30
-		JMod.LuaConfigSync(false)
-	end
 end)
 
 function JMod.LuaConfigSync(copyArmorOffsets)
 	local ToSend = {}
-	ToSend.ArmorOffsets = (JMod.LuaConfig and JMod.LuaConfig.ArmorOffsets) or {}
 	ToSend.AltFunctionKey = JMod.Config.General.AltFunctionKey
 	ToSend.WeaponSwayMult = JMod.Config.Weapons.SwayMult
 	ToSend.Blackhole = JMod.Config.Machines.Blackhole
-	ToSend.CopyArmorOffsets = copyArmorOffsets or false
 	ToSend.QoL = table.FullCopy(JMod.Config.QoL)
 	ToSend.MaxResourceMult = JMod.Config.ResourceEconomy.MaxResourceMult
 	ToSend.Flashbang = JMod.Config.Explosives.Flashbang
 	ToSend.ScoutIDwhitelist = table.FullCopy(JMod.Config.Armor.ScoutIDwhitelist)
+	ToSend.ArmorOffsets = (copyArmorOffsets and JMod.LuaConfig and JMod.LuaConfig.ArmorOffsets) or nil
+
 	net.Start("JMod_LuaConfigSync")
 		net.WriteData(util.Compress(util.TableToJSON(ToSend)))
 	net.Broadcast()

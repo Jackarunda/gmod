@@ -1298,12 +1298,6 @@ if CLIENT then
 	end, "First argument is action, second arg is slot to apply the action to")
 end
 
--- Debug
---[[
-for _, ply in player.Iterator() do
-	ply.NextEZarmorTableCopy=0
-end
---]]
 LoadAdditionalArmor()
 
 -- Sounds

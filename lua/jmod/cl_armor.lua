@@ -1,11 +1,20 @@
-﻿JMod.ArmorTableCopy = {}
-function JMod.CopyArmorTableToPlayer(ply)
-	-- make a copy of the global armor spec table, personalize it, and store it on the player
-	JMod.ArmorTableCopy = table.FullCopy(JMod.ArmorTable)
-	local plyMdl = ply:GetModel()
+﻿JMod.ArmorTableOffsetCache = {}
+function JMod.CopyArmorTableForModel(plyMdl)
+	JMod.ArmorTableOffsetCache = JMod.ArmorTableOffsetCache or {}
+	-- Make a copy of the relevant parts of an armor table and store them.
+	if plyMdl and JMod.LuaConfig and JMod.LuaConfig.ArmorOffsets and JMod.LuaConfig.ArmorOffsets[plyMdl] then
+		JMod.ArmorTableOffsetCache[plyMdl] = {}
+		for k, v in pairs(JMod.LuaConfig.ArmorOffsets[plyMdl]) do
+			JMod.ArmorTableOffsetCache[plyMdl][k] = table.Merge(table.FullCopy(JMod.ArmorTable[k]), v)
+		end
+	end
+end
 
-	if JMod.LuaConfig and JMod.LuaConfig.ArmorOffsets and JMod.LuaConfig.ArmorOffsets[plyMdl] then
-		table.Merge(JMod.ArmorTableCopy, JMod.LuaConfig.ArmorOffsets[plyMdl])
+function JMod.CopyAllArmorOffsets()
+	if JMod.LuaConfig and JMod.LuaConfig.ArmorOffsets and JMod.LuaConfig.ArmorOffsets then
+		for k, v in pairs(JMod.LuaConfig.ArmorOffsets) do
+			JMod.CopyArmorTableForModel(k)
+		end
 	end
 end
 
@@ -17,15 +26,20 @@ function JMod.ArmorPlayerModelDraw(ply, nomerge)
 
 		local Time = CurTime()
 
-		if not JMod.ArmorTableCopy or ((ply.NextEZarmorTableCopy or 0) < Time) then
-			JMod.CopyArmorTableToPlayer(ply)
-			ply.NextEZarmorTableCopy = Time + 30
+		if not JMod.ArmorTableOffsetCache or table.IsEmpty(JMod.ArmorTableOffsetCache) then
+			JMod.CopyAllArmorOffsets()
+		end
+
+		local plyMdl = ply:GetModel()
+
+		if not JMod.ArmorTableOffsetCache[plyMdl] then
+			JMod.CopyArmorTableForModel(plyMdl)
 		end
 
 		local plyboneedit = {}
 
 		for id, armorData in pairs(ply.EZarmor.items) do
-			local ArmorInfo = JMod.ArmorTableCopy[armorData.name]
+			local ArmorInfo = JMod.ArmorTableOffsetCache[plyMdl] and JMod.ArmorTableOffsetCache[plyMdl][armorData.name] or JMod.ArmorTable[armorData.name]
 
 			if not ArmorInfo then continue end
 			if armorData.tgl and ArmorInfo.tgl then

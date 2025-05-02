@@ -1,4 +1,4 @@
-﻿JMod.NukeFlashEndTime = 0
+JMod.NukeFlashEndTime = 0
 JMod.NukeFlashPos = nil
 JMod.NukeFlashRange = 0
 JMod.NukeFlashIntensity = 1
@@ -437,8 +437,6 @@ end)
 net.Receive("JMod_LuaConfigSync", function(dataLength)
 	local Payload = net.ReadData(dataLength)
 	Payload = util.JSONToTable(util.Decompress(Payload))
-	JMod.LuaConfig = JMod.LuaConfig or {}
-	JMod.LuaConfig.ArmorOffsets = Payload.ArmorOffsets
 	JMod.Config = JMod.Config or {}
 	JMod.Config.General = {AltFunctionKey = Payload.AltFunctionKey}
 	JMod.Config.Machines = {Blackhole = Payload.Blackhole}
@@ -448,10 +446,10 @@ net.Receive("JMod_LuaConfigSync", function(dataLength)
 	JMod.Config.Explosives = {Flashbang = Payload.Flashbang}
 	JMod.Config.Armor = {ScoutIDwhitelist = table.FullCopy(Payload.ScoutIDwhitelist)}
 
-	if tobool(net.ReadBit()) then
-		for k, v in player.Iterator() do
-			JMod.CopyArmorTableToPlayer(v)
-		end
+	if tobool(Payload.ArmorOffsets) then
+		JMod.LuaConfig = JMod.LuaConfig or {}
+		JMod.LuaConfig.ArmorOffsets = Payload.ArmorOffsets
+		JMod.CopyAllArmorOffsets()
 	end
 end)
 
