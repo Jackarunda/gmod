@@ -70,11 +70,11 @@ if(SERVER)then
 	end
 
 	function ENT:Use(activator)
-		if(self:GetState()==STATE_FINE)then
-			if(self:GetElectricity()>0 and self:GetGas()>0)then
+		if(self:GetState() == STATE_FINE)then
+			if(self:GetElectricity() > 0 and self:GetGas() > 0)then
 				net.Start("JMod_EZworkbench")
 				net.WriteEntity(self)
-				net.WriteTable(self.Craftables)
+				net.WriteString("workbench")
 				net.WriteFloat(1)
 				net.Send(activator)
 				JMod.Hint(activator, "craft")
@@ -85,6 +85,7 @@ if(SERVER)then
 			JMod.Hint(activator, "destroyed")
 		end
 	end
+
 	function ENT:TryBuild(itemName,ply)
 		local ItemInfo=self.Craftables[itemName]
 

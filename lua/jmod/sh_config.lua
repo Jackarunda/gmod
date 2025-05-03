@@ -3025,19 +3025,19 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 	-- This is to make sure the ammo types are saved on config reload
 	JMod.LoadAmmoTable(JMod.AmmoTable)
 
-	print("JMOD: updating recipes...")
-	for k, v in ents.Iterator() do
-		if(IsValid(v) and v.UpdateConfig)then
-			v:UpdateConfig()
-		end
-	end
-
 	SetArmorPlayerModelModifications()
 
 	print("JMOD: lua config file loaded")
 	if SERVER then
 		print("JMOD: syncing lua config's")
 		JMod.LuaConfigSync(true)
+		print("JMOD: updating recipes...")
+		JMod.CraftablesSync()
+		for k, v in ents.Iterator() do
+			if(IsValid(v) and v.UpdateConfig)then
+				v:UpdateConfig()
+			end
+		end
 	end
 	if not forceNew then
 		print("-----Config Info-----")

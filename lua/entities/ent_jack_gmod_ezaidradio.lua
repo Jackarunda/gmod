@@ -116,7 +116,7 @@ if(SERVER)then
 						net.Start("JMod_EZradio")
 						net.WriteBool(false)
 						net.WriteEntity(self)
-						net.WriteTable(JMod.Config.RadioSpecs.AvailablePackages)
+						net.WriteString("aidradio")
 						net.Send(activator)
 					elseif (State == JMod.EZ_STATION_STATE_BUSY) or (State == JMod.EZ_STATION_STATE_DELIVERING) then
 						self:Connect(activator, true)

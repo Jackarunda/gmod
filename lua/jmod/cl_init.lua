@@ -455,21 +455,33 @@ hook.Add("PostDrawTranslucentRenderables", "JMOD_EZDANGERSCANNING", function(bDe
 end)
 
 net.Receive("JMod_LuaConfigSync", function(dataLength)
-	local Payload = net.ReadData(dataLength)
-	Payload = util.JSONToTable(util.Decompress(Payload))
 	JMod.Config = JMod.Config or {}
-	JMod.Config.General = {AltFunctionKey = Payload.AltFunctionKey}
-	JMod.Config.Machines = {Blackhole = Payload.Blackhole}
-	JMod.Config.Weapons = {SwayMult = Payload.WeaponSwayMult}
-	JMod.Config.QoL = table.FullCopy(Payload.QoL)
-	JMod.Config.ResourceEconomy = {MaxResourceMult = Payload.MaxResourceMult}
-	JMod.Config.Explosives = {Flashbang = Payload.Flashbang}
-	JMod.Config.Armor = {ScoutIDwhitelist = table.FullCopy(Payload.ScoutIDwhitelist)}
+	JMod.Config.RadioSpecs = JMod.Config.RadioSpecs or {}
+	local SentCrafting = net.ReadBool()
 
-	if tobool(Payload.ArmorOffsets) then
-		JMod.LuaConfig = JMod.LuaConfig or {}
-		JMod.LuaConfig.ArmorOffsets = Payload.ArmorOffsets
-		JMod.CopyAllArmorOffsets()
+	if SentCrafting then
+		local Payload = net.ReadData(dataLength - 1)
+		Payload = util.JSONToTable(util.Decompress(Payload))
+
+		JMod.Config.Craftables = Payload.Craftables
+		JMod.Config.RadioSpecs.AvailablePackages = Payload.Orderables
+	else
+		local Payload = net.ReadData(dataLength - 1)
+		Payload = util.JSONToTable(util.Decompress(Payload))
+		
+		JMod.Config.General = {AltFunctionKey = Payload.AltFunctionKey}
+		JMod.Config.Machines = {Blackhole = Payload.Blackhole}
+		JMod.Config.Weapons = {SwayMult = Payload.WeaponSwayMult}
+		JMod.Config.QoL = table.FullCopy(Payload.QoL)
+		JMod.Config.ResourceEconomy = {MaxResourceMult = Payload.MaxResourceMult}
+		JMod.Config.Explosives = {Flashbang = Payload.Flashbang}
+		JMod.Config.Armor = {ScoutIDwhitelist = table.FullCopy(Payload.ScoutIDwhitelist)}
+
+		if tobool(Payload.ArmorOffsets) then
+			JMod.LuaConfig = JMod.LuaConfig or {}
+			JMod.LuaConfig.ArmorOffsets = Payload.ArmorOffsets
+			JMod.CopyAllArmorOffsets()
+		end
 	end
 end)
 

@@ -1298,7 +1298,7 @@ if CLIENT then
 	end, "First argument is action, second arg is slot to apply the action to")
 end
 
-LoadAdditionalArmor()
+--LoadAdditionalArmor()
 
 -- Sounds
 sound.Add({	name = "JMod_ZipLine_Clip",

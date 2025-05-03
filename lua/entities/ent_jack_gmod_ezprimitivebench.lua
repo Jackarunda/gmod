@@ -115,7 +115,7 @@ if(SERVER)then
 				else
 					net.Start("JMod_EZworkbench")
 					net.WriteEntity(self)
-					net.WriteTable(self.Craftables)
+					net.WriteString("craftingtable")
 					net.WriteFloat(self.ResourceReqMult)
 					net.Send(activator)
 					JMod.Hint(activator, "craft")

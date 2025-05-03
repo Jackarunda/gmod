@@ -74,7 +74,7 @@ if(SERVER)then
 			if(self:GetElectricity() >= 10) and (self:GetGas() >= 8) and (self:GetWater() >= 4) and (self:GetChemicals() >= 4) then
 				net.Start("JMod_EZworkbench")
 				net.WriteEntity(self)
-				net.WriteTable(self.Craftables)
+				net.WriteString("fabricator")
 				net.WriteFloat(1)
 				net.Send(activator)
 			else

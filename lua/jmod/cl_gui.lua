@@ -21,10 +21,10 @@ local SpecialIcons = {
 }
 
 local RankIcons = {Material("ez_rank_icons/grade_1.png"), Material("ez_rank_icons/grade_2.png"), Material("ez_rank_icons/grade_3.png"), Material("ez_rank_icons/grade_4.png"), Material("ez_rank_icons/grade_5.png")}
+local QuestionMarkIcon = Material("question_mark.png")
 
 JMod.SelectionMenuIcons = {}
 local LocallyAvailableResources = nil -- this is here solely for caching and efficieny purposes, I sure hope it doesn't bite me in the ass
-local QuestionMarkIcon = Material("question_mark.png")
 
 local JModIcon, JModLegacyIcon = "jmod_icon", "jmod_icon_legacy.png"
 list.Set("ContentCategoryIcons", "JMod - EZ Armor", JModIcon.."_armor.png" )
@@ -768,8 +768,24 @@ if #JMod.ClientConfig.BuildKitFavs > 0 then
 	Categories["Favourites"]=Tab
 end
 --]]
+local function GetCraftables(typ)
+	local Tab = {}
+
+	if not typ then return Tab end
+	if not (JMod.Config and JMod.Config.Craftables and next(JMod.Config.Craftables)) then return Tab end
+
+	for k, info in pairs(JMod.Config.Craftables) do
+		if (istable(info.craftingType) and table.HasValue(info.craftingType, typ)) or (info.craftingType == typ) then
+			info.name = k
+			Tab[k] = info
+		end
+	end
+
+	return Tab
+end
+
 net.Receive("JMod_EZtoolbox", function()
-	local Buildables = net.ReadTable()
+	local Buildables = GetCraftables(net.ReadString())
 	local Kit = net.ReadEntity()
 
 	if IsValid(CurrentSelectionMenu) then return end
@@ -868,7 +884,7 @@ end)
 
 net.Receive("JMod_EZworkbench", function()
 	local Bench = net.ReadEntity()
-	local Buildables = net.ReadTable()
+	local Buildables = GetCraftables(net.ReadString())
 	local Multiplier = net.ReadFloat()
 
 	if IsValid(CurrentSelectionMenu) then return end
@@ -1166,6 +1182,15 @@ net.Receive("JMod_ModifyMachine", function()
 	end
 end)
 
+local function GetOrderables()
+	local Tab = {}
+	if not (JMod.Config and JMod.Config.RadioSpecs and JMod.Config.RadioSpecs.AvailablePackages) then return Tab end
+
+	Tab = table.FullCopy(JMod.Config.RadioSpecs.AvailablePackages)
+
+	return Tab
+end
+
 net.Receive("JMod_EZradio", function()
 	local isMessage = net.ReadBool()
 
@@ -1193,14 +1218,7 @@ net.Receive("JMod_EZradio", function()
 	end
 
 	local Radio = net.ReadEntity()
-	local Orderables = net.ReadTable()
-	JMod.Config.RadioSpecs = {
-		DeliveryTimeMult = 1,
-		ParachuteDragMult = 1,
-		StartingOutpostCount = 1,
-		AvailablePackages = {}
-	}
-	JMod.Config.RadioSpecs.AvailablePackages = Orderables
+	local Orderables = GetOrderables(net.ReadString())
 
 	if IsValid(CurrentSelectionMenu) then return end
 	local MotherFrame = StandardSelectionMenu('selecting', "EZ Radio", Orderables, Radio, function(name, info, ply, ent)

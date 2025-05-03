@@ -715,7 +715,7 @@ function SWEP:Reload()
 				self.NextSwitch = Time + .5
 				JMod.Hint(self.Owner, "craft")
 				net.Start("JMod_EZtoolbox")
-				net.WriteTable(self.Craftables)
+				net.WriteString("toolbox")
 				net.WriteEntity(self)
 				net.Send(self.Owner)
 			end

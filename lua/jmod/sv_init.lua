@@ -89,7 +89,8 @@ end
 hook.Add("PlayerSpawn", "JMod_PlayerSpawn", JackaSpawnHook)
 hook.Add("PlayerInitialSpawn", "JMod_PlayerInitialSpawn", function(ply, transit) 
 	JackaSpawnHook(ply, transit) 
-	JMod.LuaConfigSync(true) 
+	JMod.LuaConfigSync(true, ply)
+	JMod.CraftablesSync(ply) 
 end)
 
 hook.Add("PlayerSelectSpawn", "JMod_SleepingBagSpawn", function(ply, transition) 
@@ -902,7 +903,7 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 	end
 end)
 
-function JMod.LuaConfigSync(copyArmorOffsets)
+function JMod.LuaConfigSync(copyArmorOffsets, ply)
 	local ToSend = {}
 	ToSend.AltFunctionKey = JMod.Config.General.AltFunctionKey
 	ToSend.WeaponSwayMult = JMod.Config.Weapons.SwayMult
@@ -912,15 +913,36 @@ function JMod.LuaConfigSync(copyArmorOffsets)
 	ToSend.Flashbang = JMod.Config.Explosives.Flashbang
 	ToSend.ScoutIDwhitelist = table.FullCopy(JMod.Config.Armor.ScoutIDwhitelist)
 	ToSend.ArmorOffsets = (copyArmorOffsets and JMod.LuaConfig and JMod.LuaConfig.ArmorOffsets) or nil
+	
+	net.Start("JMod_LuaConfigSync")
+		net.WriteBool(false)
+		net.WriteData(util.Compress(util.TableToJSON(ToSend)))
+	if ply then 
+		net.Send(ply)
+	else
+		net.Broadcast()
+	end
+end
+
+function JMod.CraftablesSync(ply)
+	local ToSend = {}
+	ToSend.Craftables = table.FullCopy(JMod.Config.Craftables)
+	ToSend.Orderables = table.FullCopy(JMod.Config.RadioSpecs.AvailablePackages)
 
 	net.Start("JMod_LuaConfigSync")
+		net.WriteBool(true)
 		net.WriteData(util.Compress(util.TableToJSON(ToSend)))
-	net.Broadcast()
+	if ply and IsValid(ply) then
+		net.Send(ply)
+	else
+		net.Broadcast()
+	end
 end
 
 concommand.Add("jmod_force_lua_config_sync", function(ply, cmd, args)
 	if ply and not ply:IsSuperAdmin() then return end
 	JMod.LuaConfigSync(true)
+	JMod.CraftablesSync()
 end, nil, "Manually forces the Lua Config for Jmod to sync.")
 
 concommand.Add("jacky_trace_debug", function(ply)
