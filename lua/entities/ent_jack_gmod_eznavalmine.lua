@@ -56,6 +56,7 @@ if SERVER then
 		self.LastUse = 0
 		self.MoorMode = "subsurface"
 		self.Moored = false
+		self.MoorRope = nil
 		self.NextDet = 0
 
 		if istable(WireLib) then
@@ -151,6 +152,7 @@ if SERVER then
 				self:SetState(STATE_OFF)
 				self:EmitSound("snds_jack_gmod/bomb_disarm.ogg", 70, 110)
 				self.Moored = false
+				if IsValid(self.MoorRope) then self.MoorRope:Remove() end
 			else
 				JMod.Hint(activator, "double tap to disarm")
 			end
@@ -223,7 +225,7 @@ if SERVER then
 
 					if Tr.Hit then
 						local Length = Tr.HitPos:Distance(SelfPos)
-						constraint.Rope(self, Tr.Entity, 0, 0, Vector(0, 0, -18), Tr.Entity:WorldToLocal(Tr.HitPos), Length, math.random(-20, 20), 0, 2, "cable/mat_jack_gmod_chain", false)
+						self.MoorRope = constraint.Rope(self, Tr.Entity, 0, 0, Vector(0, 0, -18), Tr.Entity:WorldToLocal(Tr.HitPos), Length, math.random(-20, 20), 0, 2, "cable/mat_jack_gmod_chain", false)
 					end
 				elseif self.MoorMode == "subsurface" then
 					local WaterLevel = nil
@@ -242,7 +244,7 @@ if SERVER then
 						if GroundTr.Hit then
 							local SeaFloorLevel = GroundTr.HitPos
 							local WaterDepth = WaterLevel:Distance(SeaFloorLevel)
-							constraint.Rope(self, GroundTr.Entity, 0, 0, Vector(0, 0, -18), GroundTr.Entity:WorldToLocal(SeaFloorLevel), WaterDepth, math.random(-45, -38), 0, 2, "cable/mat_jack_gmod_chain", false)
+							self.MoorRope = constraint.Rope(self, GroundTr.Entity, 0, 0, Vector(0, 0, -18), GroundTr.Entity:WorldToLocal(SeaFloorLevel), WaterDepth, math.random(-45, -38), 0, 2, "cable/mat_jack_gmod_chain", false)
 						end
 					end
 				end
@@ -265,6 +267,11 @@ if SERVER then
 				end
 			end
 		end
+	end
+
+	function ENT:PostEntityPaste(pl, Ent, CreatedEntities)
+		local Time = CurTime()
+		self.NextDet = Time + 3
 	end
 elseif CLIENT then
 	function ENT:Initialize()
