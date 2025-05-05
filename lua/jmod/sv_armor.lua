@@ -396,7 +396,8 @@ function JMod.CalcSpeed(ply)
 
 	for k, v in pairs(ply.EZarmor.items) do
 		local ArmorInfo = JMod.ArmorTable[v.name]
-		TotalWeight = TotalWeight + ArmorInfo.wgt
+		local Weight = (ArmorInfo and ArmorInfo.wgt) or 0
+		TotalWeight = TotalWeight + Weight
 	end
 
 	if ply.JModInv and ply.JModInv.weight then
