@@ -88,9 +88,12 @@ end
 
 hook.Add("PlayerSpawn", "JMod_PlayerSpawn", JackaSpawnHook)
 hook.Add("PlayerInitialSpawn", "JMod_PlayerInitialSpawn", function(ply, transit) 
-	JackaSpawnHook(ply, transit) 
-	JMod.LuaConfigSync(true, ply)
-	JMod.CraftablesSync(ply) 
+	JackaSpawnHook(ply, transit)
+	timer.Simple(0, function()
+		if not IsValid(ply) then return end
+		JMod.LuaConfigSync(true, ply)
+		JMod.CraftablesSync(ply) 
+	end)
 end)
 
 hook.Add("PlayerSelectSpawn", "JMod_SleepingBagSpawn", function(ply, transition) 
@@ -915,7 +918,6 @@ function JMod.LuaConfigSync(copyArmorOffsets, ply)
 	ToSend.ArmorOffsets = (copyArmorOffsets and JMod.LuaConfig and JMod.LuaConfig.ArmorOffsets) or nil
 	
 	net.Start("JMod_LuaConfigSync")
-		net.WriteBool(false)
 		net.WriteData(util.Compress(util.TableToJSON(ToSend)))
 	if ply then 
 		net.Send(ply)
@@ -930,7 +932,6 @@ function JMod.CraftablesSync(ply)
 	ToSend.Orderables = table.FullCopy(JMod.Config.RadioSpecs.AvailablePackages)
 
 	net.Start("JMod_LuaConfigSync")
-		net.WriteBool(true)
 		net.WriteData(util.Compress(util.TableToJSON(ToSend)))
 	if ply and IsValid(ply) then
 		net.Send(ply)
@@ -938,6 +939,18 @@ function JMod.CraftablesSync(ply)
 		net.Broadcast()
 	end
 end
+
+local PlyConfigRequestTimes = {}
+
+net.Receive("JMod_LuaConfigSync", function(len, ply)
+	local Time = CurTime()
+
+	if PlyConfigRequestTimes[ply] and PlyConfigRequestTimes[ply] > Time then return end
+	PlyConfigRequestTimes[ply] = Time + 5
+
+	JMod.LuaConfigSync(false, ply)
+	JMod.CraftablesSync(ply)
+end)
 
 concommand.Add("jmod_force_lua_config_sync", function(ply, cmd, args)
 	if ply and not ply:IsSuperAdmin() then return end

@@ -457,18 +457,14 @@ end)
 net.Receive("JMod_LuaConfigSync", function(dataLength)
 	JMod.Config = JMod.Config or {}
 	JMod.Config.RadioSpecs = JMod.Config.RadioSpecs or {}
-	local SentCrafting = net.ReadBool()
+	local Payload = net.ReadData(dataLength)
+	Payload = util.JSONToTable(util.Decompress(Payload))
+	local SentCrafting = Payload.Craftables and istable(Payload.Craftables)
 
 	if SentCrafting then
-		local Payload = net.ReadData(dataLength - 1)
-		Payload = util.JSONToTable(util.Decompress(Payload))
-
 		JMod.Config.Craftables = Payload.Craftables
 		JMod.Config.RadioSpecs.AvailablePackages = Payload.Orderables
 	else
-		local Payload = net.ReadData(dataLength - 1)
-		Payload = util.JSONToTable(util.Decompress(Payload))
-		
 		JMod.Config.General = {AltFunctionKey = Payload.AltFunctionKey}
 		JMod.Config.Machines = {Blackhole = Payload.Blackhole}
 		JMod.Config.Weapons = {SwayMult = Payload.WeaponSwayMult}
@@ -484,6 +480,11 @@ net.Receive("JMod_LuaConfigSync", function(dataLength)
 		end
 	end
 end)
+
+concommand.Add("jmod_cl_requestluaconfig", function(ply)
+	net.Start("JMod_LuaConfigSync")
+	net.SendToServer()
+end, nil, "Requests the server to send you the current lua config")
 
 --[[
 hook.Add("CalcView", "HD2_TEST", function(ply, pos, ang, fov)
