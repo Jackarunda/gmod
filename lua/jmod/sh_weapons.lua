@@ -895,6 +895,8 @@ elseif SERVER then
 			end
 		end
 
+		--local MaxGAmmo = GetConVar("gmod_maxammo"):GetInt()
+
 		if isnumber(ent) and game.GetAmmoName(ent) then
 			-- it's an ammo type
 			local MaxAmmo = (game.GetAmmoMax(ent) * JMod.Config.Weapons.AmmoCarryLimitMult * ArmorAmmoCarryMult)

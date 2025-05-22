@@ -12,6 +12,8 @@ ENT.AdminSpawnable = true
 ENT.JModPreferredCarryAngles = Angle(0, 180, 0)
 ENT.JModEZstorable = true
 ENT.JModHighlyFlammableFunc = "Detonate"
+ENT.LastDamageTime = 0
+ENT.LastDamage = 0
 
 ---
 if SERVER then
@@ -69,21 +71,77 @@ if SERVER then
 		end
 	end
 
+	local HighChanceTable = {
+		[DMG_BLAST] = true,
+		[DMG_BURN] = true,
+		[DMG_BLAST_SURFACE] = true,
+		[DMG_ACID] = true,
+		[DMG_DISSOLVE] = true,
+		[DMG_SHOCK] = true,
+		[DMG_PLASMA] = true
+	}
+
+	local LowChanceTable = {
+		[DMG_BULLET] = true,
+		[DMG_BUCKSHOT] = true,
+		[DMG_AIRBOAT] = true,
+		[DMG_SLOWBURN] = true
+	}
+
 	function ENT:OnTakeDamage(dmginfo)
 		if self.Exploded then return end
 		if dmginfo:GetInflictor() == self then return end
 		self:TakePhysicsDamage(dmginfo)
 		local Dmg = dmginfo:GetDamage()
 
-		if Dmg >= 4 then
-			local Pos, DetChance = self:GetPos(), 0
+		local Time = CurTime()
+		if (Time - self.LastDamageTime) < .01 then
+			self.LastDamage = self.LastDamage + Dmg
+			Dmg = self.LastDamage
+		else
+			self.LastDamageTime = Time
+			self.LastDamage = Dmg
+		end
 
-			if dmginfo:IsDamageType(DMG_BLAST) or dmginfo:IsDamageType(DMG_BURN) or dmginfo:IsDamageType(DMG_DIRECT) then
-				DetChance = DetChance + Dmg / 150
+		if Dmg >= 5 then
+			-- Check the damage type to see which table to use
+			local LowDetChance, HighDetChance = 1000, 1000
+			local IsHighChance = false
+
+			for k, v in pairs(HighChanceTable) do
+				if dmginfo:IsDamageType(k) then
+					LowDetChance = 5
+					HighDetChance = 30
+					IsHighChance = true
+
+					break
+				end
 			end
 
-			if math.Rand(0, 1) < DetChance then
-				self:Detonate()
+			if not IsHighChance then
+				for k, v in pairs(LowChanceTable) do
+					if dmginfo:IsDamageType(k) then
+						LowDetChance = 30
+						HighDetChance = 90
+	
+						break
+					end
+				end
+			end
+			
+			if JMod.LinCh(Dmg, LowDetChance, HighDetChance) then
+				timer.Simple(0.01, function()
+					if IsValid(self) then
+						self:Detonate()
+					end
+				end)
+			else
+				self.Pouring = true
+				timer.Simple(1, function() 
+					if IsValid(self) and not self:IsPlayerHolding() then
+						self.Pouring = false
+					end
+				end)
 			end
 		end
 	end
