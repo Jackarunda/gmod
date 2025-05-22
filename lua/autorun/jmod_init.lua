@@ -324,7 +324,10 @@ include("jmod/sh_locales.lua")
 AddCSLuaFile("jmod/sh_locales.lua")
 
 for i, f in pairs(file.Find("jmod/*.lua", "LUA")) do
-	if string.Left(f, 3) == "sv_" then
+	if string.Left(f, 3) == "sh_" then
+		AddCSLuaFile("jmod/" .. f)
+		include("jmod/" .. f)
+	elseif string.Left(f, 3) == "sv_" then
 		if SERVER then
 			include("jmod/" .. f)
 		end
@@ -334,9 +337,6 @@ for i, f in pairs(file.Find("jmod/*.lua", "LUA")) do
 		else
 			AddCSLuaFile("jmod/" .. f)
 		end
-	elseif string.Left(f, 3) == "sh_" then
-		AddCSLuaFile("jmod/" .. f)
-		include("jmod/" .. f)
 	else
 		print("JMod detected unaccounted-for lua file '" .. f .. "'-check prefixes!")
 	end
