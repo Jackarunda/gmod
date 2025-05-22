@@ -9,21 +9,10 @@ local function JackaSpawnHook(ply, transition)
 	if transition then return end
 	ply.EZragdoll = nil
 	ply.JModFriends = ply.JModFriends or {}
-
-	ply.EZarmor = ply.EZarmor or {
-		items = {},
-		speedFrac = nil,
-		effects = {},
-		mskmat = nil,
-		sndlop = nil,
-		suited = false,
-		bodygroups = nil,
-		totalWeight = 0
-	}
-
 	ply.JModInv = ply.JModInv or table.Copy(JMod.DEFAULT_INVENTORY)
 
 	JMod.EZarmorSync(ply)
+	JMod.CalcSpeed(ply)
 	ply.EZoxygen = 100
 	ply.EZbleeding = 0
 	JMod.SyncBleeding(ply)
@@ -864,8 +853,8 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 					end
 				end
 
-				JMod.CalcSpeed(playa)
-				JMod.EZarmorSync(playa)
+				--JMod.CalcSpeed(playa)
+				--JMod.EZarmorSync(playa)
 			end
 		end
 	end

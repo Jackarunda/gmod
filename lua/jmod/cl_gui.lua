@@ -1870,6 +1870,7 @@ local JModInventoryMenu = function(PlyModel, itemTable)
 		Ply = PlyModel
 		PlyModel = Ply:GetModel()
 	end--]]
+	Ply.EZarmor = Ply.EZarmor or JMod.DEFAULT_ARMOR
 	local weight = (Ply.EZarmor) and (Ply.EZarmor.totalWeight) or 0
 	if itemTable then
 		Ply.JModInv = itemTable

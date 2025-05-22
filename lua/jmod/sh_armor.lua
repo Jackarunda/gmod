@@ -1,5 +1,18 @@
 ﻿player_manager.AddValidModel("JMod_HazMat", "models/bloocobalt/splinter cell/chemsuit_cod.mdl")
 player_manager.AddValidHands("JMod_HazMat", "models/bloocobalt/splinter cell/chemsuit_v.mdl", 0, "00000000")
+
+-- default armor data
+JMod.DEFAULT_ARMOR = {
+	items = {},
+	speedFrac = nil,
+	effects = {},
+	mskmat = nil,
+	sndlop = nil,
+	suited = false,
+	bodygroups = nil,
+	totalWeight = 0
+}
+
 --[[ ArmorSlots
 
 	-- if damage is locational (bullets):

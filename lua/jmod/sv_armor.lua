@@ -21,13 +21,14 @@ local function IsDamageOneOfTypes(dmg, types)
 end
 
 function JMod.EZarmorSync(ply)
-	if not ply.EZarmor then return end
+	if not ply.EZarmor then ply.EZarmor = table.FullCopy(JMod.DEFAULT_ARMOR) end
 	ply.EZarmor.effects = {}
 	ply.EZarmor.mskmats = {}
 	ply.EZarmor.sndlop = nil
 	ply.EZarmor.blackvision = nil
 
 	for id, item in pairs(ply.EZarmor.items) do
+		if not (item.name and JMod.ArmorTable[item.name]) then continue end
 		local ArmorInfo = table.FullCopy(JMod.ArmorTable[item.name])
 
 		if item.tgl and ArmorInfo.tgl then
@@ -392,7 +393,6 @@ end
 
 function JMod.CalcSpeed(ply)
 	local Walk, Run, TotalWeight = ply.EZoriginalWalkSpeed or 200, ply.EZoriginalRunSpeed or 400, 0
-	local Phys = ply:GetPhysicsObject()
 
 	for k, v in pairs(ply.EZarmor.items) do
 		local ArmorInfo = JMod.ArmorTable[v.name]
@@ -427,8 +427,12 @@ hook.Add("PlayerFootstep", "JMOD_PlayerFootstep", function(ply, pos, foot, snd, 
 end)
 
 function JMod.RemoveArmorByID(ply, ID, broken)
+	if not ply.EZarmor then return end
+
 	local Info = ply.EZarmor.items[ID]
-	if not Info then return end
+
+	if not Info then print("JMod.RemoveArmorByID: no info for " .. tostring(ID)) return end
+	
 	local Specs = JMod.ArmorTable[Info.name]
 
 	if Specs.eff and Specs.eff.weapon then
@@ -562,6 +566,7 @@ function JMod.SetPlayerModel(ply, mod)
 end
 
 function JMod.EZ_Equip_Armor(ply, nameOrEnt)
+	ply.EZarmor = ply.EZarmor or table.FullCopy(JMod.DEFAULT_ARMOR)
 	local NewArmorName = nameOrEnt
 	local NewArmorID, NewArmorDurability, NewArmorColor, NewArmorSpecs, NewArmorCharges
 
@@ -578,6 +583,9 @@ function JMod.EZ_Equip_Armor(ply, nameOrEnt)
 		end
 	else
 		NewArmorSpecs = JMod.ArmorTable[NewArmorName]
+
+		if not NewArmorSpecs then print("JMOD: Invalid armor name!!!") return end
+
 		NewArmorID = JMod.GenerateGUID()
 		NewArmorColor = Color(128, 128, 128)
 		NewArmorDurability = NewArmorSpecs.dur
