@@ -356,7 +356,7 @@ end
 net.Receive(
     "JMod_ConfigUI",
     function(dataLength)
-        data = util.JSONToTable(util.Decompress(net.ReadData(dataLength)))
+        data = util.JSONToTable(util.Decompress(net.ReadData(dataLength / 8)))
         local config = data
         local catBlacklist = {"Craftables", "Note", "Info"}
         local categories = {}

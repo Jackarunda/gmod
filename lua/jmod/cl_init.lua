@@ -457,7 +457,7 @@ end)
 net.Receive("JMod_LuaConfigSync", function(dataLength)
 	JMod.Config = JMod.Config or {}
 	JMod.Config.RadioSpecs = JMod.Config.RadioSpecs or {}
-	local Payload = net.ReadData(dataLength)
+	local Payload = net.ReadData(dataLength / 8)
 	Payload = util.JSONToTable(util.Decompress(Payload))
 	local SentCrafting = Payload.Craftables and istable(Payload.Craftables)
 
