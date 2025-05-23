@@ -198,7 +198,7 @@ if SERVER then
 		end
 
 		if tr and tr.Hit then
-			if self.Burnin then
+			if self.Burnin and IsValid(tr.Entity) then
 				local Mul = self.DamageMul
 				local Dam = DamageInfo()
 				Dam:SetDamageType(DMG_BURN)
@@ -222,8 +222,7 @@ if SERVER then
 				Haz:Spawn()
 				Haz:Activate()
 				
-
-				if not tr.Entity:IsWorld() then
+				if IsValid(tr.Entity) then
 					Haz:SetParent(tr.Entity)
 				end
 			end
