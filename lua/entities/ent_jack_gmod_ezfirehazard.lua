@@ -119,12 +119,13 @@ if SERVER then
 				local Fraction = self.Intensity / (self.MaxIntensity * 1.5)
 				local Par, Att, Infl = self:GetParent(), JMod.GetEZowner(self), self
 				local Water = self:WaterLevel()
+				local ValidParent = IsValid(Par)
 
 				if not IsValid(Att) then
 					Att = Infl
 				end
 
-				if IsValid(Par) then 
+				if ValidParent then 
 					if Par:IsPlayer() and not(Par:Alive()) then
 						self:Remove()
 
@@ -165,7 +166,7 @@ if SERVER then
 				for k, v in pairs(ents.FindInSphere(Pos, ActualRange)) do
 					local TheirPos = v:GetPos()
 
-					if (v:GetClass() == "ent_jack_gmod_ezfirehazard") and (v ~= self) and JMod.ClearLoS(self, v) then
+					if (v:GetClass() == "ent_jack_gmod_ezfirehazard") and v.Burnin and (v ~= self) and JMod.ClearLoS(self, v) then
 						Pos = self:GetPos()
 						FireNearby = v.GetHighVisuals and v:GetHighVisuals() or false
 						if (TheirPos:Distance(Pos) < self.Range * 0.5) then
@@ -178,13 +179,21 @@ if SERVER then
 								self.Intensity = self.Intensity + Taken
 								--v.Intensity = TheirIntensity - Taken
 								v:Remove()
-								if not IsValid(Par) then
+								if not ValidParent then
 									self:SetPos(Pos + (TheirPos - Pos) * 0.5)
 								end
 
 								break
-							elseif not IsValid(Par) then
+							elseif not ValidParent then
 								DirToMove = DirToMove + (Pos - TheirPos)
+								local PlaceToGo = Pos + ((DirToMove):GetNormalized() + Vector(0, 0, .1)) * ActualRange * .25
+								local MoveTr = util.TraceLine({
+									start = Pos, 
+									endpos = PlaceToGo, 
+									filter = self,
+									mask = MASK_SHOT
+								})
+								self:SetPos(MoveTr.HitPos)
 							end
 						end
 					elseif v.JModHighlyFlammableFunc then
@@ -204,16 +213,7 @@ if SERVER then
 					end
 				end
 
-				if FireNearby then
-					local PlaceToGo = Pos + ((DirToMove):GetNormalized() + Vector(0, 0, .1)) * ActualRange * .25
-					local MoveTr = util.TraceLine({
-						start = Pos, 
-						endpos = PlaceToGo, 
-						filter = self,
-						mask = MASK_SHOT
-					})
-					self:SetPos(MoveTr.HitPos)
-				else
+				if not FireNearby then
 					self.HighVisuals = true
 					self:SetHighVisuals(true)
 				end
