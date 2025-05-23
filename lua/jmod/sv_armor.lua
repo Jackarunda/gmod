@@ -431,7 +431,7 @@ function JMod.RemoveArmorByID(ply, ID, broken)
 
 	local Info = ply.EZarmor.items[ID]
 
-	if not Info then print("JMod.RemoveArmorByID: no info for " .. tostring(ID)) return end
+	if not Info then print("JMod.RemoveArmorByID: no info for ID " .. tostring(ID)) return end
 	
 	local Specs = JMod.ArmorTable[Info.name]
 
@@ -583,9 +583,6 @@ function JMod.EZ_Equip_Armor(ply, nameOrEnt)
 		end
 	else
 		NewArmorSpecs = JMod.ArmorTable[NewArmorName]
-
-		if not NewArmorSpecs then print("JMOD: Invalid armor name!!!") return end
-
 		NewArmorID = JMod.GenerateGUID()
 		NewArmorColor = Color(128, 128, 128)
 		NewArmorDurability = NewArmorSpecs.dur
