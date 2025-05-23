@@ -138,7 +138,7 @@ if SERVER then
 						self:SetParent(FireTracy.Entity)
 					end
 				else
-					local FireTracy = util.TraceLine({start = Pos + Vector(0, 0, 10), endpos = Pos + Vector(0, 0, -30), filter = self})
+					local FireTracy = util.TraceLine({start = Pos + Vector(0, 0, 10), endpos = Pos + Vector(0, 0, -100), filter = self})
 					self:SetPos(FireTracy.HitPos)
 
 					if IsValid(FireTracy.Entity) then
@@ -152,6 +152,7 @@ if SERVER then
 				end
 
 				local FireNearby = false
+				local DirToMove = Vector(0, 0, 0)
 				local ActualRange = math.min(self.Range * Fraction, self.Range)
 				self.Power = math.max(Fraction * 10, 5)
 				-- Just doin it here instead of reseting it every time
@@ -179,30 +180,19 @@ if SERVER then
 								v:Remove()
 								if not IsValid(Par) then
 									self:SetPos(Pos + (TheirPos - Pos) * 0.5)
-									--debugoverlay.Cross(self:GetPos(), 5, 2, Color(255, 0, 0), true)
 								end
 
 								break
 							elseif not IsValid(Par) then
-								local PlaceToGo = Pos - (TheirPos - Pos) * 0.75 + VectorRand()
-								local MoveTr = util.TraceLine({
-									starpos = Pos, 
-									endpos = PlaceToGo, 
-									filter = self,
-									mask = MASK_SHOT
-								})
-								--debugoverlay.Line(Pos, PlaceToGo, 2, Color(0, 255, 0), true)
-								self:SetPos(MoveTr.HitPos)
-
-								break
+								DirToMove = DirToMove + (Pos - TheirPos)
 							end
 						end
-					elseif v.JModHighlyFlammableFunc and JMod.VisCheck(Pos, v, self) then
+					elseif v.JModHighlyFlammableFunc then
 						JMod.SetEZowner(v, self.EZowner)
 						local Func = v[v.JModHighlyFlammableFunc]
 						Func(v)
 					elseif not DamageBlacklist[v:GetClass()] and IsValid(v:GetPhysicsObject()) and JMod.VisCheck(Pos, v, self) then
-						local DistanceFactor = math.max( 1 - ( Pos:Distance( TheirPos ) / ActualRange ), 0 ) ^ 2
+						local DistanceFactor = math.max(1 - (Pos:Distance(TheirPos) / ActualRange), 0) ^ 2
 						FireDam:SetDamage(1 + (self.Power * DistanceFactor * 2))
 						v:TakeDamageInfo(FireDam)
 
@@ -214,7 +204,16 @@ if SERVER then
 					end
 				end
 
-				if not FireNearby then
+				if FireNearby then
+					local PlaceToGo = Pos + ((DirToMove):GetNormalized() + Vector(0, 0, .1)) * ActualRange * .25
+					local MoveTr = util.TraceLine({
+						start = Pos, 
+						endpos = PlaceToGo, 
+						filter = self,
+						mask = MASK_SHOT
+					})
+					self:SetPos(MoveTr.HitPos)
+				else
 					self.HighVisuals = true
 					self:SetHighVisuals(true)
 				end
