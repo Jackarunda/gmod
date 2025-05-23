@@ -493,11 +493,45 @@ hook.Add("JMod_RadioDelivery","jackatest",function(owner,radio,package,tiem,pos)
 	return 4,pos
 end)
 --]]
+
+local function TryFindSky(ent)
+	local TestPos = ent.GetShootPos and ent:GetShootPos() or ent:LocalToWorld(Vector(0, 0, 45))
+
+	for i = 1, 10 do
+		local Dir = ent:LocalToWorldAngles(Angle(-90 + i * 9, 0, 0)):Forward()
+
+		--debugoverlay.Line(TestPos, TestPos + Dir * 9e9, 2, Color(0, 89, 255), true)
+		local HitSky = util.TraceLine({
+			start = TestPos,
+			endpos = TestPos + Dir * 9e9,
+			filter = {ent},
+			mask = MASK_OPAQUE
+		}).HitSky
+
+		if HitSky then return true end
+	end
+
+	return false
+end
+
 local function StartDelivery(pkg, transceiver, id, bff, ply)
 	local Station = JMod.EZ_RADIO_STATIONS[id]
 	Station.lastCaller = transceiver
 	local Time = CurTime()
-	local DeliveryTime, Pos = math.ceil(JMod.Config.RadioSpecs.DeliveryTimeMult * math.Rand(30, 60)), ply:GetPos()
+	local DeliveryTime, Pos = math.ceil(JMod.Config.RadioSpecs.DeliveryTimeMult * math.Rand(30, 60)), transceiver:GetPos()
+	local PlyPos = ply:GetPos()
+	-- Check to see if the player or the transceiver has a better drop position
+	--print(TryFindSky(ply))
+	for i = 0, 20 do
+		local RandVec = VectorRand()
+		RandVec.z = 0
+		local Dir = (vector_up + RandVec):GetNormalized()
+		local TrResult = util.QuickTrace(PlyPos, Dir * 9e9, {ply, transceiver})
+		if TrResult.HitSky then
+			Pos = PlyPos
+			break
+		end
+	end
 	local newTime, newPos = hook.Run("JMod_RadioDelivery", ply, transceiver, pkg, DeliveryTime, Pos)
 	DeliveryTime = newTime or DeliveryTime
 	Pos = newPos or Pos
