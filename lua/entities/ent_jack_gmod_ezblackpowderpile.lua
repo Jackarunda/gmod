@@ -46,7 +46,66 @@ if SERVER then
 		end
 	end
 
+	local HighChanceTable = {
+		[DMG_BLAST] = true,
+		[DMG_BURN] = true,
+		[DMG_BLAST_SURFACE] = true,
+		[DMG_ACID] = true,
+		[DMG_DISSOLVE] = true,
+		[DMG_SHOCK] = true,
+		[DMG_PLASMA] = true
+	}
+
+	local LowChanceTable = {
+		[DMG_BULLET] = true,
+		[DMG_BUCKSHOT] = true,
+		[DMG_AIRBOAT] = true,
+		[DMG_SLOWBURN] = true
+	}
+
 	function ENT:OnTakeDamage(dmginfo)
+		if self.Exploded then return end
+		if dmginfo:GetInflictor() == self then return end
+		self:TakePhysicsDamage(dmginfo)
+		local Dmg = dmginfo:GetDamage()
+
+		if Dmg >= 5 then
+			-- Check the damage type to see which table to use
+			local LowDetChance, HighDetChance = 1000, 1000
+			local IsHighChance = false
+
+			for k, v in pairs(HighChanceTable) do
+				if dmginfo:IsDamageType(k) then
+					LowDetChance = 5
+					HighDetChance = 30
+					IsHighChance = true
+
+					break
+				end
+			end
+
+			if not IsHighChance then
+				for k, v in pairs(LowChanceTable) do
+					if dmginfo:IsDamageType(k) then
+						LowDetChance = 5
+						HighDetChance = 30
+	
+						break
+					end
+				end
+			end
+			
+			if JMod.LinCh(Dmg, LowDetChance, HighDetChance) then
+				timer.Simple(0.01, function()
+					if IsValid(self) then
+						self:Arm()
+					end
+				end)
+			end
+		end
+	end
+
+	--[[function ENT:OnTakeDamage(dmginfo)
 		if self.Ignited then return end
 
 		if dmginfo:IsDamageType(DMG_BLAST) then
@@ -59,7 +118,7 @@ if SERVER then
 			JMod.SetEZowner(self, dmginfo:GetAttacker())
 			self:Arm()
 		end
-	end
+	end--]]
 
 	function ENT:Use(activator, activatorAgain, onOff)
 		local Dude = activator or activatorAgain
