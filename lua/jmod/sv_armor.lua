@@ -525,6 +525,9 @@ function JMod.RemoveArmorByID(ply, ID, broken)
 	end
 
 	hook.Run("JMod_ArmorRemoved", ply, Info, Specs, Ent, broken)
+	
+	JMod.CalcSpeed(ply)
+	JMod.EZarmorSync(ply)
 
 	return Ent
 end
