@@ -222,7 +222,7 @@ hook.Add("PlayerSay", "JMod_PLAYERSAY", function(ply, txt)
 	end
 
 	for k, v in pairs(ents.FindInSphere(ply:GetPos(), 150)) do
-		if v.EZreceiveSpeech and (v.GetState and v:GetState() == JMod.EZ_STATION_STATE_READY) then
+		if v.EZreceiveSpeech then
 			if v:EZreceiveSpeech(ply, txt) then return "" end -- hide the player's radio chatter from the server
 		end
 	end
@@ -245,7 +245,8 @@ hook.Add("PlayerSay", "JMod_PLAYERSAY", function(ply, txt)
 		
 		for _, v in ipairs(FindEZradios()) do
 			if v:UserIsAuthorized(ply) and (not(bestradio) or (bestradio:GetPos():DistToSqr(ply:GetPos()) > v:GetPos():DistToSqr(ply:GetPos()))) then
-				if (v.GetState and v:GetState() == JMod.EZ_STATION_STATE_READY) then
+				local RadioState = bestradio and bestradio:GetState() or 4
+				if (v.GetState and v:GetState() <= RadioState) then
 					bestradio = v
 				end
 			end
@@ -543,9 +544,9 @@ local function StartDelivery(pkg, transceiver, id, bff, ply)
 	Station.notified = false
 	Station.nextNotifyTime = Time + (DeliveryTime - 5)
 	JMod.NotifyAllRadios(id) -- do a notify to update all radio states
-	if bff then return "ayo GOOD COPY homie, we sendin " .. GetArticle(pkg) .. " " .. pkg .. " box right over to " .. math.Round(Pos.x) .. " " .. math.Round(Pos.y) .. " " .. math.Round(Pos.z) .. " in prolly like " .. DeliveryTime .. " seconds" end
+	if bff then return "ayo GOOD COPY homie, we sendin " .. GetArticle(pkg) .. " " .. pkg .. " box right over to " .. math.Round(Pos.x) .. " " .. math.Round(Pos.y) .. " " .. math.Round(Pos.z) .. " in prolly like " .. GetTimeString(DeliveryTime) end
 
-	return "roger wilco, sending " .. GetArticle(pkg) .. " " .. pkg .. " package to coordinates " .. math.Round(Pos.x) .. ", " .. math.Round(Pos.z) .. "; ETA " .. DeliveryTime .. " seconds"
+	return "roger wilco, sending " .. GetArticle(pkg) .. " " .. pkg .. " package to coordinates " .. math.Round(Pos.x) .. ", " .. math.Round(Pos.z) .. "; ETA " .. GetTimeString(DeliveryTime)
 end
 
 function JMod.EZradioRequest(transceiver, id, ply, pkg, bff)
@@ -557,13 +558,15 @@ function JMod.EZradioRequest(transceiver, id, ply, pkg, bff)
 	if override == false then return msg or "negative on that request." end
 
 	if Station.state == JMod.EZ_STATION_STATE_DELIVERING then
-		if bff then return "no can do bro, we deliverin somethin else" end
+		local DeliveryTime = (Station.nextDeliveryTime - Time) * math.Rand(.8, 1.2)
+		if bff then return "no can do bro, we deliverin somethin else. Give us " .. GetTimeString(DeliveryTime) .. " yea?" end
 
-		return "negative on that request, we're currently delivering another package"
+		return "negative on that request, we're currently delivering another package; ETA " .. GetTimeString(DeliveryTime)
 	elseif Station.state == JMod.EZ_STATION_STATE_BUSY then
-		if bff then return "nah fam we ain't ready yet tryagin l8r aight" end
+		local ReadyTime = (Station.nextReadyTime - Time)
+		if bff then return "nah fam we ain't ready yet try agin in " .. GetTimeString(ReadyTime) .. " alr?" end
 
-		return "negative on that request, the delivery team isn't currently on station"
+		return "negative on that request, the delivery team will be back in " .. GetTimeString(ReadyTime) .. "."
 	elseif Station.state == JMod.EZ_STATION_STATE_READY then
 		if table.HasValue(JMod.Config.RadioSpecs.RestrictedPackages, pkg) then
 			if not JMod.Config.RadioSpecs.RestrictedPackagesAllowed then
@@ -610,16 +613,18 @@ function JMod.EZradioStatus(transceiver, id, ply, bff)
 	transceiver.BFFd = bff
 
 	if Station.state == JMod.EZ_STATION_STATE_DELIVERING then
-		Msg = "this outpost is currently delivering a package"
+		local DeliveryTime = (Station.nextDeliveryTime - Time) * math.Rand(.9, 1.1)
+		Msg = "this outpost is currently delivering a package; ETA " .. GetTimeString(DeliveryTime) .. "."
 
 		if bff then
-			Msg = "hey we gettin somethin fo someone else righ now"
+			Msg = "hey we gettin somethin fo someone else righ now in about " .. GetTimeString(DeliveryTime)
 		end
 	elseif Station.state == JMod.EZ_STATION_STATE_BUSY then
-		Msg = "this outpost is currently preparing for deliveries"
+		local ReadyTime = (Station.nextReadyTime - Time)
+		Msg = "this outpost is currently preparing for deliveries, check again in " .. GetTimeString(ReadyTime) .. "."
 
 		if bff then
-			Msg = "hey homie we pretty busy out here right now jus hol up"
+			Msg = "hey homie we pretty busy out here right now jus hol up for about " .. GetTimeString(ReadyTime) .. "."
 		end
 	elseif Station.state == JMod.EZ_STATION_STATE_READY then
 		Msg = "this outpost is ready to accept delivery missions"
