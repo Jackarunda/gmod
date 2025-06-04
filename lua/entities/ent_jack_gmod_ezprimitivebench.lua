@@ -387,7 +387,7 @@ if(SERVER)then
 
 		local EnoughStuff, StuffLeft = JMod.HaveResourcesToPerformTask(nil,200,ItemInfo.craftingReqs,self,nil,(not(ItemInfo.noRequirementScaling) and self.ResourceReqMult) or 1)
 		if(EnoughStuff)then
-			local override, msg=hook.Run("JMod_CanWorkbenchBuild", ply, workbench, itemName)
+			local override, msg=hook.Run("JMod_CanWorkbenchBuild", ply, self, itemName)
 			if override == false then
 				ply:PrintMessage(HUD_PRINTCENTER,msg or "cannot build")
 				return
