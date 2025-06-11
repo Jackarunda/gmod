@@ -1521,7 +1521,7 @@ if SERVER then
 						local Mins, Maxs = Loot:GetCollisionBounds()
 						local BBVec = Maxs - Mins
 						local SpawnHeight = math.max(BBVec.x, BBVec.y, BBVec.z)
-						Loot:SetPos(PosSetTr.HitPos + Vector(0, 0, SpawnHeight * 1.5))
+						Loot:SetPos(PosSetTr.HitPos + Vector(0, 0, SpawnHeight * 1.5 + 20))
 						Loot:SetAngles(AngleRand())
 						Loot:Spawn()
 						Loot:Activate()
