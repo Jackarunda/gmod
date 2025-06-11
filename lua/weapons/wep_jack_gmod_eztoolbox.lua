@@ -543,7 +543,7 @@ function SWEP:PrimaryAttack()
 						local CurAmt = Ent.UpgradeProgress[resourceType] or 0
 
 						if CurAmt < requiredAmt then
-							local ResourceContainer = JMod.FindResourceContainer(resourceType, UpgradeRate, nil, nil, self)
+							local ResourceContainer = JMod.FindResourceContainer(resourceType, 1, nil, nil, self)
 
 							if ResourceContainer then
 								self:UpgradeEntWithResource(Ent, ResourceContainer, UpgradeRate, resourceType)
