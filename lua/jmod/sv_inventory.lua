@@ -631,6 +631,7 @@ end
 function JMod.EZ_Open_Inventory(ply)
 	JMod.Hint(ply, "scrounge")
 	JMod.UpdateInv(ply)
+	JMod.EZarmorSync(ply)
 	net.Start("JMod_Inventory")
 		net.WriteString(ply:GetModel())
 		net.WriteTable(ply.JModInv)

@@ -188,7 +188,20 @@ end)
 
 net.Receive("JMod_EZarmorSync", function()
 	local ply = net.ReadEntity()
-	ply.EZarmor = net.ReadTable()
+	local IsDamageUpdate = net.ReadBool()
+	if IsDamageUpdate then
+		local ArmorID = net.ReadString()
+		local NewDurability = net.ReadFloat()
+		if not ply.EZarmor then ply.EZarmor = table.FullCopy(JMod.DEFAULT_ARMOR) end
+		for id, armorData in pairs(ply.EZarmor.items) do
+			if ArmorID == id then
+				armorData.dur = NewDurability
+				return
+			end
+		end
+	else
+		ply.EZarmor = net.ReadTable()
+	end
 
 	if ply.EZarmorModels then
 		for k, v in pairs(ply.EZarmorModels) do

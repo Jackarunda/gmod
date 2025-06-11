@@ -77,6 +77,7 @@ function JMod.EZarmorSync(ply)
 
 	net.Start("JMod_EZarmorSync")
 		net.WriteEntity(ply)
+		net.WriteBool(false)
 		net.WriteTable(ply.EZarmor)
 	net.Broadcast()
 end
@@ -163,7 +164,7 @@ local function GetProtectionFromSlot(ply, slot, dmg, dmgAmt, protectionMul, shou
 									end
 
 									armorData.dur = armorData.dur - ArmorDmgAmt
-
+									
 									if armorData.dur < ArmorInfo.dur * .25 then
 										JMod.EZarmorWarning(ply, "armor piece is almost destroyed!")
 									end
@@ -179,6 +180,13 @@ local function GetProtectionFromSlot(ply, slot, dmg, dmgAmt, protectionMul, shou
 										Protection = 0
 									end
 								end
+
+								net.Start("JMod_EZarmorSync")
+									net.WriteEntity(ply)
+									net.WriteBool(true)
+									net.WriteString(id)
+									net.WriteFloat(armorData.dur)
+								net.Send(ply)
 							end
 
 							break
