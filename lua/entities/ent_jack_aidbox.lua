@@ -107,8 +107,8 @@ if SERVER then
 				Yay.SpawnFull = true
 			end
 			Yay:Spawn()
+			hook.Run("JMod_OnObjectSpawned", owner, Yay)
 			Yay:Activate()
-
 			if resourceAmt then
 				Yay:SetResource(resourceAmt)
 			end

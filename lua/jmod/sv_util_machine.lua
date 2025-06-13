@@ -605,6 +605,7 @@ function JMod.BuildRecipe(results, ply, Pos, Ang, skinNum)
 			JMod.SetEZowner(Ent, ply)
 			Ent:SetCreator(ply)
 			Ent:Spawn()
+			hook.Run("JMod_OnRecipeCrafted", ply, nil, Ent)
 			Ent:Activate()
 			if (results[3]) then
 				Ent:SetEZsupplies(Ent.EZsupplies, results[3])
