@@ -609,6 +609,7 @@ function JMod.BuildRecipe(results, ply, Pos, Ang, skinNum)
 			if (results[3]) then
 				Ent:SetEZsupplies(Ent.EZsupplies, results[3])
 			end
+			hook.Run("JMod_OnRecipeCrafted", ply, nil, Ent)
 		end
 	else
 		local StringParts=string.Explode(" ", results)
@@ -635,6 +636,7 @@ function JMod.BuildRecipe(results, ply, Pos, Ang, skinNum)
 					Ent:SetSkin(skinNum)
 				end
 			end
+			hook.Run("JMod_OnRecipeCrafted", ply, nil, Ent)
 		else
 			local Ent = ents.Create(results)
 			Ent:SetPos(Pos)
@@ -643,6 +645,7 @@ function JMod.BuildRecipe(results, ply, Pos, Ang, skinNum)
 			Ent:SetCreator(ply)
 			Ent:Spawn()
 			Ent:Activate()
+			hook.Run("JMod_OnRecipeCrafted", ply, nil, Ent)
 			JMod.Hint(ply, results)
 		end
 	end
