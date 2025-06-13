@@ -440,8 +440,8 @@ function SWEP:BuildItem(selectedBuild)
 							JMod.SetEZowner(Ent, self.Owner)
 							Ent:SetCreator(self.Owner)
 							Ent:Spawn()
-							hook.Run("JMod_OnRecipeCrafted", self.Owner, self, Ent)
 							Ent:Activate()
+							hook.Run("JMod_OnRecipeCrafted", self.Owner, self, Ent)
 							if BuildInfo.skin then
 								if istable(BuildInfo.skin) then
 									Ent:SetSkin(table.Random(BuildInfo.skin))

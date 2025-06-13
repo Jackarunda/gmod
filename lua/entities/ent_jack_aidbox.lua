@@ -107,11 +107,11 @@ if SERVER then
 				Yay.SpawnFull = true
 			end
 			Yay:Spawn()
-			hook.Run("JMod_OnObjectSpawned", owner, Yay)
 			Yay:Activate()
 			if resourceAmt then
 				Yay:SetResource(resourceAmt)
 			end
+			hook.Run("JMod_OnObjectSpawned", owner, Yay)
 
 			if IsValid(Yay) then
 				local YayPhys = Yay:GetPhysicsObject()
