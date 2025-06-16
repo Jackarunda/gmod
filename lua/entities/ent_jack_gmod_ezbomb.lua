@@ -165,14 +165,14 @@ if SERVER then
 				if WorldTr.HitWorld and not(Constrained) and (AngleDiff > .75) and (OurSpeed * Mass > Hardness * 1000000) then
 					DetTime = math.Rand(.5, 2)
 
+					local Eff = EffectData()
+					Eff:SetOrigin(WorldTr.HitPos)
+					Eff:SetScale(10)
+					Eff:SetNormal(WorldTr.HitNormal)
+					util.Effect("eff_jack_sminebury", Eff, true, true)
+					--
 					timer.Simple(0.1, function()
 						if IsValid(self) then
-							local Eff = EffectData()
-							Eff:SetOrigin(WorldTr.HitPos)
-							Eff:SetScale(10)
-							Eff:SetNormal(WorldTr.HitNormal)
-							util.Effect("eff_jack_sminebury", Eff, true, true)
-							--
 							local OldAngle = self:GetAngles()
 							local BuryAngle = data.OurOldVelocity:Angle()
 							BuryAngle:RotateAroundAxis(BuryAngle:Right(), self.JModPreferredCarryAngles.p)
