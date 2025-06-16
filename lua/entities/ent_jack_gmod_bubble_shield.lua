@@ -37,6 +37,7 @@ hook.Add("ShouldCollide", "JMOD_SHIELDCOLLISION", function(ent1, ent2)
 end)
 
 function ENT:ShouldNotCollide(ent)
+	if not IsValid(ent) then return true end
 	if ent:IsPlayer() then return true end
 	
 	local InsideShield = ent:GetPos():DistToSqr(self:GetPos()) < self.ShieldRadiusSqr
