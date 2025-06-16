@@ -272,7 +272,7 @@ elseif(CLIENT)then
 		---
 		self:DrawModel()
 		---
-		if (self.BaseGear) then
+		if IsValid(self.BaseGear) then
 			self.BaseGear:SetMaterial(JMod.EZ_GRADE_MATS[Grade]:GetName())
 			JMod.RenderModel(self.BaseGear, BasePos - Up * 100, SelfAng)
 		end
