@@ -1,8 +1,8 @@
 ﻿-- this causes an object to rotate to point forward while moving, like a dart
 function JMod.AeroDrag(ent, forward, mult, spdReq)
-	--if constraint.HasConstraints(ent) then return end
 	if constraint.FindConstraint(ent, "Weld") then return end
 	if ent:IsPlayerHolding() then return end
+
 	local Phys = ent:GetPhysicsObject()
 	if not IsValid(Phys) then return end
 	local Vel = Phys:GetVelocity()
@@ -14,11 +14,14 @@ function JMod.AeroDrag(ent, forward, mult, spdReq)
 
 	if Spd < spdReq then return end
 	mult = mult or 1
-	local Pos, Mass = Phys:LocalToWorld(Phys:GetMassCenter()), Phys:GetMass()
+	ent.JMod_PhysMassCenter = ent.JMod_PhysMassCenter or Phys:GetMassCenter()
+	local Pos, Mass = Phys:LocalToWorld(ent.JMod_PhysMassCenter), Phys:GetMass()
 	Phys:ApplyForceOffset(Vel * Mass / 6 * mult, Pos + forward)
 	Phys:ApplyForceOffset(-Vel * Mass / 6 * mult, Pos - forward)
-	Phys:AddAngleVelocity(-Phys:GetAngleVelocity() * Mass / 1000)
-	ent.LastAreoDragAmount = mult
+	local AngVel = Phys:GetAngleVelocity()
+	Phys:AddAngleVelocity(-AngVel * Mass / 1000)
+
+	ent.JMod_LastAreoDragAmount = mult
 end
 
 -- this causes an object to rotate to point and fly to a point you give it
