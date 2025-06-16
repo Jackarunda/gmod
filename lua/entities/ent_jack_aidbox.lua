@@ -91,10 +91,59 @@ if SERVER then
 	function ENT:OnTakeDamage(dmginfo)
 		self:TakePhysicsDamage(dmginfo)
 	end
+	function ENT:Use(activator, caller)
+		--if true then return end
+		local Time = CurTime()
+		if not((activator.NextAidBoxOpenTime or 0) < Time) then activator:PrintMessage(HUD_PRINTCENTER, "No opening in rapid sucession") return end
+		activator.NextAidBoxOpenTime = Time + 2
+		local Pos = self:LocalToWorld(self:OBBCenter() + Vector(0, 0, 10))
+		--
+		
+		JMod.SpawnRadioContents(self.Contents or "ent_jack_gmod_ezeasteregg", Pos, activator)
+		--
+		local Up = self:GetUp()
+		local Right = self:GetRight()
+		local Forward = self:GetForward()
+		local Ang = self:GetAngles()
+		local AngLat = self:GetAngles()
+		AngLat:RotateAroundAxis(AngLat:Forward(), 90)
+		local AngLin = self:GetAngles()
+		AngLin:RotateAroundAxis(AngLin:Right(), 90)
+		self:MakeSide(Pos + Up * 15, Ang, Up)
+		self:MakeSide(Pos - Up * 15, Ang, -Up)
+		self:MakeSide(Pos + Right * 15, AngLat, Right)
+		self:MakeSide(Pos - Right * 15, AngLat, -Right)
+		self:MakeSide(Pos + Forward * 15, AngLin, Forward)
+		self:MakeSide(Pos - Forward * 15, AngLin, -Forward)
+		local Poof = EffectData()
+		Poof:SetOrigin(Pos)
+		Poof:SetScale(2)
+		util.Effect("eff_jack_aidopen", Poof, true, true)
+		local Snd = (self.Chrimsas and "snds_jack_gmod/rapid_present_unwrap.ogg") or "snd_jack_aidboxopen.ogg"
+		self:EmitSound(Snd, 75, 100)
 
+		if activator:IsPlayer() then
+			local Wep = activator:GetActiveWeapon()
+
+			if IsValid(Wep) then
+				Wep:SendWeaponAnim(ACT_VM_DRAW)
+			end
+
+			activator:ViewPunch(Angle(1, 0, 0))
+			activator:SetAnimation(PLAYER_ATTACK1)
+		end
+
+		local Snd = (self.Chrimsas and "snds_jack_gmod/merry_Christmas_group_shout.ogg") or "snd_jack_itemsget.ogg"
+
+		timer.Simple(2, function()
+			sound.Play(Snd, Pos, 75, 100)
+		end)
+		
+		self:Remove()
+	end
 	local function SpawnItem(itemClass, pos, owner, resourceAmt)
 		local ItemNameParts = string.Explode(" ", itemClass)
-
+		
 		if ItemNameParts and ItemNameParts[1] == "FUNC" then
 			if ItemNameParts[2] and JMod.LuaConfig.BuildFuncs[ItemNameParts[2]] then
 				JMod.LuaConfig.BuildFuncs[ItemNameParts[2]](owner, pos + Vector(0, 0, 5), Angle(0, 0, 0))
@@ -106,12 +155,14 @@ if SERVER then
 			if Yay.IsJackyEZmachine and JMod.Config.Machines.SpawnMachinesFull then
 				Yay.SpawnFull = true
 			end
+			Yay.pkg = pkg
+			Yay.pkgname = pkgname
 			Yay:Spawn()
 			Yay:Activate()
 			if resourceAmt then
 				Yay:SetResource(resourceAmt)
 			end
-			hook.Run("JMod_OnObjectSpawned", owner, Yay)
+			hook.Run("JMod_OnPackageObjectSpawned", owner, Yay)
 
 			if IsValid(Yay) then
 				local YayPhys = Yay:GetPhysicsObject()
@@ -181,55 +232,7 @@ if SERVER then
 		end
 	end
 
-	function ENT:Use(activator, caller)
-		--if true then return end
-		local Time = CurTime()
-		if not((activator.NextAidBoxOpenTime or 0) < Time) then activator:PrintMessage(HUD_PRINTCENTER, "No opening in rapid sucession") return end
-		activator.NextAidBoxOpenTime = Time + 2
-		local Pos = self:LocalToWorld(self:OBBCenter() + Vector(0, 0, 10))
-		--
-		JMod.SpawnRadioContents(self.Contents or "ent_jack_gmod_ezeasteregg", Pos, activator)
-		--
-		local Up = self:GetUp()
-		local Right = self:GetRight()
-		local Forward = self:GetForward()
-		local Ang = self:GetAngles()
-		local AngLat = self:GetAngles()
-		AngLat:RotateAroundAxis(AngLat:Forward(), 90)
-		local AngLin = self:GetAngles()
-		AngLin:RotateAroundAxis(AngLin:Right(), 90)
-		self:MakeSide(Pos + Up * 15, Ang, Up)
-		self:MakeSide(Pos - Up * 15, Ang, -Up)
-		self:MakeSide(Pos + Right * 15, AngLat, Right)
-		self:MakeSide(Pos - Right * 15, AngLat, -Right)
-		self:MakeSide(Pos + Forward * 15, AngLin, Forward)
-		self:MakeSide(Pos - Forward * 15, AngLin, -Forward)
-		local Poof = EffectData()
-		Poof:SetOrigin(Pos)
-		Poof:SetScale(2)
-		util.Effect("eff_jack_aidopen", Poof, true, true)
-		local Snd = (self.Chrimsas and "snds_jack_gmod/rapid_present_unwrap.ogg") or "snd_jack_aidboxopen.ogg"
-		self:EmitSound(Snd, 75, 100)
-
-		if activator:IsPlayer() then
-			local Wep = activator:GetActiveWeapon()
-
-			if IsValid(Wep) then
-				Wep:SendWeaponAnim(ACT_VM_DRAW)
-			end
-
-			activator:ViewPunch(Angle(1, 0, 0))
-			activator:SetAnimation(PLAYER_ATTACK1)
-		end
-
-		local Snd = (self.Chrimsas and "snds_jack_gmod/merry_Christmas_group_shout.ogg") or "snd_jack_itemsget.ogg"
-
-		timer.Simple(2, function()
-			sound.Play(Snd, Pos, 75, 100)
-		end)
-		
-		self:Remove()
-	end
+	
 
 	function ENT:MakeSide(pos, ang, dir)
 		local Side = ents.Create("prop_physics")
