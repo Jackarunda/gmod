@@ -458,30 +458,32 @@ if(SERVER)then
 	end
 
 	function ENT:TryLoadResource(typ, amt)
-		if (amt <= 0) then return 0 end
+		if amt <= 0 then return 0 end
+
 		local Time = CurTime()
 		if (self.NextRefillTime > Time) or (typ == "generic") then return 0 end
+		
 		for _, v in pairs(self.EZconsumes)do
-			if(typ == v)then
+			if typ == v then
 				local Accepted = 0
-				if(typ == JMod.EZ_RESOURCE_TYPES.POWER)then
+				if typ == JMod.EZ_RESOURCE_TYPES.POWER then
 					local Powa = self:GetElectricity()
 					local Missing = self.MaxElectricity - Powa
-					if(Missing <= 0)then return 0 end
+					if Missing <= 0 then return 0 end
 					Accepted = math.min(Missing, amt)
 					self:SetElectricity(Powa + Accepted)
 					self:EmitSound("snd_jack_turretbatteryload.ogg", 65, math.random(90, 110))
-				elseif(typ == JMod.EZ_RESOURCE_TYPES.MEDICALSUPPLIES)then
+				elseif typ == JMod.EZ_RESOURCE_TYPES.MEDICALSUPPLIES then
 					local Supps = self:GetSupplies()
 					local Missing = self.MaxSupplies - Supps
-					if(Missing <= 0)then return 0 end
+					if Missing <= 0 then return 0 end
 					--if(Missing<self.MaxSupplies*.1)then return 0 end
 					Accepted = math.min(Missing, amt)
 					self:SetSupplies(Supps + Accepted)
 					self:EmitSound("snd_jack_turretbatteryload.ogg", 65, math.random(90, 110)) -- TODO: new sound here
-				elseif(typ == JMod.EZ_RESOURCE_TYPES.BASICPARTS)then
+				elseif typ == JMod.EZ_RESOURCE_TYPES.BASICPARTS then
 					local Missing = self.MaxDurability - self.Durability
-					if(Missing <= 0)then return 0 end
+					if Missing <= 0 then return 0 end
 					Accepted = math.min(Missing / 3, amt)
 					local Broken = false
 					if self.Durability <= 0 then Broken = true end
@@ -493,64 +495,64 @@ if(SERVER)then
 						if Broken and self.OnRepair then self:OnRepair() end
 					end
 					self:SetNW2Float("EZdurability", self.Durability)
-				elseif(typ == JMod.EZ_RESOURCE_TYPES.GAS)then
+				elseif typ == JMod.EZ_RESOURCE_TYPES.GAS then
 					local Fool = self:GetGas()
 					local Missing = self.MaxGas - Fool
 					if(Missing <= 0)then return 0 end
 					--if(Missing < self.MaxGas * .1)then return 0 end
-					Accepted=math.min(Missing, amt)
+					Accepted = math.min(Missing, amt)
 					self:SetGas(Fool + Accepted)
 					self:EmitSound("snds_jack_gmod/gas_load.ogg", 65, math.random(90, 110))
-				elseif(typ == JMod.EZ_RESOURCE_TYPES.AMMO)then
+				elseif typ == JMod.EZ_RESOURCE_TYPES.AMMO then
 					local Ammo = self:GetAmmo()
 					local Missing = self.MaxAmmo - Ammo
 					if(Missing <= 1)then return 0 end
 					Accepted = math.min(Missing, amt)
 					self:SetAmmo(Ammo + Accepted)
 					self:EmitSound("snd_jack_turretammoload.ogg", 65, math.random(90, 110))
-				elseif(typ == JMod.EZ_RESOURCE_TYPES.MUNITIONS)then
+				elseif typ == JMod.EZ_RESOURCE_TYPES.MUNITIONS then
 					local Ammo = self:GetAmmo()
 					local Missing = self.MaxAmmo - Ammo
 					if(Missing <= 1)then return 0 end
 					Accepted = math.min(Missing, amt)
 					self:SetAmmo(Ammo + Accepted)
 					self:EmitSound("snd_jack_turretammoload.ogg", 65, math.random(90, 110))
-				elseif(typ == JMod.EZ_RESOURCE_TYPES.COOLANT)then
+				elseif typ == JMod.EZ_RESOURCE_TYPES.COOLANT then
 					local Kewl = self:GetCoolant()
 					local Missing = self.MaxCoolant - Kewl
 					if(Missing < 1)then return 0 end
 					Accepted=math.min(Missing,amt)
 					self:SetCoolant(Kewl+Accepted)
 					self:EmitSound("snds_jack_gmod/liquid_load.ogg", 65, math.random(90, 110))
-				elseif(typ == JMod.EZ_RESOURCE_TYPES.WATER)then
+				elseif typ == JMod.EZ_RESOURCE_TYPES.WATER then
 					local Aqua = self:GetWater()
 					local Missing = self.MaxWater - Aqua
 					if(Missing < 1)then return 0 end
 					Accepted=math.min(Missing,amt)
 					self:SetWater(Aqua+Accepted)
 					self:EmitSound("snds_jack_gmod/liquid_load.ogg", 65, math.random(90, 110))
-				elseif(typ == JMod.EZ_RESOURCE_TYPES.CHEMICALS)then
+				elseif typ == JMod.EZ_RESOURCE_TYPES.CHEMICALS then
 					local Chem = self:GetChemicals()
 					local Missing = self.MaxChemicals - Chem
 					if(Missing < 1)then return 0 end
 					Accepted=math.min(Missing,amt)
 					self:SetChemicals(Chem+Accepted)
 					self:EmitSound("snds_jack_gmod/liquid_load.ogg", 65, math.random(90, 110))
-				elseif(typ==JMod.EZ_RESOURCE_TYPES.OIL)then
+				elseif typ == JMod.EZ_RESOURCE_TYPES.OIL then
 					local Oil = self:GetOil()
 					local Missing = self.MaxOil - Oil
 					if(Missing < 1)then return 0 end
 					Accepted=math.min(Missing,amt)
 					self:SetOil(Oil+Accepted)
 					self:EmitSound("snds_jack_gmod/liquid_load.ogg", 65, math.random(90, 110))
-				elseif(typ == JMod.EZ_RESOURCE_TYPES.URANIUM)then
+				elseif typ == JMod.EZ_RESOURCE_TYPES.URANIUM then
 					local Uran = self:GetUranium()
 					local Missing = self.MaxUranium - Uran
 					if(Missing < 1)then return 0 end
 					Accepted=math.min(Missing,amt)
 					self:SetUranium(Uran+Accepted)
 					self:EmitSound("Boulder.ImpactSoft", 65, math.random(90, 110))
-				elseif(typ==JMod.EZ_RESOURCE_TYPES.FUEL)then
+				elseif typ == JMod.EZ_RESOURCE_TYPES.FUEL then
 					if (self.FlexFuels and table.HasValue(self.FlexFuels, typ)) then
 						local Powa = self:GetElectricity()
 						local Missing = self.MaxElectricity - Powa
@@ -566,7 +568,7 @@ if(SERVER)then
 						self:SetFuel(Fuel + Accepted)
 					end
 					self:EmitSound("snds_jack_gmod/liquid_load.ogg", 65, math.random(90, 110))
-				elseif(typ==JMod.EZ_RESOURCE_TYPES.COAL)then
+				elseif typ == JMod.EZ_RESOURCE_TYPES.COAL then
 					if (self.FlexFuels and table.HasValue(self.FlexFuels, typ)) then
 						local Powa = self:GetElectricity()
 						local Missing = self.MaxElectricity - Powa
@@ -582,7 +584,7 @@ if(SERVER)then
 						self:SetCoal(Coal + Accepted)
 					end
 					self:EmitSound("Boulder.ImpactSoft", 65, math.random(90, 110))
-				elseif(typ==JMod.EZ_RESOURCE_TYPES.WOOD)then
+				elseif typ == JMod.EZ_RESOURCE_TYPES.WOOD then
 					if (self.FlexFuels and table.HasValue(self.FlexFuels, typ)) then
 						local Powa = self:GetElectricity()
 						local Missing = self.MaxElectricity - Powa
@@ -598,7 +600,7 @@ if(SERVER)then
 						self:SetWood(Wood + Accepted)
 					end
 					self:EmitSound("Wood.ImpactSoft", 65, math.random(90, 110))
-				elseif (string.find(typ, " ore"))or(typ==JMod.EZ_RESOURCE_TYPES.SAND) then
+				elseif string.find(typ, " ore") or (typ == JMod.EZ_RESOURCE_TYPES.SAND) then
 					if(self.GetOreType and (self:GetOreType() == "generic" or typ == self:GetOreType())) then
 						self:SetOreType(typ)
 						local COre = self:GetOre()
@@ -611,9 +613,11 @@ if(SERVER)then
 				end
 				if self.ResourceLoaded then self:ResourceLoaded(typ, Accepted) end
 				self.NextRefillTime = Time + 1
+
 				return math.ceil(Accepted)
 			end
 		end
+
 		return 0
 	end
 
