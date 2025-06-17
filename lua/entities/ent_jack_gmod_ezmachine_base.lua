@@ -148,7 +148,7 @@ if(SERVER)then
 		--=== Apply changes and state things that shouldn't be overrideable below.====-
 
 		---
-		if self.SetupWire and istable(WireLib) then
+		if self.SetupWire and istable(WireLib) and not self.DuplicationInProgress then
 			self:SetupWire()
 		end
 		
@@ -346,117 +346,6 @@ if(SERVER)then
 		net.Send(dude)
 	end
 
-	function ENT:ConsumeElectricity(amt)
-		if not(self.GetElectricity)then return end
-		amt = (amt or .2)/(self.ElectricalEfficiency or 1)
-		local NewAmt = math.Clamp(self:GetElectricity() - amt, 0.0, self.MaxElectricity)
-		self:SetElectricity(NewAmt)
-		if(NewAmt <= 0 and self:GetState() > 0)then self:TurnOff() end
-	end
-
-	function ENT:DetermineDamageMultiplier(dmg)
-		local Mult = 1 / (self.Armor or 1)
-		if self.DamageModifierTable then
-			for typ, mul in pairs(self.DamageModifierTable)do
-				if(dmg:IsDamageType(typ))then Mult = Mult * mul break end
-			end
-		end
-		if(self.CustomDetermineDmgMult)then Mult = Mult * self:CustomDetermineDmgMult(dmg) end
-		return Mult
-	end
-
-	function ENT:OnTakeDamage(dmginfo)
-		if not(IsValid(self))then return end
-		self:TakePhysicsDamage(dmginfo)
-		--
-		local DmgMult = self:DetermineDamageMultiplier(dmginfo)
-		if(DmgMult <= .01)then return end
-		local Damage = dmginfo:GetDamage() * DmgMult
-		--jprint(Damage)
-		self.Durability = self.Durability - math.Round(Damage, 2)
-		self:SetNW2Float("EZdurability", self.Durability)
-
-		if(self.Durability <= 0)then self:Break(dmginfo) end
-		if(self.Durability <= (self.MaxDurability * -2))then self:Destroy(dmginfo) end
-	end
-
-	function ENT:Break(dmginfo)
-		if(self:GetState() == JMod.EZ_STATE_BROKEN)then return end
-		self:SetState(JMod.EZ_STATE_BROKEN)
-		self:EmitSound("snd_jack_turretbreak.ogg", 70, math.random(80, 120))
-		for i = 1, 20 do JMod.DamageSpark(self) end
-
-		local StartPoint, ToPoint, Spread, Scale, UpSpeed = self:LocalToWorld(self:OBBCenter()), nil, 2, 1, 10
-		local Force, GibNum = dmginfo:GetDamageForce(), math.min(JMod.Config.Machines.SupplyEffectMult * self:GetPhysicsObject():GetMass()/2000, 20)
-
-		if JMod.Config.Craftables[self.PrintName] then
-			for k, v in pairs(JMod.Config.Craftables[self.PrintName].craftingReqs) do
-				JMod.ResourceEffect(k, StartPoint, ToPoint, GibNum * (v / 5000), Spread, Scale, UpSpeed)
-			end
-		else
-			JMod.ResourceEffect(JMod.EZ_RESOURCE_TYPES.BASICPARTS, StartPoint, ToPoint, GibNum, Spread, Scale, UpSpeed)
-		end
-
-		if(self.Pod)then -- machines with seats
-			if(IsValid(self.Pod:GetDriver()))then
-				self.Pod:GetDriver():ExitVehicle()
-			end
-			self.Pod:Fire("lock","",0)
-		end
-
-		constraint.RemoveConstraints(self, "JModResourceCable")
-
-		if(self.OnBreak)then self:OnBreak() end
-	end
-
-	function ENT:Destroy(dmginfo)
-		if(self.Destroyed)then return end
-		self.Destroyed = true
-		self:EmitSound("snd_jack_turretbreak.ogg",70,math.random(80,120))
-		for i = 1, 20 do JMod.DamageSpark(self) end
-
-		local StartPoint, ToPoint, Spread, Scale, UpSpeed = self:LocalToWorld(self:OBBCenter()), nil, 2, 1, 10
-		local Force, GibNum = dmginfo:GetDamageForce(), math.min(JMod.Config.Machines.SupplyEffectMult * self:GetPhysicsObject():GetMass()/1000, 30)
-		if JMod.Config.Craftables[self.PrintName] then
-			for k, v in pairs(JMod.Config.Craftables[self.PrintName].craftingReqs) do
-				JMod.ResourceEffect(k, StartPoint, ToPoint, GibNum * (v / 800), Spread, Scale, UpSpeed)
-			end
-		else
-			JMod.ResourceEffect(JMod.EZ_RESOURCE_TYPES.BASICPARTS, StartPoint, ToPoint, GibNum, Spread, Scale, UpSpeed)
-		end
-
-		if(self.Pod)then -- machines with seats
-			if(IsValid(self.Pod:GetDriver()))then
-				self.Pod:GetDriver():ExitVehicle()
-			end
-		end
-		if self.ProduceResource then self:ProduceResource() end
-		if self.OnDestroy then self:OnDestroy(dmginfo) end
-		self:SetNoDraw(true)
-		self:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
-		SafeRemoveEntityDelayed(self, 2)
-	end
-
-	function ENT:SFX(str,absPath)
-		if(absPath)then
-			sound.Play(str,self:GetPos()+Vector(0,0,20)+VectorRand()*10,60,math.random(90,110))
-		else
-			sound.Play("snds_jack_gmod/"..str..".ogg",self:GetPos()+Vector(0,0,20)+VectorRand()*10,60,100)
-		end
-	end
-
-	function ENT:Whine(serious)
-		local Time=CurTime()
-		if(self.NextWhine<Time)then
-			self.NextWhine=Time+4
-			self:EmitSound("snds_jack_gmod/ezsentry_whine.ogg",70,100)
-			self:ConsumeElectricity(.05)
-		end
-	end
-
-	function ENT:OnRemove()
-	end
-
 	function ENT:TryLoadResource(typ, amt)
 		if amt <= 0 then return 0 end
 
@@ -621,6 +510,161 @@ if(SERVER)then
 		return 0
 	end
 
+	function ENT:ConsumeElectricity(amt)
+		if not(self.GetElectricity)then return end
+		amt = (amt or .2)/(self.ElectricalEfficiency or 1)
+		local NewAmt = math.Clamp(self:GetElectricity() - amt, 0.0, self.MaxElectricity)
+		self:SetElectricity(NewAmt)
+		if(NewAmt <= 0 and self:GetState() > 0)then self:TurnOff() end
+	end
+
+	function ENT:DetermineDamageMultiplier(dmg)
+		local Mult = 1 / (self.Armor or 1)
+		if self.DamageModifierTable then
+			for typ, mul in pairs(self.DamageModifierTable)do
+				if(dmg:IsDamageType(typ))then Mult = Mult * mul break end
+			end
+		end
+		if(self.CustomDetermineDmgMult)then Mult = Mult * self:CustomDetermineDmgMult(dmg) end
+		return Mult
+	end
+
+	function ENT:OnTakeDamage(dmginfo)
+		if not(IsValid(self))then return end
+		self:TakePhysicsDamage(dmginfo)
+		--
+		local DmgMult = self:DetermineDamageMultiplier(dmginfo)
+		if(DmgMult <= .01)then return end
+		local Damage = dmginfo:GetDamage() * DmgMult
+		--jprint(Damage)
+		self.Durability = self.Durability - math.Round(Damage, 2)
+		self:SetNW2Float("EZdurability", self.Durability)
+
+		if(self.Durability <= 0)then self:Break(dmginfo) end
+		if(self.Durability <= (self.MaxDurability * -2))then self:Destroy(dmginfo) end
+	end
+
+	function ENT:Break(dmginfo)
+		if(self:GetState() == JMod.EZ_STATE_BROKEN)then return end
+		self:SetState(JMod.EZ_STATE_BROKEN)
+		self:EmitSound("snd_jack_turretbreak.ogg", 70, math.random(80, 120))
+		for i = 1, 20 do JMod.DamageSpark(self) end
+
+		local StartPoint, ToPoint, Spread, Scale, UpSpeed = self:LocalToWorld(self:OBBCenter()), nil, 2, 1, 10
+		local Force, GibNum = dmginfo:GetDamageForce(), math.min(JMod.Config.Machines.SupplyEffectMult * self:GetPhysicsObject():GetMass()/2000, 20)
+
+		if JMod.Config.Craftables[self.PrintName] then
+			for k, v in pairs(JMod.Config.Craftables[self.PrintName].craftingReqs) do
+				JMod.ResourceEffect(k, StartPoint, ToPoint, GibNum * (v / 5000), Spread, Scale, UpSpeed)
+			end
+		else
+			JMod.ResourceEffect(JMod.EZ_RESOURCE_TYPES.BASICPARTS, StartPoint, ToPoint, GibNum, Spread, Scale, UpSpeed)
+		end
+
+		if(self.Pod)then -- machines with seats
+			if(IsValid(self.Pod:GetDriver()))then
+				self.Pod:GetDriver():ExitVehicle()
+			end
+			self.Pod:Fire("lock","",0)
+		end
+
+		constraint.RemoveConstraints(self, "JModResourceCable")
+
+		if(self.OnBreak)then self:OnBreak() end
+	end
+
+	function ENT:Destroy(dmginfo)
+		if(self.Destroyed)then return end
+		self.Destroyed = true
+		self:EmitSound("snd_jack_turretbreak.ogg",70,math.random(80,120))
+		for i = 1, 20 do JMod.DamageSpark(self) end
+
+		local StartPoint, ToPoint, Spread, Scale, UpSpeed = self:LocalToWorld(self:OBBCenter()), nil, 2, 1, 10
+		local Force, GibNum = dmginfo:GetDamageForce(), math.min(JMod.Config.Machines.SupplyEffectMult * self:GetPhysicsObject():GetMass()/1000, 30)
+		if JMod.Config.Craftables[self.PrintName] then
+			for k, v in pairs(JMod.Config.Craftables[self.PrintName].craftingReqs) do
+				JMod.ResourceEffect(k, StartPoint, ToPoint, GibNum * (v / 800), Spread, Scale, UpSpeed)
+			end
+		else
+			JMod.ResourceEffect(JMod.EZ_RESOURCE_TYPES.BASICPARTS, StartPoint, ToPoint, GibNum, Spread, Scale, UpSpeed)
+		end
+
+		if(self.Pod)then -- machines with seats
+			if(IsValid(self.Pod:GetDriver()))then
+				self.Pod:GetDriver():ExitVehicle()
+			end
+		end
+		if self.ProduceResource then self:ProduceResource() end
+		if self.OnDestroy then self:OnDestroy(dmginfo) end
+		self:SetNoDraw(true)
+		self:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
+		SafeRemoveEntityDelayed(self, 2)
+	end
+
+	function ENT:SFX(str,absPath)
+		if(absPath)then
+			sound.Play(str,self:GetPos()+Vector(0,0,20)+VectorRand()*10,60,math.random(90,110))
+		else
+			sound.Play("snds_jack_gmod/"..str..".ogg",self:GetPos()+Vector(0,0,20)+VectorRand()*10,60,100)
+		end
+	end
+
+	function ENT:Whine(serious)
+		local Time=CurTime()
+		if(self.NextWhine<Time)then
+			self.NextWhine=Time+4
+			self:EmitSound("snds_jack_gmod/ezsentry_whine.ogg",70,100)
+			self:ConsumeElectricity(.05)
+		end
+	end
+
+	----- Wiremod and connection stuff -----
+	function ENT:OnRemove()
+		if WireLib then WireLib.Remove(self) end
+	end
+
+	function ENT:OnRestore()
+		if WireLib then WireLib.Restored(self) end
+	end
+
+	function ENT:BuildDupeInfo()
+		if not WireLib then return end
+		
+		--[[print("Starting BuildDupeInfo for", self)
+		print("Entity has inputs:", self.Inputs and true or false)
+		if self.Inputs then
+			print("Inputs table:")
+			PrintTable(self.Inputs)
+		end
+		
+		print("Entity has outputs:", self.Outputs and true or false)
+		if self.Outputs then
+			print("Outputs table:")
+			PrintTable(self.Outputs)
+		end--]]
+		
+		local DupeInfo = WireLib.BuildDupeInfo(self)
+		print("WireLib.BuildDupeInfo returned:")
+		PrintTable(DupeInfo or {})
+		
+		return DupeInfo
+	end
+
+	function ENT:ApplyDupeInfo(ply, ent, info, createdEntities)
+		if WireLib then WireLib.ApplyDupeInfo(self, ply, ent, info, createdEntities) end
+	end
+
+	function ENT:PreEntityCopy()
+		if not WireLib then return end
+
+		duplicator.ClearEntityModifier(self, "WireDupeInfo")
+		-- build the DupeInfo table and save it as an entity mod
+		local DupeInfo = self:BuildDupeInfo()
+		if DupeInfo then
+			duplicator.StoreEntityModifier(self, "WireDupeInfo", DupeInfo)
+		end
+	end
+
 	--[[function ENT:OnEntityCopyTableFinish(tbl)
 		if self.EZconnections then
 			for k, v in pairs(self.EZconnections) do
@@ -634,6 +678,19 @@ if(SERVER)then
 			PrintTable(tbl.EZconnections)
 		end
 	end--]]
+
+	function ENT:OnDuplicated(entTable)
+		self.DuplicationInProgress = true
+	end
+
+	local function EntityLookup(CreatedEntities)
+		return function(id, default)
+			if id == nil then return default end
+			if id == 0 then return game.GetWorld() end
+			local ent = CreatedEntities[id]
+			if IsValid(ent) then return ent else return default end
+		end
+	end
 
 	-- Entity save/dupe functionality
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
@@ -692,6 +749,14 @@ if(SERVER)then
 		if self.EZconnections then
 			self.EZconnections = nil -- Down with the old system
 		end
+
+		-- We manually apply the entity mod here rather than using a
+		-- duplicator.RegisterEntityModifier because we need access to the
+		-- CreatedEntities table.
+		if ent.EntityMods and ent.EntityMods.WireDupeInfo then
+			ent:ApplyDupeInfo(ply, ent, ent.EntityMods.WireDupeInfo, EntityLookup(createdEntities))
+		end
+		ent.DuplicationInProgress = nil
 		
 		if self.OnPostEntityPaste then
 			self:OnPostEntityPaste(ply, self, createdEntities)
