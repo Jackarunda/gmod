@@ -410,7 +410,6 @@ function SWEP:BuildItem(selectedBuild)
 					else
 						local Class = BuildInfo.results
 						local StringParts = string.Explode(" ", Class)
-
 						if StringParts[1] and (StringParts[1] == "FUNC") then
 							local FuncName = StringParts[2]
 
@@ -441,6 +440,7 @@ function SWEP:BuildItem(selectedBuild)
 							Ent:SetCreator(self.Owner)
 							Ent:Spawn()
 							Ent:Activate()
+							hook.Run("JMod_OnRecipeCrafted", self.Owner, self, Ent, selectedBuild)
 							if BuildInfo.skin then
 								if istable(BuildInfo.skin) then
 									Ent:SetSkin(table.Random(BuildInfo.skin))

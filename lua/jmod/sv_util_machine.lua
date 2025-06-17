@@ -596,7 +596,13 @@ function JMod.Rope(ply, origin, dir, width, strength, mat)
 	return Rope, RopeTr.Entity, Vrope
 end
 
-function JMod.BuildRecipe(results, ply, Pos, Ang, skinNum)
+function JMod.BuildRecipe(results, craftEnt, ply, Pos, Ang, skinNum)
+	local itemName
+	for k,v in pairs(JMod.Config.Craftables) do
+		if v.results == results then
+			itemName = k
+		end
+	end
 	if istable(results) then
 		for n = 1, (results[2] or 1) do
 			local Ent = ents.Create(results[1])
@@ -609,6 +615,7 @@ function JMod.BuildRecipe(results, ply, Pos, Ang, skinNum)
 			if (results[3]) then
 				Ent:SetEZsupplies(Ent.EZsupplies, results[3])
 			end
+			hook.Run("JMod_OnRecipeCrafted", ply, craftEnt, Ent, itemName)
 		end
 	else
 		local StringParts=string.Explode(" ", results)
@@ -635,6 +642,7 @@ function JMod.BuildRecipe(results, ply, Pos, Ang, skinNum)
 					Ent:SetSkin(skinNum)
 				end
 			end
+			hook.Run("JMod_OnRecipeCrafted", ply, craftEnt, Ent, itemName)
 		else
 			local Ent = ents.Create(results)
 			Ent:SetPos(Pos)
@@ -643,6 +651,7 @@ function JMod.BuildRecipe(results, ply, Pos, Ang, skinNum)
 			Ent:SetCreator(ply)
 			Ent:Spawn()
 			Ent:Activate()
+			hook.Run("JMod_OnRecipeCrafted", ply, craftEnt, Ent, itemName)
 			JMod.Hint(ply, results)
 		end
 	end
