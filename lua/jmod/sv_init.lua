@@ -1049,10 +1049,29 @@ hook.Add("PlayerDeath", "JMOD_SERVER_PLAYERDEATH", function(ply, inflictor, atta
 				JMod.SetPlayerModel(ply, ply.EZoriginalPlayerModel)
 				PlyRagdoll:SetModel(ply.EZoriginalPlayerModel)
 			end
+
 			local BodyGroupValues = ""
-			for i = 1, PlyRagdoll:GetNumBodyGroups() do
-				BodyGroupValues = BodyGroupValues .. tostring(PlyRagdoll:GetBodygroup(i - 1))
+						
+			-- Get player's desired bodygroups from client convar
+			local PlayerBodygroups = ply:GetInfo("cl_playerbodygroups")
+			if PlayerBodygroups and PlayerBodygroups ~= "" then
+				local values = string.Explode(" ", PlayerBodygroups)
+				for i, val in ipairs(values) do
+					local idx = i - 1 -- bodygroup indices are 0-based
+					local num = tonumber(val)
+					if num then
+						PlyRagdoll:SetBodygroup(idx, num)
+					end
+					-- If the bodygroup ID is greater than 9 we need to start using letters
+					if num > 9 then
+						BodyGroupValues = BodyGroupValues .. string.char(65 + (num - 10))
+					else
+						BodyGroupValues = BodyGroupValues .. tostring(num)
+					end
+					BodyGroupValues = BodyGroupValues
+				end
 			end
+
 			SafeRemoveEntity(PlyRagdoll)
 			EZcorpse = ents.Create("ent_jack_gmod_ezcorpse")
 			EZcorpse.DeadPlayer = ply
