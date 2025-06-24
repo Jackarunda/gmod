@@ -8,6 +8,7 @@ JMod.DEFAULT_ARMOR = {
 	effects = {},
 	mskmat = nil,
 	sndlop = nil,
+	blackvision = nil,
 	suited = false,
 	bodygroups = nil,
 	totalWeight = 0
