@@ -108,6 +108,8 @@ function JMod.UpdateInv(invEnt, noplace, transfer, emergancyNetwork)
 	local jmodinvfinal = table.Copy(JMod.DEFAULT_INVENTORY)
 	jmodinvfinal.maxVolume = Capacity
 
+	local OldWeight = invEnt.JModInv.weight
+
 	for k, iteminfo in ipairs(invEnt.JModInv.items) do
 		if (Capacity > 0) and JMod.IsEntContained(iteminfo.ent, invEnt) and (iteminfo.ent:EntIndex() ~= -1) then
 			local Vol, Mass = JMod.GetItemVolumeWeight(iteminfo.ent)
@@ -154,6 +156,10 @@ function JMod.UpdateInv(invEnt, noplace, transfer, emergancyNetwork)
 				jmodinvfinal.EZresources[typ] = math.Round(amt)
 			end
 		end
+	end
+
+	if OldWeight ~= jmodinvfinal.weight then
+		JMod.CalcSpeed(invEnt)
 	end
 
 	invEnt.JModInv = jmodinvfinal

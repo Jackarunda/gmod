@@ -11,8 +11,8 @@ local function JackaSpawnHook(ply, transition)
 	ply.JModFriends = ply.JModFriends or {}
 	ply.JModInv = ply.JModInv or table.Copy(JMod.DEFAULT_INVENTORY)
 
-	JMod.EZarmorSync(ply)
 	JMod.CalcSpeed(ply)
+	JMod.EZarmorSync(ply)
 	ply.EZoxygen = 100
 	ply.EZbleeding = 0
 	JMod.SyncBleeding(ply)
@@ -852,9 +852,6 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 						end
 					end
 				end
-
-				--JMod.CalcSpeed(playa)
-				--JMod.EZarmorSync(playa)
 			end
 		end
 	end

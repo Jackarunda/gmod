@@ -396,10 +396,11 @@ function JMod.RemoveAllArmor(ply)
 		JMod.RemoveArmorByID(ply, k, false)
 	end
 
-	JMod.EZarmorSync(ply)
+	--JMod.EZarmorSync(ply)
 end
 
 function JMod.CalcSpeed(ply)
+	ply.EZarmor = ply.EZarmor or table.FullCopy(JMod.DEFAULT_ARMOR)
 	local Walk, Run, TotalWeight = ply.EZoriginalWalkSpeed or 200, ply.EZoriginalRunSpeed or 400, 0
 
 	for k, v in pairs(ply.EZarmor.items) do
