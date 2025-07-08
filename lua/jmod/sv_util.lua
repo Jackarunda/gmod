@@ -163,9 +163,32 @@ function JMod.ShouldAllowControl(self, ply, neutral)
 	return (engine.ActiveGamemode() ~= "sandbox" or ply:Team() ~= TEAM_UNASSIGNED) and ply:Team() == EZowner:Team()
 end
 
+-- This is for providing a whitelist of point entities that should be targetable
+JMod.TargetableClasses = {
+	["npc_bullseye"] = true
+}
+
+local function DealWithNPCs(self, ent, vehiclesOnly, peaceWasNeverAnOption)
+	local Class = ent:GetClass()
+	if self.WhitelistedNPCs and table.HasValue(self.WhitelistedNPCs, Class) then return true end
+	if self.BlacklistedNPCs and table.HasValue(self.BlacklistedNPCs, Class) then return false end
+	if not IsValid(self.EZowner) then return ent:Health() > 0 end
+
+	if ent.Disposition and (ent:Disposition(self.EZowner) == D_HT) and ent.GetMaxHealth and ent.Health then
+		if vehiclesOnly then
+			return ent:GetMaxHealth() > 100 and ent:Health() > 0
+		else
+			return ent:GetMaxHealth() > 0 and ent:Health() > 0
+		end
+	else
+		return peaceWasNeverAnOption or false
+	end
+end
+
 function JMod.ShouldAttack(self, ent, vehiclesOnly, peaceWasNeverAnOption)
 	if not IsValid(ent) then return false end
 	if ent:IsWorld() then return false end
+	if not JMod.TargetableClasses[ent:GetClass()] and not IsValid(ent:GetPhysicsObject()) then return false end
 	local SelfOwner = JMod.GetEZowner(self)
 
 	local Override = hook.Run("JMod_ShouldAttack", self, ent, vehiclesOnly, peaceWasNeverAnOption)
@@ -185,23 +208,17 @@ function JMod.ShouldAttack(self, ent, vehiclesOnly, peaceWasNeverAnOption)
 			if ent.Health > 0 then return true end
 		end
 	elseif ent:IsNPC() then
-		local Class = ent:GetClass()
-		if self.WhitelistedNPCs and table.HasValue(self.WhitelistedNPCs, Class) then return true end
-		if self.BlacklistedNPCs and table.HasValue(self.BlacklistedNPCs, Class) then return false end
-		if not IsValid(self.EZowner) then return ent:Health() > 0 end
-
-		if ent.Disposition and (ent:Disposition(self.EZowner) == D_HT) and ent.GetMaxHealth and ent.Health then
-			if vehiclesOnly then
-				return ent:GetMaxHealth() > 100 and ent:Health() > 0
-			else
-				return ent:GetMaxHealth() > 0 and ent:Health() > 0
-			end
-		else
-			return peaceWasNeverAnOption or false
-		end
+		return DealWithNPCs(self, ent, vehiclesOnly, peaceWasNeverAnOption)
 	elseif ent:IsVehicle() then
-		PlayerToCheck = ent:GetDriver()
-		InVehicle = true
+		local Driver = ent:GetDriver()
+		if IsValid(Driver) then
+			if Driver:IsNPC() then
+				return DealWithNPCs(self, Driver, vehiclesOnly, peaceWasNeverAnOption)
+			else
+				PlayerToCheck = Driver
+				InVehicle = true
+			end
+		end
 	elseif (ent.LVS and not(ent.ExplodedAlready)) then
 		if ent.GetDriver and IsValid(ent:GetDriver()) then
 			PlayerToCheck = ent:GetDriver()
