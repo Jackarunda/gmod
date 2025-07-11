@@ -34,7 +34,11 @@
 		timer.Simple(.2, function()
 			if IsValid(FirstWep) then
 				if FirstWep.EZlaunchableWeaponLoadTime then
-					FirstWep:LaunchRocket(#FirstWep.Rockets, true, ply)
+					if FirstWep.LoadedProjectileType then
+						FirstWep:LaunchProjectile(false, ply)
+					elseif FirstWep.Rockets then
+						FirstWep:LaunchRocket(#FirstWep.Rockets, true, ply)
+					end
 				elseif FirstWep.EZlaunchableWeaponArmedTime then
 					FirstWep.DropOwner = ply
 					FirstWep:Launch()
