@@ -64,7 +64,7 @@ function JMod.GetItemVolumeWeight(ent, amt)
 			Vol = X * Y * Z
 		end
 		Vol = ent.JModEZstorableVolume or math.Round(Vol / JMod.VOLUMEDIV, 2)
-		Mass = math.ceil(Phys:GetMass())
+		Mass = ent.JModEZstorableMass or math.ceil(Phys:GetMass())
 
 		return Vol, Mass
 	end
