@@ -5,31 +5,6 @@ local addIconMat = Material("icon16/add.png")
 local removeIconMat = Material("icon16/delete.png")
 local infoIconMat = Material("icon16/information.png")
 local changes_made = false
-local function BlurBackground(panel)
-	if not (IsValid(panel) and panel:IsVisible()) then return end
-	local layers, density, alpha = 1, 1, 255
-	local x, y = panel:LocalToScreen(0, 0)
-	local FrameRate, Num, Dark = 1 / FrameTime(), 5, 150
-
-	if GetConVar("jmod_cl_blurry_menus"):GetBool() then
-		surface.SetDrawColor(255, 255, 255, alpha)
-		surface.SetMaterial(blurMat)
-
-		for i = 1, Num do
-			blurMat:SetFloat("$blur", (i / layers) * density * Dynamic)
-			blurMat:Recompute()
-			render.UpdateScreenEffectTexture()
-			surface.DrawTexturedRect(-x, -y, ScrW(), ScrH())
-		end
-
-		surface.SetDrawColor(0, 0, 0, Dark * Dynamic)
-		surface.DrawRect(0, 0, panel:GetWide(), panel:GetTall())
-		Dynamic = math.Clamp(Dynamic + (1 / FrameRate) * 7, 0, 1)
-	else
-		surface.SetDrawColor(0, 0, 0, 180)
-		surface.DrawRect(0, 0, panel:GetWide(), panel:GetTall())
-	end
-end
 
 --[[-----------------------------------+
 |             For ConfigUI,            |
@@ -240,7 +215,7 @@ local function PopulateControls(parent, controls, motherFrame)
                         function tablePanel:Paint(w, h)
                             surface.SetDrawColor(50, 50, 50, 60)
                             surface.DrawRect(0, 0, w, h)
-                            BlurBackground(self)
+                            EZBlurBackground(self)
                         end
 
                         function setup_table_value(index, value)
@@ -409,7 +384,7 @@ net.Receive(
                 surface.PlaySound("snds_jack_gmod/ez_gui/menu_open.ogg")
             end
 
-            BlurBackground(self)
+            EZBlurBackground(self)
         end
 
         MotherFrame:MakePopup()
@@ -455,7 +430,7 @@ net.Receive(
         function resetButt:Paint(w, h)
             surface.SetDrawColor(50, 50, 50, 60)
             surface.DrawRect(0, 0, w, h)
-            BlurBackground(self)
+            EZBlurBackground(self)
         end
 
         local hasClicked = false
@@ -495,7 +470,7 @@ net.Receive(
             if self:GetText() ~= "Apply Changes" then self:SetText("Apply Changes") end
             surface.SetDrawColor(50, 50, 50, 60)
             surface.DrawRect(0, 0, w, h)
-            BlurBackground(self)
+            EZBlurBackground(self)
         end
 
         function applyButt:DoClick()

@@ -46,7 +46,7 @@ local BlurryMenus = CreateClientConVar("jmod_cl_blurry_menus", "1", true, true, 
 local SortEnabled = CreateClientConVar("jmod_cl_sort_enabled", "1", true, true, "Sorts enabled menu buttons to the top of the list", 0, 1)
 local blurMat = Material("pp/blurscreen")
 local Dynamic = 0
-local function BlurBackground(panel)
+function EZBlurBackground(panel)
 	if not (IsValid(panel) and panel:IsVisible()) then return end
 	local layers, density, alpha = 1, 1, 255
 	local x, y = panel:LocalToScreen(0, 0)
@@ -250,7 +250,7 @@ net.Receive("JMod_Friends", function()
 	end
 
 	function Frame:Paint()
-		BlurBackground(self)
+		EZBlurBackground(self)
 	end
 
 	local Scroll = vgui.Create("DScrollPanel", Frame)
@@ -277,7 +277,7 @@ net.Receive("JMod_ColorAndArm", function()
 	local Picker
 
 	function Frame:Paint()
-		BlurBackground(self)
+		EZBlurBackground(self)
 		local Time = CurTime()
 
 		if NextColorCheck < Time then
@@ -366,7 +366,7 @@ net.Receive("JMod_ArmorColor", function()
 	local Picker
 
 	function Frame:Paint(w, h)
-		BlurBackground(self)
+		EZBlurBackground(self)
 		local Time = CurTime()
 
 		if NextColorCheck < Time then
@@ -656,7 +656,7 @@ local function StandardSelectionMenu(typ, displayString, data, entity, enableFun
 			surface.PlaySound("snds_jack_gmod/ez_gui/menu_open.ogg")
 		end
 
-		BlurBackground(self)
+		EZBlurBackground(self)
 	end
 
 	MotherFrame:MakePopup()
@@ -959,7 +959,7 @@ net.Receive("JMod_EZtimeBomb", function()
 	frame:MakePopup()
 
 	function frame:Paint()
-		BlurBackground(self)
+		EZBlurBackground(self)
 	end
 
 	local bg = vgui.Create("DPanel", frame)
@@ -1025,7 +1025,7 @@ net.Receive("JMod_ModifyMachine", function()
 	frame:MakePopup()
 
 	function frame:Paint()
-		BlurBackground(self)
+		EZBlurBackground(self)
 	end
 
 	local bg = vgui.Create("DPanel", frame)
@@ -1298,7 +1298,7 @@ local ArmorSlotButtons = {
 			Panel:MakePopup()
 
 			function Panel:Paint(w, h)
-				BlurBackground(self)
+				EZBlurBackground(self)
 			end
 
 			local ColorPicker = vgui.Create("DColorMixer", Panel)
@@ -1752,7 +1752,7 @@ local function CreateResButton(parent, resourceType, amt, x, y, w, h, scrollFram
 		DropFrame:MakePopup()
 
 		function DropFrame:Paint(w, h)
-			BlurBackground(self)
+			EZBlurBackground(self)
 		end
 
 		local amtSlide = vgui.Create("DNumSlider", DropFrame)
@@ -1886,7 +1886,7 @@ local JModInventoryMenu = function(PlyModel, itemTable)
 	motherFrame:SetTitle("Inventory | Current Inventory Weight: " .. weight .. "kg. | Current Inventory Volume: " .. tostring(Ply.JModInv.volume) .. "/" .. tostring(Ply.JModInv.maxVolume))
 
 	function motherFrame:Paint()
-		BlurBackground(self)
+		EZBlurBackground(self)
 	end
 
 	motherFrame:MakePopup()
@@ -2097,7 +2097,7 @@ local JModItemInventoryMenu = function(invEnt, newInv, customOffset)
 	end
 
 	frame.Paint = function(self, w, h)
-		BlurBackground(self)
+		EZBlurBackground(self)
 	end
 
 	local scrollPanel = vgui.Create("DScrollPanel", frame, "ItemScroller")
@@ -2183,7 +2183,7 @@ net.Receive("JMod_ItemInventory", function(len, sender) -- for when we pick up s
 		ResourceGrabFrame:MakePopup()
 
 		function ResourceGrabFrame:Paint(w, h)
-			BlurBackground(self)
+			EZBlurBackground(self)
 		end
 
 		local MaxAmt = invEnt:GetEZsupplies(invEnt.EZsupplies)
@@ -2233,7 +2233,7 @@ net.Receive("JMod_ModifyConnections", function()
 	Frame:MakePopup()
 
 	function Frame:Paint()
-		BlurBackground(self)
+		EZBlurBackground(self)
 	end
 
 	local List = vgui.Create("DListView", Frame)
@@ -2392,7 +2392,7 @@ net.Receive("JMod_SaveLoadDeposits", function()
 		MotherFrame:MakePopup()
 
 		function MotherFrame:Paint()
-			BlurBackground(self)
+			EZBlurBackground(self)
 		end	
 
 		local Dropdown = vgui.Create("DPanel", MotherFrame)
