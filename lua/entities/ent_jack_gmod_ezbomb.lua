@@ -182,7 +182,7 @@ if SERVER then
 							self:SetAngles(BuryAngle)
 							local StickOffSet = self:GetPos() - self:WorldSpaceCenter()
 							--print(StickOffSet)
-							self:SetPos(WorldTr.HitPos - StickOffSet + WorldTr.HitNormal * 10)
+							self:SetPos(WorldTr.HitPos + StickOffSet + WorldTr.HitNormal * 10)
 							--
 							--[[local EmptySpaceTr = util.QuickTrace(self:LocalToWorld(self:OBBCenter()) + OurNoseDir * 100, -OurNoseDir * 200, {self})
 							if not EmptySpaceTr.StartSolid and not EmptySpaceTr.HitSky and EmptySpaceTr.Hit then
