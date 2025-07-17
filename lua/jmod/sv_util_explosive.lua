@@ -418,7 +418,7 @@ local SurfaceHardness = {
 
 -- Slayer Ricocheting/Penetrating Bullets FTW
 function JMod.RicPenBullet(ent, pos, dir, dmg, doBlasts, wreckShit, num, penMul, tracerName, callback)
-	if not IsValid(ent) then return end
+	if not IsValid(ent) then ent = game.GetWorld() end
 	if num and num > 10 then return end
 	local Attacker = JMod.GetEZowner(ent)
 

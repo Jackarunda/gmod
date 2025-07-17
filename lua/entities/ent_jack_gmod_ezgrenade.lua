@@ -166,8 +166,9 @@ if SERVER then
 	end
 
 	function ENT:SpoonEffect()
-		if self.SpoonEnt then
+		if self.SpoonEnt and self.SpoonEnt ~= "" then
 			local Spewn = ents.Create(self.SpoonEnt)
+			if not IsValid(Spewn) then return end
 
 			if self.SpoonModel then
 				Spewn.Model = self.SpoonModel
@@ -222,6 +223,7 @@ if SERVER then
 		self:SetState(JMod.EZ_STATE_PRIMED)
 		self:EmitSound("weapons/pinpull.wav", 60, 100)
 		if self.PinBodygroup then self:SetBodygroup(self.PinBodygroup[1], self.PinBodygroup[2]) end
+		if self.OnPrime then self:OnPrime() end
 	end
 
 	function ENT:Arm()
