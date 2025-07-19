@@ -39,6 +39,13 @@ function ENT:SetEZsupplies(typ, amt, setter)
 	end)
 end
 
+hook.Add("OnEntityWaterLevelChanged", "JMod_BucketFill", function(ent, old, new)
+	if not IsValid(ent) then return end
+	if ent:GetClass() == "ent_jack_gmod_ezbucket" and new >= 1 then
+		ent:SetEZsupplies( JMod.EZ_RESOURCE_TYPES.WATER, self.MaxWater or 50)
+	end
+end)
+
 ---
 function ENT:SetupDataTables() 
 	self:NetworkVar("Float", 0, "Water")

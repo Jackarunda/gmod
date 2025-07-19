@@ -216,6 +216,10 @@ if SERVER then
 		return 0
 	end
 
+	function ENT:PreEntityCopy()
+		self.DupeEZsupplies = self.EZsupplies
+	end
+
 	local RestrictedMaterials = {
 		JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL,
 		JMod.EZ_RESOURCE_TYPES.ANTIMATTER
@@ -224,7 +228,7 @@ if SERVER then
 		local Type = self:GetResourceType()
 		if not(JMod.IsAdmin(ply)) and table.HasValue(RestrictedMaterials, Type) then
 			self:SetEZsupplies(Type, 0, self)
-			self:ApplySupplyType(self.EZsupplies)
+			self:ApplySupplyType(self.DupeEZsupplies or self.EZsupplies)
 		end
 		self.NextLoad = 0
 	end
