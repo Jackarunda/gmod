@@ -31,18 +31,18 @@ function ENT:SetEZsupplies(typ, amt, setter)
 	if not SERVER then return end -- Important because this is shared as well
 	if typ ~= JMod.EZ_RESOURCE_TYPES.WATER then return end -- Type doesn't matter because we only have one type, but we have it here because of uniformness
 	self:SetWater(amt) -- Otherwise, just set our resource to the new value
-	local Phys = self:GetPhysicsObject()
+	--[[local Phys = self:GetPhysicsObject()
 	timer.Simple(.01, function()
 		if not IsValid(Phys) then return end
 		Phys:SetMass(math.max(self:GetWater(), 2.5))
 		Phys:Wake()
-	end)
+	end)--]]
 end
 
 hook.Add("OnEntityWaterLevelChanged", "JMod_BucketFill", function(ent, old, new)
 	if not IsValid(ent) then return end
 	if ent:GetClass() == "ent_jack_gmod_ezbucket" and new >= 1 then
-		ent:SetEZsupplies( JMod.EZ_RESOURCE_TYPES.WATER, self.MaxWater or 50)
+		ent:SetEZsupplies( JMod.EZ_RESOURCE_TYPES.WATER, ent.MaxWater or 50)
 	end
 end)
 
