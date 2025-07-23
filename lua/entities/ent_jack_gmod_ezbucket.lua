@@ -34,7 +34,7 @@ function ENT:SetEZsupplies(typ, amt, setter)
 	--[[local Phys = self:GetPhysicsObject()
 	timer.Simple(.01, function()
 		if not IsValid(Phys) then return end
-		Phys:SetMass(math.max(self:GetWater(), 2.5))
+		Phys:SetMass(math.max(self:GetWater() * .5, 2.5))
 		Phys:Wake()
 	end)--]]
 end

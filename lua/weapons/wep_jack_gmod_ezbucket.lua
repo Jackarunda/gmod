@@ -231,8 +231,14 @@ end
 --
 function SWEP:OnDrop()
 	local Bucket = ents.Create("ent_jack_gmod_ezbucket")
-	Bucket:SetPos(self:GetPos())
-	Bucket:SetAngles(self:GetAngles())
+	local Pos, Ang = self:GetPos(), self:GetAngles()
+	if IsValid(self.EZdropper) and self.EZdropper:IsPlayer() then
+		local AimPos, AimVec = self.EZdropper:GetShootPos(), self.EZdropper:GetAimVector()
+		local PlaceTr = util.QuickTrace(AimPos, AimVec * 60, {self, self.EZdropper})
+		Pos = PlaceTr.HitPos + PlaceTr.HitNormal * 5
+	end
+	Bucket:SetPos(Pos)
+	Bucket:SetAngles(Ang)
 	Bucket:Spawn()
 	Bucket:Activate()
 

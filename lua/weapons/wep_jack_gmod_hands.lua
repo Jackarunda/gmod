@@ -218,6 +218,10 @@ function SWEP:ApplyForce()
 	end
 end
 
+function SWEP:OnDrop()
+	self:Remove() -- You can't drop hands
+end
+
 function SWEP:OnRemove()
 	if IsValid(self.Owner) and CLIENT and self.Owner:IsPlayer() then
 		local vm = self.Owner:GetViewModel()

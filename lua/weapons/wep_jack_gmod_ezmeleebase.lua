@@ -334,8 +334,14 @@ end
 --
 function SWEP:OnDrop()
 	local Ent = ents.Create(self.DropEnt)
-	Ent:SetPos(self:GetPos())
-	Ent:SetAngles(self:GetAngles())
+	local Pos, Ang = self:GetPos(), self:GetAngles()
+	if IsValid(self.EZdropper) and self.EZdropper:IsPlayer() then
+		local AimPos, AimVec = self.EZdropper:GetShootPos(), self.EZdropper:GetAimVector()
+		local PlaceTr = util.QuickTrace(AimPos, AimVec * 60, {self, self.EZdropper})
+		Pos = PlaceTr.HitPos + PlaceTr.HitNormal * 5
+	end
+	Ent:SetPos(Pos)
+	Ent:SetAngles(Ang)
 	Ent:Spawn()
 	Ent:Activate()
 

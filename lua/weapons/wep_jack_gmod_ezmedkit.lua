@@ -528,8 +528,14 @@ end
 
 function SWEP:OnDrop()
 	local Kit = ents.Create("ent_jack_gmod_ezmedkit")
-	Kit:SetPos(self:GetPos())
-	Kit:SetAngles(self:GetAngles())
+	local Pos, Ang = self:GetPos(), self:GetAngles()
+	if IsValid(self.EZdropper) and self.EZdropper:IsPlayer() then
+		local AimPos, AimVec = self.EZdropper:GetShootPos(), self.EZdropper:GetAimVector()
+		local PlaceTr = util.QuickTrace(AimPos, AimVec * 60, {self, self.EZdropper})
+		Pos = PlaceTr.HitPos + PlaceTr.HitNormal * 5
+	end
+	Kit:SetPos(Pos)
+	Kit:SetAngles(Ang)
 	Kit:Spawn()
 	Kit:Activate()
 	Kit:SetSupplies(self:GetSupplies())
