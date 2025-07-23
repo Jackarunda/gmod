@@ -34,9 +34,13 @@ if(SERVER)then
 		self.LastSubModel = 0
 		self.NextGrowThink = 0
 		self.Mutated = false
+		self.IsPlanting = false
 		self.EZconsumes = {JMod.EZ_RESOURCE_TYPES.WATER}
 		self:UpdateAppearance()
-		self:GetPhysicsObject():SetMass(1)
+		local phys = self:GetPhysicsObject()
+		if IsValid(phys) then
+			phys:SetMass(1)
+		end
 	end
 
 	function ENT:Mutate()
@@ -129,11 +133,12 @@ if(SERVER)then
 
 	function ENT:TryPlant()
 		self.InstalledMat = nil
+		self.IsPlanting = true -- Flag to prevent destruction during planting
 		local Tr = util.QuickTrace(self:GetPos() + Vector(0, 0, 100), Vector(0, 0, -200), self)
 		if (Tr.Hit) then
 			self.InstalledMat = Tr.MatType
-			if not (table.HasValue(self.UsableMats, self.InstalledMat)) then self:Remove() return end
-			if (self:WaterLevel() > 0) then self:Remove() return end
+			if not (table.HasValue(self.UsableMats, self.InstalledMat)) then self:Destroy() return end
+			if (self:WaterLevel() > 0) then self:Destroy() return end
 			self.EZinstalled = true
 			--util.Decal("EZtreeRoots", Tr.HitPos + Tr.HitNormal, Tr.HitPos - Tr.HitNormal)
 			timer.Simple(.1, function()
@@ -144,20 +149,36 @@ if(SERVER)then
 					self:SetAngles(HitAngle)
 					--self:SetAngles(Angle(0, math.random(0, 360, 0)))
 					self:SetPos(Tr.HitPos + Tr.HitNormal * 1)
+					
+					-- Remove any existing constraints before creating new ones
+					constraint.RemoveAll(self)
+					
 					self.GroundWeld = constraint.Weld(self, Tr.Entity, 0, 0, 5000, true)
-					self:GetPhysicsObject():Sleep()
+					local phys = self:GetPhysicsObject()
+					if IsValid(phys) then
+						phys:Sleep()
+					end
+					self.IsPlanting = false -- Clear planting flag
 					JMod.Hint(JMod.GetEZowner(self), "tree growth")
 				end
 			end)
 		else
-			self:Remove()
+			self.IsPlanting = false
+			self:Destroy()
 		end
 	end
 
 	function ENT:Think()
 		--jprint(self.Helf, self.EZinstalled, self.GroundWeld)
 		if (self.Helf <= 0) then self:Destroy() return end
-		if (self.EZinstalled and not(IsValid(self.GroundWeld))) then self:Destroy() return end
+		-- Don't check planting status if crop is in the process of being planted
+		if not self.IsPlanting then
+			-- Check if crop is properly planted - should have a valid weld
+			if (self.EZinstalled and not(IsValid(self.GroundWeld))) then 
+				self:Destroy() 
+				return 
+			end
+		end
 		local Time, SelfPos = CurTime(), self:GetPos()
 		if (self.NextGrowThink < Time) then
 			self.NextGrowThink = Time + math.random(9, 11)
@@ -195,6 +216,8 @@ if(SERVER)then
 		self:NextThink(Time + math.Rand(2, 4))
 		return true
 	end
+
+
 
 	function ENT:UpdateAppearance()
 		local NewWheatMat, NewSubModel, WheatColor

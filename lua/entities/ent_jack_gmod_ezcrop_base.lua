@@ -107,6 +107,7 @@ if(SERVER)then
 	end
 
 	function ENT:Break(dmginfo)
+		print("Destroying due to break")
 		self:Destroy(dmginfo)
 	end
 
@@ -196,13 +197,7 @@ if(SERVER)then
 
 		local StartPoint, ToPoint, Spread, Scale, UpSpeed = self:LocalToWorld(self:OBBCenter()), nil, 2, 1, 10
 		local Force, GibNum = dmginfo:GetDamageForce(), math.min(JMod.Config.Machines.SupplyEffectMult * self:GetPhysicsObject():GetMass()/1000, 30)
-		if self.GibModels then
-			for k, v in pairs(self.GibModels) do
-				--JMod.ResourceEffect(k, StartPoint, ToPoint, GibNum * (v / 800), Spread, Scale, UpSpeed)
-			end
-		else
-			JMod.ResourceEffect(JMod.EZ_RESOURCE_TYPES.WOOD, StartPoint, ToPoint, GibNum, Spread, Scale, UpSpeed)
-		end
+		JMod.ResourceEffect(JMod.EZ_RESOURCE_TYPES.WOOD, StartPoint, ToPoint, GibNum, Spread, Scale, UpSpeed)
 		
 		if self.OnDestroy then self:OnDestroy(dmginfo) end
 		self:SetNoDraw(true)
@@ -345,9 +340,25 @@ if(SERVER)then
 		if ent.NextUseTime then
 			ent.NextUseTime = Time + 1
 		end
-		if ent.UpdateAppearance then
-			ent:UpdateAppearance()
-		end
+		-- Reset installation state for proper replanting after duplication
+		ent.EZinstalled = false
+		ent.GroundWeld = nil
+		ent.IsPlanting = true
+		-- Reset growth timers to ensure they start growing again
+		ent.NextGrowThink = Time + math.random(9, 11)
+		timer.Simple(0.2, function()
+			if not IsValid(ent) then return end
+			if ent.UpdateAppearance then
+				ent.LastSubModel = -1
+				ent:UpdateAppearance()
+			end
+			if ent.TryPlant then
+				ent:TryPlant()
+			end
+			if ent.Mutated and ent.Mutate then
+				ent:Mutate()
+			end
+		end)
 	end
 
 	hook.Add("GravGunOnPickedUp", "JMOD_Fruit_GravGun_TimeReset", function(ply, ent) 

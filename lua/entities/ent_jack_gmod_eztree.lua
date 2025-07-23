@@ -36,6 +36,7 @@ if(SERVER)then
 		self.LastBarkMat = ""
 		self.LastModel = ""
 		self.NextGrowThink = 0
+		self.IsPlanting = false
 		self:UpdateAppearance()
 	end
 
@@ -81,6 +82,8 @@ if(SERVER)then
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
+		if not IsValid(physobj) then return end
+		
 		if (data.Speed > 100) and (data.DeltaTime>0.2) then
 			self:EmitSound("Wood.ImpactSoft", 100, 80)
 			self:EmitSound("Wood.ImpactSoft", 100, 80)
@@ -89,8 +92,14 @@ if(SERVER)then
 				local ForceThreshold = physobj:GetMass() * 10 * self.Growth
 				local PhysDamage = TheirForce/(physobj:GetMass()*100)
 
+				-- Only enable motion if tree is planted and motion is currently disabled
 				if self.EZinstalled and not(physobj:IsMotionEnabled()) and (TheirForce >= ForceThreshold) then
-					physobj:EnableMotion(true)
+					-- Add a small delay to prevent rapid state changes at low tickrates
+					timer.Simple(0.1, function()
+						if IsValid(self) and IsValid(physobj) and self.EZinstalled then
+							physobj:EnableMotion(true)
+						end
+					end)
 				end
 				if PhysDamage >= 1 then
 					local CrushDamage = DamageInfo()
@@ -106,6 +115,7 @@ if(SERVER)then
 
 	function ENT:TryPlant()
 		self.InstalledMat = nil
+		self.IsPlanting = true -- Flag to prevent destruction during planting
 		local Tr = util.QuickTrace(self:GetPos() + Vector(0, 0, 100), Vector(0, 0, -200), self)
 		if (Tr.Hit) then
 			self.InstalledMat = Tr.MatType
@@ -122,23 +132,49 @@ if(SERVER)then
 					self:SetAngles(Angle(0, math.random(0, 360, 0)))
 					self:SetPos(Tr.HitPos + Vector(0, 0, -2))
 					if Tr.Entity == game.GetWorld() then
-						self:GetPhysicsObject():EnableMotion(false)
+						local phys = self:GetPhysicsObject()
+						if IsValid(phys) then
+							phys:EnableMotion(false)
+						end
 						--self.GroundWeld = constraint.Weld(self, Tr.Entity, 0, 0, 50000, true)
 					else
 						self.GroundWeld = constraint.Weld(self, Tr.Entity, 0, 0, 50000, true)
-						self:GetPhysicsObject():Sleep()
+						local phys = self:GetPhysicsObject()
+						if IsValid(phys) then
+							phys:Sleep()
+						end
 					end
+					self.IsPlanting = false -- Clear planting flag
 					JMod.Hint(JMod.GetEZowner(self), "tree growth")
 				end
 			end)
 		else
+			self.IsPlanting = false
 			self:Remove()
 		end
 	end
 
 	function ENT:Think()
 		if (self.Helf <= 0) then self:Destroy() return end
-		if (self.EZinstalled and not(IsValid(self.GroundWeld) or not self:GetPhysicsObject():IsMotionEnabled())) then self:Destroy() return end
+		-- Don't check planting status if tree is in the process of being planted
+		if not self.IsPlanting then
+			-- Check if tree is properly planted - either welded to an entity or motion disabled on world
+			if (self.EZinstalled) then
+				local phys = self:GetPhysicsObject()
+				if IsValid(phys) then
+					local isWelded = IsValid(self.GroundWeld)
+					local isMotionDisabled = not phys:IsMotionEnabled()
+					-- Tree should be either welded OR have motion disabled (planted on world)
+					if not (isWelded or isMotionDisabled) then
+						self:Destroy() 
+						return 
+					end
+				else
+					self:Destroy()
+					return
+				end
+			end
+		end
 		local Time, SelfPos, Owner, Vel = CurTime(), self:GetPos(), self.EZowner, self:GetPhysicsObject():GetVelocity()
 		if (self.NextGrowThink < Time) then
 			self.NextGrowThink = Time + math.random(9, 11)
@@ -277,8 +313,12 @@ if(SERVER)then
 		JMod.SetEZowner(self, ply, true)
 		self.NextRefillTime = Time
 		self.NextGrowThink = Time + math.random(10, 11)
-		self.LastModel = ""
-		self:UpdateAppearance()
+		timer.Simple(0.1, function()
+			if IsValid(self) then
+				self.LastModel = ""
+				self:UpdateAppearance()
+			end
+		end)
 	end
 elseif CLIENT then
 	local Roots = Material("decals/ez_tree_roots")
