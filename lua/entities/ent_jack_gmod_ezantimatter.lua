@@ -26,33 +26,9 @@ if SERVER then
 		if destructive and not self.Sploomd then
 			local Resources = self:GetResource()
 			self.Sploomd = true
-			local Blam = EffectData()
-			Blam:SetOrigin(pos)
-			Blam:SetScale(5 * (Resources / 200))
-			util.Effect("eff_jack_plastisplosion", Blam, true, true)
-			util.ScreenShake(pos, 99999, 99999, 1, 750 * 5)
+			JMod.AntimatterExplosion(pos, attacker, (Resources / 100))
 
-			for i = 1, 2 do
-				sound.Play("BaseExplosionEffect.Sound", pos, 120, math.random(90, 110))
-			end
-
-			for i = 1, 2 do
-				sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".wav", pos + VectorRand() * 1000, 140, math.random(90, 110))
-			end
-
-			timer.Simple(.1, function()
-				local MeltBlast = DamageInfo()
-				MeltBlast:SetInflictor(game.GetWorld())
-				MeltBlast:SetAttacker(game.GetWorld())
-				MeltBlast:SetDamage(Resources * 5)
-				MeltBlast:SetDamageType(DMG_DISSOLVE)
-				util.BlastDamageInfo(MeltBlast, pos, Resources * 8)
-				for k, v in pairs(ents.FindInSphere(pos, Resources * 5)) do 
-					if v:GetClass() == "npc_strider" then
-						v:Fire("break")
-					end
-				end
-			end)
+			JMod.WreckBuildings(self, pos, 15 * (Resources / 100), 1, false)
 		end
 	end
 

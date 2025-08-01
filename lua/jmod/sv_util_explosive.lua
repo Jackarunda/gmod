@@ -586,3 +586,38 @@ function JMod.EnergeticsCookoff(pos, attacker, powerMult, numExplo, numBullet, n
 	end
 	JMod.FireSplosion(pos, Vector(0, 0, 0), numFire, powerMult, 1, true, nil, attacker)
 end
+
+function JMod.AntimatterExplosion(pos, attacker, powerMult, radius)
+	radius = radius or powerMult * 1000
+	local Blam = EffectData()
+	Blam:SetOrigin(pos)
+	Blam:SetScale(radius and (radius / 100) or (5 * powerMult))
+	util.Effect("eff_jack_plastisplosion", Blam, true, true)
+	util.ScreenShake(pos, 99999, 99999, 1, 750 * 5)
+
+	for i = 1, 2 do
+		sound.Play("BaseExplosionEffect.Sound", pos, 120, math.random(90, 110))
+	end
+
+	for i = 1, 5 do
+		timer.Simple(i * .1, function()
+			sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".wav", pos + VectorRand() * 1000, 140, math.random(90, 110))
+		end)
+	end
+
+	timer.Simple(.1, function()
+		local MeltBlast = DamageInfo()
+		MeltBlast:SetInflictor(game.GetWorld())
+		MeltBlast:SetAttacker(game.GetWorld())
+		MeltBlast:SetDamage(powerMult * 5000)
+		MeltBlast:SetDamagePosition(pos)
+		MeltBlast:SetDamageForce(Vector(0, 0, 10000))
+		MeltBlast:SetDamageType(DMG_DISSOLVE + DMG_PLASMA)
+		util.BlastDamageInfo(MeltBlast, pos, radius)
+		for k, v in pairs(ents.FindInSphere(pos, radius * 0.8)) do 
+			if v:GetClass() == "npc_strider" then
+				v:Fire("break")
+			end
+		end
+	end)
+end

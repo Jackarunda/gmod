@@ -253,8 +253,6 @@ if SERVER then
 		return math.min(Shieldin, 1)
 	end
 
-	local Frac = 0
-
 	function ENT:Think()
 		local State, Time, SelfPos = self:GetState(), CurTime(), self:GetPos() + Vector(0, 0, 15)
 
