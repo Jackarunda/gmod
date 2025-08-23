@@ -35,7 +35,7 @@ function EFFECT:Init(data)
 				Particle:SetNextThink(CurTime())
 
 				Particle:SetThinkFunction(function(pa)
-					if LocalPlayer().EZarmor.effects.thermalVision then
+					if JMod.PlyHasArmorEff(LocalPlayer(), "thermalVision") then
 						pa:SetStartAlpha(20)
 					else
 						pa:SetStartAlpha(pa.OriginalStartAlpha)
