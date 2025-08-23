@@ -61,6 +61,7 @@ if SERVER then
 		self:SetState(STATE_OFF)
 		self.FuelLeft = 100
 		self.NextStick = 0
+		self.NextDragTime = 0
 
 		if istable(WireLib) then
 			self.Inputs = WireLib.CreateInputs(self, {"Arm", "Launch"}, {"Arms rocket", "Launches rocket"})
@@ -183,6 +184,7 @@ if SERVER then
 		local State = self:GetState()
 		if (State == STATE_LAUNCHED) or (State == STATE_BROKEN) then return end
 		self:SetState(STATE_LAUNCHED)
+		self.LaunchedDir = self.LaunchedDir or self:GetUp()
 		local Phys = self:GetPhysicsObject()
 
 		if IsValid(self.StuckTo) then
@@ -198,6 +200,12 @@ if SERVER then
 			if self.StuckTo.Drop then
 				self.StuckTo:Drop(JMod.GetEZowner(self))
 				self.StuckTo:SetState(JMod.EZ_STATE_ON)
+			end
+			local OtherRockets = self.StuckTo:GetChildren()
+			for _, rocket in pairs(OtherRockets) do
+				if rocket:GetClass() == "ent_jack_gmod_ezrocketmotor" then
+					rocket:SetState(STATE_LAUNCHED)
+				end
 			end
 		elseif JMod.IsEntContained(self) then
 			self.StuckTo = self:GetNW2Entity("EZInvOwner", self)
@@ -247,16 +255,14 @@ if SERVER then
 				Phys = EntToPush:GetPhysicsObject()
 			end
 
+			local PushDir = self.LaunchedDir or self:GetUp()
+
 			if self.FuelLeft > 0 then
-				if EntToPush:IsPlayer() then
+				if EntToPush:IsPlayer() or EntToPush:IsNPC() then
 					local AimVec = EntToPush:GetAimVector()
-					EntToPush:SetVelocity((self:GetUp() + AimVec * 2 + VectorRand()):GetNormalized() * self.ThrustPower * .015)
+					EntToPush:SetVelocity((PushDir + AimVec * 2 + VectorRand()):GetNormalized() * self.ThrustPower * .015)
 				else
-					if self.ThrustStuckTo then
-						Phys:ApplyForceCenter(self:GetUp() * self.ThrustPower)
-					else 
-						Phys:ApplyForceOffset(self:GetUp() * self.ThrustPower, self:GetPos() + self:GetUp() * 10)
-					end
+					Phys:ApplyForceCenter(PushDir * self.ThrustPower)
 				end
 				self.FuelLeft = self.FuelLeft - 2
 				--jprint(1 / self.FuelLeft)
