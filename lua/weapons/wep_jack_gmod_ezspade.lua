@@ -1,13 +1,13 @@
 ﻿-- AdventureBoots 2023
 AddCSLuaFile()
 SWEP.Base = "wep_jack_gmod_ezmeleebase"
-SWEP.PrintName = "EZ Shovel"
+SWEP.PrintName = "EZ Spade"
 SWEP.Author = "Jackarunda"
 SWEP.Purpose = ""
-JMod.SetWepSelectIcon(SWEP, "entities/ent_jack_gmod_ezshovel")
+JMod.SetWepSelectIcon(SWEP, "entities/ent_jack_gmod_ezspade")
 SWEP.ViewModel = "models/weapons/hl2meleepack/v_shovel.mdl"
-SWEP.WorldModel = "models/props_junk/shovel01a.mdl"
-SWEP.BodyHolsterModel = "models/props_junk/shovel01a.mdl"
+SWEP.WorldModel = "models/weapons/w_spade.mdl"
+SWEP.BodyHolsterModel = "models/weapons/w_spade.mdl"
 SWEP.BodyHolsterSlot = "back"
 SWEP.BodyHolsterAng = Angle(-85, 0, 90)
 SWEP.BodyHolsterAngL = Angle(-93, 0, 90)
@@ -15,17 +15,33 @@ SWEP.BodyHolsterPos = Vector(3, -10, -3)
 SWEP.BodyHolsterPosL = Vector(4, -10, 3)
 SWEP.BodyHolsterScale = .75
 SWEP.ViewModelFOV = 50
-SWEP.ShowViewModel = true
+SWEP.ShowViewModel = false
 SWEP.Slot = 1
 SWEP.SlotPos = 6
 
+SWEP.VElements = {
+	["spade"] = { type = "Model", 
+		model = "models/weapons/w_spade.mdl", 
+		bone = "ValveBiped.Bip01_L_Hand", 
+		rel = "", 
+		pos = Vector(2.825, 1.37, 51), 
+		angle = Angle(0, 0, 180), 
+		size = Vector(1, 1, 1), 
+		color = Color(255, 255, 255, 255), 
+		surpresslightning = false, 
+		material = "", 
+		skin = 0, 
+		bodygroup = {} 
+	}
+}
+
 SWEP.WElements = {
-	["shovel"] = {
+	["spade"] = {
 		type = "Model",
-		model = "models/props_junk/shovel01a.mdl",
+		model = "models/weapons/w_spade.mdl",
 		bone = "ValveBiped.Bip01_R_Hand",
 		rel = "",
-		pos = Vector(5, 2.3, -12),
+		pos = Vector(3, 5, -42),
 		angle = Angle(0, 180, 5),
 		size = Vector(1, 1, 1),
 		color = Color(255, 255, 255, 255),
@@ -37,14 +53,14 @@ SWEP.WElements = {
 }
 
 --
-SWEP.DropEnt = "ent_jack_gmod_ezshovel"
+SWEP.DropEnt = "ent_jack_gmod_ezspade"
 SWEP.HitDistance		= 64
 SWEP.HitInclination		= 0.4
 SWEP.HitPushback		= 200
 SWEP.MaxSwingAngle		= 120
 SWEP.SwingSpeed 		= 1.2
 SWEP.SwingPullback 		= 100
-SWEP.PrimaryAttackSpeed = 1
+SWEP.PrimaryAttackSpeed = .8
 SWEP.SecondaryAttackSpeed 	= .6
 SWEP.DoorBreachPower 	= .5
 --
@@ -112,7 +128,7 @@ function SWEP:OnHit(swingProgress, tr)
 		PickDam:SetInflictor(self)
 		PickDam:SetDamagePosition(StrikePos)
 		PickDam:SetDamageType(DMG_CLUB)
-		PickDam:SetDamage(math.random(20, 50))
+		PickDam:SetDamage(math.random(25, 40))
 		PickDam:SetDamageForce(StrikeVector:GetNormalized() * 30)
 		tr.Entity:TakeDamageInfo(PickDam)
 	end
@@ -129,6 +145,7 @@ function SWEP:OnHit(swingProgress, tr)
 
 		if Message then
 			local OldAmount = self:GetTaskProgress()
+			--print(OldAmount)
 
 			if (DirtTypeModifier) then
 				self:SetResourceType(JMod.EZ_RESOURCE_TYPES.SAND)

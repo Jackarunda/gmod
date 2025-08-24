@@ -7,7 +7,7 @@ SWEP.Purpose = ""
 SWEP.Spawnable = false
 SWEP.UseHands = true
 SWEP.DrawAmmo = false
-SWEP.DrawCrosshair = false
+SWEP.DrawCrosshair = true
 SWEP.EZdroppable = true
 SWEP.ViewModel = ""
 SWEP.WorldModel = ""
@@ -38,14 +38,14 @@ SWEP.HitDistance		= 50
 SWEP.HitInclination		= 0.4
 SWEP.HitSpace 			= 0
 SWEP.HitAngle 			= 45
-SWEP.HitPushback		= 2000
+SWEP.HitPushback		= 400
 SWEP.StartSwingAngle 	= 0
 SWEP.MaxSwingAngle		= 120
 SWEP.SwingSpeed 		= 1
 SWEP.SwingPullback 		= 0
 SWEP.SwingOffset 		= Vector(12, 15, -5)
 SWEP.PrimaryAttackSpeed = 1
-SWEP.SecondaryAttackSpeed 	= 1
+SWEP.SecondaryAttackSpeed 	= .8
 SWEP.DoorBreachPower 	= 1
 --
 SWEP.SprintCancel 	= true
@@ -95,11 +95,11 @@ function SWEP:Swing(secondary)
 	end
 
 	if secondary then
-		self:SetNextPrimaryFire(CurTime() + self.SecondaryAttackSpeed)
+		self:SetNextPrimaryFire(CurTime() + self.SecondaryAttackSpeed * .5)
 		self:SetNextSecondaryFire(CurTime() + self.SecondaryAttackSpeed)
 	else
 		self:SetNextPrimaryFire(CurTime() + self.PrimaryAttackSpeed)
-		self:SetNextSecondaryFire(CurTime() + self.PrimaryAttackSpeed)
+		self:SetNextSecondaryFire(CurTime() + self.PrimaryAttackSpeed * .5)
 	end
 	
 	local IsPlaya = Owner:IsPlayer()
@@ -132,7 +132,7 @@ function SWEP:SecondaryAttack()
 	local Owner = self:GetOwner()
 
 	if self.SecondaryPush then
-		self:SetNextPrimaryFire(CurTime() + self.SecondaryAttackSpeed)
+		self:SetNextPrimaryFire(CurTime() + self.SecondaryAttackSpeed * .5)
 		self:SetNextSecondaryFire(CurTime() + self.SecondaryAttackSpeed)
 
 		local vm = Owner:GetViewModel()
@@ -140,19 +140,20 @@ function SWEP:SecondaryAttack()
 
 		local tr = util.TraceLine( {
 			start = Owner:GetShootPos(),
-			endpos = Owner:GetShootPos() + Owner:GetAimVector() * 1.5 * 40,
+			endpos = Owner:GetShootPos() + Owner:GetAimVector() * 50,
 			filter = Owner,
 			mask = MASK_SHOT_HULL
 		} )
 
 		if ( tr.Hit ) then
-			local PushVector = Owner:GetAimVector() * 1000
+			local PushVector = Owner:GetAimVector() * 400
 			if tr.Entity:IsPlayer() or string.find(tr.Entity:GetClass(),"npc") or string.find(tr.Entity:GetClass(),"prop_ragdoll") or string.find(tr.Entity:GetClass(),"prop_physics") then
-				tr.Entity:SetVelocity(PushVector * Vector( 1, 1, 0 ))
+				tr.Entity:SetGroundEntity(NULL)
+				tr.Entity:SetVelocity(tr.Entity:GetVelocity() + PushVector)
 			elseif IsValid(tr.Entity) and IsValid(tr.Entity:GetPhysicsObject()) then
 				tr.Entity:GetPhysicsObject():ApplyForceOffset(PushVector, tr.HitPos)
 			end
-			Owner:SetVelocity( -PushVector * .25 * Vector( 1, 1, 0 ))
+			Owner:SetVelocity( -PushVector * .1)
 			Owner:SetAnimation(PLAYER_RELOAD)
 
 			local PushSound = self.PushSoundBody
@@ -218,9 +219,9 @@ function SWEP:Think()
 					
 					local Offset = SwingRight * self.SwingOffset.x + SwingForward * SwingSin * self.SwingOffset.y + SwingUp * self.SwingOffset.z
 					local StartPos = (SwingPos + Offset) + SwingForward * -self.DistanceCompensation
-					local EndVector = SwingForward * self.HitDistance + SwingRight * -self.HitInclination + SwingUp * self.HitSpace - SwingUp * self.StartSwingAngle
+					local EndVector = SwingForward * self.HitDistance * SwingSin + SwingRight * -self.HitInclination + SwingUp * self.HitSpace - SwingUp * self.StartSwingAngle
 					
-					local tr = util.TraceLine( {
+					local tr = util.TraceLine({
 						start = StartPos,
 						endpos = StartPos + EndVector,
 						filter = Owner,
@@ -249,7 +250,8 @@ function SWEP:Think()
 								end
 								sound.Play(BodySound, tr.HitPos, 10, math.random(75, 100), 1)
 							end
-							tr.Entity:SetVelocity( self.Owner:GetAimVector() * Vector( 1, 1, 0 ) * self.HitPushback )
+							tr.Entity:SetGroundEntity(NULL)
+							tr.Entity:SetVelocity(self.Owner:GetAimVector() * self.HitPushback)
 							--
 							if self.SetTaskProgress then self:SetTaskProgress(0) end
 							--

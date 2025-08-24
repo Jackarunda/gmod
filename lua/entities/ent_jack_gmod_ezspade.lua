@@ -4,7 +4,7 @@ ENT.Type = "anim"
 ENT.Author = "Jackarunda"
 ENT.Category = "JMod - EZ Misc."
 ENT.Information = "glhfggwpezpznore"
-ENT.PrintName = "EZ Shovel"
+ENT.PrintName = "EZ Spade"
 ENT.NoSitAllowed = true
 ENT.Spawnable = true
 ENT.AdminSpawnable = true
@@ -16,7 +16,7 @@ ENT.JModEZstorable = true
 ---
 if SERVER then
 	function ENT:SpawnFunction(ply, tr)
-		local SpawnPos = tr.HitPos + tr.HitNormal * 35
+		local SpawnPos = tr.HitPos + tr.HitNormal * 20
 		local ent = ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0, 0, 0))
 		ent:SetPos(SpawnPos)
@@ -30,7 +30,7 @@ if SERVER then
 	end
 
 	function ENT:Initialize()
-		self:SetModel("models/props_junk/shovel01a.mdl")
+		self:SetModel("models/weapons/w_spade.mdl")
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)
 		self:SetSolid(SOLID_VPHYSICS)
@@ -67,9 +67,9 @@ if SERVER then
 	function ENT:Use(activator)
 		if JMod.IsAltUsing(activator) then
 			activator:PickupObject(self)
-		elseif not activator:HasWeapon("wep_jack_gmod_ezshovel") then
-			activator:Give("wep_jack_gmod_ezshovel")
-			activator:SelectWeapon("wep_jack_gmod_ezshovel")
+		elseif not activator:HasWeapon("wep_jack_gmod_ezspade") then
+			activator:Give("wep_jack_gmod_ezspade")
+			activator:SelectWeapon("wep_jack_gmod_ezspade")
 
 			self:Remove()
 		else
@@ -84,5 +84,5 @@ elseif CLIENT then
 		self:DrawModel()
 	end
 
-	language.Add("wep_jack_gmod_ezshovel", "EZ Shovel")
+	language.Add("wep_jack_gmod_ezspade", "EZ Spade")
 end
