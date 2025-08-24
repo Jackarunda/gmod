@@ -13,7 +13,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda & Friends",
-			Version = 55
+			Version = 56
 		},
 		General = {
 			Hints = true,
@@ -1106,7 +1106,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				results = "ent_jack_gmod_ezrocketmotor",
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.PAPER] = 20,
-					[JMod.EZ_RESOURCE_TYPES.PROPELLANT] = 50
+					[JMod.EZ_RESOURCE_TYPES.PROPELLANT] = 25
 				},
 				sizeScale = 1,
 				category = "Other",
@@ -2047,6 +2047,16 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				},
 				category = "Tools",
 				craftingType = {"craftingtable", "workbench"},
+				description = "I am a dwarf and I'm digging in a hole"
+			},
+			["EZ Spade"] = {
+				results = "ent_jack_gmod_ezspade",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.STEEL] = 15,
+					[JMod.EZ_RESOURCE_TYPES.WOOD] = 12
+				},
+				category = "Tools",
+				craftingType = {"workbench"},
 				description = "Give me a spade, and I'll give you a hooole"
 			},
 			["EZ Bucket"] = {
