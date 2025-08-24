@@ -555,8 +555,9 @@ function JMod.EZprogressTask(ent, pos, deconstructor, task, mult)
 	end
 end
 
-function JMod.ConsumeNutrients(ply, amt)
+function JMod.ConsumeNutrients(ply, amt, nextEatTimeMult)
 	if not IsValid(ply) or not ply:Alive() then return false end
+	nextEatTimeMult = nextEatTimeMult or 1
 	local Time = CurTime()
 	amt = math.Round(amt)
 	--
@@ -567,7 +568,7 @@ function JMod.ConsumeNutrients(ply, amt)
 	if (ply.EZnutrition.NextEat or 0) > Time then JMod.Hint(activator, "can not eat") return false end
 	if (ply.EZnutrition.Nutrients or 0) >= 100 then JMod.Hint(ply, "nutrition filled") return false end
 	--
-	ply.EZnutrition.NextEat = Time + amt / JMod.Config.FoodSpecs.EatSpeed
+	ply.EZnutrition.NextEat = Time + (amt * nextEatTimeMult / JMod.Config.FoodSpecs.EatSpeed)
 	ply.EZnutrition.Nutrients = math.Round(ply.EZnutrition.Nutrients + amt * JMod.Config.FoodSpecs.ConversionEfficiency)
 
 	local result = hook.Run("JMod_ConsumeNutrients", ply, amt)
@@ -576,6 +577,7 @@ function JMod.ConsumeNutrients(ply, amt)
 	return true
 end
 
+-- Example hook for DarkRP energy compatibility
 hook.Add("JMod_ConsumeNutrients", "DarkRP_EnergyCompat", function(ply, amt)
 	if ply.getDarkRPVar and ply.setDarkRPVar and ply:getDarkRPVar("energy") then
 		local Old = ply:getDarkRPVar("energy")
@@ -583,14 +585,61 @@ hook.Add("JMod_ConsumeNutrients", "DarkRP_EnergyCompat", function(ply, amt)
 	end
 end)
 
+function JMod.ConsumeAlcohol(ply, amt, drunkMult, nextDrinkTimeMult)
+	if not IsValid(ply) or not ply:Alive() then return false end
+	nextDrinkTimeMult = nextDrinkTimeMult or 1
+	local Time = CurTime()
+	amt = math.Round(amt)
+	--
+	ply.EZalcohol = ply.EZalcohol or {
+		NextDrink = 0, -- Stop people from gulping down to much, enjoy your drinks
+		Tolerance = 1, -- The threshold at which you start to feel the effects of alcohol
+		Alcohol = 0, -- The 'good' benefits of alcohol [0 - 100]
+		Drunk = 0 -- The 'bad' effects of alcohol [0 - 100]
+	}
+	if (ply.EZalcohol.NextDrink or 0) > Time then JMod.Hint(activator, "can not drink") return false end
+	if (ply.EZalcohol.Alcohol or 0) >= 100 then JMod.Hint(ply, "alcohol filled") return false end
+	--
+	ply.EZalcohol.NextDrink = Time + (amt * nextDrinkTimeMult / JMod.Config.FoodSpecs.DrinkSpeed)
+	ply.EZalcohol.Alcohol = math.Round(ply.EZalcohol.Alcohol + amt * JMod.Config.FoodSpecs.ConversionEfficiency)
+	ply.EZalcohol.Drunk = math.Round(ply.EZalcohol.Drunk + amt * drunkMult * JMod.Config.FoodSpecs.ConversionEfficiency)
+
+	ply:PrintMessage(HUD_PRINTCENTER, "alcohol: " .. ply.EZalcohol.Alcohol .. "/100")
+	return true
+end
+
+function JMod.GetPlayerAlcoholMult(ply)
+	if not IsValid(ply) or not ply:Alive() then return 1 end
+	local EZalcohol = ply.EZalcohol
+
+	if not EZalcohol then return 1 end
+
+	local Alcohol = EZalcohol.Alcohol or 0
+	local Drunk = EZalcohol.Drunk or 0
+	local Tolerance = EZalcohol.Tolerance or 1
+
+	local DrunkEffect = Drunk / (150 * Tolerance)
+    local AlcoholEffect = Alcohol / (100 * math.sqrt(Tolerance))
+    
+    return 1 + AlcoholEffect - DrunkEffect
+end
+
+local function GetPlayerHealthMult(ply)
+	if not(IsValid(ply) and ply:IsPlayer() and ply:Alive()) then return 1 end
+	local PlyMaxHealth = ply:GetMaxHealth()
+	local HealthDiff = math.Clamp(ply:Health() - PlyMaxHealth, 0, PlyMaxHealth * 2)
+	local HealthMult = math.Round(HealthDiff ^ 1.2 / (PlyMaxHealth), 2)
+
+	return HealthMult
+end
+
 function JMod.GetPlayerStrength(ply)
 	if not(IsValid(ply) and ply:IsPlayer() and ply:Alive()) then return 1 end
-	local PlyHealth = ply:Health()
-	local PlyMaxHealth = ply:GetMaxHealth()
-	local HealthDiff = math.Clamp(PlyHealth - PlyMaxHealth, 0, PlyMaxHealth * 2)
+	local HealthMult = GetPlayerHealthMult(ply)
+	local AlcoholMult = JMod.GetPlayerAlcoholMult(ply)
 
 	--jprint(1 + (math.max(PlyHealth - PlyMaxHealth, 0) ^ 1.2 / (PlyMaxHealth)) * JMod.Config.General.HandGrabStrength)
-	return 1 + math.Round(HealthDiff ^ 1.2 / (PlyMaxHealth), 2) * JMod.Config.General.HandGrabStrength
+	return 1 + HealthMult * AlcoholMult * JMod.Config.General.HandGrabStrength
 end
 
 function JMod.DebugArrangeEveryone(ply, mult)
