@@ -16,7 +16,7 @@ ENT.EZbombBaySize = nil
 ENT.EZguidable = false
 ---
 ENT.Model = "models/hunter/blocks/cube075x6x075.mdl"
-ENT.Mass = 500
+ENT.Mass = 600
 ENT.DetSpeed = 1000
 ENT.DetType = "dualdet"
 ENT.Durability = 200
