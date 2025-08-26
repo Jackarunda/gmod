@@ -158,11 +158,11 @@ function JMod.UpdateInv(invEnt, noplace, transfer, emergancyNetwork)
 		end
 	end
 
+	invEnt.JModInv = jmodinvfinal
+
 	if OldWeight ~= jmodinvfinal.weight then
 		JMod.CalcSpeed(invEnt)
 	end
-
-	invEnt.JModInv = jmodinvfinal
 	if not(invEnt:IsPlayer() or invEnt.KeepJModInv) and table.IsEmpty(invEnt.JModInv.EZresources) and table.IsEmpty(invEnt.JModInv.items) then
 		invEnt.JModInv = nil
 	end
@@ -246,7 +246,8 @@ function JMod.AddToInventory(invEnt, target, noUpdate)
 		--if invEnt:GetPersistent() then
 		--	target:SetPersistent(true)
 		--end
-		table.insert(jmodinv.items, {name = target.PrintName or target:GetModel(), ent = target, vol = JMod.GetItemVolumeWeight(target)})
+		local Vol, Mass = JMod.GetItemVolumeWeight(target)
+		table.insert(jmodinv.items, {name = target.PrintName or target:GetModel(), ent = target, vol = Vol})
 
 		local Children = target:GetChildren()
 		if Children then
@@ -257,6 +258,10 @@ function JMod.AddToInventory(invEnt, target, noUpdate)
 				v:SetNotSolid(true)
 			end
 		end
+
+		target:CallOnRemove("JMod_RemoveFromInventory", function()
+			JMod.RemoveFromInventory(invEnt, target, nil, false)
+		end)
 	end
 
 	invEnt.JModInv = jmodinv
@@ -346,6 +351,7 @@ function JMod.RemoveFromInventory(invEnt, target, pos, noUpdate, transfer)
 					v:SetNotSolid(v.JModWasNoSolid or false)
 				end
 			end
+			target:RemoveCallOnRemove("JMod_RemoveFromInventory")
 		end
 	end
 
