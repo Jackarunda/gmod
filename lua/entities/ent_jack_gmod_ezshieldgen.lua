@@ -164,6 +164,7 @@ if(SERVER)then
 
 		self.Shield:Spawn()
 		self.Shield:Activate()
+		self.Shield:SetParent(self)
 	end
 
 	function ENT:ShieldBreak()
@@ -203,7 +204,7 @@ if(SERVER)then
 		end
 		if (State == STATE_ON) then
 			if (self:WaterLevel() > 0) then self:TurnOff() return end
-			if (self:GetPhysicsObject():IsMotionEnabled()) then self:TurnOff() return end
+			--if (self:GetPhysicsObject():IsMotionEnabled()) then self:TurnOff() return end
 			if not (IsValid(self.Shield)) then
 				self:ShieldBreak()
 			else

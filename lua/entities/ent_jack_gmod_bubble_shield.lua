@@ -308,12 +308,12 @@ if SERVER then
 	end
 
 	function ENT:Think()
-		if IsValid(self.Projector) then
-			self:SetPos(self.Projector:GetPos() - self.Projector:GetUp() * 120)
-			self:SetAngles(self.Projector:GetAngles())
-		elseif IsValid(self.OuterShield) then
+		if IsValid(self.OuterShield) then
 			self:SetPos(self.OuterShield:GetPos())
 			self:SetAngles(self.OuterShield:GetAngles())
+		elseif IsValid(self.Projector) then
+			--self:SetPos(self.Projector:GetPos() - self.Projector:GetUp() * 120)
+			--self:SetAngles(self.Projector:GetAngles())
 		end
 		if IsValid(self:GetPhysicsObject()) then
 			self:GetPhysicsObject():SetVelocity(Vector(0, 0, 0))
@@ -323,8 +323,11 @@ if SERVER then
 		if not self:GetAmInnerShield() then
 			-- "leak" strength so that the projector must consume energy to maintain us
 			self:TakeShieldDamage(2, 1)
+			self:NextThink(CurTime() + 1)
+		else
+			self:NextThink(CurTime())
 		end
-		self:NextThink(CurTime() + 1)
+		
 		return true
 	end
 
@@ -381,6 +384,9 @@ if SERVER then
 	function ENT:OnRemove()
 		SafeRemoveEntity(self.InnerShield)
 		SafeRemoveEntity(self.OuterShield)
+		if IsValid(self.Projector) then
+			self.Projector:ShieldBreak()
+		end
 	end
 
 	function ENT:DoHitEffect(pos, scale, normal)
