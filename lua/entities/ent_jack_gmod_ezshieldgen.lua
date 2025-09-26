@@ -17,7 +17,7 @@ ENT.SpawnHeight = 1
 ENT.EZcolorable = true
 --
 ENT.StaticPerfSpecs = {
-	ElectricityToShieldStrengthConversion = .045
+	ElectricityToShieldStrengthConversion = .05
 }
 ENT.DynamicPerfSpecs = {
 	MaxElectricity = 200,
@@ -82,8 +82,8 @@ if(SERVER)then
 				self.Established.Pos = Tr.HitPos
 				self.Established.Norm = Tr.HitNormal
 				self.Established.OnWorld = true
-				self:GetPhysicsObject():SetVelocity(Vector(0, 0, 0))
-				self:GetPhysicsObject():EnableMotion(false)
+				--self:GetPhysicsObject():SetVelocity(Vector(0, 0, 0))
+				--self:GetPhysicsObject():EnableMotion(false)
 				return true
 			end
 			if (Tr.Entity and Tr.Entity.GetPhysicsObject) then
@@ -94,8 +94,8 @@ if(SERVER)then
 						self.Established.Norm = Tr.HitNormal
 						self.Established.Anchor = Tr.Entity
 						self.Established.OnWorld = false
-						self:GetPhysicsObject():SetVelocity(Vector(0, 0, 0))
-						self:GetPhysicsObject():EnableMotion(false)
+						--self:GetPhysicsObject():SetVelocity(Vector(0, 0, 0))
+						--self:GetPhysicsObject():EnableMotion(false)
 						return true
 					end
 				end
