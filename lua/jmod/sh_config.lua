@@ -898,8 +898,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				results = "ent_jack_gmod_ezpowerbank",
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 150,
-					[JMod.EZ_RESOURCE_TYPES.STEEL] = 25,
-					[JMod.EZ_RESOURCE_TYPES.STEEL] = 25,
+					[JMod.EZ_RESOURCE_TYPES.LEAD] = 25,
 				},
 				sizeScale = 5,
 				category = "Machines",
