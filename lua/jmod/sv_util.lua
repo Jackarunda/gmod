@@ -574,6 +574,15 @@ function JMod.ConsumeNutrients(ply, amt, nextEatTimeMult)
 	local result = hook.Run("JMod_ConsumeNutrients", ply, amt)
 
 	ply:PrintMessage(HUD_PRINTCENTER, "nutrition: " .. ply.EZnutrition.Nutrients .. "/100")
+
+	if ply.EZvirus and ply.EZvirus.Severity > 1 then
+		if ply.EZvirus.InfectionWarned then
+			ply:PrintMessage(HUD_PRINTCENTER, "immune system boosted")
+		end
+
+		ply.EZvirus.Severity = math.Clamp(ply.EZvirus.Severity - 10, 1, 9e9)
+	end
+	
 	return true
 end
 
