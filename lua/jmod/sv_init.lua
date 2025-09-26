@@ -283,10 +283,10 @@ function JMod.TryVirusInfectInRange(host, att, hostFaceProt, hostSkinProt)
 end
 
 local function VirusCough(ply)
-	if math.random(1, 10) == 2 then
+	local Cough = math.random(1, 10) == 10
+	if Cough then
 		JMod.TryCough(ply)
 	end
-
 	local VirusAttacker = (IsValid(ply.EZvirus.Attacker) and ply.EZvirus.Attacker) or game.GetWorld()
 	local Dmg = DamageInfo()
 	Dmg:SetDamageType(DMG_GENERIC) -- why aint this working to hazmat wearers?
@@ -299,9 +299,10 @@ local function VirusCough(ply)
 	--
 	local HostFaceProtection, HostSkinProtection = JMod.GetArmorBiologicalResistance(ply, DMG_RADIATION)
 	if (HostFaceProtection + HostSkinProtection) >= 2 then return end
-	JMod.TryVirusInfectInRange(ply, VirusAttacker, HostFaceProtection, HostSkinProtection)
 
-	if math.random(1, 10) == 10 then
+	JMod.TryVirusInfectInRange(ply, VirusAttacker, HostFaceProtection, HostSkinProtection)
+	if Cough then
+		JMod.TryCough(ply)
 		local Gas = ents.Create("ent_jack_gmod_ezvirusparticle")
 		Gas:SetPos(ply:GetPos())
 		JMod.SetEZowner(Gas, ply)

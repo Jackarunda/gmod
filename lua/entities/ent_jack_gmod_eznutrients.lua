@@ -45,14 +45,6 @@ if SERVER then
 			if self:GetResource() <= 0 then
 				self:Remove()
 			end
-
-			if ply.EZvirus and ply.EZvirus.Severity > 1 then
-				if ply.EZvirus.InfectionWarned then
-					ply:PrintMessage(HUD_PRINTCENTER, "immune system boosted")
-				end
-
-				ply.EZvirus.Severity = math.Clamp(ply.EZvirus.Severity - 10, 1, 9e9)
-			end
 		end
 	end
 elseif CLIENT then
