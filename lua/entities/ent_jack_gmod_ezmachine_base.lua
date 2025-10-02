@@ -30,6 +30,7 @@ ENT.DynamicPerfSpecs={
 }
 ENT.DynamicPerfSpecExp=1
 ENT.EZstorageSpace = 0
+ENT.NextRefillTime = 0
 
 ---- Shared Functions ----
 function ENT:SetupDataTables()
@@ -170,7 +171,6 @@ if(SERVER)then
 			self.UpgradeProgress = {}
 			self.UpgradeCosts = JMod.CalculateUpgradeCosts((JMod.Config.Craftables[self.PrintName] and JMod.Config.Craftables[self.PrintName].craftingReqs) or (self.BackupRecipe and self.BackupRecipe))
 		end
-		self.NextRefillTime = 0
 
 		self:UpdateWireOutputs()
 	end
@@ -461,7 +461,7 @@ if(SERVER)then
 		if amt <= 0 then return 0 end
 
 		local Time = CurTime()
-		if (self.NextRefillTime > Time) or (typ == "generic") then return 0 end
+		if ((self.NextRefillTime or 0) > Time) or (typ == "generic") then return 0 end
 		
 		for _, v in pairs(self.EZconsumes)do
 			if typ == v then
@@ -649,8 +649,6 @@ if(SERVER)then
 		elseif self.EZownerID then
 			JMod.SetEZowner(self, player.GetBySteamID64(self.EZownerID), true)
 		end
-
-		self.NextRefillTime = 0
 
 		if self.NextUseTime then
 			self.NextUseTime = Time + 1

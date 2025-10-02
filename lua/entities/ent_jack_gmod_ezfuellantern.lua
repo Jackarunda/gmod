@@ -15,6 +15,7 @@ ENT.JModPreferredCarryAngles = Angle(0, 180, 0)
 ENT.EZconsumes={
     JMod.EZ_RESOURCE_TYPES.FUEL
 }
+ENT.NextRefillTime = 0
 ---
 local STATE_OFF, STATE_ON = 0, 1
 function ENT:SetupDataTables()
@@ -56,7 +57,6 @@ if SERVER then
 		self:SetState(STATE_OFF)
 		self.MaxFuel = 10
 		self:SetFuel(self.MaxFuel)
-		self.NextRefillTime = 0
 		self.Suffocated = 0
 	end
 

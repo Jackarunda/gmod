@@ -209,7 +209,6 @@ if SERVER then
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
 		JMod.SetEZowner(self, ply, true)
-		self.NextRefillTime = Time
 		self.LastTouchedTime = Time
 	end
 

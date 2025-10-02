@@ -17,6 +17,7 @@ ENT.EZcolorable = false
 ENT.EZconsumes={
 	JMod.EZ_RESOURCE_TYPES.WATER
 }
+ENT.NextRefillTime = 0
 --[[ENT.StaticPerfSpecs={
 	MaxDurability=100,
 	MaxWater=100,
@@ -100,10 +101,6 @@ if(SERVER)then
 		else
 			self:SetWater(0)
 		end
-		---
-		--if(JMod.GetEZowner(self))then JMod.Colorify(self) end --No ownership for plants, maybe
-		---
-		self.NextRefillTime = 0
 	end
 
 	function ENT:Break(dmginfo)
@@ -336,7 +333,6 @@ if(SERVER)then
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
 		JMod.SetEZowner(self, ply, true)
-		ent.NextRefillTime = Time + 1
 		if ent.NextUseTime then
 			ent.NextUseTime = Time + 1
 		end

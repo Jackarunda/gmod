@@ -95,10 +95,10 @@ if SERVER then
 	end
 
 	function ENT:TryLoadResource(typ, amt)
-		if(amt <= 0)then return 0 end
+		if (amt <= 0)then return 0 end
 		local Time = CurTime()
 		local Accepted = 0
-		if(typ == JMod.EZ_RESOURCE_TYPES.WATER) or (typ == JMod.EZ_RESOURCE_TYPES.PROPELLANT)then
+		if (typ == JMod.EZ_RESOURCE_TYPES.WATER) or (typ == JMod.EZ_RESOURCE_TYPES.PROPELLANT) then
 			local Wata = self.Hydration
 			local Missing = self.MaxWater - Wata
 			if (Missing <= 0) then return 0 end
@@ -226,7 +226,6 @@ if SERVER then
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
 		JMod.SetEZowner(self, ply, true)
-		self.NextRefillTime = Time
 		self.LastTouchedTime = Time
 	end
 
