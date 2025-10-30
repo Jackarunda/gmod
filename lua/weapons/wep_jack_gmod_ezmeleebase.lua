@@ -481,16 +481,13 @@ function SWEP:SCKInitialize()
 		-- init view model bone build function
 		if IsValid(self.Owner) then
 			local vm = self.Owner:GetViewModel()
+			if not IsValid(vm) then return end
 
-			if IsValid(vm) then
-				self:ResetBonePositions(vm)
-			end
+			self:ResetBonePositions(vm)
 
 			-- Init viewmodel visibility
 			if self.ShowViewModel == nil or self.ShowViewModel then
-				if IsValid(vm) then
-					vm:SetColor(Color(255, 255, 255, 255))
-				end
+				vm:SetColor(Color(255, 255, 255, 255))
 			else
 				-- we set the alpha to 1 instead of 0 because else ViewModelDrawn stops being called
 				vm:SetColor(Color(255, 255, 255, 1))
