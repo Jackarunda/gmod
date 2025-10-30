@@ -273,13 +273,16 @@ if SERVER then
 		return true
 	end
 elseif CLIENT then
-	function ENT:Initialize()
+	local function MakeModel(self)
 		self.Mdl = ClientsideModel("models/jmod/explosives/missile/missile_patriot.mdl")
 		self.Mdl:SetSkin(1)
 		self.Mdl:SetModelScale(.45, 0)
 		self.Mdl:SetPos(self:GetPos())
 		self.Mdl:SetParent(self)
 		self.Mdl:SetNoDraw(true)
+	end
+	function ENT:Initialize()
+		MakeModel(self)
 	end
 
 	function ENT:Think()
@@ -313,9 +316,13 @@ elseif CLIENT then
 		local Time = CurTime()
 		Ang:RotateAroundAxis(Ang:Up(), 90)
 		--self:DrawModel()
-		self.Mdl:SetRenderOrigin(Pos + Ang:Up() * 1.5 - Ang:Right() * 0 - Ang:Forward() * 1)
-		self.Mdl:SetRenderAngles(Ang)
-		self.Mdl:DrawModel()
+		if not IsValid(self.Mdl) then 
+			MakeModel(self) 
+		else
+			self.Mdl:SetRenderOrigin(Pos + Ang:Up() * 1.5 - Ang:Right() * 0 - Ang:Forward() * 1)
+			self.Mdl:SetRenderAngles(Ang)
+			self.Mdl:DrawModel()
+		end
 
 		if self:GetState() == STATE_LAUNCHED then
 			self.BurnoutTime = self.BurnoutTime or Time + 1
@@ -332,8 +339,8 @@ elseif CLIENT then
 	end
 
 	function ENT:OnRemove()
-		if self.Mdl then
-			self.Mdl:Remove()
+		if IsValid(self.Mdl) then
+			SafeRemoveEntity(self.Mdl)
 		end
 	end
 
