@@ -690,14 +690,10 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 		for _, playa in PlyIterator, Playas, startingindex do
 			if playa.EZnutrition then
 				if playa:Alive() then
-					local RestMult = 1
-					if playa.JMod_IsSleeping then
-						RestMult = 2
-					end
 					local Nuts = playa.EZnutrition.Nutrients
 
 					if Nuts > 0 then
-						playa.EZnutrition.Nutrients = Nuts - 1
+						playa.EZnutrition.Nutrients = Nuts - (playa.JMod_IsSleeping and .5 or 1)
 						local Helf, Max, Nuts = playa:Health(), playa:GetMaxHealth()
 
 						if Helf < Max then
@@ -706,8 +702,8 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 							if playa:Health() == Max then
 								playa:RemoveAllDecals()
 							end
-						elseif math.Rand(0, 1) < .75 then
-							local BoostMult = JMod.Config.FoodSpecs.BoostMult * RestMult
+						elseif math.Rand(0, 1) > .25 then
+							local BoostMult = JMod.Config.FoodSpecs.BoostMult * (playa.JMod_IsSleeping and 2 or 1)
 							local BoostedFrac = (Helf - Max) / Max
 
 							if math.Rand(0, 1) > BoostedFrac then
