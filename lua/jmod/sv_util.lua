@@ -1,4 +1,12 @@
-﻿-- this causes an object to rotate to point forward while moving, like a dart
+﻿-- Material types that can be mined for sand, with speed multipliers
+JMod.SandTypes = {
+	[MAT_DIRT] = 1,
+	[MAT_SAND] = 1.5,
+	[MAT_SNOW] = .5,
+	[MAT_GRASS] = .75
+}
+
+-- this causes an object to rotate to point forward while moving, like a dart
 function JMod.AeroDrag(ent, forward, mult, spdReq)
 	if constraint.FindConstraint(ent, "Weld") then return end
 	if ent:IsPlayerHolding() then return end
@@ -381,63 +389,54 @@ function JMod.ResourceEffect(typ, fromPoint, toPoint, amt, spread, scale, upSpee
 	end
 end
 
-function JMod.EZprogressTask(ent, pos, deconstructor, task, mult)
+function JMod.EZprogressMining(ent, pos, deconstructor, mult, surfaceMat)
 	mult = mult or 1
 	local Time = CurTime()
-
+	
 	if not IsValid(ent) then return "Invalid Ent" end
-
-	local CancelTaskMessage = hook.Run("JMod_EZprogressTask", ent, pos, deconstructor, task, mult)
-
+	
+	local CancelTaskMessage = hook.Run("JMod_EZprogressMining", ent, pos, deconstructor, mult)
+	
 	if CancelTaskMessage ~= nil then
-
 		return CancelTaskMessage
 	end
-
-	if task == "mining" then
-		local DepositKey = JMod.GetDepositAtPos(ent, pos)
-		local DepositInfo = JMod.NaturalResourceTable[DepositKey]
-		if DepositInfo and ent.SetResourceType then
-			local NewType = DepositInfo.typ
-			if ent.GetResourceType and (ent:GetResourceType() ~= NewType) then
-				ent:SetNW2Float("EZminingProgress", 0) -- No you don't
-			end 
-			ent:SetResourceType(NewType)
-		end
+	
+	local DepositKey = JMod.GetDepositAtPos(ent, pos)
+	local DepositInfo = JMod.NaturalResourceTable[DepositKey]
+	if DepositInfo and ent.SetResourceType then
+		local NewType = DepositInfo.typ
+		if ent.GetResourceType and (ent:GetResourceType() ~= NewType) then
+			ent:SetNW2Float("EZminingProgress", 0) -- No you don't
+		end 
+		ent:SetResourceType(NewType)
+	end
+	
+	-- Check if we can mine sand from this surface
+	local SandMiningModifier = surfaceMat and JMod.SandTypes[surfaceMat]
+	
+	if ent.EZpreviousMiningPos and ent.EZpreviousMiningPos:Distance(pos) > 200 then
+		ent:SetNW2Float("EZminingProgress", 0)
+		ent.EZpreviousMiningPos = nil
+	end
+	if ent:GetNW2Float("EZcancelminingTime", 0) <= Time then
+		ent:SetNW2Float("EZminingProgress", 0)
+		ent.EZpreviousMiningPos = nil
+	end
+	ent:SetNW2Float("EZcancelminingTime", Time + 5)
+	ent.EZpreviousMiningPos = pos
+	
+	local Prog = ent:GetNW2Float("EZminingProgress", 0)
+	local AddAmt = math.random(15, 25) * mult * JMod.Config.ResourceEconomy.ExtractionSpeed
+	
+	ent:SetNW2Float("EZminingProgress", math.Clamp(Prog + AddAmt, 0, 100))
+	
+	-- Check if mining is complete first (before checking >= 10)
+	if Prog >= 100 then
+		local AmtToProduce
+		local ResourceType
 		
-		if ent.EZpreviousMiningPos and ent.EZpreviousMiningPos:Distance(pos) > 200 then
-			ent:SetNW2Float("EZminingProgress", 0)
-			ent.EZpreviousMiningPos = nil
-		end
-		if ent:GetNW2Float("EZcancelminingTime", 0) <= Time then
-			ent:SetNW2Float("EZminingProgress", 0)
-			ent.EZpreviousMiningPos = nil
-		end
-		ent:SetNW2Float("EZcancelminingTime", Time + 5)
-		ent.EZpreviousMiningPos = pos
-
-		local Prog = ent:GetNW2Float("EZminingProgress", 0)
-		local AddAmt = math.random(15, 25) * mult * JMod.Config.ResourceEconomy.ExtractionSpeed
-
-		ent:SetNW2Float("EZminingProgress", math.Clamp(Prog + AddAmt, 0, 100))
-
-		if (Prog >= 10) and not(DepositInfo) then
-			ent:SetNW2Float("EZminingProgress", 0)
-			ent.EZpreviousMiningPos = nil
-			local NearestGoodDeposit = JMod.GetDepositAtPos(ent, pos, 3)
-			local NearestGoodDepositInfo = JMod.NaturalResourceTable[NearestGoodDeposit]
-			if NearestGoodDepositInfo then
-				net.Start("JMod_ResourceScanner")
-					net.WriteEntity(ent)
-					net.WriteTable({NearestGoodDepositInfo})
-				net.Broadcast()
-				return NearestGoodDepositInfo.typ .. " nearby"
-			else
-				return "nothing of value nearby"
-			end
-		elseif Prog >= 100 then
-			local AmtToProduce
-
+		if DepositInfo then
+			-- Mining a deposit
 			if DepositInfo.rate then
 				local Rate = DepositInfo.rate
 				AmtToProduce = Rate * Prog
@@ -449,25 +448,87 @@ function JMod.EZprogressTask(ent, pos, deconstructor, task, mult)
 				end
 				JMod.DepleteNaturalResource(DepositKey, AmtToProduce)
 			end
+			ResourceType = DepositInfo.typ
+		elseif SandMiningModifier then
+			-- Mining sand/dirt
+			AmtToProduce = 25 * SandMiningModifier
+			ResourceType = JMod.EZ_RESOURCE_TYPES.SAND
+		else
+			-- Nothing to mine
+			return nil
+		end
 
-			local SpawnPos = ent:WorldToLocal(pos + Vector(0, 0, 8))
-			JMod.MachineSpawnResource(ent, DepositInfo.typ, AmtToProduce, SpawnPos, Angle(0, 0, 0), SpawnPos, 100)
-			ent:SetNW2Float("EZminingProgress", 0)
-			ent.EZpreviousMiningPos = nil
-			JMod.ResourceEffect(DepositInfo.typ, pos, nil, 1, 1, 1, 5)
-			util.Decal("EZgroundHole", pos + Vector(0, 0, 10), pos + Vector(0, 0, -10))
-			--
+		local SpawnPos = ent:WorldToLocal(pos + Vector(0, 0, 8))
+		JMod.MachineSpawnResource(ent, ResourceType, AmtToProduce, SpawnPos, Angle(0, 0, 0), SpawnPos, 100)
+		ent:SetNW2Float("EZminingProgress", 0)
+		ent.EZpreviousMiningPos = nil
+		JMod.ResourceEffect(ResourceType, pos, nil, 1, 1, 1, 5)
+		util.Decal("EZgroundHole", pos + Vector(0, 0, 10), pos + Vector(0, 0, -10))
+
+		if DepositInfo then
 			net.Start("JMod_ResourceScanner")
 				net.WriteEntity(ent)
 				net.WriteTable({DepositInfo})
 			net.Broadcast()
+		end
 
+		if ent.SetResourceType then
 			ent:SetResourceType("")
+		end
+	elseif not(DepositInfo) then
+		ent:SetNW2Float("EZminingProgress", 0)
+		ent.EZpreviousMiningPos = nil
+		
+		-- Check for nearby valuable deposits first
+		local NearestGoodDeposit = JMod.GetDepositAtPos(ent, pos, 3)
+		local NearestGoodDepositInfo = JMod.NaturalResourceTable[NearestGoodDeposit]
+		
+		-- Check if we can mine sand/dirt instead
+		if SandMiningModifier then
+			-- Mine sand instead of a deposit
+			if ent.SetResourceType then
+				ent:SetResourceType(JMod.EZ_RESOURCE_TYPES.SAND)
+			end
+			ent:SetNW2Float("EZminingProgress", 100)
+			
+			-- Also notify about nearby deposits while mining sand
+			if NearestGoodDepositInfo then
+				net.Start("JMod_ResourceScanner")
+					net.WriteEntity(ent)
+					net.WriteTable({NearestGoodDepositInfo})
+				net.Broadcast()
+				return NearestGoodDepositInfo.typ .. " nearby"
+			end
 			
 			return nil
 		end
+		
+		-- No sand mining possible, just check for nearby deposits
+		if NearestGoodDepositInfo then
+			net.Start("JMod_ResourceScanner")
+				net.WriteEntity(ent)
+				net.WriteTable({NearestGoodDepositInfo})
+			net.Broadcast()
+			return NearestGoodDepositInfo.typ .. " nearby"
+		else
+			return "nothing of value nearby"
+		end
+	end
 
-		return nil
+	return nil
+end
+
+function JMod.EZprogressTask(ent, pos, deconstructor, task, mult)
+	mult = mult or 1
+	local Time = CurTime()
+
+	if not IsValid(ent) then return "Invalid Ent" end
+
+	local CancelTaskMessage = hook.Run("JMod_EZprogressTask", ent, pos, deconstructor, task, mult)
+
+	if CancelTaskMessage ~= nil then
+
+		return CancelTaskMessage
 	end
 
 	if ent:GetNW2Float("EZcancel"..task.."Time", 0) <= Time then

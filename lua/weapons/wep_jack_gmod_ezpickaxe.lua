@@ -115,7 +115,7 @@ function SWEP:OnHit(swingProgress, tr)
 		tr.Entity:TakeDamageInfo(PickDam)
 
 	elseif tr.Entity:IsWorld() then
-		local Message = JMod.EZprogressTask(self, tr.HitPos, self.Owner, "mining", JMod.GetPlayerStrength(self.Owner) ^ .25)
+		local Message = JMod.EZprogressMining(self, tr.HitPos, self.Owner, JMod.GetPlayerStrength(self.Owner) ^ .25)
 
 		if Message then
 			self:Msg(Message)
