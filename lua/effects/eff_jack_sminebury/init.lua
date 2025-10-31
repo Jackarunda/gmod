@@ -14,7 +14,7 @@
 		endpos = vOffset - self.Normal * 10
 	})
 	local MatColor = Color(105, 100, 90)
-	if Tr.HitWorld then
+	if Tr.HitWorld and Tr.MatType and JMod.HitMatColors[Tr.MatType] then
 		MatColor = JMod.HitMatColors[Tr.MatType][1]
 	end
 
