@@ -230,16 +230,16 @@ if(SERVER)then
 					WireLib.TriggerOutput(self, "FlexFuel", self:GetElectricity())
 				elseif self.GetAmmoType and self.AmmoRefundTable and (self.AmmoRefundTable[self:GetAmmoType()].spawnType == typ) then
 					WireLib.TriggerOutput(self, "Ammo", self:GetAmmo())
-			else
-				local MethodName = JMod.EZ_RESOURCE_TYPE_METHODS[typ]
-				if MethodName then
-					local ResourceGetMethod = self["Get"..MethodName]
-					if ResourceGetMethod then
-						local ResourceName = string.Replace(typ, " ", "")
-						WireLib.TriggerOutput(self, string.gsub(ResourceName, "^%l", string.upper), ResourceGetMethod(self))
+				else
+					local MethodName = JMod.EZ_RESOURCE_TYPE_METHODS[typ]
+					if MethodName then
+						local ResourceGetMethod = self["Get"..MethodName]
+						if ResourceGetMethod then
+							local ResourceName = string.Replace(typ, " ", "")
+							WireLib.TriggerOutput(self, string.gsub(ResourceName, "^%l", string.upper), ResourceGetMethod(self))
+						end
 					end
 				end
-			end
 			end
 		end
 	end
