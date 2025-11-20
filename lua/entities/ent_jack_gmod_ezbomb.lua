@@ -32,6 +32,9 @@ end
 
 ---
 if SERVER then
+	-- Network string for bomb exit/reentry events
+	util.AddNetworkString("JMod_EZBombTrail")
+	
 	function ENT:SpawnFunction(ply, tr)
 		local SpawnPos = tr.HitPos + tr.HitNormal * (self.SpawnHeight or 40)
 		local ent = ents.Create(self.ClassName)
@@ -123,12 +126,20 @@ if SERVER then
 					filter = {self}
 				})--]]
 
-				local Constrained = self:IsPlayerHolding() or constraint.HasConstraints(self) or not self:GetPhysicsObject():IsMotionEnabled()
+				local Constrained = self:IsPlayerHolding() or constraint.FindConstraint(self, "Weld") or not self:GetPhysicsObject():IsMotionEnabled()
 
 				if WorldTr.HitSky and not(Constrained) then
 					local NewPos, TravelTime, NewVel = self:FindNextEmptySpace(data.OurOldVelocity)
 
 					if NewPos then
+						-- Network the exit/reentry event to clients
+						net.Start("JMod_EZBombTrail")
+						net.WriteVector(SelfPos) -- Exit position
+						net.WriteVector(data.OurOldVelocity) -- Exit velocity
+						net.WriteVector(NewPos) -- Reentry position
+						net.WriteFloat(TravelTime) -- Travel time
+						net.Broadcast()
+						
 						timer.Simple(0, function()
 							if IsValid(self) then
 								self:SetNoDraw(true)
@@ -448,6 +459,161 @@ if SERVER then
 	end
 
 elseif CLIENT then
+	-- Table to store bomb trail data
+	local BombTrails = {}
+	
+	-- Material for rendering trails
+	local TrailMat = Material("cable/xbeam")
+	
+	-- Trail decay time after reentry (in seconds)
+	local TRAIL_DECAY_TIME = 2
+	
+	-- Constant trail color (RGB values)
+	local TRAIL_COLOR = Color(200, 200, 200, 255)
+	
+	-- Texture repeat factor (how many times the texture repeats along the trail)
+	local TRAIL_TEX_REPEAT = 4
+	
+	-- Receive bomb exit/reentry events
+	net.Receive("JMod_EZBombTrail", function()
+		local exitPos = net.ReadVector()
+		local exitVel = net.ReadVector()
+		local reentryPos = net.ReadVector()
+		local travelTime = net.ReadFloat()
+		
+		local grav = physenv.GetGravity()
+		local gravZ = grav.z
+		local exitVelZ = exitVel.z
+		
+		-- Pre-calculate apex of trajectory
+		local tApex = 0
+		if gravZ ~= 0 and exitVelZ > 0 then
+			tApex = math.max(0, math.min(-exitVelZ / gravZ, travelTime))
+		end
+		
+		-- Pre-calculate trail start/end times and positions
+		local tStart = 0 -- Start at exit point
+		local tEnd = tApex + (travelTime - tApex) * 0.75 -- End halfway between apex and reentry
+		local startPos = exitPos + exitVel * tStart + grav * tStart * tStart * 0.5
+		local endPos = exitPos + exitVel * tEnd + grav * tEnd * tEnd * 0.5
+		local effectiveTravelTime = tEnd - tStart
+		
+		table.insert(BombTrails, {
+			exitPos = exitPos,
+			exitVel = exitVel,
+			reentryPos = reentryPos,
+			travelTime = travelTime,
+			startTime = CurTime(),
+			-- Pre-calculated values
+			tStart = tStart,
+			tEnd = tEnd,
+			startPos = startPos,
+			endPos = endPos,
+			effectiveTravelTime = effectiveTravelTime
+		})
+	end)
+	
+	-- Hook to render trails
+	hook.Add("PostDrawTranslucentRenderables", "JMod_EZBombTrailRender", function(bDrawingDepth, bDrawingSkybox)
+		if bDrawingSkybox or #BombTrails == 0 then return end -- Don't draw in skybox or if no trails
+		
+		local currentTime = CurTime()
+		local grav = physenv.GetGravity()
+		local numSegments = 50
+		local invNumSegments = 1 / numSegments
+		
+		-- Clean up expired trails and render active ones
+		for i = #BombTrails, 1, -1 do
+			local trail = BombTrails[i]
+			local elapsed = currentTime - trail.startTime
+			local totalLifetime = trail.travelTime + TRAIL_DECAY_TIME
+			
+			-- Remove trail only when fully decayed
+			if elapsed >= totalLifetime then
+				table.remove(BombTrails, i)
+			else
+				-- Check if trail is complete (bomb has reentered)
+				local isComplete = elapsed >= trail.travelTime
+				
+				-- Calculate overall fade (for decay after reentry)
+				local decayProgress = isComplete and ((elapsed - trail.travelTime) / TRAIL_DECAY_TIME) or 0
+				local baseWidth = 100 * (1 - decayProgress)
+				
+				-- Use pre-calculated values
+				local tStart = trail.tStart
+				local tEnd = trail.tEnd
+				local startPos = trail.startPos
+				local endPos = trail.endPos
+				local effectiveTravelTime = trail.effectiveTravelTime
+				
+				-- Calculate effective progress for the trail
+				local effectiveProgress = math.Clamp((elapsed - tStart) / effectiveTravelTime, 0, 1)
+				local isTrailComplete = elapsed >= tEnd
+				local maxSegment = isTrailComplete and numSegments or math.floor(numSegments * effectiveProgress)
+				
+				-- Render trail if we have segments to render
+				if maxSegment >= 1 then
+					render.SetMaterial(TrailMat)
+					
+					-- Build list of beam points
+					local beamPoints = {}
+					local widthScaleStart = math.Clamp(1 - (effectiveProgress * 1.5), 0, 1)
+					
+					-- Add start position as first point (oldest, should pinch to 0)
+					beamPoints[1] = {
+						pos = startPos,
+						width = baseWidth * widthScaleStart,
+						texCoord = 0,
+						color = TRAIL_COLOR
+					}
+					
+					-- Add intermediate segments
+					for seg = 1, maxSegment do
+						local t = seg * invNumSegments
+						local segTime = tStart + t * effectiveTravelTime
+						
+						-- Approximate trajectory with gravity (simplified physics)
+						local segPos = trail.exitPos + trail.exitVel * segTime + grav * segTime * segTime * 0.5
+						
+						-- Calculate width pinch: older parts get thinner
+						local segmentAge = math.max(0, effectiveProgress - t)
+						local widthScale = math.Clamp(1 - (segmentAge * 1.5), 0, 1)
+						
+						beamPoints[seg + 1] = {
+							pos = segPos,
+							width = baseWidth * widthScale,
+							texCoord = t * TRAIL_TEX_REPEAT,
+							color = TRAIL_COLOR
+						}
+					end
+					
+					-- Add current position if trail is still growing (newest, full width)
+					if not isTrailComplete and effectiveProgress > 0 and maxSegment < numSegments then
+						local currentPos = (elapsed > tEnd) and endPos or (trail.exitPos + trail.exitVel * elapsed + grav * elapsed * elapsed * 0.5)
+						
+						beamPoints[#beamPoints + 1] = {
+							pos = currentPos,
+							width = baseWidth,
+							texCoord = effectiveProgress * TRAIL_TEX_REPEAT,
+							color = TRAIL_COLOR
+						}
+					end
+					
+					-- Render the beam if we have at least 2 points
+					local numPoints = #beamPoints
+					if numPoints >= 2 then
+						render.StartBeam(numPoints)
+						for j = 1, numPoints do
+							local point = beamPoints[j]
+							render.AddBeam(point.pos, point.width, point.texCoord, point.color)
+						end
+						render.EndBeam()
+					end
+				end
+			end
+		end
+	end)
+	
 	function ENT:Initialize()
 		self.Mdl = ClientsideModel("models/jmod/mk82_gbu.mdl")
 		self.Mdl:SetModelScale(.9, 0)
