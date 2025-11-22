@@ -243,7 +243,6 @@ if SERVER then
 					mask = MASK_SOLID_BRUSHONLY
 				})
 				if SkyTr.HitSky then
-
 					Pos = SkyTr.HitPos + (SkyTr.Normal * -10)
 					debugoverlay.Cross(Pos, 5, 2, Color(255, 0, 0), true)
 					return Pos, i / 2, vel
@@ -464,15 +463,22 @@ elseif CLIENT then
 	
 	-- Material for rendering trails
 	local TrailMat = Material("cable/xbeam")
+	-- Material for bomb position indicator
+	local BombGlowMat = Material("sprites/light_glow02_add")
 	
 	-- Trail decay time after reentry (in seconds)
 	local TRAIL_DECAY_TIME = 2
 	
 	-- Constant trail color (RGB values)
 	local TRAIL_COLOR = Color(200, 200, 200, 255)
+	-- Bomb indicator color (yellow)
+	local BOMB_INDICATOR_COLOR = Color(255, 230, 0)
 	
 	-- Texture repeat factor (how many times the texture repeats along the trail)
 	local TRAIL_TEX_REPEAT = 4
+	-- Bomb indicator base size and strobe settings
+	local BOMB_INDICATOR_BASE_SIZE = 1000
+	local BOMB_INDICATOR_STROBE_SPEED = 1 -- Strobes per second
 	
 	-- Receive bomb exit/reentry events
 	net.Receive("JMod_EZBombTrail", function()
@@ -608,6 +614,19 @@ elseif CLIENT then
 							render.AddBeam(point.pos, point.width, point.texCoord, point.color)
 						end
 						render.EndBeam()
+					end
+					
+					-- Render strobing yellow spot at bomb's current position
+					-- Only render while trail is still progressing (not at end point) and bomb hasn't reentered
+					if not isTrailComplete and not isComplete and elapsed <= trail.travelTime then
+						-- Calculate strobe size using sine wave (oscillates between 70% and 100% of base size)
+						local strobePhase = currentTime * BOMB_INDICATOR_STROBE_SPEED * 2 * math.pi
+						local sizeMod = 0.7 + 0.3 * math.sin(strobePhase) -- Oscillates between 0.7 and 1.0
+						local indicatorSize = BOMB_INDICATOR_BASE_SIZE * sizeMod
+						
+						-- Render the glow sprite
+						render.SetMaterial(BombGlowMat)
+						render.DrawSprite(beamPoints[numPoints].pos, indicatorSize, indicatorSize, BOMB_INDICATOR_COLOR)
 					end
 				end
 			end

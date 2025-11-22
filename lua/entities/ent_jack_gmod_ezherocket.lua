@@ -14,6 +14,7 @@ ENT.EZrackAngles = Angle(0, 0, 0)
 ENT.EZrocket = true
 ---
 local STATE_BROKEN, STATE_OFF, STATE_ARMED, STATE_LAUNCHED = -1, 0, 1, 2
+local DETONATION_SPEED = 600
 
 function ENT:SetupDataTables()
 	self:NetworkVar("Int", 0, "State")
@@ -84,9 +85,7 @@ if SERVER then
 				self:EmitSound("Canister.ImpactHard")
 			end
 
-			local DetSpd = 300
-
-			if (data.Speed > DetSpd) and (self:GetState() == STATE_LAUNCHED) then
+			if (data.Speed > DETONATION_SPEED) and (self:GetState() >= STATE_ARMED) then
 				self:Detonate()
 
 				return
