@@ -129,7 +129,7 @@ if SERVER then
 				local Constrained = self:IsPlayerHolding() or constraint.FindConstraint(self, "Weld") or not self:GetPhysicsObject():IsMotionEnabled()
 
 				if WorldTr.HitSky and not(Constrained) then
-					local NewPos, TravelTime, NewVel = self:FindNextEmptySpace(data.OurOldVelocity)
+					local NewPos, TravelTime, NewVel = JMod.FindSkyboxEntryPoint(SelfPos, data.OurOldVelocity, self, self.Mass, self.LastAreoDragAmount, 60, 0.1, {self})
 
 					if NewPos then
 						-- Network the exit/reentry event to clients
@@ -225,32 +225,6 @@ if SERVER then
 			elseif (data.Speed > self.Durability * 10) then
 				self:Break()
 			end
-		end
-	end
-
-	function ENT:FindNextEmptySpace(vel)
-		local Pos = self:GetPos()
-		local Grav = physenv.GetGravity()
-
-		for i = 1, 100 do
-			Pos = Pos + ((vel / 2) / math.max(self.LastAreoDragAmount, 1))
-
-			if util.IsInWorld(Pos) then
-				local SkyTr = util.TraceLine({
-					start = Pos,
-					endpos = Pos - vel,
-					filter = {self},
-					mask = MASK_SOLID_BRUSHONLY
-				})
-				if SkyTr.HitSky then
-					Pos = SkyTr.HitPos + (SkyTr.Normal * -10)
-					debugoverlay.Cross(Pos, 5, 2, Color(255, 0, 0), true)
-					return Pos, i / 2, vel
-				end
-			else
-				debugoverlay.Cross(Pos, 5, 2, Color(0, 255, 200), true)
-			end
-			vel = vel + Grav / 2
 		end
 	end
 
