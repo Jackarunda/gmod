@@ -400,7 +400,6 @@ if SERVER then
 		--end
 		--end
 		--end
-		--self:FindNextEmptySpace(-self:GetRight() * 2000)
 
 		if self:GetState() == STATE_BROKEN then
 			JMod.DamageSpark(self)

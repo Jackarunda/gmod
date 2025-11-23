@@ -72,8 +72,8 @@ if SERVER then
 		self:SetState(STATE_ARMING)
 	end
 
-	function ENT:Bury(activator)
-		local Tr = util.QuickTrace(activator:GetShootPos(), activator:GetAimVector() * 100, {activator, self})
+	function ENT:Bury(activator, pos, dir)
+		local Tr = util.QuickTrace(pos or activator:GetShootPos(), dir or activator:GetAimVector() * 100, {activator, self})
 
 		if Tr.Hit and table.HasValue(self.UsableMats, Tr.MatType) and IsValid(Tr.Entity:GetPhysicsObject()) then
 			local Ang = Tr.HitNormal:Angle()
@@ -99,13 +99,16 @@ if SERVER then
 
 	function ENT:PhysicsCollide(data, physobj)
 		if data.DeltaTime > 0.2 then
-			--jprint(self.EZlaunchBury)
 			if data.Speed > 25 then
-				if (self:GetState() == JMod.EZ_STATE_ARMED) and (math.random(1, 5) == 3) then
+				print(physobj:HasGameFlag(FVPHYSICS_WAS_THROWN))
+				if (physobj:HasGameFlag(FVPHYSICS_WAS_THROWN)) then
+					timer.Simple(0.1, function()
+						if IsValid(self) then
+							self:Bury(nil, data.HitPos, data.HitNormal)
+						end
+					end)
+				elseif (self:GetState() == JMod.EZ_STATE_ARMED) and (math.random(1, 5) == 3) then
 					self:Detonate()
-				--elseif self.EZlaunchBury then
-				--	self:Bury(JMod.GetEZowner(self))
-				--	self.EZlaunchBury = false
 				else
 					self:EmitSound("Weapon.ImpactHard")
 				end
@@ -304,32 +307,6 @@ if SERVER then
 
 	function ENT:OnRemove()
 	end
---[[]
-	function ENT:GravGunPunt(ply)
-		if (self:GetState() == JMod.EZ_STATE_OFF) and IsValid(self.EZholdingPlayer) then
-			
-			self.EZlaunchBury = true
-			self.EZholdingPlayer = nil
-			--self:SetState(STATE_LAUNCHED)
-			--self:EmitSound("npc/roller/mine/rmine_predetonate.wav")
-
-			return true
-		else
-			ply:DropObject()
-		end
-	end
-
-	hook.Add("GravGunOnPickedUp", "JMOD_BOUNDINGMINE_GRAB", function(ply, ent)
-		if ent:GetClass() == "ent_jack_gmod_ezboundingmine" then 
-			local State = ent:GetState()
-			--ent.EZlastGravGunGrabTime = CurTime()
-
-			if State ~= JMod.EZ_STATE_ARMED then
-				JMod.SetEZowner(ent, ply)
-				ent.EZholdingPlayer = ply
-			end
-		end
-	end)--]]
 
 elseif CLIENT then
 	function ENT:Initialize()
