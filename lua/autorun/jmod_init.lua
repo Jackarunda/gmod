@@ -317,6 +317,13 @@ JMod.TreeArmorTable={
 
 JMod.EZ_OwnerID = {}
 
+JMod.NETWORK_INDEX = {
+	MODIFY_CONNECTIONS = {CONNECT = 1, DISCONNECT = 2, DISCONNECT_ALL = 3, PRODUCE = 4, TOGGLE = 5},
+	ARMOR_INVENTORY = {OPEN_MENU = 1, DROP = 2, TOGGLE = 3, REPAIR = 4, RECHARGE = 5, COLOR = 6},
+	ITEM_INVENTORY = {OPEN_MENU = 1, UPDATE = 2, DROP = 3, USE = 4, PRIME = 5, STOW = 6, TAKE = 7, STOW_RES = 8, TAKE_RES = 9, DROP_RES = 10, FULL = 11, MISSING = 12},
+	ARMOR_SLOT = {HEAD = 1, EYES = 2, MOUTHNOSE = 3, EARS = 4, LEFT_SHOULDER = 5, LEFT_FOREARM = 6, LEFT_THIGH = 7, LEFT_CALF = 8, CHEST = 9, BACK = 10, WAIST = 11, PELVIS = 12, RIGHT_SHOULDER = 13, RIGHT_FOREARM = 14, RIGHT_THIGH = 15, RIGHT_CALF = 16},
+}
+
 -- we have to load locales before any other files
 -- because files that add concommands have help text
 -- and we want the help text to be localized

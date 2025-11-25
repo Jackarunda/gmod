@@ -1241,7 +1241,7 @@ local ArmorSlotButtons = {
 		title = "Drop",
 		actionFunc = function(slot, itemID, itemData, itemInfo)
 			net.Start("JMod_Inventory")
-			net.WriteInt(1, 8) -- drop
+			net.WriteInt(JMod.NETWORK_INDEX.ARMOR_INVENTORY.DROP, 8)
 			net.WriteString(itemID)
 			net.SendToServer()
 		end
@@ -1251,7 +1251,7 @@ local ArmorSlotButtons = {
 		visTestFunc = function(slot, itemID, itemData, itemInfo) return itemInfo.tgl end,
 		actionFunc = function(slot, itemID, itemData, itemInfo)
 			net.Start("JMod_Inventory")
-			net.WriteInt(2, 8) -- toggle
+			net.WriteInt(JMod.NETWORK_INDEX.ARMOR_INVENTORY.TOGGLE, 8)
 			net.WriteString(itemID)
 			net.SendToServer()
 		end,
@@ -1262,7 +1262,7 @@ local ArmorSlotButtons = {
 		visTestFunc = function(slot, itemID, itemData, itemInfo) return itemData.dur < itemInfo.dur * .9 end,
 		actionFunc = function(slot, itemID, itemData, itemInfo)
 			net.Start("JMod_Inventory")
-			net.WriteInt(3, 8) -- repair
+			net.WriteInt(JMod.NETWORK_INDEX.ARMOR_INVENTORY.REPAIR, 8)
 			net.WriteString(itemID)
 			net.SendToServer()
 		end,
@@ -1281,7 +1281,7 @@ local ArmorSlotButtons = {
 		end,
 		actionFunc = function(slot, itemID, itemData, itemInfo)
 			net.Start("JMod_Inventory")
-			net.WriteInt(4, 8) -- recharge
+			net.WriteInt(JMod.NETWORK_INDEX.ARMOR_INVENTORY.RECHARGE, 8)
 			net.WriteString(itemID)
 			net.SendToServer()
 		end,
@@ -1317,7 +1317,7 @@ local ArmorSlotButtons = {
 			Buttony:SetText("CHANGE")
 			Buttony.DoClick = function()
 				net.Start("JMod_Inventory")
-				net.WriteInt(5, 8) -- color
+				net.WriteInt(JMod.NETWORK_INDEX.ARMOR_INVENTORY.COLOR, 8)
 				net.WriteString(itemID)
 				local Col = ColorPicker:GetColor()
 				net.WriteColor(Color(Col.r, Col.g, Col.b))
@@ -1517,7 +1517,7 @@ local function CreateInvButton(parent, itemTable, x, y, w, h, scrollFrame, invEn
 	if not scrollFrame then return end
 	if not(itemTable and IsValid(itemTable.ent)) then
 		net.Start("JMod_ItemInventory")
-			net.WriteString("missing")
+			net.WriteInt(JMod.NETWORK_INDEX.ITEM_INVENTORY.MISSING, 8)
 			net.WriteEntity(NULL)
 			net.WriteEntity(invEnt)
 		net.SendToServer()
@@ -1574,13 +1574,13 @@ local function CreateInvButton(parent, itemTable, x, y, w, h, scrollFrame, invEn
 				actionFunc = function(itemTable)
 					if IsValid(itemTable.ent) then
 						net.Start("JMod_ItemInventory")
-							net.WriteString("drop")
+							net.WriteInt(JMod.NETWORK_INDEX.ITEM_INVENTORY.DROP, 8)
 							net.WriteEntity(itemTable.ent)
 							net.WriteEntity(invEnt)
 						net.SendToServer()
 					else
 						net.Start("JMod_ItemInventory")
-							net.WriteString("missing")
+							net.WriteInt(JMod.NETWORK_INDEX.ITEM_INVENTORY.MISSING, 8)
 							net.WriteEntity(NULL)
 							net.WriteEntity(invEnt)
 						net.SendToServer()
@@ -1592,13 +1592,13 @@ local function CreateInvButton(parent, itemTable, x, y, w, h, scrollFrame, invEn
 				actionFunc = function(itemTable)
 					if IsValid(itemTable.ent) then
 						net.Start("JMod_ItemInventory")
-							net.WriteString("use")
+							net.WriteInt(JMod.NETWORK_INDEX.ITEM_INVENTORY.USE, 8)
 							net.WriteEntity(itemTable.ent)
 							net.WriteEntity(invEnt)
 						net.SendToServer()
 					else
 						net.Start("JMod_ItemInventory")
-							net.WriteString("missing")
+							net.WriteInt(JMod.NETWORK_INDEX.ITEM_INVENTORY.MISSING, 8)
 							net.WriteEntity(NULL)
 							net.WriteEntity(Ply)
 						net.SendToServer()
@@ -1610,7 +1610,7 @@ local function CreateInvButton(parent, itemTable, x, y, w, h, scrollFrame, invEn
 				actionFunc = function(itemTable)
 					--Ply:ConCommand("+alt1")
 					net.Start("JMod_ItemInventory")
-					net.WriteString("prime")
+					net.WriteInt(JMod.NETWORK_INDEX.ITEM_INVENTORY.PRIME, 8)
 					net.WriteEntity(itemTable.ent)
 					if invEnt ~= Ply then
 						net.WriteEntity(invEnt)
@@ -1627,7 +1627,7 @@ local function CreateInvButton(parent, itemTable, x, y, w, h, scrollFrame, invEn
 				title="Prime",
 				actionFunc = function(itemTable)
 					net.Start("JMod_ItemInventory")
-					net.WriteString("prime")
+					net.WriteInt(JMod.NETWORK_INDEX.ITEM_INVENTORY.PRIME, 8)
 					net.WriteEntity(itemTable.ent)
 					net.WriteEntity(invEnt)
 					net.SendToServer()
@@ -1641,13 +1641,13 @@ local function CreateInvButton(parent, itemTable, x, y, w, h, scrollFrame, invEn
 				actionFunc = function(itemTable)
 					if IsValid(itemTable.ent) then
 						net.Start("JMod_ItemInventory")
-							net.WriteString("stow")
+							net.WriteInt(JMod.NETWORK_INDEX.ITEM_INVENTORY.STOW, 8)
 							net.WriteEntity(itemTable.ent)
 							net.WriteEntity(Ply:GetEyeTrace().Entity)
 						net.SendToServer()
 					else
 						net.Start("JMod_ItemInventory")
-							net.WriteString("missing")
+							net.WriteInt(JMod.NETWORK_INDEX.ITEM_INVENTORY.MISSING, 8)
 							net.WriteEntity(NULL)
 							net.WriteEntity(invEnt)
 						net.SendToServer()
@@ -1660,13 +1660,13 @@ local function CreateInvButton(parent, itemTable, x, y, w, h, scrollFrame, invEn
 				actionFunc = function(itemTable)
 					if IsValid(itemTable.ent) then
 						net.Start("JMod_ItemInventory")
-							net.WriteString("take")
+							net.WriteInt(JMod.NETWORK_INDEX.ITEM_INVENTORY.TAKE, 8)
 							net.WriteEntity(itemTable.ent)
 							net.WriteEntity(Ply:GetEyeTrace().Entity)
 						net.SendToServer()
 					else
 						net.Start("JMod_ItemInventory")
-							net.WriteString("missing")
+							net.WriteInt(JMod.NETWORK_INDEX.ITEM_INVENTORY.MISSING, 8)
 							net.WriteEntity(NULL)
 							net.WriteEntity(invEnt)
 						net.SendToServer()
@@ -1771,7 +1771,7 @@ local function CreateResButton(parent, resourceType, amt, x, y, w, h, scrollFram
 
 		apply.DoRightClick = function()
 			net.Start("JMod_ItemInventory")
-				net.WriteString("drop_res")
+				net.WriteInt(JMod.NETWORK_INDEX.ITEM_INVENTORY.DROP_RES, 8)
 				net.WriteUInt(amtSlide:GetValue(), 12)
 				net.WriteString(resourceType)
 				net.WriteEntity(invEnt)
@@ -1782,7 +1782,7 @@ local function CreateResButton(parent, resourceType, amt, x, y, w, h, scrollFram
 		end
 		apply.DoClick = function()
 			net.Start("JMod_ItemInventory")
-				net.WriteString("drop_res")
+				net.WriteInt(JMod.NETWORK_INDEX.ITEM_INVENTORY.DROP_RES, 8)
 				net.WriteUInt(amtSlide:GetValue(), 12)
 				net.WriteString(resourceType)
 				net.WriteEntity(invEnt)
@@ -1801,7 +1801,7 @@ local function CreateResButton(parent, resourceType, amt, x, y, w, h, scrollFram
 
 			stow.DoRightClick = function()
 				net.Start("JMod_ItemInventory")
-					net.WriteString("stow_res")
+					net.WriteInt(JMod.NETWORK_INDEX.ITEM_INVENTORY.STOW_RES, 8)
 					net.WriteUInt(amtSlide:GetValue(), 12)
 					net.WriteString(resourceType)
 					net.WriteEntity(Ply:GetEyeTrace().Entity)
@@ -1813,7 +1813,7 @@ local function CreateResButton(parent, resourceType, amt, x, y, w, h, scrollFram
 			end
 			stow.DoClick = function()
 				net.Start("JMod_ItemInventory")
-					net.WriteString("stow_res")
+					net.WriteInt(JMod.NETWORK_INDEX.ITEM_INVENTORY.STOW_RES, 8)
 					net.WriteUInt(amtSlide:GetValue(), 12)
 					net.WriteString(resourceType)
 					net.WriteEntity(Ply:GetEyeTrace().Entity)
@@ -1832,7 +1832,7 @@ local function CreateResButton(parent, resourceType, amt, x, y, w, h, scrollFram
 
 			tek.DoRightClick = function()
 				net.Start("JMod_ItemInventory")
-					net.WriteString("take_res")
+					net.WriteInt(JMod.NETWORK_INDEX.ITEM_INVENTORY.TAKE_RES, 8)
 					net.WriteUInt(amtSlide:GetValue(), 12)
 					net.WriteString(resourceType)
 					net.WriteEntity(invEnt)
@@ -1845,7 +1845,7 @@ local function CreateResButton(parent, resourceType, amt, x, y, w, h, scrollFram
 
 			tek.DoClick = function()
 				net.Start("JMod_ItemInventory")
-					net.WriteString("take_res")
+					net.WriteInt(JMod.NETWORK_INDEX.ITEM_INVENTORY.TAKE_RES, 8)
 					net.WriteUInt(amtSlide:GetValue(), 12)
 					net.WriteString(resourceType)
 					net.WriteEntity(invEnt)
@@ -2138,7 +2138,7 @@ end
 
 net.Receive("JMod_ItemInventory", function(len, sender) -- for when we pick up stuff with JMOD HANDS
 	local invEnt = net.ReadEntity()
-	local command = net.ReadString()
+	local command = net.ReadInt(8)
 	local newInv = net.ReadTable()
 
 	local Ply = LocalPlayer()
@@ -2153,7 +2153,7 @@ net.Receive("JMod_ItemInventory", function(len, sender) -- for when we pick up s
 
 	if not (command or isstring(command)) then return end
 
-	if command == "open_menu" then
+	if command == JMod.NETWORK_INDEX.ITEM_INVENTORY.OPEN_MENU then
 		if IsValid(CurrentJModInvScreen) then return end
 		if IsValid(CurrentSelectionMenu) then return end
 
@@ -2161,7 +2161,7 @@ net.Receive("JMod_ItemInventory", function(len, sender) -- for when we pick up s
 
 		CurrentJModInvScreen = frame
 		CurrentJModInvEnt = invEnt
-	elseif command == "update" then
+	elseif command == JMod.NETWORK_INDEX.ITEM_INVENTORY.UPDATE then
 		if IsValid(CurrentJModInvScreen) then 
 			if IsValid(CurrentJModInvEnt) then 
 				if (CurrentJModInvEnt == invEnt) then
@@ -2171,7 +2171,7 @@ net.Receive("JMod_ItemInventory", function(len, sender) -- for when we pick up s
 				CurrentJModInvScreen:Close()
 			end
 		end
-	elseif command == "take_res" then
+	elseif command == JMod.NETWORK_INDEX.ITEM_INVENTORY.TAKE_RES then
 		if OpenDropdown then
 			OpenDropdown:Remove()
 		end

@@ -1245,7 +1245,12 @@ if CLIENT then
 		ply:ConCommand("jmod_ez_armoraction toggle eyes")
 	end)
 
-	local ArmorCommands = {"drop", "toggle", "repair", "recharge"}
+	local ArmorCommands = {
+		["drop"] = JMod.NETWORK_INDEX.ARMOR_INVENTORY.DROP, 
+		["toggle"] = JMod.NETWORK_INDEX.ARMOR_INVENTORY.TOGGLE, 
+		["repair"] = JMod.NETWORK_INDEX.ARMOR_INVENTORY.REPAIR, 
+		["recharge"] = JMod.NETWORK_INDEX.ARMOR_INVENTORY.RECHARGE
+	}
 	local ArmorNames = {"head", "eyes", "mouthnose", "ears", "leftshoulder", "leftforearm", "leftthigh", "leftcalf", "chest", "back", "waist", "pelvis", "rightshoulder", "rightforearm", "rightthigh", "rightcalf"}
 
 	concommand.Add("jmod_ez_armoraction", function(ply, cmd, args)
@@ -1256,7 +1261,7 @@ if CLIENT then
 		if not(action) then return end
 
 		if not isnumber(tonumber(action)) then
-			action = table.KeyFromValue(ArmorCommands, action)
+			action = ArmorCommands[action]
 		end
 		if slot and isnumber(tonumber(slot)) then
 			slot = ArmorNames[tonumber(slot)]
@@ -1309,7 +1314,7 @@ if CLIENT then
 
 		return Suggestions
 
-	end, "First argument is action, second arg is slot to apply the action to")
+	end, "First argument is action, second arg is slot to apply the action to. \nOtherwise it applies the action to all slots")
 end
 
 --LoadAdditionalArmor()

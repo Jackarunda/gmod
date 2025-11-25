@@ -170,7 +170,7 @@ function JMod.UpdateInv(invEnt, noplace, transfer, emergancyNetwork)
 	if invEnt:IsPlayer() then 
 		net.Start("JMod_ItemInventory")
 			net.WriteEntity(invEnt)
-			net.WriteString("update")
+			net.WriteInt(JMod.NETWORK_INDEX.ITEM_INVENTORY.UPDATE, 8)
 			net.WriteTable(invEnt.JModInv)
 		net.Send(invEnt)
 	end
@@ -459,11 +459,16 @@ local CanSeeInventoryEnt = function(ent, ply)
 	return ply:GetShootPos():Distance(InvEntPos) < 200 and CanSeeNonPlyInv
 end
 
+local ResourceCommands = {
+	[JMod.NETWORK_INDEX.ITEM_INVENTORY.TAKE_RES] = true,
+	[JMod.NETWORK_INDEX.ITEM_INVENTORY.STOW_RES] = true,
+	[JMod.NETWORK_INDEX.ITEM_INVENTORY.DROP_RES] = true,
+}
 -- I put this in here because they all have to do with each other
 net.Receive("JMod_ItemInventory", function(len, ply)
-	local command = net.ReadString()
+	local command = net.ReadInt(8)
 	local desiredAmt, resourceType, target
-	if string.find(command, "_res") then
+	if ResourceCommands[command] then
 		desiredAmt = net.ReadUInt(12)
 		resourceType = net.ReadString()
 	else
@@ -481,7 +486,7 @@ net.Receive("JMod_ItemInventory", function(len, ply)
 
 	-- 'take' means from another inventory, use grab if it's on the ground
 	-- 'stow' means put in another inventory
-	if command == "take" then
+	if command == JMod.NETWORK_INDEX.ITEM_INVENTORY.TAKE then
 		if not(IsValid(target)) then 
 			JMod.Hint(ply, "hint item inventory missing") 
 			JMod.UpdateInv(invEnt) 
@@ -495,7 +500,7 @@ net.Receive("JMod_ItemInventory", function(len, ply)
 				ply:PrintMessage(HUD_PRINTCENTER, "Cannot take")
 			end
 		end
-	elseif command == "stow" then
+	elseif command == JMod.NETWORK_INDEX.ITEM_INVENTORY.STOW then
 		if not(IsValid(target)) then 
 			JMod.Hint(ply, "hint item inventory missing") 
 			JMod.UpdateInv(invEnt) 
@@ -509,7 +514,7 @@ net.Receive("JMod_ItemInventory", function(len, ply)
 				ply:PrintMessage(HUD_PRINTCENTER, "Cannot stow")
 			end
 		end
-	elseif command == "drop" then
+	elseif command == JMod.NETWORK_INDEX.ITEM_INVENTORY.DROP then
 		if NonPlyInv and not(CanSeeNonPlyInv) then return end
 		if not(JMod.IsEntContained(target, invEnt)) then 
 			JMod.Hint(ply, "hint item inventory missing") 
@@ -520,7 +525,7 @@ net.Receive("JMod_ItemInventory", function(len, ply)
 		JMod.RemoveFromInventory(invEnt, target, Tr.HitPos + Tr.HitNormal * 10)
 		sound.Play(((invEnt ~= ply) and InvSound) or ("snd_jack_clothunequip.ogg"), Tr.HitPos, 60, math.random(90, 110))
 		JMod.Hint(ply,"hint item inventory drop")
-	elseif (command == "use") or (command == "prime") then
+	elseif (command == JMod.NETWORK_INDEX.ITEM_INVENTORY.USE) or (command == JMod.NETWORK_INDEX.ITEM_INVENTORY.PRIME) then
 		if NonPlyInv and not(CanSeeNonPlyInv) then return end
 		if not(JMod.IsEntContained(target, invEnt)) then 
 			JMod.Hint(ply, "hint item inventory missing") 
@@ -544,12 +549,12 @@ net.Receive("JMod_ItemInventory", function(len, ply)
 			end
 		end
 		sound.Play(((invEnt ~= ply) and InvSound) or ("snd_jack_clothunequip.ogg"), Tr.HitPos, 60, math.random(90, 110))
-	elseif command == "drop_res" then
+	elseif command == JMod.NETWORK_INDEX.ITEM_INVENTORY.DROP_RES then
 		if NonPlyInv and not(CanSeeNonPlyInv) then return end
 		local amt = math.Clamp(desiredAmt, 0, invEnt.JModInv.EZresources[resourceType] or 0)
 		JMod.RemoveFromInventory(invEnt, {resourceType, amt}, Tr.HitPos + Tr.HitNormal * 10, false)
 		sound.Play(((invEnt ~= ply) and InvSound) or ("snd_jack_clothunequip.ogg"), Tr.HitPos, 60, math.random(90, 110))
-	elseif command == "take_res" then
+	elseif command == JMod.NETWORK_INDEX.ITEM_INVENTORY.TAKE_RES then
 		if not(CanSeeNonPlyInv) then return end
 		local amt = math.Clamp(desiredAmt, 0, invEnt.JModInv.EZresources[resourceType] or 0)
 		if invEnt.IsJackyEZresource then
@@ -564,7 +569,7 @@ net.Receive("JMod_ItemInventory", function(len, ply)
 		else
 			ply:PrintMessage(HUD_PRINTCENTER, "Cannot take")
 		end
-	elseif command == "stow_res" then
+	elseif command == JMod.NETWORK_INDEX.ITEM_INVENTORY.STOW_RES then
 		if not(CanSeeNonPlyInv) then return end
 		local amt = math.Clamp(desiredAmt, 0, ply.JModInv.EZresources[resourceType] or 0)
 		local Added = JMod.AddToInventory(invEnt, {resourceType, amt})
@@ -579,9 +584,9 @@ net.Receive("JMod_ItemInventory", function(len, ply)
 			sound.Play(InvSound, Tr.HitPos, 60, math.random(90, 110))
 			JMod.RemoveFromInventory(ply, {resourceType, amt}, nil, false)
 		end
-	elseif command == "full" then
+	elseif command == JMod.NETWORK_INDEX.ITEM_INVENTORY.FULL then
 		JMod.Hint(ply,"hint item inventory full")
-	elseif command == "missing" then
+	elseif command == JMod.NETWORK_INDEX.ITEM_INVENTORY.MISSING then
 		JMod.UpdateInv(invEnt, nil, nil, true)
 		JMod.Hint(ply,"hint item inventory missing")
 	end
@@ -596,7 +601,7 @@ function JMod.OpenEntityInventory(ent, ply)
 
 	net.Start("JMod_ItemInventory")
 		net.WriteEntity(ent)
-		net.WriteString("open_menu")
+		net.WriteInt(JMod.NETWORK_INDEX.ITEM_INVENTORY.OPEN_MENU, 8)
 		net.WriteTable(ent.JModInv)
 	net.Send(ply)
 end
@@ -614,8 +619,21 @@ function JMod.EZ_GrabItem(ply, cmd, args)
 		TargetEntity = Entity(tonumber(args[1]))
 	end
 
+	local ShootPos, AimVec = ply:GetShootPos(), ply:GetAimVector()
+
 	if not(IsValid(TargetEntity)) or not(CanSeeInventoryEnt(TargetEntity, ply)) then
-		TargetEntity = util.QuickTrace(ply:GetShootPos(), ply:GetAimVector() * JMod.GRABDISTANCE, ply).Entity
+		TargetEntity = util.QuickTrace(ShootPos, AimVec * JMod.GRABDISTANCE, ply).Entity
+	end
+
+	if not(IsValid(TargetEntity)) then
+		TargetEntity = util.TraceHull({
+			start = ShootPos,
+			endpos = ShootPos + AimVec * JMod.GRABDISTANCE,
+			filter = {ply, ply:GetActiveWeapon()},
+			mins = Vector(-10, -10, -10),
+			maxs = Vector(10, 10, 10),
+			mask = MASK_SOLID
+		}).Entity
 	end
 
 	if not(IsValid(TargetEntity)) then ply:PrintMessage(HUD_PRINTCENTER, "Nothing to grab") return end
@@ -641,7 +659,7 @@ function JMod.EZ_GrabItem(ply, cmd, args)
 					else
 						net.Start("JMod_ItemInventory")
 							net.WriteEntity(TargetEntity)
-							net.WriteString("take_res")
+							net.WriteInt(JMod.NETWORK_INDEX.ITEM_INVENTORY.TAKE_RES, 8)
 							net.WriteTable({})
 						net.Send(ply)
 
