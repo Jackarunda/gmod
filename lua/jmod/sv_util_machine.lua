@@ -46,7 +46,7 @@ function JMod.EZinstallMachine(machine, install)
 	Phys:EnableMotion(not install)
 end
 
-function JMod.StartResourceConnection(machine, ply)
+function JMod.StartResourceConnection(machine, ply, resType)
 	if not(IsValid(machine)) then return end
 	if IsValid(machine.EZconnectorPlug) then 
 		if machine.EZconnectorPlug:IsPlayerHolding() then return end
@@ -62,6 +62,12 @@ function JMod.StartResourceConnection(machine, ply)
 	Plugy.Model = "models/props_lab/tpplug.mdl"
 	Plugy.EZhookType = "Plugin"
 	Plugy.EZconnector = machine
+	-- Set resource type for connection (default to POWER, but autoloader uses Entity)
+	if resType then
+		Plugy.EZconnectionResourceType = resType
+	else
+		Plugy.EZconnectionResourceType = JMod.EZ_RESOURCE_TYPES.POWER
+	end
 	Plugy:Spawn()
 	Plugy:Activate()
 	machine.EZconnectorPlug = Plugy
@@ -107,7 +113,12 @@ function JMod.CreateResourceConnection(machine, ent, resType, plugPos, dist, new
 	dist = dist or 1000
 	if not (IsValid(machine) and IsValid(ent) and resType) then return false end
 	if not IsValid(ent) or (ent == machine) then return false end
-	if not (ent.EZconsumes and table.HasValue(ent.EZconsumes, resType)) and not (resType == JMod.EZ_RESOURCE_TYPES.POWER and (ent.EZpowerProducer and not machine.EZpowerProducer)) then return false end
+	-- Special case for Entity connections (autoloader to cannon)
+	if resType == "Entity" then
+		if not ent:GetIsAutoLoading() then return false end
+	else
+		if not (ent.EZconsumes and table.HasValue(ent.EZconsumes, resType)) and not (resType == JMod.EZ_RESOURCE_TYPES.POWER and (ent.EZpowerProducer and not machine.EZpowerProducer)) then return false end
+	end
 	if ent.IsJackyEZcrate and ent.GetResourceType and not(ent:GetResourceType() == resType or ent:GetResourceType() == "generic") then return false end
 	if not JMod.ShouldAllowControl(ent, JMod.GetEZowner(machine), true) then return false end
 	local PluginPos = ent.EZpowerSocket or plugPos or ent:OBBCenter()
