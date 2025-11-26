@@ -12,6 +12,7 @@ ENT.JModPreferredCarryAngles = Angle(0, -90, 0)
 ENT.EZlowFragPlease = true
 ENT.EZbuoyancy = .3
 ---
+ENT.EZconsumes = {JMod.EZ_RESOURCE_TYPES.BASICPARTS}
 
 if SERVER then
 	function ENT:SpawnFunction(ply, tr)
@@ -38,6 +39,10 @@ if SERVER then
 		self:SetUseType(SIMPLE_USE)
 
 		---
+		-- Durability: Bomb bay is mostly metal with simple mechanisms, so it's quite durable
+		self.MaxDurability = 2000
+		self.Durability = self.MaxDurability
+
 		local phys = self:GetPhysicsObject()
 		timer.Simple(.01, function()
 			if IsValid(phys) then
@@ -109,14 +114,35 @@ if SERVER then
 
 			if self.Destroyed then return end
 
-			if data.Speed > 1500 then
-				self:Destroy()
+			-- High-speed impacts damage durability instead of instant destruction
+			if data.Speed > 500 then
+				local ImpactDamage = math.max(0, (data.Speed - 500) / 10)
+				self.Durability = self.Durability - ImpactDamage
+				
+				if self.Durability <= 0 then
+					self:Destroy()
+				end
 			end
 
 			if ent.EZbombBaySize then
 				self:LoadBomb(ent)
 			end
 		end
+	end
+
+	function ENT:TryLoadResources(typ, amt)
+		if amt <= 0 then return 0 end
+		if typ ~= JMod.EZ_RESOURCE_TYPES.BASICPARTS then return 0 end
+		local Missing = self.MaxDurability - self.Durability
+		if Missing <= 0 then return 0 end
+		// Make resources repair the durability by 4 times the amount of resources
+		local Accepted = math.min(Missing / 4, amt)
+		self.Durability = self.Durability + (Accepted * 4)
+		if self.Durability >= self.MaxDurability then
+			self:RemoveAllDecals()
+		end
+		self:EmitSound("snd_jack_turretrepair.ogg", 65, math.random(90, 110))
+		return Accepted
 	end
 
 	function ENT:LoadBomb(bomb)
@@ -209,8 +235,17 @@ if SERVER then
 	function ENT:OnTakeDamage(dmginfo)
 		self:TakePhysicsDamage(dmginfo)
 
-		if JMod.LinCh(dmginfo:GetDamage(), 160, 300) then
-			self:Destroy(dmginfo)
+		if self.Destroyed then return end
+
+		-- Reduce durability based on damage taken
+		local Damage = dmginfo:GetDamage() - 15
+		if Damage > 0 then
+			self.Durability = self.Durability - Damage
+
+			-- Destroy when durability reaches zero
+			if self.Durability <= 0 then
+				self:Destroy(dmginfo)
+			end
 		end
 	end
 
