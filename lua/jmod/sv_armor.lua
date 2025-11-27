@@ -673,18 +673,18 @@ end
 
 net.Receive("JMod_Inventory", function(ln, ply)
 	if not ply:Alive() then return end
-	local ActionType = net.ReadInt(8) -- 1: Remove armor | 2: Toggle armor | 3: Repair armor | 4: Recharge armor | 5: Color armor
+	local ActionType = net.ReadInt(8)
 	local ID = net.ReadString()
 
-	if ActionType == 1 then
+	if ActionType == JMod.NETWORK_INDEX.ARMOR_INVENTORY.DROP then
 		
 		JMod.RemoveArmorByID(ply, ID)
-	elseif ActionType == 2 then
+	elseif ActionType == JMod.NETWORK_INDEX.ARMOR_INVENTORY.TOGGLE then
 		local ItemData = ply.EZarmor.items[ID]
 		if ItemData and JMod.ArmorTable[ItemData.name].tgl then
 			ply.EZarmor.items[ID].tgl = not ply.EZarmor.items[ID].tgl
 		end
-	elseif ActionType == 3 then
+	elseif ActionType == JMod.NETWORK_INDEX.ARMOR_INVENTORY.REPAIR then
 		local ItemData = ply.EZarmor.items[ID]
 		local ItemInfo = JMod.ArmorTable[ItemData.name]
 		local RepairRecipe, RepairStatus, BuildRecipe = {}, 0, nil
@@ -766,7 +766,7 @@ net.Receive("JMod_Inventory", function(ln, ply)
 				sound.Play("snds_jack_gmod/ez_tools/" .. math.random(1, 27) .. ".ogg", ply:GetPos(), 60, math.random(80, 120))
 			end
 		end
-	elseif ActionType == 4 then
+	elseif ActionType == JMod.NETWORK_INDEX.ARMOR_INVENTORY.RECHARGE then
 		local ItemData = ply.EZarmor.items[ID]
 		local ItemInfo = JMod.ArmorTable[ItemData.name]
 		if ItemInfo.chrg  then
@@ -834,7 +834,7 @@ net.Receive("JMod_Inventory", function(ln, ply)
 				sound.Play("items/ammo_pickup.ogg", ply:GetPos(), 60, math.random(100, 140))
 			end
 		end
-	elseif ActionType == 5 then
+	elseif ActionType == JMod.NETWORK_INDEX.ARMOR_INVENTORY.COLOR then
 		local NewColor = net.ReadColor()
 		if ID == "" then
 			for k, v in pairs(ply.EZarmor.items) do
