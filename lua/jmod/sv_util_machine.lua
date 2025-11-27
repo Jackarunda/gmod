@@ -112,7 +112,7 @@ duplicator.RegisterConstraint("JModResourceCable", JModResourceCable, "Ent1", "E
 function JMod.CreateResourceConnection(machine, ent, resType, plugPos, dist, newCable)
 	dist = dist or 1000
 	if not (IsValid(machine) and IsValid(ent) and resType) then return false end
-	if not IsValid(ent) or (ent == machine) then return false end
+	if (ent == machine) then return false end
 	-- Special case for Entity connections (autoloader to cannon)
 	if resType == "Entity" then
 		if not ent:GetIsAutoLoading() then return false end

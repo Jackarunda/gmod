@@ -107,7 +107,7 @@ function JMod.FragSplosion(shooter, origin, fragNum, fragDmg, fragMaxDist, attac
 
 				BulletsFired = BulletsFired + 1
 			else
-				debugoverlay.Line(origin, Tr.HitPos, 2, Color(217, 255, 0), true)
+				--debugoverlay.Line(origin, Tr.HitPos, 2, Color(217, 255, 0), true)
 			end
 		end)
 	end
