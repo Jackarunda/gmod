@@ -677,7 +677,6 @@ net.Receive("JMod_Inventory", function(ln, ply)
 	local ID = net.ReadString()
 
 	if ActionType == JMod.NETWORK_INDEX.ARMOR_INVENTORY.DROP then
-		
 		JMod.RemoveArmorByID(ply, ID)
 	elseif ActionType == JMod.NETWORK_INDEX.ARMOR_INVENTORY.TOGGLE then
 		local ItemData = ply.EZarmor.items[ID]

@@ -115,7 +115,7 @@ function JMod.CreateResourceConnection(machine, ent, resType, plugPos, dist, new
 	if (ent == machine) then return false end
 	-- Special case for Entity connections (autoloader to cannon)
 	if resType == "Entity" then
-		if not ent:GetIsAutoLoading() then return false end
+		if not (ent.GetIsAutoLoading and ent:GetIsAutoLoading()) then return false end
 	else
 		if not (ent.EZconsumes and table.HasValue(ent.EZconsumes, resType)) and not (resType == JMod.EZ_RESOURCE_TYPES.POWER and (ent.EZpowerProducer and not machine.EZpowerProducer)) then return false end
 	end
