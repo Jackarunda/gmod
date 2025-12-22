@@ -294,8 +294,10 @@ if SERVER then
 
 	function ENT:Think()
 		local Time = CurTime()
+		self:NextThink(Time + 1)
 		if (self.NextFireThink < Time) and self:IsOnFire() then
-			self.NextFireThink = Time + .5
+			self.NextFireThink = Time + math.Rand(0.5, 1.0)
+			self:NextThink(self.NextFireThink)
 			local FuelLeft = self:GetResource()
 			if self.Flammable then
 				if FuelLeft <= 2 * self.Flammable then
@@ -309,7 +311,9 @@ if SERVER then
 				self:DoCookoff()
 			end
 		end
-		if self.CustomThink then return self:CustomThink() end
+		if self.CustomThink then 
+			return self:CustomThink() 
+		end
 	end
 
 	function ENT:DoCookoff()
