@@ -367,6 +367,10 @@ local function LookupEyes(ent)
 	if not ent.GetAttachment then return false end
 	local class = ent:GetClass()
 	if class == "class C_BaseFlex" then return false end
+	if class == "prop_ragdoll" then return false end
+	if class == "class C_ClientRagdoll" then return false end
+	if class == "class C_HL2MPRagdoll" then return false end
+	if ent.Alive and not ent:Alive() then return false end
 
 	local AngPos = ent:GetAttachment(ent:LookupAttachment("eyes"))
 	if AngPos and AngPos.Pos then
@@ -408,13 +412,14 @@ hook.Add("PostDrawTranslucentRenderables", "JMOD_EZDANGERSCANNING", function(bDe
 
 	if ply:InVehicle() then
 		table.insert(TraceSetup.filter, ply:GetVehicle())
-		if IsValid(ply:GetVehicle():GetParent()) then
-			table.insert(TraceSetup.filter, ply:GetVehicle():GetParent())
+		local PlyVehicleParent = ply:GetVehicle():GetParent()
+		if IsValid(PlyVehicleParent) then
+			table.insert(TraceSetup.filter, PlyVehicleParent)
 		end
 	end
 
 	for _, ent in ipairs(KnownEnts) do
-		if IsValid(ent) then
+		if IsValid(ent) and not ent:GetNoDraw() then
 
 			local eyePos = LookupEyes(ent)
 			if ent ~= ply and eyePos then
