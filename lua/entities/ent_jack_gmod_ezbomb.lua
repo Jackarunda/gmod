@@ -34,6 +34,15 @@ end
 if SERVER then
 	-- Network string for bomb exit/reentry events
 	util.AddNetworkString("JMod_EZBombTrail")
+
+	function JMod.StartEZBombTrail(SelfPos, OurOldVelocity, NewPos, TravelTime)
+		net.Start("JMod_EZBombTrail")
+			net.WriteVector(SelfPos)
+			net.WriteVector(OurOldVelocity)
+			net.WriteVector(NewPos)
+			net.WriteFloat(TravelTime)
+		net.Broadcast()
+	end
 	
 	function ENT:SpawnFunction(ply, tr)
 		local SpawnPos = tr.HitPos + tr.HitNormal * (self.SpawnHeight or 40)
@@ -133,13 +142,7 @@ if SERVER then
 
 					if NewPos then
 						-- Network the exit/reentry event to clients
-						net.Start("JMod_EZBombTrail")
-						net.WriteVector(SelfPos) -- Exit position
-						net.WriteVector(data.OurOldVelocity) -- Exit velocity
-						net.WriteVector(NewPos) -- Reentry position
-						net.WriteFloat(TravelTime) -- Travel time
-						net.Broadcast()
-						
+						JMod.StartEZBombTrail(SelfPos, data.OurOldVelocity, NewPos, TravelTime)
 						timer.Simple(0, function()
 							if IsValid(self) then
 								self:SetNoDraw(true)
