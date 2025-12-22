@@ -80,6 +80,55 @@ function JMod.StartResourceConnection(machine, ply, resType)
 	ply:PickupObject(Plugy)
 end
 
+-- Cable appearance properties for different resource types
+JMod.ResourceCableAppearance = {
+	-- Default fallback for any resource type not explicitly defined
+	default = {
+		size = 2,
+		color = Color(150, 150, 150, 255)
+	},
+	-- Power cables
+	[JMod.EZ_RESOURCE_TYPES.POWER] = {
+		size = 2,
+		color = Color(255, 255, 0, 255)
+	},
+	-- Fluid resources
+	fluid = {
+		size = 3,
+		color = Color(100, 150, 255, 255)
+	},
+	-- Entity connections (special case for autoloader, etc.)
+	["Entity"] = {
+		size = 10,
+		color = Color(150, 150, 150, 255)
+	}
+}
+
+local FluidTypes = {
+	[JMod.EZ_RESOURCE_TYPES.OIL] = true,
+	[JMod.EZ_RESOURCE_TYPES.WATER] = true,
+	[JMod.EZ_RESOURCE_TYPES.COOLANT] = true,
+	[JMod.EZ_RESOURCE_TYPES.FUEL] = true,
+	[JMod.EZ_RESOURCE_TYPES.GAS] = true,
+	[JMod.EZ_RESOURCE_TYPES.CHEMICALS] = true
+}
+
+-- Helper function to get cable appearance for a resource type
+function JMod.GetResourceCableAppearance(resType)
+	-- Check if specific resource type has appearance defined
+	if JMod.ResourceCableAppearance[resType] then
+		return JMod.ResourceCableAppearance[resType]
+	end
+	
+	-- Check if it's a fluid type
+	if FluidTypes[resType] then
+		return JMod.ResourceCableAppearance.fluid
+	end
+	
+	-- Fallback to default
+	return JMod.ResourceCableAppearance.default
+end
+
 function JModResourceCable(Ent1, Ent2, resType, plugPos, dist, newCable)
 	if not(IsValid(Ent1) and IsValid(Ent2)) then return false end
 	if Ent1 == Ent2 then return false end
@@ -88,7 +137,8 @@ function JModResourceCable(Ent1, Ent2, resType, plugPos, dist, newCable)
 		plugPos = Vector(0, 0, 0)
 	end
 
-	local LengthConstraint, Rope = constraint.Rope(Ent1, Ent2, 0, 0, Ent1.EZpowerSocket or Vector(0, 0, 0), plugPos, dist + 20, 10, 100, 2, "cable/cable2")
+	local CableAppearance = JMod.GetResourceCableAppearance(resType)
+	local LengthConstraint, Rope = constraint.Rope(Ent1, Ent2, 0, 0, Ent1.EZpowerSocket or Vector(0, 0, 0), plugPos, dist + 20, 10, 100, CableAppearance.size, "cable/cable2", false, CableAppearance.color)
 	if IsValid(newCable) then
 		LengthConstraint:Remove()
 		LengthConstraint = newCable
