@@ -141,6 +141,13 @@ if SERVER then
 			SafeRemoveEntity(ent)
 		end
 		ent.NextLoad = 0
+		
+		-- Recalculate weight after duplicator inventory restoration completes
+		timer.Simple(0.6, function()
+			if IsValid(ent) and ent.CalcWeight then
+				ent:CalcWeight()
+			end
+		end)
 	end
 	--aw fuck you
 elseif CLIENT then

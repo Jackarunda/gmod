@@ -32,40 +32,22 @@ end
 ---
 if SERVER then
 	function ENT:Initialize()
-		local Contents = self:GetContents()
-		local ContentsPhys = Contents:GetPhysicsObject()
-
-		if not IsValid(ContentsPhys) then
-			print("EZ compact box error: WAT")
-			self:Remove()
-
-			return
-		end
-
-		local Mass = self.ExtraMass or ContentsPhys:GetMass()
-
-		if Mass <= 35 then
-			self:SetSizeScale(1)
-		elseif Mass <= 300 then
-			self:SetSizeScale(2)
-		elseif Mass <= 1200 then
-			self:SetSizeScale(3)
-		else
-			self:SetSizeScale(3)
-			self:MultiplePackage(Mass - 1200)
-			self.ExtraMass = 1200
-		end
-
-		local Specs = self.ScaleSpecs[self:GetSizeScale()]
-		---
+		-- Set up basic entity structure
 		self:SetModel("models/props_junk/wood_crate001a.mdl")
+		
+		-- If no size scale set, use default
+		if not self:GetSizeScale() or self:GetSizeScale() == 0 then
+			self:SetSizeScale(2)
+		end
+		
+		local Specs = self.ScaleSpecs[self:GetSizeScale()]
 		self:SetModelScale(Specs[1], 0)
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)
 		self:SetSolid(SOLID_VPHYSICS)
 		self:DrawShadow(true)
 		self:SetUseType(SIMPLE_USE)
-		---
+		
 		self.LastUsedTime = 0
 		self.Unpackaging = false
 
@@ -76,15 +58,68 @@ if SERVER then
 				Phys:Wake()
 			end
 		end)
+		
+		-- If we have contents, set them up
+		local Contents = self:GetContents()
+		if IsValid(Contents) then
+			self:SetupWithContents(Contents)
+		end
+		-- If no contents, that's fine - duplicator will set them later
+	end
 
-		---
+	-- Helper function to set up the box with contents
+	-- Used both during normal spawn and after duplicator restoration
+	function ENT:SetupWithContents(Contents, skipExtraMass)
+		if not IsValid(Contents) then return false end
+		
+		local ContentsPhys = Contents:GetPhysicsObject()
+		if not IsValid(ContentsPhys) then
+			print("EZ compact box error: Invalid contents physics")
+			return false
+		end
+
+		-- Calculate size based on mass
+		-- skipExtraMass is used during duplication to get the real mass, not the clamped value
+		local Mass = (skipExtraMass and ContentsPhys:GetMass()) or (self.ExtraMass or ContentsPhys:GetMass())
+
+		if Mass <= 35 then
+			self:SetSizeScale(1)
+		elseif Mass <= 300 then
+			self:SetSizeScale(2)
+		elseif Mass <= 1200 then
+			self:SetSizeScale(3)
+		else
+			-- Mass > 1200 - need multiple boxes
+			self:SetSizeScale(3)
+			if not self.Boxes then  -- Only create multiple boxes if they don't already exist
+				self:MultiplePackage(Mass - 1200)
+				self.ExtraMass = 1200
+			end
+		end
+
+		local Specs = self.ScaleSpecs[self:GetSizeScale()]
+		
+		-- Update model scale to match size
+		self:SetModelScale(Specs[1], 0)
+		
+		-- Update physics mass to match contents
+		local Phys = self:GetPhysicsObject()
+		if IsValid(Phys) then
+			Phys:SetMass(Specs[2])
+			Phys:Wake()
+		end
+
+		-- Hide and disable the contents entity
 		Contents:SetNoDraw(true)
 		Contents:SetNotSolid(true)
 		ContentsPhys:Sleep()
-		if Contents.IsJackyEZmachine then --EZ machine compat
+		
+		-- Handle EZ machines
+		if Contents.IsJackyEZmachine then
 			if Contents.EZinstalled then Contents.EZinstalled = false end
-			--if Contents.TurnOff then Contents:TurnOff() end
 		end
+		
+		return true
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
@@ -263,6 +298,85 @@ if SERVER then
 			Contents:Remove()
 		end
 	end
+
+	-- Duplicator support: save the packaged entity
+	function ENT:PreEntityCopy()
+		local Contents = self:GetContents()
+		if IsValid(Contents) then
+			-- Only save contents data on box #1 to prevent duplication when multiple boxes exist
+			local PackageNum = self:GetNW2Int("EZpackageNum", 0)
+			
+			if PackageNum == 0 or PackageNum == 1 then
+				-- This is either a single box or box #1 of a multi-box package
+				local DupeInfo = {}
+				DupeInfo.ContentsData = duplicator.CopyEntTable(Contents)
+				-- Don't save ExtraMass - we'll recalculate from actual contents mass
+				DupeInfo.PackageNum = PackageNum
+				duplicator.StoreEntityModifier(self, "EZCompactBoxContents", DupeInfo)
+			else
+				-- This is box #2, #3, etc. - don't save contents, just mark it
+				local DupeInfo = {}
+				DupeInfo.IsSecondaryBox = true
+				DupeInfo.PackageNum = PackageNum
+				duplicator.StoreEntityModifier(self, "EZCompactBoxContents", DupeInfo)
+			end
+		end
+	end
+
+	-- Duplicator support: restore the packaged entity
+	function ENT:PostEntityPaste(ply, ent, createdEntities)
+		-- The entity modifier will handle restoring the contents
+		-- This happens automatically via the modifier registered below
+	end
+
+	-- Register duplicator modifier to restore contents
+	duplicator.RegisterEntityModifier("EZCompactBoxContents", function(ply, ent, data)
+		if not IsValid(ent) or not data then return end
+		
+		-- Handle secondary boxes (box #2, #3, etc. in multi-box packages)
+		if data.IsSecondaryBox then
+			ent:SetNW2Int("EZpackageNum", data.PackageNum)
+			-- Don't restore contents - the primary box will handle that
+			return
+		end
+		
+		-- Primary box or single box - restore the contents
+		if not data.ContentsData then return end
+		
+		-- Delay to ensure compact box is fully initialized
+		timer.Simple(0.1, function()
+			if not IsValid(ent) then return end
+			
+			-- Use duplicator.Paste to properly restore the contents entity
+			local pastedEnts = duplicator.Paste(ply, {data.ContentsData}, {})
+			
+			if pastedEnts and pastedEnts[1] then
+				local contentsEnt = pastedEnts[1]
+				
+				-- Wait for the entity to be fully created
+				timer.Simple(0.1, function()
+					if IsValid(contentsEnt) and IsValid(ent) then
+						-- Set the contents
+						ent:SetContents(contentsEnt)
+						
+						-- Set the EZ owner to the player who pasted
+						if IsValid(JMod.GetEZowner(contentsEnt)) then
+							JMod.SetEZowner(ent, JMod.GetEZowner(contentsEnt))
+						elseif IsValid(ply) then
+							JMod.SetEZowner(ent, ply)
+						end
+						
+						-- Don't set ExtraMass from saved data - let it calculate from actual contents
+						-- This allows MultiplePackage() to trigger properly based on real mass
+						
+						-- Use the helper function to set up the box with contents
+						-- Pass true to use actual mass, not saved ExtraMass
+						ent:SetupWithContents(contentsEnt, true)
+					end
+				end)
+			end
+		end)
+	end)
 elseif CLIENT then
 	local TxtCol = Color(10, 10, 10, 220)
 

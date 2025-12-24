@@ -2,6 +2,138 @@
 JMod.DEFAULT_INVENTORY = {EZresources = {}, items = {}, weight = 0, volume = 0, maxVolume = 0}
 JMod.GRABDISTANCE = 70
 
+---
+--- Duplicator support for inventory system
+---
+local function SerializeInventoryForDuplicator(jmodinv)
+	if not jmodinv then return nil end
+	
+	local data = {
+		resources = {},
+		items = {}
+	}
+	
+	-- Serialize resources (simple key-value pairs)
+	if jmodinv.EZresources then
+		for resType, amount in pairs(jmodinv.EZresources) do
+			if amount > 0 then
+				data.resources[resType] = amount
+			end
+		end
+	end
+	
+	-- Serialize items (store full duplicator data for each entity)
+	if jmodinv.items then
+		for k, iteminfo in ipairs(jmodinv.items) do
+			if IsValid(iteminfo.ent) then
+				local ent = iteminfo.ent
+				
+				-- Trigger PreEntityCopy hook to let entities save custom data
+				hook.Run("PreEntityCopy", ent)
+				
+				-- Use the standard duplicator copy function
+				local entTable = duplicator.CopyEntTable(ent)
+				
+				-- Trigger PostEntityCopy hook
+				hook.Run("PostEntityCopy", ent)
+				
+				if entTable then
+					table.insert(data.items, entTable)
+				end
+			end
+		end
+	end
+	
+	return data
+end
+
+local function UpdateDuplicatorData(invEnt)
+	if not IsValid(invEnt) then return end
+	
+	if invEnt.JModInv and (next(invEnt.JModInv.items) or next(invEnt.JModInv.EZresources)) then
+		local data = SerializeInventoryForDuplicator(invEnt.JModInv)
+		if data then
+			duplicator.StoreEntityModifier(invEnt, "JModInventory", data)
+		end
+	else
+		-- Clear modifier if inventory is empty or nil
+		duplicator.ClearEntityModifier(invEnt, "JModInventory")
+	end
+end
+
+-- Prevent JModInv from being auto-saved by the duplicator
+-- We handle it manually with our custom modifier
+hook.Add("PreEntityCopy", "JMod_PreventInventoryAutoDupe", function(ent)
+	if ent.JModInv then
+		-- Store inventory temporarily and clear it from entity
+		-- This prevents it from being auto-saved by duplicator
+		ent.JModInv_DupTemp = ent.JModInv
+		ent.JModInv = nil
+	end
+end)
+
+hook.Add("PostEntityCopy", "JMod_RestoreInventoryAfterCopy", function(ent)
+	if ent.JModInv_DupTemp then
+		-- Restore inventory after copy is complete
+		ent.JModInv = ent.JModInv_DupTemp
+		ent.JModInv_DupTemp = nil
+	end
+end)
+
+-- Register the duplicator modifier for inventory restoration
+duplicator.RegisterEntityModifier("JModInventory", function(ply, ent, data)
+	if not IsValid(ent) or not data then return end
+	
+	-- Delay restoration to ensure entity is fully initialized
+	timer.Simple(0.1, function()
+		if not IsValid(ent) then return end
+		
+		-- Clear any existing inventory that may have been auto-saved by the duplicator
+		-- (This is a safeguard, but PreEntityCopy should prevent this)
+		ent.JModInv = nil
+		
+		-- Restore resources first (simpler, no dependencies)
+		if data.resources then
+			for resType, amount in pairs(data.resources) do
+				if amount > 0 then
+					JMod.AddToInventory(ent, {resType, amount}, true)
+				end
+			end
+		end
+		
+		-- Restore items (more complex, may have initialization requirements)
+		if data.items then
+			for k, entTable in ipairs(data.items) do
+				-- Use duplicator.Paste with correct parameters
+				-- Parameters: Player, EntityList (table), ConstraintList (table)
+				local pastedEnts, pastedConstraints = duplicator.Paste(ply, {entTable}, {})
+				
+				if pastedEnts and pastedEnts[1] then
+					local item = pastedEnts[1]
+					
+					-- Give the paste system time to fully complete
+					timer.Simple(0.2 + (0.05 * k), function()
+						if IsValid(item) and IsValid(ent) then
+							JMod.AddToInventory(ent, item, true)
+						end
+					end)
+				end
+			end
+		end
+		
+		-- Final update after all items are added
+		timer.Simple(0.5, function()
+			if IsValid(ent) then
+				JMod.UpdateInv(ent)
+				-- For storage crates, recalculate weight
+				if ent.CalcWeight then
+					ent:CalcWeight()
+				end
+			end
+		end)
+	end)
+end)
+
 function JMod.GetStorageCapacity(ent)
 	if not(IsValid(ent)) then return 0 end
 	if ent.IsJackyEZcrate then return 0 end
@@ -175,6 +307,9 @@ function JMod.UpdateInv(invEnt, noplace, transfer, emergancyNetwork)
 		net.Send(invEnt)
 	end
 
+	-- Update duplicator data to reflect current inventory state
+	UpdateDuplicatorData(invEnt)
+
 	return RemovedItems
 end
 
@@ -274,7 +409,8 @@ function JMod.AddToInventory(invEnt, target, noUpdate)
 	invEnt.JModInv = jmodinv
 
 	if noUpdate then
-		--
+		-- Update duplicator data even if we're not doing a full inventory update
+		UpdateDuplicatorData(invEnt)
 	else
 		JMod.UpdateInv(invEnt)
 	end
