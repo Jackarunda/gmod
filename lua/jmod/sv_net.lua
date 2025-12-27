@@ -104,7 +104,8 @@ net.Receive("JMod_ArmorColor", function(ln, ply)
 	if not (IsValid(ply) and ply:Alive()) then return end
 	local ArmorEnt = net.ReadEntity()
 	if not IsValid(ArmorEnt) or not ArmorEnt.ArmorName then return end
-	if JMod.ArmorTable[ArmorEnt.ArmorName].clrForced then return end
+	local ArmorInfo = JMod.ArmorTable[ArmorEnt.ArmorName]
+	if not ArmorInfo or ArmorInfo.clrForced then return end
 	if (ply:GetPos():Distance(ArmorEnt:GetPos()) > 150) then return end
 
 	local AutoColor = net.ReadBool()

@@ -111,7 +111,10 @@ local function GetProtectionFromSlot(ply, slot, dmg, dmgAmt, protectionMul, shou
 
 	if not(ply.EZarmor and ply.EZarmor.items) then return Protection, Busted end
 	for id, armorData in pairs(ply.EZarmor.items) do
-		local ArmorInfo = table.FullCopy(JMod.ArmorTable[armorData.name])
+		local ArmorTableEntry = JMod.ArmorTable[armorData.name]
+		if not ArmorTableEntry then continue end
+		
+		local ArmorInfo = table.FullCopy(ArmorTableEntry)
 
 		if armorData.tgl and ArmorInfo.tgl then
 			ArmorInfo = table.Merge(ArmorInfo, ArmorInfo.tgl)
@@ -443,6 +446,12 @@ function JMod.RemoveArmorByID(ply, ID, broken)
 	if not Info then print("JMod.RemoveArmorByID: no info for ID " .. tostring(ID)) return end
 	
 	local Specs = JMod.ArmorTable[Info.name]
+	if not Specs then 
+		print("JMod.RemoveArmorByID: no armor table entry for " .. tostring(Info.name))
+		ply.EZarmor.items[ID] = nil
+		JMod.EZarmorSync(ply)
+		return nil
+	end
 
 	if Specs.eff and Specs.eff.weapon then
 		local Wep = ply:GetWeapon(Specs.eff.weapon)
@@ -543,7 +552,8 @@ end
 
 local function GetArmorBySlot(currentArmorItems, slot)
 	for id, currentArmorData in pairs(currentArmorItems) do
-		if JMod.ArmorTable[currentArmorData.name].slots[slot] ~= nil then return id, currentArmorData end
+		local ArmorInfo = JMod.ArmorTable[currentArmorData.name]
+		if ArmorInfo and ArmorInfo.slots[slot] ~= nil then return id, currentArmorData end
 	end
 
 	return nil, nil
@@ -551,10 +561,14 @@ end
 
 local function GetAreSlotsClear(currentArmorItems, newArmorName)
 	local NewArmorInfo = JMod.ArmorTable[newArmorName]
+	if not NewArmorInfo then return true, nil end
 	local RequiredSlots = NewArmorInfo.slots
 
 	for id, currentArmorData in pairs(currentArmorItems) do
 		local CurrentArmorInfo = JMod.ArmorTable[currentArmorData.name]
+		
+		-- Skip armor pieces that don't have valid definitions
+		if not CurrentArmorInfo then continue end
 
 		for newSlotName, newCoverage in pairs(RequiredSlots) do
 			for oldSlotName, oldCoverage in pairs(CurrentArmorInfo.slots) do
@@ -586,6 +600,17 @@ function JMod.EZ_Equip_Armor(ply, nameOrEnt)
 		if not IsValid(nameOrEnt) then return end
 		NewArmorName = nameOrEnt.ArmorName
 		NewArmorSpecs = JMod.ArmorTable[NewArmorName]
+		
+		-- Validate armor exists in ArmorTable
+		if not NewArmorSpecs then
+			if ply:IsPlayer() then
+				ply:PrintMessage(HUD_PRINTTALK, "[JMod] ERROR: Cannot equip '" .. tostring(NewArmorName) .. "' - armor definition not found!")
+			end
+			print("[JMod] ERROR: Attempted to equip armor '" .. tostring(NewArmorName) .. "' but it does not exist in JMod.ArmorTable")
+
+			return
+		end
+		
 		NewArmorID = nameOrEnt.EZID
 		NewArmorDurability = nameOrEnt.Durability or NewArmorSpecs.dur
 		NewArmorColor = nameOrEnt:GetColor()
@@ -595,6 +620,17 @@ function JMod.EZ_Equip_Armor(ply, nameOrEnt)
 		end
 	else
 		NewArmorSpecs = JMod.ArmorTable[NewArmorName]
+		
+		-- Validate armor exists in ArmorTable
+		if not NewArmorSpecs then
+			if ply:IsPlayer() then
+				ply:PrintMessage(HUD_PRINTTALK, "[JMod] ERROR: Cannot equip '" .. tostring(NewArmorName) .. "' - armor definition not found!")
+			end
+			print("[JMod] ERROR: Attempted to equip armor '" .. tostring(NewArmorName) .. "' but it does not exist in JMod.ArmorTable")
+			
+			return
+		end
+		
 		NewArmorID = JMod.GenerateGUID()
 		NewArmorColor = Color(128, 128, 128)
 		NewArmorDurability = NewArmorSpecs.dur
@@ -680,12 +716,14 @@ net.Receive("JMod_Inventory", function(ln, ply)
 		JMod.RemoveArmorByID(ply, ID)
 	elseif ActionType == JMod.NETWORK_INDEX.ARMOR_INVENTORY.TOGGLE then
 		local ItemData = ply.EZarmor.items[ID]
-		if ItemData and JMod.ArmorTable[ItemData.name].tgl then
+		local ItemInfo = ItemData and JMod.ArmorTable[ItemData.name]
+		if ItemInfo and ItemInfo.tgl then
 			ply.EZarmor.items[ID].tgl = not ply.EZarmor.items[ID].tgl
 		end
 	elseif ActionType == JMod.NETWORK_INDEX.ARMOR_INVENTORY.REPAIR then
 		local ItemData = ply.EZarmor.items[ID]
-		local ItemInfo = JMod.ArmorTable[ItemData.name]
+		local ItemInfo = ItemData and JMod.ArmorTable[ItemData.name]
+		if not ItemInfo then return end
 		local RepairRecipe, RepairStatus, BuildRecipe = {}, 0, nil
 		for k, v in pairs(JMod.Config.Craftables) do
 			if v.results == ItemInfo.ent then
@@ -767,7 +805,8 @@ net.Receive("JMod_Inventory", function(ln, ply)
 		end
 	elseif ActionType == JMod.NETWORK_INDEX.ARMOR_INVENTORY.RECHARGE then
 		local ItemData = ply.EZarmor.items[ID]
-		local ItemInfo = JMod.ArmorTable[ItemData.name]
+		local ItemInfo = ItemData and JMod.ArmorTable[ItemData.name]
+		if not ItemInfo then return end
 		if ItemInfo.chrg  then
 			local RechargeRecipe, RechargeStatus, PartialRecharge = {}, 0, false
 
@@ -838,13 +877,14 @@ net.Receive("JMod_Inventory", function(ln, ply)
 		if ID == "" then
 			for k, v in pairs(ply.EZarmor.items) do
 				local ItemInfo = JMod.ArmorTable[v.name]
-				if not ItemInfo["clrForced"] then
+				if ItemInfo and not ItemInfo["clrForced"] then
 					ply.EZarmor.items[k].col = {r = NewColor.r, g = NewColor.g, b = NewColor.b, a = 255}
 				end
 			end
 		else
 			local ItemData = ply.EZarmor.items[ID]
-			local ItemInfo = JMod.ArmorTable[ItemData.name]
+			local ItemInfo = ItemData and JMod.ArmorTable[ItemData.name]
+			if not ItemInfo then return end
 			if not ItemInfo["clrForced"] then
 				ply.EZarmor.items[ID].col = {r = NewColor.r, g = NewColor.g, b = NewColor.b, a = 255}
 			end

@@ -31,6 +31,17 @@ if SERVER then
 
 	function ENT:Initialize()
 		self.Specs = JMod.ArmorTable[self.ArmorName]
+		
+		-- Warn if armor definition is missing
+		if not self.Specs then
+			print("[JMod] WARNING: Armor entity spawned with ArmorName '" .. tostring(self.ArmorName) .. "' but no definition exists in JMod.ArmorTable!")
+
+			-- Remove self to prevent errors
+			SafeRemoveEntity(self)
+			
+			return
+		end
+		
 		self:SetModel(self.entmdl or self.Specs.mdl)
 		self:SetMaterial(self.Specs.mat or "")
 
@@ -119,7 +130,20 @@ if SERVER then
 		local Alt = JMod.IsAltUsing(activator)
 
 		if Alt then
-			if activator.JackyArmor and (#table.GetKeys(activator.JackyArmor) > 0) then return end
+			if activator.JackyArmor and (#table.GetKeys(activator.JackyArmor) > 0) then
+				activator:PrintMessage(HUD_PRINTTALK, "Legacy armor already equipped")
+
+				return 
+			end
+
+			-- Validate that this armor has a valid ArmorTable entry before equipping
+			if not JMod.ArmorTable[self.ArmorName] then
+				if activator:IsPlayer() then
+					activator:PrintMessage(HUD_PRINTTALK, "ERROR: Cannot equip '" .. tostring(self.ArmorName) .. "' - armor definition not found!")
+				end
+				
+				return
+			end
 
 			if self.Specs.clrForced then
 				JMod.EZ_Equip_Armor(activator, self)

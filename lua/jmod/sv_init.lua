@@ -23,6 +23,7 @@ local function JackaSpawnHook(ply, transition)
 			if ply.EZarmor.suited then
 				for k, v in pairs(ply.EZarmor.items) do
 					local ArmorInfo = JMod.ArmorTable[v.name]
+					if not ArmorInfo then continue end
 		
 					if ArmorInfo.plymdl then
 						JMod.SetPlayerModel(ply, ArmorInfo.plymdl)
@@ -477,7 +478,8 @@ local function OpenChute(ply)
 	Chute:SetPos(ply:GetPos())
 	Chute:SetNW2Entity("Owner", ply)
 	for k, v in pairs(ply.EZarmor.items) do
-		if JMod.ArmorTable[v.name].eff and JMod.ArmorTable[v.name].eff.parachute then
+		local ArmorInfo = JMod.ArmorTable[v.name]
+		if ArmorInfo and ArmorInfo.eff and ArmorInfo.eff.parachute then
 			Chute.ParachuteName = ply.EZarmor.items[k].name
 			Chute.ChuteColor = ply.EZarmor.items[k].col 
 			break
@@ -739,6 +741,7 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 					for id, armorData in pairs(playa.EZarmor.items) do
 						if armorData.chrg then
 							local Info = JMod.ArmorTable[armorData.name]
+							if not Info then continue end
 
 							if Info.eff then 
 								if Info.eff.nightVision then
@@ -769,9 +772,10 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 					end
 				end
 
-				if ArmorEffs.scuba then
-					for id, armorData in pairs(playa.EZarmor.items) do
-						local Info = JMod.ArmorTable[armorData.name]
+			if ArmorEffs.scuba then
+				for id, armorData in pairs(playa.EZarmor.items) do
+					local Info = JMod.ArmorTable[armorData.name]
+					if not Info then continue end
 
 						if (Info.eff and Info.eff.scuba) and (armorData.chrg and armorData.chrg.gas) then
 							armorData.chrg.gas = math.Clamp(armorData.chrg.gas - JMod.Config.Armor.ChargeDepletionMult / 10, 0, 9e9)
@@ -783,11 +787,12 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 					end
 				end
 
-				if ArmorEffs.weapon then
-					for id, armorData in pairs(playa.EZarmor.items) do
-						local Info = JMod.ArmorTable[armorData.name]
+			if ArmorEffs.weapon then
+				for id, armorData in pairs(playa.EZarmor.items) do
+					local Info = JMod.ArmorTable[armorData.name]
+					if not Info then continue end
 
-						if Info.eff and Info.eff.weapon then
+					if Info.eff and Info.eff.weapon then
 							if not playa:HasWeapon(Info.eff.weapon) then
 								local Sweppy = playa:Give(Info.eff.weapon)
 								playa:SelectWeapon(Sweppy)
@@ -797,18 +802,20 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 					end
 				end
 
-				if ArmorEffs.chargeEquipped then
-					for id, armorData in pairs(playa.EZarmor.items) do
-						local Info = JMod.ArmorTable[armorData.name]
+			if ArmorEffs.chargeEquipped then
+				for id, armorData in pairs(playa.EZarmor.items) do
+					local Info = JMod.ArmorTable[armorData.name]
+					if not Info then continue end
 
-						if Info.eff and Info.eff.chargeEquipped then
-							local SubtractCharge = armorData.chrg and armorData.chrg.power
-							
-							local ArmorIDsToCharge = {}
-							for id2, armorData2 in pairs(playa.EZarmor.items) do
-								local Info2 = JMod.ArmorTable[armorData2.name]
+					if Info.eff and Info.eff.chargeEquipped then
+						local SubtractCharge = armorData.chrg and armorData.chrg.power
+						
+						local ArmorIDsToCharge = {}
+						for id2, armorData2 in pairs(playa.EZarmor.items) do
+							local Info2 = JMod.ArmorTable[armorData2.name]
+							if not Info2 then continue end
 
-								if not(Info2.eff and Info2.eff.chargeEquipped) and armorData2.chrg and armorData2.chrg.power and (armorData2.chrg.power < Info2.chrg.power) then
+							if not(Info2.eff and Info2.eff.chargeEquipped) and armorData2.chrg and armorData2.chrg.power and (armorData2.chrg.power < Info2.chrg.power) then
 									table.insert(ArmorIDsToCharge, id2)
 								end
 							end
@@ -829,9 +836,10 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 					end
 				end
 
-				if ArmorEffs.chargeShield then
-					for id, armorData in pairs(playa.EZarmor.items) do
-						local Info = JMod.ArmorTable[armorData.name]
+			if ArmorEffs.chargeShield then
+				for id, armorData in pairs(playa.EZarmor.items) do
+					local Info = JMod.ArmorTable[armorData.name]
+					if not Info then continue end
 
 						if Info.eff and Info.eff.chargeShield then
 							local SubtractCharge = armorData.chrg and armorData.chrg.power
@@ -1143,7 +1151,8 @@ concommand.Add("jmod_debug_parachute", function(ply, cmd, args)
 		Chute:SetNW2Entity("Owner", Ent)
 		Chute.ParachuteName = "Parachute"
 		for k, v in pairs(ply.EZarmor.items) do
-			if JMod.ArmorTable[v.name].eff and JMod.ArmorTable[v.name].eff.parachute then
+			local ArmorInfo = JMod.ArmorTable[v.name]
+			if ArmorInfo and ArmorInfo.eff and ArmorInfo.eff.parachute then
 				Chute.ChuteColor = ply.EZarmor.items[k].col 
 				break
 			end

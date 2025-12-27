@@ -146,13 +146,14 @@ function JMod.GetStorageCapacity(ent)
 		if ent.EZarmor and ent.EZarmor.items then
 			for id, v in pairs(ent.EZarmor.items) do
 				local ArmorInfo = JMod.ArmorTable[v.name]
-				if ArmorInfo.storage then
+				if ArmorInfo and ArmorInfo.storage then
 					Capacity = Capacity + ArmorInfo.storage
 				end
 			end
 		end
 	elseif ent.ArmorName then
 		local Specs = JMod.ArmorTable[ent.ArmorName]
+		if not Specs then return 0 end
 		Capacity = Specs.storage
 	elseif ent.EZstorageSpace or ent.MaxItems then
 		Capacity = ent.EZstorageSpace or ent.MaxItems

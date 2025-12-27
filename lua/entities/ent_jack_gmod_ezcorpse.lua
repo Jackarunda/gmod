@@ -55,6 +55,7 @@ if SERVER then
 			local Parachute = false
 			for k, armorData in pairs(Ply.EZarmor.items) do
 				local ArmorInfo = JMod.ArmorTable[armorData.name]
+				if not ArmorInfo then continue end
 				if not ArmorInfo.plymdl then
 					local Index = Ragdoll:LookupBone(ArmorInfo.bon)
 					local Pos, Ang = Ragdoll:GetBonePosition(Index)

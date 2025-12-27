@@ -230,6 +230,7 @@ hook.Add("PlayerSay", "JMod_PLAYERSAY", function(ply, txt)
 	if JMod.PlyHasArmorEff(ply, "teamComms") then
 		for id, data in pairs(ply.EZarmor.items) do
 			local Info = JMod.ArmorTable[data.name]
+			if not Info then continue end
 
 			if Info.eff and Info.eff.teamComms then
 				local SubtractAmt = JMod.Config.Armor.DegradationMult / 2

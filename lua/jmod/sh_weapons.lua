@@ -447,6 +447,13 @@ function JMod.LoadAmmoTable(tbl)
 			plydmg = v.basedmg,
 			dmgtype = v.dmgtype or DMG_BULLET
 		})
+		timer.Simple(2, function()
+			local ammoID = game.GetAmmoID(k)
+			-- Debug: Verify ammo type was registered
+			if ammoID == -1 then
+				print("[JMod WARNING] Failed to register ammo type: " .. tostring(k))
+			end
+		end)
 		if SERVER then
 			timer.Simple(1, function()
 				if (v.resourcetype) and (v.resourcetype == "munitions") then
@@ -548,6 +555,7 @@ function JMod.ApplyAmmoSpecs(wep, typ, mult)
 	wep.Primary.Ammo = typ
 	local Specs = JMod.GetAmmoSpecs(typ)
 	if not Specs then print("[JMod] - " ..typ.." is not a registered ammo type") return end
+	timer.Simple(0.1, function() if game.GetAmmoID(typ) == -1 then print("[JMod] - " ..typ.." failed to register") return end end)
 	wep.Damage = Specs.basedmg * mult
 	wep.Num = Specs.projnum or 1
 
@@ -889,7 +897,7 @@ elseif SERVER then
 		if ply.EZarmor and ply.EZarmor.items then
 			for id, v in pairs(ply.EZarmor.items) do
 				local ArmorInfo = JMod.ArmorTable[v.name]
-				if ArmorInfo.ammoCarryMult then
+				if ArmorInfo and ArmorInfo.ammoCarryMult then
 					ArmorAmmoCarryMult = ArmorAmmoCarryMult * ArmorInfo.ammoCarryMult
 				end
 			end

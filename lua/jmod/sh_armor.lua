@@ -1150,6 +1150,7 @@ function JMod.GetArmorBiologicalResistance(ply, typ)
 		for k, armorData in pairs(ply.EZarmor.items) do
 			if not armorData.tgl then
 				local ArmorInfo = JMod.ArmorTable[armorData.name]
+				if not ArmorInfo then continue end
 
 				if ArmorInfo.def and (ArmorInfo.chrg and ArmorInfo.chrg.chemicals and armorData.chrg.chemicals > 0) then
 					skinResist = skinResist + (ArmorInfo.def[typ] or 0) * ((ArmorInfo.slots.chest or 0) + (ArmorInfo.slots.abdomen or 0)) / 2
@@ -1169,6 +1170,7 @@ function JMod.DepleteArmorChemicalCharge(ply, amt)
 	if ply.EZarmor then
 		for k, armorData in pairs(ply.EZarmor.items) do
 			local ArmorInfo = JMod.ArmorTable[armorData.name]
+			if not ArmorInfo then continue end
 
 			if armorData.chrg and armorData.chrg.chemicals then
 				armorData.chrg.chemicals = math.max(armorData.chrg.chemicals - SubtractAmt, 0)
@@ -1232,7 +1234,7 @@ if CLIENT then
 
 		for id, armorData in pairs(armorTable.items) do
 			local ArmorInfo = JMod.ArmorTable[armorData.name]
-			if ArmorInfo.slots[slot] then return id, armorData, ArmorInfo end
+			if ArmorInfo and ArmorInfo.slots[slot] then return id, armorData, ArmorInfo end
 		end
 
 		return nil
