@@ -57,7 +57,7 @@ if SERVER then
 		self.FuelLeft = 100
 
 		if istable(WireLib) then
-			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"Directly detonates rocket", "Arms rocket"})
+			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm", "Launch"}, {"Directly detonates rocket", "Arms rocket", "Launches rocket"})
 
 			self.Outputs = WireLib.CreateOutputs(self, {"State", "Fuel"}, {"-1 broken \n 0 off \n 1 armed \n 2 launched", "Fuel left in the tank"})
 		end
@@ -70,6 +70,9 @@ if SERVER then
 			self:SetState(STATE_ARMED)
 		elseif iname == "Arm" and value == 0 then
 			self:SetState(STATE_OFF)
+		elseif iname == "Launch" and value > 0 then
+			self:SetState(STATE_ARMED)
+			self:Launch()
 		end
 	end
 
@@ -349,3 +352,4 @@ elseif CLIENT then
 
 	language.Add("ent_jack_gmod_ezherocket", "EZ Heavy Rocket")
 end
+
