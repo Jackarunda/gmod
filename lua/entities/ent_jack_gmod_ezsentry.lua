@@ -136,6 +136,7 @@ ENT.AmmoRefundTable = {
 }
 
 function ENT:SetMods(tbl, ammoType)
+	self.ModPerfSpecs = self.ModPerfSpecs or {}
 	local OldMaxAmmoSpec = (self.ModPerfSpecs and self.ModPerfSpecs.MaxAmmo) or 0
 	self.ModPerfSpecs = tbl
 	local OldAmmo = self:GetAmmoType()
@@ -395,6 +396,20 @@ if(SERVER)then
 	end
 	
 	function ENT:OnPostEntityPaste(ply, ent, createdEntities)
+		-- Ensure ModPerfSpecs exists with proper defaults
+		if not self.ModPerfSpecs or not next(self.ModPerfSpecs) then
+			self.ModPerfSpecs = {
+				MaxAmmo = 0,
+				TurnSpeed = 0,
+				TargetingRadius = 0,
+				Armor = 0,
+				FireRate = 0,
+				Damage = 0,
+				Accuracy = 0,
+				SearchSpeed = 0,
+				Cooling = 0
+			}
+		end
 		self:ResetMemory()
 		self:SetState(STATE_WATCHING)
 		self:SetMods(self.ModPerfSpecs, self:GetAmmoType())
@@ -1480,13 +1495,13 @@ elseif(CLIENT)then
 				surface.DrawRect(-100, -140, 128, 128)
 				JMod.StandardRankDisplay(Grade, -35, -75, 118, Opacity + 20)
 				draw.SimpleTextOutlined("POWER", "JMod-Display", 250, 0, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-				local ElecFrac = self:GetElectricity() / self.MaxElectricity
+				local ElecFrac = self:GetElectricity() / (self.MaxElectricity or 100)
 				local R, G, B = JMod.GoodBadColor(ElecFrac)
 				draw.SimpleTextOutlined(tostring(math.Round(ElecFrac * 100)) .. "%", "JMod-Display", 250, 30, Color(R, G, B, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 
 				if AmmoType ~= "Pulse Laser" then
 					local Ammo = self:GetAmmo()
-					local AmmoFrac = Ammo / self.MaxAmmo
+					local AmmoFrac = Ammo / (self.MaxAmmo or 100)
 					local R, G, B = JMod.GoodBadColor(AmmoFrac)
 					draw.SimpleTextOutlined("AMMO", "JMod-Display", -50, 0, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 					draw.SimpleTextOutlined(tostring(Ammo), "JMod-Display", -50, 30, Color(R, G, B, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
