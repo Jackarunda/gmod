@@ -30,6 +30,10 @@ if SERVER then
 		Ragdoll:SetAngles(Ply:GetAngles())
 		Ragdoll:Spawn()
 		Ragdoll:Activate()
+		Ragdoll.IsEZcorpse = true
+		Ragdoll.DeadPlayer = Ply
+		Ragdoll.EZcorpseEntity = self
+		self.EZragdoll = Ragdoll
 		for k, v in pairs(Ply:GetMaterials()) do
 			local Matty = Ply:GetSubMaterial(k - 1)
 			Ragdoll:SetSubMaterial(k - 1, Matty)
@@ -116,10 +120,6 @@ if SERVER then
 			Ply:SetNW2Bool("EZparachuting", true)
 			Ply.EZparachute = nil
 		end
-		Ragdoll.IsEZcorpse = true
-		Ragdoll.DeadPlayer = Ply
-		Ragdoll.EZcorpseEntity = self
-		self.EZragdoll = Ragdoll
 		timer.Simple(0, function()
 			if IsValid(self) and IsValid(self.EZragdoll) then
 				self:SetParent(self.EZragdoll)
