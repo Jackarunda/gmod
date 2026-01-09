@@ -556,7 +556,7 @@ function SWEP:Holster()
 end
 --]]
 function SWEP:OnDrop()
-	local Specs = JMod.WeaponTable[self.PrintName]
+	local Specs = JMod.WeaponLookup and JMod.WeaponLookup[self.PrintName] or JMod.WeaponTable[self.PrintName]
 
 	if Specs then
 		timer.Simple(0.001, function()

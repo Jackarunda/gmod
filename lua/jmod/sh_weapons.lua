@@ -271,232 +271,253 @@ JMod.WeaponTable = {
 	}
 }
 
+-- Order ensures consistent ammo IDs between client/server.
 JMod.AmmoTable = {
-	["Light Rifle Round"] = {
-		resourcetype = "ammo",
-		sizemult = 6,
-		carrylimit = 200,
-		basedmg = 40,
-		effrange = 100,
-		terminaldmg = 10,
-		penetration = 40,
-		--ammoboxEnt = "ent_jack_gmod_ezammobox_lrr"
+	{name = "Light Rifle Round", 
+		resourcetype = "ammo", 
+		sizemult = 6, 
+		carrylimit = 200, 
+		basedmg = 40, 
+		effrange = 100, 
+		terminaldmg = 10, 
+		penetration = 40
 	},
-	["Light Rifle Round-Armor Piercing"] = {
-		armorpiercing = .2,
-		penetration = 70,
-		--ammoboxEnt = "ent_jack_gmod_ezammobox_lrrap"
-	},
-	["Light Rifle Round-Ballistic Tip"] = {
-		expanding = .4,
-		penetration = 30,
-		--ammoboxEnt = "ent_jack_gmod_ezammobox_lrrbt"
-	},
-	["Light Rifle Round-Tracer"] = {
-		tracer = true,
-		--ammoboxEnt = "ent_jack_gmod_ezammobox_lrrt"
-	},
-	["Medium Rifle Round"] = {
-		resourcetype = "ammo",
-		sizemult = 12,
-		carrylimit = 100,
-		basedmg = 60,
-		effrange = 200,
-		terminaldmg = 20,
+	{name = "Light Rifle Round-Armor Piercing", 
+		armorpiercing = .2, 
 		penetration = 70
 	},
-	["Heavy Rifle Round"] = {
-		resourcetype = "ammo",
-		sizemult = 24,
-		carrylimit = 25,
-		basedmg = 200,
-		effrange = 300,
-		terminaldmg = 30,
+	{name = "Light Rifle Round-Ballistic Tip", 
+		expanding = .4, 
+		penetration = 30
+	},
+	{name = "Light Rifle Round-Tracer", 
+		tracer = true
+	},
+	{name = "Medium Rifle Round", 
+		resourcetype = "ammo", 
+		sizemult = 12, 
+		carrylimit = 100, 
+		basedmg = 60, 
+		effrange = 200, 
+		terminaldmg = 20, 
+		penetration = 70
+	},
+	{name = "Heavy Rifle Round", 
+		resourcetype = "ammo", 
+		sizemult = 24, 
+		carrylimit = 25, 
+		basedmg = 200, 
+		effrange = 300, 
+		terminaldmg = 30, 
 		penetration = 120
 	},
-	["Magnum Rifle Round"] = {
-		resourcetype = "ammo",
-		sizemult = 18,
-		carrylimit = 50,
-		basedmg = 110,
-		effrange = 400,
-		terminaldmg = 20,
+	{name = "Magnum Rifle Round", 
+		resourcetype = "ammo", 
+		sizemult = 18, 
+		carrylimit = 50, 
+		basedmg = 110, 
+		effrange = 400, 
+		terminaldmg = 20, 
 		penetration = 80
 	},
-	["Shotgun Round"] = {
-		resourcetype = "ammo",
-		sizemult = 14,
-		carrylimit = 70,
-		basedmg = 11,
-		effrange = 50,
-		projnum = 9,
-		terminaldmg = 1,
-		penetration = 10,
+	{name = "Shotgun Round", 
+		resourcetype = "ammo", 
+		sizemult = 14, 
+		carrylimit = 70, 
+		basedmg = 11, 
+		effrange = 50, 
+		projnum = 9, 
+		terminaldmg = 1, 
+		penetration = 10, 
 		dmgtype = DMG_BUCKSHOT
 	},
-	["Pistol Round"] = {
-		resourcetype = "ammo",
-		sizemult = 3,
-		carrylimit = 300,
-		basedmg = 30,
-		effrange = 50,
-		terminaldmg = 5,
+	{name = "Pistol Round", 
+		resourcetype = "ammo", 
+		sizemult = 3, 
+		carrylimit = 300, 
+		basedmg = 30, 
+		ffrange = 50, 
+		terminaldmg = 5, 
 		penetration = 20
 	},
-    ["Medium Pistol Round"] = {
-		resourcetype = "ammo",
-		sizemult = 4,
-		carrylimit = 200,
-		basedmg = 40,
-		effrange = 65,
-		terminaldmg = 10,
+	{name = "Medium Pistol Round", 
+		resourcetype = "ammo", 
+		sizemult = 4, 
+		carrylimit = 200, 
+		basedmg = 40, 
+		effrange = 65, 
+		terminaldmg = 10, 
 		penetration = 25
 	},
-	["Plinking Round"] = {
-		resourcetype = "ammo",
-		sizemult = 1,
-		carrylimit = 600,
-		basedmg = 11,
-		effrange = 50,
-		terminaldmg = 1,
+	{name = "Plinking Round", 
+		resourcetype = "ammo", 
+		sizemult = 1, 
+		carrylimit = 600, 
+		basedmg = 11, 
+		effrange = 50, 
+		terminaldmg = 1, 
 		penetration = 10
 	},
-	["Magnum Pistol Round"] = {
-		resourcetype = "ammo",
-		sizemult = 6,
-		carrylimit = 150,
-		basedmg = 55,
-		effrange = 50,
-		terminaldmg = 15,
+	{name = "Magnum Pistol Round", 
+		resourcetype = "ammo", 
+		sizemult = 6, 
+		carrylimit = 150, 
+		basedmg = 55, 
+		effrange = 50, 
+		terminaldmg = 15, 
 		penetration = 35
 	},
-	["Small Shotgun Round"] = {
-		resourcetype = "ammo",
-		sizemult = 6,
-		carrylimit = 120,
-		basedmg = 12,
-		effrange = 30,
-		projnum = 5,
-		terminaldmg = 1,
-		penetration = 10,
+	{name = "Small Shotgun Round", 
+		resourcetype = "ammo", 
+		sizemult = 6, 
+		carrylimit = 120, 
+		basedmg = 12, 
+		effrange = 30, 
+		projnum = 5, 
+		terminaldmg = 1, 
+		penetration = 10, 
 		dmgtype = DMG_BUCKSHOT
 	},
-	["40mm Grenade"] = {
-		resourcetype = "munitions",
-		sizemult = 30,
-		carrylimit = 20,
-		ent = "ent_jack_gmod_ezprojectilenade",
-		nicename = "EZ 40mm Grenade",
-		basedmg = 480,
+	{name = "40mm Grenade", 
+		resourcetype = "munitions", 
+		sizemult = 30, 
+		carrylimit = 20, 
+		ent = "ent_jack_gmod_ezprojectilenade", 
+		nicename = "EZ 40mm Grenade", 
+		basedmg = 480, 
 		blastrad = 300
 	},
-	["Mini Rocket"] = {
-		resourcetype = "munitions",
-		sizemult = 60,
-		carrylimit = 6,
-		ent = "ent_jack_gmod_ezminirocket",
-		nicename = "EZ Mini Rocket",
-		basedmg = 350,
+	{name = "Mini Rocket", 
+		resourcetype = "munitions", 
+		sizemult = 60, 
+		carrylimit = 6, 
+		ent = "ent_jack_gmod_ezminirocket", 
+		nicename = "EZ Mini Rocket", 
+		basedmg = 350, 
 		blastrad = 200
 	},
-	["Autocannon Round"] = {
-		resourcetype = "munitions",
-		sizemult = 40,
-		carrylimit = 10,
-		ent = "ent_jack_gmod_ezautocannonshot",
-		nicename = "EZ Autocannon Round",
+	{name = "Autocannon Round", 
+		resourcetype = "munitions", 
+		sizemult = 40, 
+		carrylimit = 10, 
+		ent = "ent_jack_gmod_ezautocannonshot", 
+		nicename = "EZ Autocannon Round", 
 		basedmg = 80,
 		blastrad = 140
 	},
-	["Arrow"] = {
-		sizemult = 24,
-		carrylimit = 30,
-		ent = "ent_jack_gmod_ezarrow",
-		armorpiercing = .7,
-		basedmg = 75,
+	{name = "Arrow", 
+		sizemult = 24, 
+		carrylimit = 30, 
+		ent = "ent_jack_gmod_ezarrow", 
+		armorpiercing = .7, 
+		basedmg = 75, 
 		ammoboxEnt = "ent_jack_gmod_ezammobox_a"
 	},
-	["Black Powder Paper Cartridge"] = {
-		sizemult = 7,
-		carrylimit = 100,
-		basedmg = 95,
-		effrange = 50,
-		terminaldmg = 30,
-		penetration = 30,
-		dmgtype = DMG_BUCKSHOT,
+	{name = "Black Powder Paper Cartridge", 
+		sizemult = 7, 
+		carrylimit = 100, 
+		basedmg = 95, 
+		effrange = 50, 
+		terminaldmg = 30, 
+		penetration = 30, 
+		dmgtype = DMG_BUCKSHOT, 
 		ammoboxEnt = "ent_jack_gmod_ezammobox_bppc"
 	},
-	["Black Powder Metallic Cartridge"] = {
-		sizemult = 6,
-		carrylimit = 100,
-		basedmg = 90,
-		effrange = 100,
-		terminaldmg = 30,
-		penetration = 40,
-		--ammoboxEnt = "ent_jack_gmod_ezammobox_bpmc"
+	{name = "Black Powder Metallic Cartridge", 
+		sizemult = 6, 
+		carrylimit = 100, 
+		basedmg = 90, 
+		effrange = 100, 
+		terminaldmg = 30, 
+		penetration = 40
 	}
 }
 
 function JMod.LoadAmmoTable(tbl)
-	for k, v in pairs(tbl) do
+	JMod.AmmoLookup = JMod.AmmoLookup or {}
+	JMod.AmmoLookupByID = JMod.AmmoLookupByID or {}
+	
+	for i, v in ipairs(tbl) do  -- ipairs() guarantees order!
+		local name = v.name
+		if not name then
+			print("[JMod ERROR] Ammo entry #" .. i .. " missing name!")
+			continue
+		end
+		
 		v.carrylimit = v.carrylimit or -2
+		
 		game.AddAmmoType({
-			name = k,
+			name = name,
 			maxcarry = v.carrylimit,
 			npcdmg = v.basedmg,
 			plydmg = v.basedmg,
 			dmgtype = v.dmgtype or DMG_BULLET
 		})
+		
+		-- Verify registration for critical errors only
 		timer.Simple(2, function()
-			local ammoID = game.GetAmmoID(k)
-			-- Debug: Verify ammo type was registered
+			local ammoID = game.GetAmmoID(name)
 			if ammoID == -1 then
-				print("[JMod WARNING] Failed to register ammo type: " .. tostring(k))
+				print("[JMod ERROR] Failed to register ammo type: " .. tostring(name))
 			end
 		end)
+		
 		if SERVER then
 			timer.Simple(1, function()
 				if (v.resourcetype) and (v.resourcetype == "munitions") then
-					if not(table.HasValue(JMod.Config.Weapons.AmmoTypesThatAreMunitions, k)) then
-						table.insert(JMod.Config.Weapons.AmmoTypesThatAreMunitions, k)
+					if not(table.HasValue(JMod.Config.Weapons.AmmoTypesThatAreMunitions, name)) then
+						table.insert(JMod.Config.Weapons.AmmoTypesThatAreMunitions, name)
 					end
 				elseif not(v.resourcetype) then
-					if not(table.HasValue(JMod.Config.Weapons.WeaponAmmoBlacklist, k)) then
-						table.insert(JMod.Config.Weapons.WeaponAmmoBlacklist, k)
+					if not(table.HasValue(JMod.Config.Weapons.WeaponAmmoBlacklist, name)) then
+						table.insert(JMod.Config.Weapons.WeaponAmmoBlacklist, name)
 					end
 				end
 			end)
 		end
 
 		if CLIENT then
-			language.Add(k .. "_ammo", k)
+			language.Add(name .. "_ammo", name)
 
 			if v.ent then
-				language.Add(v.ent, v.nicename or ("EZ " .. k))
+				language.Add(v.ent, v.nicename or ("EZ " .. name))
 			end
 		end
 
 		if v.ammoboxEnt then
 			local BoxEnt = {}
 			BoxEnt.Base = "ent_jack_gmod_ezammobox"
-			BoxEnt.PrintName = "EZ " .. k
+			BoxEnt.PrintName = "EZ " .. name
 			BoxEnt.Spawnable = true
 			BoxEnt.AdminOnly = v.AdminOnly or false
 			BoxEnt.Category = v.Category or "JMod - EZ Special Ammo"
-			BoxEnt.EZammo = k
+			BoxEnt.EZammo = name
 			BoxEnt.Model = v.ammoboxModel
 			BoxEnt.ModelScale = v.mdlScale or nil
 			scripted_ents.Register(BoxEnt, v.ammoboxEnt)
 
 			if CLIENT then
-				language.Add(v.ammoboxEnt, v.nicename or ("EZ " .. k))
+				language.Add(v.ammoboxEnt, v.nicename or ("EZ " .. name))
 			end
 		end
+		
+		-- Build lookup tables for name-based and ID-based access
+		JMod.AmmoLookup[name] = v
+		
+		-- Also store by ID (do this in a timer to ensure registration is complete)
+		timer.Simple(0.1, function()
+			local id = game.GetAmmoID(name)
+			if id ~= -1 then
+				JMod.AmmoLookupByID[id] = v
+			end
+		end)
 	end
 end
 
 -- Dynamically create weapon Ents
 function JMod.GenerateWeaponEntities(tbl)
+	JMod.WeaponLookup = JMod.WeaponLookup or {}
+	
 	for name, info in pairs(tbl) do
 		if info.noent then continue end
 
@@ -517,45 +538,84 @@ function JMod.GenerateWeaponEntities(tbl)
 		if CLIENT then
 			language.Add(info.ent, name)
 		end
+		
+		-- Build lookup table for entities to access weapon specs by name
+		JMod.WeaponLookup[name] = info
 	end
 end
 
+-- Utility: List all registered ammo types with their IDs
+function JMod.ListAmmoTypes()
+	print("=== JMod Ammo Types ===")
+	for i, v in ipairs(JMod.AmmoTable) do
+		local id = game.GetAmmoID(v.name)
+		print(string.format("#%d: %s (ID: %d)", i, v.name, id))
+	end
+end
+
+-- Load base JMod ammo types IMMEDIATELY so weapons can use them
+-- This must happen before weapon files load (which use ApplyAmmoSpecs)
+JMod.AmmoLookup = {}
+JMod.AmmoLookupByID = {}
 JMod.LoadAmmoTable(JMod.AmmoTable)
+
+-- Load base weapon entities immediately too
+JMod.WeaponLookup = {}
 JMod.GenerateWeaponEntities(JMod.WeaponTable)
 
--- support third-party additions to the jmod ammo/weapons table
-function JMod.LoadAdditionalAmmo()
-	if JMod.AdditionalAmmoTable then
-		table.Merge(JMod.AmmoTable, JMod.AdditionalAmmoTable)
-		JMod.LoadAmmoTable(JMod.AdditionalAmmoTable)
+-- Hook system for ADDONS to register their ammo/weapons in predictable order
+hook.Add("Initialize", "JMod_RegisterAddonContent", function()
+	-- Trigger hook for addons to register their ammo types
+	hook.Run("JMod_RegisterAmmoTypes")
+	
+	-- Trigger hook for addons to register their weapons
+	hook.Run("JMod_RegisterWeaponEntities")
+end, 0) -- Priority 0 = runs first
+
+-- Helper to normalize ammo type (ID or name -> name)
+function JMod.NormalizeAmmoType(typ)
+	if isnumber(typ) then
+		return game.GetAmmoName(typ)
 	end
+	return typ
 end
-hook.Add("Initialize", "JMod_LoadAdditionalAmmo", JMod.LoadAdditionalAmmo)
 
-function JMod.LoadAdditionalWeaponEntities()
-	if JMod.AdditionalWeaponTable then
-		table.Merge(JMod.WeaponTable, JMod.AdditionalWeaponTable)
-		JMod.GenerateWeaponEntities(JMod.AdditionalWeaponTable)
-	end
-end
-hook.Add("Initialize", "JMod_LoadAdditionalWeaponEntities", JMod.LoadAdditionalWeaponEntities)
-
-JMod.LoadAdditionalAmmo()
-JMod.LoadAdditionalWeaponEntities()
-
+-- Get ammo specs - handles both names AND IDs
 function JMod.GetAmmoSpecs(typ)
-	if not JMod.AmmoTable[typ] then return nil end
-	local Result, BaseType = table.FullCopy(JMod.AmmoTable[typ]), string.Split(typ, "-")[1]
-
-	return table.Inherit(Result, JMod.AmmoTable[BaseType])
+	if not JMod.AmmoLookup then
+		print("[JMod ERROR] AmmoLookup not initialized!")
+		return nil
+	end
+	
+	-- Handle numeric ID - convert to name first
+	if isnumber(typ) then
+		typ = game.GetAmmoName(typ)
+		if not typ then return nil end
+	end
+	
+	-- Now look up by name
+	if not JMod.AmmoLookup[typ] then return nil end
+	local Result, BaseType = table.FullCopy(JMod.AmmoLookup[typ]), string.Split(typ, "-")[1]
+	
+	return table.Inherit(Result, JMod.AmmoLookup[BaseType])
 end
 
+-- Apply ammo specs - also handles both names AND IDs
 function JMod.ApplyAmmoSpecs(wep, typ, mult)
 	mult = mult or 1
+	
+	-- Normalize to name if it's an ID
+	if isnumber(typ) then
+		typ = game.GetAmmoName(typ)
+	end
+	
 	wep.Primary.Ammo = typ
 	local Specs = JMod.GetAmmoSpecs(typ)
-	if not Specs then print("[JMod] - " ..typ.." is not a registered ammo type") return end
-	timer.Simple(0.1, function() if game.GetAmmoID(typ) == -1 then print("[JMod] - " ..typ.." failed to register") return end end)
+	if not Specs then
+		print("[JMod ERROR] Ammo type '" .. tostring(typ) .. "' is not registered")
+		return
+	end
+	
 	wep.Damage = Specs.basedmg * mult
 	wep.Num = Specs.projnum or 1
 
@@ -587,7 +647,6 @@ function JMod.ApplyAmmoSpecs(wep, typ, mult)
 		wep.EZarmorpiercingAmmo = Specs.armorpiercing
 	end
 
-	-- todo: implement this when we add these types
 	if Specs.tracer then
 		wep.Tracer = Specs.tracer
 	else
@@ -846,10 +905,11 @@ elseif SERVER then
 		-- and somehow we have to keep track of the original values during swaps
 		if not ply:Alive() then return end
 		local Wep = ply:GetActiveWeapon()
-		if not (Wep.Primary.Ammo and JMod.AmmoTable[Wep.Primary.Ammo]) then return end
+		if not (Wep.Primary.Ammo and JMod.AmmoLookup and JMod.AmmoLookup[Wep.Primary.Ammo]) then return end
 		local AllTypes, OriginalType = {}, string.Split(Wep.Primary.Ammo, "-")[1]
 
-		for name, info in pairs(JMod.AmmoTable) do
+		-- Iterate through lookup table to find matching ammo variants
+		for name, info in pairs(JMod.AmmoLookup) do
 			if string.find(name, OriginalType) and (ply:GetAmmoCount(name) > 0) then
 				table.insert(AllTypes, name)
 			end
