@@ -1,4 +1,4 @@
-﻿SWEP.Base = "wep_jack_gmod_gunbase"
+SWEP.Base = "wep_jack_gmod_gunbase"
 SWEP.PrintName = "Bolt-Action Rifle"
 JMod.SetWepSelectIcon(SWEP, "entities/ent_jack_gmod_ezweapon_bar", true)
 SWEP.Slot = 3
@@ -105,7 +105,7 @@ SWEP.Animations = {
 		TPAnim = ACT_HL2MP_GESTURE_RANGE_ATTACK_AR2,
 		SoundTable = {
 			{
-				s = "snds_jack_gmod/ez_weapons/bar/lift.wav",
+				s = "snds_jack_gmod/ez_weapons/bar/lift.ogg",
 				t = .2,
 				v = 60
 			},
@@ -132,7 +132,7 @@ SWEP.Animations = {
 		ShellEjectAt = .5,
 		SoundTable = {
 			{
-				s = "snds_jack_gmod/ez_weapons/bar/lift.wav",
+				s = "snds_jack_gmod/ez_weapons/bar/lift.ogg",
 				t = .15,
 				v = 60
 			},
@@ -167,7 +167,7 @@ SWEP.Animations = {
 				v = 60
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/bar/lift.wav",
+				s = "snds_jack_gmod/ez_weapons/bar/lift.ogg",
 				t = .2,
 				v = 60
 			},

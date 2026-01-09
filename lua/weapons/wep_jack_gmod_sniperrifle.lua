@@ -1,4 +1,4 @@
-﻿SWEP.Base = "wep_jack_gmod_gunbase"
+SWEP.Base = "wep_jack_gmod_gunbase"
 SWEP.PrintName = "Sniper Rifle"
 JMod.SetWepSelectIcon(SWEP, "entities/ent_jack_gmod_ezweapon_sr", true)
 SWEP.Slot = 3
@@ -121,7 +121,7 @@ SWEP.Animations = {
 		TPAnim = ACT_HL2MP_GESTURE_RANGE_ATTACK_AR2,
 		SoundTable = {
 			{
-				s = "snds_jack_gmod/ez_weapons/sniper_rifle/lift.wav",
+				s = "snds_jack_gmod/ez_weapons/sniper_rifle/lift.ogg",
 				t = .25,
 				v = 60
 			},
@@ -154,7 +154,7 @@ SWEP.Animations = {
 		ShellEjectAt = .9,
 		SoundTable = {
 			{
-				s = "snds_jack_gmod/ez_weapons/sniper_rifle/lift.wav",
+				s = "snds_jack_gmod/ez_weapons/sniper_rifle/lift.ogg",
 				t = .25,
 				v = 60
 			},
@@ -194,7 +194,7 @@ SWEP.Animations = {
 				v = 65
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/sniper_rifle/lift.wav",
+				s = "snds_jack_gmod/ez_weapons/sniper_rifle/lift.ogg",
 				t = .35,
 				v = 60
 			},

@@ -1,4 +1,4 @@
-﻿-- Jackarunda 2021 - AdventureBoots 2023
+-- Jackarunda 2021 - AdventureBoots 2023
 AddCSLuaFile()
 SWEP.Base = "wep_jack_gmod_ezmeleebase"
 SWEP.PrintName = "EZ Pickaxe"
@@ -122,7 +122,7 @@ function SWEP:OnHit(swingProgress, tr)
 			self:SetTaskProgress(0)
 			self:SetResourceType("")
 		else
-			sound.Play("snds_jack_gmod/ez_tools/hit.wav", tr.HitPos + VectorRand(), 75, math.random(50, 70))
+			sound.Play("snds_jack_gmod/ez_tools/hit.ogg", tr.HitPos + VectorRand(), 75, math.random(50, 70))
 			self:SetTaskProgress(self:GetNW2Float("EZminingProgress", 0))
 		end
 

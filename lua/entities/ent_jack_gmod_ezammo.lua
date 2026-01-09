@@ -22,7 +22,7 @@ ENT.Cookoff = true
 ENT.IsBoolet = 1
 
 ---
-local ShellEffects = {"RifleShellEject", "PistolShellEject", "ShotgunShellEject"}
+local ShellEffects = {"RifleShellEject", "ShotgunShellEject"}--{"RifleShellEject", "PistolShellEject", "ShotgunShellEject"}
 
 if SERVER then
 	function ENT:UseEffect(pos, ent, destructive)
