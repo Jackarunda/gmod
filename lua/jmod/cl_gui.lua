@@ -810,6 +810,11 @@ net.Receive("JMod_EZtoolbox", function()
 				local ScaledMinMax = Vector(info.sizeScale * 10, info.sizeScale * 10, info.sizeScale * 10)
 				ent.EZpreview = {Box = {mins = -ScaledMinMax, maxs = ScaledMinMax}, sizeScale = info.sizeScale, SpawnAngles = Ang or Angle(0, 0, 0)}
 			end
+		elseif info.EZpreview then
+			ent.EZpreview = table.FullCopy(info.EZpreview)
+			ent.EZpreview.Box = ent.EZpreview.Box or {mins = Vector(-10, -10, -10), maxs = Vector(10, 10, 10)}
+			ent.EZpreview.sizeScale = ent.EZpreview.sizeScale or 1
+			ent.EZpreview.SpawnAngles = ent.EZpreview.SpawnAngles or Angle(0, 0, 0)
 		else
 			local temp_ent
 			if (string.Right(info["results"], 4) == ".mdl") then

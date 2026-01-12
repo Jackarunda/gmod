@@ -597,8 +597,8 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 				end
 			end
 
-			if playa.EZbleeding then
-				local Bleed = playa.EZbleeding
+			if playa.EZbleeding and playa.EZbleeding > 0 then
+				local Bleed = math.Clamp(playa.EZbleeding or 0, 0, 9e9)
 
 				if Bleed > 0 then
 					local Amt = JMod.Config.QoL.BleedSpeedMult
@@ -642,6 +642,7 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 			VirusHostThink(playa)
 
 			if JMod.Config.QoL.Drowning then
+				playa.EZoxygen = playa.EZoxygen or 100
 				if playa:WaterLevel() >= 3 then
 					if (playa.EZarmor and playa.EZarmor.effects.scuba) then
 						playa.EZoxygen = math.Clamp(playa.EZoxygen + 3, 0, 100)
