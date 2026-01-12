@@ -462,16 +462,20 @@ end
 local Holidays = {
 	Christmas = {
 		startDay = 350, -- 350, roughly the start of the week before the week of christmas most years
-		endDay = 364 -- 364, roughly a week after
+		endDay = 366 -- 364, roughly a week after
 	},
 	Easter = {
 		startDay = 85, -- 85, roughly 5 days before easter most years
 		endDay = 95 -- 95, roughly 3 days after
-	}
+	},
+	Halloween = {
+		startDay = 300, -- 300, a few days before the start of November
+		endDay = 330 -- 330, roughly a month after
+	},
 }
 local CachedHoliday, NextCheck = nil, 0
 function JMod.GetHoliday()
-	if not (JMod.Config.QoL.SeasonalEventsEnabled) then return end
+	if not (JMod.Config and JMod.Config.QoL.SeasonalEventsEnabled) then return end
 	local Time = CurTime()
 	if (NextCheck < Time) then
 		local CurDay = tonumber(os.date("%j")) -- get day of the year, 1-366
