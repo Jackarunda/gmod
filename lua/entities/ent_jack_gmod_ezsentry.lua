@@ -234,6 +234,8 @@ function ENT:InitPerfSpecs(removeAmmo)
 		net.WriteEntity(self)
 		net.WriteTable(NetworkTable)
 		net.Broadcast()
+		-- Update targeting trigger size when specs change
+		self:UpdateTargetingTriggerSize()
 	end
 end
 
@@ -363,6 +365,10 @@ if(SERVER)then
 		self:ResetMemory()
 		self:CreateNPCTarget()
 		---
+		-- Initialize potential targets tracking
+		self.PotentialTargets = {}
+		self:CreateTargetingTrigger()
+		---
 		if self.SpawnFull then
 			self:SetAmmo(self.MaxAmmo)
 			self:SetCoolant(self.MaxCoolant)
@@ -431,6 +437,83 @@ if(SERVER)then
 	function ENT:RemoveNPCTarget()
 		if IsValid(self.NPCTarget) then
 			self.NPCTarget:Remove()
+		end
+	end
+
+	function ENT:CreateTargetingTrigger()
+		if IsValid(self.TargetingTrigger) then return end
+
+		local trigger = ents.Create("ent_jack_trigger")
+		if not IsValid(trigger) then return end
+
+		trigger:SetPos(self:GetPos())
+		trigger:SetOwnerSentry(self)
+		trigger:Spawn()
+		trigger:Activate()
+
+		-- Set up trigger bounds based on targeting radius
+		local radius = self.TargetingRadius or 800
+		trigger:SetTriggerBounds(radius)
+
+		-- Parent to sentry, offset to center roughly where the gun is
+		trigger:SetParent(self)
+		trigger:SetLocalPos(Vector(0, 0, 35))
+
+		-- Start disabled until sentry is turned on
+		trigger:DisableTrigger()
+
+		self.TargetingTrigger = trigger
+	end
+
+	function ENT:RemoveTargetingTrigger()
+		if IsValid(self.TargetingTrigger) then
+			self.TargetingTrigger:Remove()
+			self.TargetingTrigger = nil
+		end
+	end
+
+	function ENT:EnableTargetingTrigger()
+		if IsValid(self.TargetingTrigger) then
+			self.TargetingTrigger:EnableTrigger()
+		end
+	end
+
+	function ENT:DisableTargetingTrigger()
+		if IsValid(self.TargetingTrigger) then
+			self.TargetingTrigger:DisableTrigger()
+		end
+		-- Clear potential targets when disabled
+		self.PotentialTargets = {}
+	end
+
+	function ENT:OnTargetEnterRange(ent)
+		--print("OnTargetEnterRange", ent)
+		if not IsValid(ent) then return end
+		if ent == self or ent == self.NPCTarget or ent == self.TargetingTrigger then return end
+		if not self.PotentialTargets then
+			self.PotentialTargets = {}
+		end
+		self.PotentialTargets[ent] = true
+	end
+
+	function ENT:OnTargetLeaveRange(ent)
+		if self.PotentialTargets then
+			self.PotentialTargets[ent] = nil
+		end
+	end
+
+	function ENT:UpdateTargetingTriggerSize()
+		-- Update trigger size if targeting radius changed
+		if IsValid(self.TargetingTrigger) then
+			local radius = self.TargetingRadius or 800
+			self.TargetingTrigger:SetTriggerBounds(radius)
+			
+			-- Restore enabled/disabled state based on current sentry state
+			if self:GetState() > 0 then
+				self.TargetingTrigger:EnableTrigger()
+			else
+				self.TargetingTrigger:DisableTrigger()
+			end
 		end
 	end
 
@@ -521,6 +604,7 @@ if(SERVER)then
 
 	function ENT:OnBreak()
 		self:RemoveNPCTarget()
+		self:DisableTargetingTrigger()
 	end
 
 	function ENT:Use(activator)
@@ -555,10 +639,13 @@ if(SERVER)then
 		self:EmitSound("snds_jack_gmod/ezsentry_shutdown.ogg", 65, 100)
 		self:ResetMemory()
 		self:RemoveNPCTarget()
+		-- Disable targeting trigger to stop unnecessary touch callbacks
+		self:DisableTargetingTrigger()
 	end
 
 	function ENT:OnRemove()
 		self:RemoveNPCTarget()
+		self:RemoveTargetingTrigger()
 	end
 
 	function ENT:TurnOn(activator)
@@ -568,6 +655,8 @@ if(SERVER)then
 		self:EmitSound("snds_jack_gmod/ezsentry_startup.ogg", 65, 100)
 		self:ResetMemory()
 		self:CreateNPCTarget()
+		-- Enable targeting trigger for touch-based target acquisition
+		self:EnableTargetingTrigger()
 	end
 
 	function ENT:DetermineTargetAimPoint(ent)
@@ -640,7 +729,7 @@ if(SERVER)then
 		return JMod.ShouldAttack(self, ent) and self:CanSeeTarget(ent)
 	end
 
-	-- We should make this use a coroutine for effiecency
+	-- Uses bounding box trigger for target acquisition via PotentialTargets list
 	function ENT:TryFindTarget()
 		local Time = CurTime()
 
@@ -654,15 +743,25 @@ if(SERVER)then
 		self:ConsumeElectricity(.01)
 		self.NextTargetSearch = Time + (.5 / self.SearchSpeed) -- limit searching cause it's expensive
 		local SelfPos = self:GetPos()
-		local Objects, ClosestTarget, ClosestDist = ents.FindInSphere(SelfPos, self.TargetingRadius), nil, 9e9
+		-- Use targeting radius as max distance so entities beyond range are excluded
+		local ClosestTarget, ClosestDist = nil, self.TargetingRadius
 
-		for k, PotentialTarget in pairs(Objects) do
-			if self:CanEngage(PotentialTarget) then
-				self:MakeHostileToMe(PotentialTarget)
-				local DistToTarg = PotentialTarget:GetPos():Distance(SelfPos)
-				if not(ClosestTarget) or (DistToTarg < ClosestDist) then
-					ClosestTarget = PotentialTarget
-					ClosestDist = DistToTarg
+		-- Iterate through potential targets from bounding box trigger
+		-- Keep track of closest valid target within max range
+		if self.PotentialTargets then
+			--print(table.Count(self.PotentialTargets))
+			for PotentialTarget, _ in pairs(self.PotentialTargets) do
+				-- Clean up invalid entities from the list
+				if not IsValid(PotentialTarget) then
+					self.PotentialTargets[PotentialTarget] = nil
+				elseif self:CanEngage(PotentialTarget) then
+					local DistToTarg = PotentialTarget:GetPos():Distance(SelfPos)
+					-- Only consider targets within the targeting radius
+					if DistToTarg < ClosestDist then
+						self:MakeHostileToMe(PotentialTarget)
+						ClosestTarget = PotentialTarget
+						ClosestDist = DistToTarg
+					end
 				end
 			end
 		end

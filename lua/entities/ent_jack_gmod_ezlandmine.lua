@@ -18,11 +18,22 @@ ENT.BlacklistedNPCs = {"bullseye_strider_focus", "npc_turret_floor", "npc_turret
 
 ENT.WhitelistedNPCs = {"npc_rollermine"}
 
+ENT.TriggerRadius = 100
+ENT.TriggerRadiusSqr = ENT.TriggerRadius * ENT.TriggerRadius
+
 ---
 local STATE_BROKEN, STATE_OFF, STATE_ARMING, STATE_ARMED, STATE_WARNING = -1, 0, 1, 2, 3
 
 function ENT:SetupDataTables()
 	self:NetworkVar("Int", 0, "State")
+end
+
+-- Custom state setter that also updates WireLib
+function ENT:UpdateState(state)
+	self:SetState(state)
+	if SERVER and istable(WireLib) then
+		WireLib.TriggerOutput(self, "State", state)
+	end
 end
 
 ---
@@ -51,12 +62,13 @@ if SERVER then
 
 		---
 		timer.Simple(.01, function()
+			if not IsValid(self) then return end
 			self:GetPhysicsObject():SetMass(20)
 			self:GetPhysicsObject():Wake()
 		end)
 
 		---
-		self:SetState(STATE_OFF)
+		self:UpdateState(STATE_OFF)
 
 		if istable(WireLib) then
 			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"This will directly detonate the bomb", "Arms bomb when > 0"})
@@ -66,17 +78,61 @@ if SERVER then
 
 		---
 		self.StillTicks = 0
+		
+		-- Set up trigger bounds with bloat to extend detection radius
+		self:UseTriggerBounds(true, self.TriggerRadius)
 
 		if self.AutoArm then
 			self:NextThink(CurTime() + math.Rand(.1, 1))
 		end
 	end
 
+	function ENT:EnableTargetDetection()
+		self:SetTrigger(true)
+	end
+
+	function ENT:DisableTargetDetection()
+		self:SetTrigger(false)
+	end
+
+	function ENT:Touch(ent)
+		-- Use continuous Touch instead of StartTouch so entities entering
+		-- from corners (outside spherical radius) still trigger when they move closer
+		if self:GetState() ~= STATE_ARMED then return end
+		if ent == self then return end
+		-- Only react to players, NPCs, and vehicles
+		if not (ent:IsPlayer() or ent:IsNPC() or ent:IsVehicle()) then return end
+		
+		-- Check distance is within trigger radius and target is valid
+		local SelfPos = self:GetPos()
+		local dist = ent:GetPos():DistToSqr(SelfPos)
+		if dist <= self.TriggerRadiusSqr and JMod.ShouldAttack(self, ent) and JMod.ClearLoS(self, ent) then
+			self:TriggerWarning()
+		end
+	end
+
+	function ENT:TriggerWarning()
+		if self:GetState() ~= STATE_ARMED then return end
+		
+		local SelfPos = self:GetPos()
+		self:UpdateState(STATE_WARNING)
+		sound.Play("snds_jack_gmod/mine_warn.ogg", SelfPos + Vector(0, 0, 30), 60, 100)
+
+		timer.Simple(math.Rand(.05, .3) * JMod.Config.Explosives.Mine.Delay, function()
+			if IsValid(self) then
+				if self:GetState() == STATE_WARNING then
+					self:Detonate()
+				end
+			end
+		end)
+	end
+
 	function ENT:TriggerInput(iname, value)
 		if iname == "Detonate" and value > 0 then
 			self:Detonate()
 		elseif iname == "Arm" and value > 0 then
-			self:SetState(STATE_ARMED)
+			self:UpdateState(STATE_ARMED)
+			self:EnableTargetDetection()
 		end
 	end
 
@@ -102,7 +158,7 @@ if SERVER then
 				self:Detonate()
 			elseif not (State == STATE_BROKEN) then
 				sound.Play("Metal_Box.Break", Pos)
-				self:SetState(STATE_BROKEN)
+				self:UpdateState(STATE_BROKEN)
 				SafeRemoveEntityDelayed(self, 10)
 			end
 		end
@@ -126,9 +182,11 @@ if SERVER then
 			end
 		elseif not (activator.KeyDown and activator:KeyDown(IN_SPEED)) then
 			self:EmitSound("snd_jack_minearm.ogg", 60, 70)
-			self:SetState(STATE_OFF)
+			self:UpdateState(STATE_OFF)
 			JMod.SetEZowner(self, activator)
 			self:DrawShadow(true)
+			-- Disable trigger detection when disarmed
+			self:DisableTargetDetection()
 		end
 	end
 
@@ -173,7 +231,7 @@ if SERVER then
 		if State ~= STATE_OFF then return end
 		JMod.Hint(armer, "mine friends")
 		JMod.SetEZowner(self, armer)
-		self:SetState(STATE_ARMING)
+		self:UpdateState(STATE_ARMING)
 		self:EmitSound("snd_jack_minearm.ogg", 60, 110)
 
 		if autoColor then
@@ -195,8 +253,10 @@ if SERVER then
 		timer.Simple(3, function()
 			if IsValid(self) then
 				if self:GetState() == STATE_ARMING then
-					self:SetState(STATE_ARMED)
+					self:UpdateState(STATE_ARMED)
 					self:DrawShadow(false)
+					-- Enable trigger-based target detection
+					self:EnableTargetDetection()
 					local Tr = util.QuickTrace(self:GetPos() + Vector(0, 0, 20), Vector(0, 0, -40), self)
 
 					if Tr.Hit then
@@ -208,50 +268,29 @@ if SERVER then
 	end
 
 	function ENT:Think()
-		if istable(WireLib) then
-			WireLib.TriggerOutput(self, "State", self:GetState())
+		-- Only needed for AutoArm functionality
+		if not self.AutoArm then return end
+		
+		local Time = CurTime()
+		local Phys = self:GetPhysicsObject()
+		if not IsValid(Phys) then return end
+		
+		local Vel = Phys:GetVelocity()
+
+		if Vel:Length() < 1 then
+			self.StillTicks = self.StillTicks + 1
+		else
+			self.StillTicks = 0
 		end
 
-		local State, Time = self:GetState(), CurTime()
-
-		if State == STATE_ARMED then
-			for k, targ in pairs(ents.FindInSphere(self:GetPos(), 100)) do
-				if not (targ == self) and (targ:IsPlayer() or targ:IsNPC() or targ:IsVehicle()) then
-					if JMod.ShouldAttack(self, targ) and JMod.ClearLoS(self, targ) then
-						self:SetState(STATE_WARNING)
-						sound.Play("snds_jack_gmod/mine_warn.ogg", self:GetPos() + Vector(0, 0, 30), 60, 100)
-
-						timer.Simple(math.Rand(.05, .3) * JMod.Config.Explosives.Mine.Delay, function()
-							if IsValid(self) then
-								if self:GetState() == STATE_WARNING then
-									self:Detonate()
-								end
-							end
-						end)
-					end
-				end
-			end
-
-			self:NextThink(Time + .3)
-
-			return true
-		elseif self.AutoArm then
-			local Vel = self:GetPhysicsObject():GetVelocity()
-
-			if Vel:Length() < 1 then
-				self.StillTicks = self.StillTicks + 1
-			else
-				self.StillTicks = 0
-			end
-
-			if self.StillTicks > 4 then
-				self:Arm(JMod.GetEZowner(self), true)
-			end
-
-			self:NextThink(Time + .5)
-
-			return true
+		if self.StillTicks > 4 then
+			self:Arm(JMod.GetEZowner(self), true)
+			self.AutoArm = false -- Stop thinking after armed
+			return
 		end
+
+		self:NextThink(Time + .5)
+		return true
 	end
 
 	function ENT:OnRemove()
