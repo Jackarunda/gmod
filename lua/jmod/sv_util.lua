@@ -765,8 +765,8 @@ concommand.Add("jacky_sandbox", function(ply, cmd, args)
 		end
 	end
 
-	for i, v in ipairs(JMod.AmmoTable) do
-		ply:GiveAmmo(150, v.name)
+	for k, v in pairs(JMod.AmmoTable) do
+		ply:GiveAmmo(150, k)
 	end
 
 	local Helf = ply:Health()

@@ -556,17 +556,21 @@ function SWEP:Holster()
 end
 --]]
 function SWEP:OnDrop()
-	local Specs = JMod.WeaponLookup and JMod.WeaponLookup[self.PrintName] or JMod.WeaponTable[self.PrintName]
+	local Specs = JMod.WeaponTable[self.PrintName]
 
 	if Specs then
 		timer.Simple(0.001, function()
 			if not IsValid(self) then return end
 			local Pos, Ang = self:GetPos(), self:GetAngles()
+			local NewVel = Vector(0, 0, 0)
 			if IsValid(self.EZdropper) and self.EZdropper:IsPlayer() then
 				local AimPos, AimVec = self.EZdropper:GetShootPos(), self.EZdropper:GetAimVector()
 				local PlaceTr = util.QuickTrace(AimPos, AimVec * 60, {self, self.EZdropper})
 				Pos = PlaceTr.HitPos + PlaceTr.HitNormal * 5
 				--Ang = PlaceTr.HitNormal:Angle() --(PlaceTr.HitPos - AimPos):Angle()
+				if JMod.IsAltUsing(self.EZdropper) then
+					NewVel = NewVel + AimVec * 500 * JMod.GetPlayerStrength(self.EZdropper)
+				end
 			end
 
 			local Ent = ents.Create(Specs.ent)
@@ -580,8 +584,11 @@ function SWEP:OnDrop()
 			Ent:Activate()
 			local Phys = Ent:GetPhysicsObject()
 
-			if Phys and self and IsValid(Phys) and IsValid(self) and IsValid(self:GetPhysicsObject()) then
-				Phys:SetVelocity(self:GetPhysicsObject():GetVelocity() / 2)
+			if Phys and self and IsValid(Phys) then
+				if IsValid(self) and IsValid(self:GetPhysicsObject()) then
+					NewVel = NewVel + self:GetPhysicsObject():GetVelocity() / 2
+				end
+				Phys:SetVelocity(NewVel)
 			end
 
 			self:Remove()
