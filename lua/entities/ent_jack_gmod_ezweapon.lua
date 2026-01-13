@@ -27,7 +27,7 @@ if SERVER then
 	end
 
 	function ENT:Initialize()
-		self.Specs = JMod.WeaponLookup and JMod.WeaponLookup[self.WeaponName] or JMod.WeaponTable[self.WeaponName]
+		self.Specs = JMod.WeaponTable[self.WeaponName]
 		if not self.Specs then
 			print("[JMod ERROR] No weapon specs found for: " .. tostring(self.WeaponName))
 			SafeRemoveEntity(self)
