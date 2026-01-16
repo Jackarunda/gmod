@@ -567,13 +567,19 @@ local function CacheSelectionMenuIcon(name, info)
 	if not JMod.SelectionMenuIcons[name] then
 		if file.Exists("materials/jmod_selection_menu_icons/" .. tostring(name) .. ".png", "GAME") then
 			JMod.SelectionMenuIcons[name] = Material("jmod_selection_menu_icons/" .. tostring(name) .. ".png")
+		elseif file.Exists("materials/jmod_selection_menu_icons/" .. tostring(name) .. ".jpg", "GAME") then
+			JMod.SelectionMenuIcons[name] = Material("jmod_selection_menu_icons/" .. tostring(name) .. ".jpg")
 		elseif info then
 			if file.Exists("materials/entities/" .. tostring(info) .. ".png", "GAME") then
 				JMod.SelectionMenuIcons[name] = Material("entities/" .. tostring(info) .. ".png")
+			elseif file.Exists("materials/entities/" .. tostring(info) .. ".jpg", "GAME") then
+				JMod.SelectionMenuIcons[name] = Material("entities/" .. tostring(info) .. ".jpg")
 			elseif string.find(tostring(info), ".mdl") then
 				local CleanStringName = string.Replace(tostring(info), ".mdl", "")
 				if file.Exists("materials/spawnicons/" .. CleanStringName .. ".png", "GAME") then
 					JMod.SelectionMenuIcons[name] = Material("spawnicons/" .. CleanStringName .. ".png")
+				elseif file.Exists("materials/spawnicons/" .. CleanStringName .. ".jpg", "GAME") then
+					JMod.SelectionMenuIcons[name] = Material("spawnicons/" .. CleanStringName .. ".jpg")
 				else
 					local Buttalony = vgui.Create("SpawnIcon")
 					Buttalony:SetModel(tostring(info))
@@ -618,7 +624,13 @@ local function CacheSelectionMenuIcon(name, info)
 					end
 
 					if not IsResource then
-						JMod.SelectionMenuIcons[name] = Material("entities/" .. itemClass .. ".png")
+						if file.Exists("materials/entities/" .. itemClass .. ".png", "GAME") then
+							JMod.SelectionMenuIcons[name] = Material("entities/" .. itemClass .. ".png")
+						elseif file.Exists("materials/entities/" .. itemClass .. ".jpg", "GAME") then
+							JMod.SelectionMenuIcons[name] = Material("entities/" .. itemClass .. ".jpg")
+						else
+							JMod.SelectionMenuIcons[name] = Material("entities/" .. itemClass .. ".png")
+						end
 					end
 				end
 			end
