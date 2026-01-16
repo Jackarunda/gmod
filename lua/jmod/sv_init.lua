@@ -1010,7 +1010,7 @@ end, nil, "Prints information about what the player's crosshair is looking at.")
 
 concommand.Add("jacky_player_debug", function(ply, cmd, args)
 	if not GetConVar("sv_cheats"):GetBool() then return end
-	if not ply:IsSuperAdmin() then return end
+	if not JMod.IsAdmin(ply) then return end
 
 	--[[local ValidEntNum = 1
 	for k, v in ents.Iterator() do
@@ -1025,6 +1025,26 @@ concommand.Add("jacky_player_debug", function(ply, cmd, args)
 	end--]]
 	JMod.DebugArrangeEveryone(ply, args[1] or 1)
 end, nil, "(CHEAT, ADMIN ONLY) Resets players' health.")
+
+concommand.Add("jmod_debug_explosivegas", function(ply, cmd, args)
+	if not GetConVar("sv_cheats"):GetBool() then return end
+	if not JMod.IsAdmin(ply) then return end
+
+	local Tr = ply:GetEyeTrace()
+	local SpawnPos = Tr.HitPos + Tr.HitNormal * 20
+
+	for i = 1, 25 do
+		timer.Simple(i / 25, function()
+			if not IsValid(ply) then return end
+			local Gas = ents.Create("ent_jack_gmod_ezexplosivegasparticle")
+			Gas:SetPos(SpawnPos)
+			Gas.CurVel = VectorRand() * math.random(30, 70)
+			JMod.SetEZowner(Gas, ply)
+			Gas:Spawn()
+			Gas:Activate()
+		end)
+	end
+end, nil, "(CHEAT, ADMIN ONLY) Spawns 25 explosive gas particles at aim position.")
 
 hook.Add("GetFallDamage", "JMod_FallDamage", function(ply, spd)
 	--local ThiccPlayer = (ply.EZarmor and ply.EZarmor.totalWeight or 10) / 10 -- Maybe?
