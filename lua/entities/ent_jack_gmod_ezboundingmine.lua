@@ -18,9 +18,20 @@ ENT.BlacklistedNPCs = {"bullseye_strider_focus", "npc_turret_floor", "npc_turret
 
 ENT.WhitelistedNPCs = {"npc_rollermine"}
 
+ENT.TriggerRadius = 100
+ENT.TriggerRadiusSqr = ENT.TriggerRadius * ENT.TriggerRadius
+
 ---
 function ENT:SetupDataTables()
 	self:NetworkVar("Int", 0, "State")
+end
+
+-- Custom state setter that also updates WireLib
+function ENT:UpdateState(state)
+	self:SetState(state)
+	if SERVER and istable(WireLib) then
+		WireLib.TriggerOutput(self, "State", state)
+	end
 end
 
 ---
@@ -57,19 +68,61 @@ if SERVER then
 		end)
 
 		---
-		self:SetState(JMod.EZ_STATE_OFF)
+		self:UpdateState(JMod.EZ_STATE_OFF)
 
 		if istable(WireLib) then
 			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"This will directly detonate the bomb", "Arms bomb when > 0"})
 
 			self.Outputs = WireLib.CreateOutputs(self, {"State"}, {"1 is armed \n 0 is not \n -1 is broken \n 2 is arming"})
 		end
+
+		-- Set up trigger bounds for target detection
+		self:UseTriggerBounds(true, self.TriggerRadius)
 	end
 
-	if (iname == "Detonate") and (self:GetState() == STATE_ARMED) and (value > 0) then
-		self:Detonate()
-	elseif iname == "Arm" and value > 0 then
-		self:SetState(STATE_ARMING)
+	function ENT:TriggerInput(iname, value)
+		if iname == "Detonate" and value > 0 then
+			self:Detonate()
+		elseif iname == "Arm" and value > 0 then
+			self:UpdateState(JMod.EZ_STATE_ARMED)
+			self:EnableTargetDetection()
+		end
+	end
+
+	function ENT:EnableTargetDetection()
+		self:SetTrigger(true)
+	end
+
+	function ENT:DisableTargetDetection()
+		self:SetTrigger(false)
+	end
+
+	function ENT:Touch(ent)
+		if self:GetState() ~= JMod.EZ_STATE_ARMED then return end
+		if ent == self then return end
+		if not (ent:IsPlayer() or ent:IsNPC() or ent:IsVehicle()) then return end
+
+		local SelfPos = self:GetPos()
+		local dist = ent:GetPos():DistToSqr(SelfPos)
+		if dist <= self.TriggerRadiusSqr and JMod.ShouldAttack(self, ent) and JMod.ClearLoS(self, ent, false, 5) then
+			self:TriggerWarning()
+		end
+	end
+
+	function ENT:TriggerWarning()
+		if self:GetState() ~= JMod.EZ_STATE_ARMED then return end
+
+		local SelfPos = self:GetPos()
+		self:UpdateState(JMod.EZ_STATE_WARNING)
+		sound.Play("snds_jack_gmod/mine_warn.ogg", SelfPos + Vector(0, 0, 30), 60, 100)
+
+		timer.Simple(math.Rand(.15, .4) * JMod.Config.Explosives.Mine.Delay, function()
+			if IsValid(self) then
+				if self:GetState() == JMod.EZ_STATE_WARNING then
+					self:Detonate()
+				end
+			end
+		end)
 	end
 
 	function ENT:Bury(activator, pos, dir)
@@ -125,7 +178,7 @@ if SERVER then
 				self:Detonate()
 			elseif not (State == JMod.EZ_STATE_BROKEN) then
 				sound.Play("Metal_Box.Break", Pos)
-				self:SetState(JMod.EZ_STATE_BROKEN)
+				self:UpdateState(JMod.EZ_STATE_BROKEN)
 				SafeRemoveEntityDelayed(self, 10)
 			end
 		end
@@ -147,9 +200,10 @@ if SERVER then
 			end
 		else
 			self:EmitSound("snd_jack_minearm.ogg", 60, 70)
-			self:SetState(JMod.EZ_STATE_OFF)
+			self:UpdateState(JMod.EZ_STATE_OFF)
 			JMod.SetEZowner(self, activator)
 			self:DrawShadow(true)
+			self:DisableTargetDetection()
 			constraint.RemoveAll(self)
 			self:SetPos(self:GetPos() + self:GetUp() * 40)
 			activator:PickupObject(self)
@@ -264,45 +318,19 @@ if SERVER then
 		local State = self:GetState()
 		if State ~= JMod.EZ_STATE_OFF then return end
 		JMod.SetEZowner(self, armer)
-		self:SetState(JMod.EZ_STATE_ARMING)
+		self:UpdateState(JMod.EZ_STATE_ARMING)
 		self:SetBodygroup(2, 1)
 		self:EmitSound("snd_jack_minearm.ogg", 60, 110)
 
 		timer.Simple(3, function()
 			if IsValid(self) then
 				if self:GetState() == JMod.EZ_STATE_ARMING then
-					self:SetState(JMod.EZ_STATE_ARMED)
+					self:UpdateState(JMod.EZ_STATE_ARMED)
 					self:DrawShadow(false)
+					self:EnableTargetDetection()
 				end
 			end
 		end)
-	end
-
-	function ENT:Think()
-		local State, Time = self:GetState(), CurTime()
-
-		if State == JMod.EZ_STATE_ARMED then
-			for k, targ in pairs(ents.FindInSphere(self:GetPos(), 100)) do
-				if not (targ == self) and (targ:IsPlayer() or targ:IsNPC() or targ:IsVehicle()) then
-					if JMod.ShouldAttack(self, targ) and JMod.ClearLoS(self, targ, false, 5) then
-						self:SetState(JMod.EZ_STATE_WARNING)
-						sound.Play("snds_jack_gmod/mine_warn.ogg", self:GetPos() + Vector(0, 0, 30), 60, 100)
-
-						timer.Simple(math.Rand(.15, .4) * JMod.Config.Explosives.Mine.Delay, function()
-							if IsValid(self) then
-								if self:GetState() == JMod.EZ_STATE_WARNING then
-									self:Detonate()
-								end
-							end
-						end)
-					end
-				end
-			end
-
-			self:NextThink(Time + .3)
-
-			return true
-		end
 	end
 
 	function ENT:OnRemove()

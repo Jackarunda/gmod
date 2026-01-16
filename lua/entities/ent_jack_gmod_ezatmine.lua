@@ -19,11 +19,22 @@ ENT.BlacklistedNPCs = {"bullseye_strider_focus", "npc_turret_floor", "npc_turret
 
 ENT.WhitelistedNPCs = {"npc_rollermine"}
 
+ENT.TriggerRadius = 100
+ENT.TriggerRadiusSqr = ENT.TriggerRadius * ENT.TriggerRadius
+
 ---
 local STATE_BROKEN, STATE_OFF, STATE_ARMING, STATE_ARMED, STATE_WARNING = -1, 0, 1, 2, 3
 
 function ENT:SetupDataTables()
 	self:NetworkVar("Int", 0, "State")
+end
+
+-- Custom state setter that also updates WireLib
+function ENT:UpdateState(state)
+	self:SetState(state)
+	if SERVER and istable(WireLib) then
+		WireLib.TriggerOutput(self, "State", state)
+	end
 end
 
 ---
@@ -60,7 +71,7 @@ if SERVER then
 		end)
 
 		---
-		self:SetState(STATE_OFF)
+		self:UpdateState(STATE_OFF)
 		self.NextDet = 0
 		self.StillTicks = 0
 
@@ -69,13 +80,42 @@ if SERVER then
 
 			self.Outputs = WireLib.CreateOutputs(self, {"State"}, {"1 is armed \n 0 is not \n -1 is broken \n 2 is arming"})
 		end
+
+		-- Set up trigger bounds for target detection
+		self:UseTriggerBounds(true, self.TriggerRadius)
+
+		if self.AutoArm then
+			self:NextThink(CurTime() + math.Rand(.1, 1))
+		end
 	end
 
 	function ENT:TriggerInput(iname, value)
 		if iname == "Detonate" and value > 0 then
 			self:Detonate()
 		elseif iname == "Arm" and value > 0 then
-			self:SetState(STATE_ARMED)
+			self:UpdateState(STATE_ARMED)
+			self:EnableTargetDetection()
+		end
+	end
+
+	function ENT:EnableTargetDetection()
+		self:SetTrigger(true)
+	end
+
+	function ENT:DisableTargetDetection()
+		self:SetTrigger(false)
+	end
+
+	function ENT:Touch(ent)
+		-- Vehicle mine only triggers on vehicles
+		if self:GetState() ~= STATE_ARMED then return end
+		if ent == self then return end
+		if not ent:IsVehicle() then return end
+
+		local SelfPos = self:GetPos()
+		local dist = ent:GetPos():DistToSqr(SelfPos)
+		if dist <= self.TriggerRadiusSqr and JMod.ShouldAttack(self, ent) then
+			self:Detonate()
 		end
 	end
 
@@ -101,7 +141,7 @@ if SERVER then
 				self:Detonate()
 			elseif State ~= STATE_BROKEN then
 				sound.Play("Metal_Box.Break", Pos)
-				self:SetState(STATE_BROKEN)
+				self:UpdateState(STATE_BROKEN)
 				SafeRemoveEntityDelayed(self, 10)
 			end
 		end
@@ -110,6 +150,7 @@ if SERVER then
 	function ENT:Use(activator)
 		local State = self:GetState()
 		if State < 0 then return end
+		self.AutoArm = false
 		local Alt = JMod.IsAltUsing(activator)
 
 		if State == STATE_OFF then
@@ -124,9 +165,10 @@ if SERVER then
 			end
 		else
 			self:EmitSound("snd_jack_minearm.ogg", 60, 70)
-			self:SetState(STATE_OFF)
+			self:UpdateState(STATE_OFF)
 			JMod.SetEZowner(self, activator)
 			self:DrawShadow(true)
+			self:DisableTargetDetection()
 		end
 	end
 
@@ -201,7 +243,7 @@ if SERVER then
 		if State ~= STATE_OFF then return end
 		JMod.Hint(armer, "mine friends")
 		JMod.SetEZowner(self, armer)
-		self:SetState(STATE_ARMING)
+		self:UpdateState(STATE_ARMING)
 		self:EmitSound("snd_jack_minearm.ogg", 60, 90)
 
 		if autoColor then
@@ -223,8 +265,9 @@ if SERVER then
 		timer.Simple(3, function()
 			if IsValid(self) then
 				if self:GetState() == STATE_ARMING then
-					self:SetState(STATE_ARMED)
+					self:UpdateState(STATE_ARMED)
 					self:DrawShadow(false)
+					self:EnableTargetDetection()
 					local Tr = util.QuickTrace(self:GetPos() + Vector(0, 0, 20), Vector(0, 0, -40), self)
 
 					if Tr.Hit then
@@ -236,43 +279,29 @@ if SERVER then
 	end
 
 	function ENT:Think()
-		if istable(WireLib) then
-			WireLib.TriggerOutput(self, "State", self:GetState())
+		-- Only needed for AutoArm functionality
+		if not self.AutoArm then return end
+
+		local Time = CurTime()
+		local Phys = self:GetPhysicsObject()
+		if not IsValid(Phys) then return end
+
+		local Vel = Phys:GetVelocity()
+
+		if Vel:Length() < 1 then
+			self.StillTicks = self.StillTicks + 1
+		else
+			self.StillTicks = 0
 		end
 
-		local State, Time = self:GetState(), CurTime()
-
-		if State == STATE_ARMED then
-			if self.NextDet < CurTime() then
-				self:GetPhysicsObject():SetBuoyancyRatio(self.EZbuoyancy)
-
-				if JMod.EnemiesNearPoint(self, self:GetPos(), 100, true) then
-					self:Detonate()
-
-					return
-				end
-
-				self:NextThink(CurTime() + .5)
-
-				return true
-			end
-		elseif self.AutoArm then
-			local Vel = self:GetPhysicsObject():GetVelocity()
-
-			if Vel:Length() < 1 then
-				self.StillTicks = self.StillTicks + 1
-			else
-				self.StillTicks = 0
-			end
-
-			if self.StillTicks > 4 then
-				self:Arm(JMod.GetEZowner(self), true)
-			end
-
-			self:NextThink(Time + .5)
-
-			return true
+		if self.StillTicks > 4 then
+			self:Arm(JMod.GetEZowner(self), true)
+			self.AutoArm = false
+			return
 		end
+
+		self:NextThink(Time + .5)
+		return true
 	end
 
 	function ENT:OnRemove()
