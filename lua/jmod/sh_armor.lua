@@ -1,4 +1,4 @@
-﻿player_manager.AddValidModel("JMod_HazMat", "models/bloocobalt/splinter cell/chemsuit_cod.mdl")
+player_manager.AddValidModel("JMod_HazMat", "models/bloocobalt/splinter cell/chemsuit_cod.mdl")
 player_manager.AddValidHands("JMod_HazMat", "models/bloocobalt/splinter cell/chemsuit_v.mdl", 0, "00000000")
 
 -- default armor data
@@ -1142,6 +1142,8 @@ end
 
 hook.Add("Initialize", "JMod_LoadAdditionalArmor", LoadAdditionalArmor)
 
+--LoadAdditionalArmor()
+
 -- support third-party integration of gas-based weapons
 function JMod.GetArmorBiologicalResistance(ply, typ)
 	local inhaleResist, skinResist, eyeProtect = 0, 0, 0
@@ -1318,8 +1320,6 @@ if CLIENT then
 
 	end, "First argument is action, second arg is slot to apply the action to. \nOtherwise it applies the action to all slots")
 end
-
---LoadAdditionalArmor()
 
 -- Sounds
 sound.Add({	name = "JMod_ZipLine_Clip",

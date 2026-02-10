@@ -1,4 +1,4 @@
-﻿-- Jackarunda 2021
+-- Jackarunda 2021
 AddCSLuaFile()
 ENT.Type = "anim"
 ENT.Author = "Jackarunda"
@@ -27,11 +27,20 @@ if SERVER then
 	end
 
 	function ENT:Initialize()
-		self.Specs = JMod.WeaponTable[self.WeaponName]
+		-- Resolve specs by name or by class: first match in WeaponTable wins (avoids persistence/dupe corruption)
+		self.Specs = nil
+		if JMod.WeaponTable then
+			for name, info in pairs(JMod.WeaponTable) do
+				if name == self.WeaponName or (info.ent and info.ent == self.ClassName) then
+					self.Specs = info
+					self.WeaponName = name
+					break
+				end
+			end
+		end
 		if not self.Specs then
-			print("[JMod ERROR] No weapon specs found for: " .. tostring(self.WeaponName))
+			print("[JMod ERROR] No weapon specs found for: " .. tostring(self.WeaponName) .. " / " .. tostring(self.ClassName))
 			SafeRemoveEntity(self)
-			
 			return
 		end
 		self:SetModel(self.Specs.mdl)

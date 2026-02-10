@@ -1,4 +1,4 @@
-﻿-- Jackarunda 2021
+-- Jackarunda 2021
 AddCSLuaFile()
 ENT.Type = "anim"
 ENT.Author = "Jackarunda"
@@ -30,18 +30,22 @@ if SERVER then
 	end
 
 	function ENT:Initialize()
-		self.Specs = JMod.ArmorTable[self.ArmorName]
-		
-		-- Warn if armor definition is missing
+		-- Resolve specs by name or by class: first match in ArmorTable wins (avoids persistence/dupe corruption)
+		self.Specs = nil
+		if JMod.ArmorTable then
+			for class, info in pairs(JMod.ArmorTable) do
+				if class == self.ArmorName or (info.ent and info.ent == self.ClassName) then
+					self.Specs = info
+					self.ArmorName = class
+					break
+				end
+			end
+		end
 		if not self.Specs then
-			print("[JMod] WARNING: Armor entity spawned with ArmorName '" .. tostring(self.ArmorName) .. "' but no definition exists in JMod.ArmorTable!")
-
-			-- Remove self to prevent errors
+			print("[JMod] WARNING: Armor entity spawned with ArmorName '" .. tostring(self.ArmorName) .. "' / " .. tostring(self.ClassName) .. " but no definition exists in JMod.ArmorTable!")
 			SafeRemoveEntity(self)
-			
 			return
 		end
-		
 		self:SetModel(self.entmdl or self.Specs.mdl)
 		self:SetMaterial(self.Specs.mat or "")
 

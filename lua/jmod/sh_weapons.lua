@@ -57,6 +57,7 @@ $attachment "shell" "ValveBiped.Bip01_R_Hand" 9.5 -0.7 -5 rotate 30 90 -90
 
 $definebone "ValveBiped.Bip01_R_Hand" "" -0.678304 13.183071 4.586786 10.000006 -89.999982 -179.999978 0 0 0 0 0 0
 --]]
+
 JMod.WeaponTable = {
 	["Assault Rifle"] = {
 		mdl = "models/weapons/w_jmod_m16.mdl",
@@ -540,6 +541,16 @@ JMod.LoadAmmoTable(JMod.AmmoTable)
 -- Load base weapon entities immediately too
 JMod.GenerateWeaponEntities(JMod.WeaponTable)
 
+JMod.WeaponsInitialized = JMod.WeaponsInitialized or false
+
+if JMod.WeaponsInitialized then
+	-- Trigger hook for addons to register their ammo types
+	hook.Run("JMod_RegisterAmmoTypes")
+	
+	-- Trigger hook for addons to register their weapons
+	hook.Run("JMod_RegisterWeaponEntities")
+end
+
 -- Hook system for ADDONS to register their ammo/weapons in predictable order
 hook.Add("Initialize", "JMod_RegisterAddonContent", function()
 	-- Trigger hook for addons to register their ammo types
@@ -547,7 +558,8 @@ hook.Add("Initialize", "JMod_RegisterAddonContent", function()
 	
 	-- Trigger hook for addons to register their weapons
 	hook.Run("JMod_RegisterWeaponEntities")
-end, 0) -- Priority 0 = runs first
+	JMod.WeaponsInitialized = true 
+end)
 
 -- Helper to normalize ammo type (ID or name -> name)
 function JMod.NormalizeAmmoType(typ)

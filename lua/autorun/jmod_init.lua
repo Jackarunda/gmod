@@ -1,4 +1,4 @@
-﻿AddCSLuaFile()
+AddCSLuaFile()
 JMod = JMod or {}
 -- EZ radio stations
 JMod.EZ_RADIO_STATIONS = {}
