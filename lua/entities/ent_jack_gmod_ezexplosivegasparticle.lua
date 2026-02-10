@@ -29,7 +29,7 @@ if SERVER then
 		if self.Detonated then return end
 		self.Detonated = true
 
-		timer.Simple(0, function()
+		timer.Simple(0.1, function()
 			if not IsValid(self) then return end
 			local SelfPos = self:GetPos()
 			local SearchRadius = self.AffectRange * 1.5
