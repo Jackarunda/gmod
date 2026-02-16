@@ -3,7 +3,7 @@ function JMod.FragSplosion(shooter, origin, fragNum, fragDmg, fragMaxDist, attac
 	-- fragmentation/shrapnel simulation
 	shooter = (IsValid(shooter) and shooter) or game.GetWorld()
 	zReduction = zReduction or 2
-	doEffect = true
+	doEffect = doEffect or true
 
 	local ShrapnelDamageInfo = nil
 	local PreSetupDamageInfo = false
