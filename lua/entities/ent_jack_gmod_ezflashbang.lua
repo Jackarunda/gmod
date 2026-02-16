@@ -72,7 +72,7 @@ hook.Add("SetupMove", "JMOD_FLASHBANG", function(ply, mvd, cmd)
 		end
 
 		if IsFirstTimePredicted() then
-			local WearoffMult = 1 / (JMod.Config.Explosives.Flashbang.StunDurationMult or 1)
+			local WearoffMult = 1 / ((JMod.Config and JMod.Config.Explosives.Flashbang.StunDurationMult) or 1)
 			BlastShock = math.Clamp(BlastShock - 10 * WearoffMult * FrameTime(), 0, 100)
 			if (BlastShock <= 0) then
 				BlastShock = nil

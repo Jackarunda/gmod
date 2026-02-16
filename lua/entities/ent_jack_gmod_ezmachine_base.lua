@@ -95,7 +95,7 @@ if(SERVER)then
 		ent:SetAngles((ent.JModPreferredCarryAngles and ent.JModPreferredCarryAngles) or Angle(0,0,0))
 		ent:SetPos(SpawnPos)
 		JMod.SetEZowner(ent,ply)
-		if JMod.Config.Machines.SpawnMachinesFull then
+		if JMod.Config and JMod.Config.Machines.SpawnMachinesFull then
 			ent.SpawnFull = true
 		end
 		ent:Spawn()
@@ -153,7 +153,7 @@ if(SERVER)then
 			self:SetupWire()
 		end
 		
-		self.Durability = self.MaxDurability * JMod.Config.Machines.DurabilityMult
+		self.Durability = self.MaxDurability * ((JMod.Config and JMod.Config.Machines.DurabilityMult) or 1)
 		self:SetNW2Float("EZdurability", self.Durability)
 		--print(self:GetNW2Float("EZdurability", -1))
 		if self.SetElectricity and self.MaxElectricity then
@@ -169,7 +169,7 @@ if(SERVER)then
 		---
 		if(self.EZupgradable)then
 			self.UpgradeProgress = {}
-			self.UpgradeCosts = JMod.CalculateUpgradeCosts((JMod.Config.Craftables[self.PrintName] and JMod.Config.Craftables[self.PrintName].craftingReqs) or (self.BackupRecipe and self.BackupRecipe))
+			self.UpgradeCosts = JMod.CalculateUpgradeCosts((JMod.Config and JMod.Config.Craftables[self.PrintName] and JMod.Config.Craftables[self.PrintName].craftingReqs) or (self.BackupRecipe and self.BackupRecipe))
 		end
 
 		self:UpdateWireOutputs()
@@ -387,9 +387,9 @@ if(SERVER)then
 		for i = 1, 20 do JMod.DamageSpark(self) end
 
 		local StartPoint, ToPoint, Spread, Scale, UpSpeed = self:LocalToWorld(self:OBBCenter()), nil, 2, 1, 10
-		local Force, GibNum = dmginfo:GetDamageForce(), math.min(JMod.Config.Machines.SupplyEffectMult * self:GetPhysicsObject():GetMass()/2000, 20)
+		local Force, GibNum = dmginfo:GetDamageForce(), math.min(((JMod.Config and JMod.Config.Machines.SupplyEffectMult) or 1) * self:GetPhysicsObject():GetMass()/2000, 20)
 
-		if JMod.Config.Craftables[self.PrintName] then
+		if JMod.Config and JMod.Config.Craftables[self.PrintName] then
 			for k, v in pairs(JMod.Config.Craftables[self.PrintName].craftingReqs) do
 				JMod.ResourceEffect(k, StartPoint, ToPoint, GibNum * (v / 5000), Spread, Scale, UpSpeed)
 			end
@@ -416,8 +416,8 @@ if(SERVER)then
 		for i = 1, 20 do JMod.DamageSpark(self) end
 
 		local StartPoint, ToPoint, Spread, Scale, UpSpeed = self:LocalToWorld(self:OBBCenter()), nil, 2, 1, 10
-		local Force, GibNum = dmginfo:GetDamageForce(), math.min(JMod.Config.Machines.SupplyEffectMult * self:GetPhysicsObject():GetMass()/1000, 30)
-		if JMod.Config.Craftables[self.PrintName] then
+		local Force, GibNum = dmginfo:GetDamageForce(), math.min(((JMod.Config and JMod.Config.Machines.SupplyEffectMult) or 1) * self:GetPhysicsObject():GetMass()/1000, 30)
+		if JMod.Config and JMod.Config.Craftables[self.PrintName] then
 			for k, v in pairs(JMod.Config.Craftables[self.PrintName].craftingReqs) do
 				JMod.ResourceEffect(k, StartPoint, ToPoint, GibNum * (v / 800), Spread, Scale, UpSpeed)
 			end
@@ -660,7 +660,7 @@ if(SERVER)then
 		end
 
 		if not(JMod.IsAdmin(ply)) and not(self:GetPersistent()) then
-			if self.EZconsumes and not(JMod.Config.Machines.SpawnMachinesFull) then
+			if self.EZconsumes and not((JMod.Config and JMod.Config.Machines.SpawnMachinesFull) or false) then
 				for _, typ in ipairs(self.EZconsumes) do
 					if istable(self.FlexFuels) and table.HasValue(self.FlexFuels, typ) then
 						self:SetElectricity(0)

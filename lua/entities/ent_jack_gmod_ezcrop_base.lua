@@ -61,7 +61,7 @@ if(SERVER)then
 		ent:SetAngles((ent.JModPreferredCarryAngles and ent.JModPreferredCarryAngles) or Angle(0,0,0))
 		ent:SetPos(SpawnPos)
 		JMod.SetEZowner(ent,ply)
-		if JMod.Config.Machines.SpawnMachinesFull then
+		if JMod.Config and JMod.Config.Machines.SpawnMachinesFull then
 			ent.SpawnFull = true
 		end
 		ent:Spawn()

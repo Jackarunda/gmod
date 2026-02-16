@@ -101,7 +101,7 @@ JMod.ArmorSlotNiceNames = {
 	leftforearm = "Left Forearm"
 }
 
--- only used if JMod.Config.QoL.RealisticLocationalDamage is true
+-- only used if JMod.Config and JMod.Config.QoL.RealisticLocationalDamage is true
 JMod.BodyPartDamageMults = {
 	[HITGROUP_HEAD] = 10,
 	[HITGROUP_CHEST] = 1,

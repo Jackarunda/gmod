@@ -330,7 +330,7 @@ elseif(CLIENT)then
 			for i = 1, 20 do
 				render.DrawQuadEasy(GlowPos + GlowDir * i / 2.5 * math.Rand(.9, 1), GlowDir, 40, 20, Color( 255 - i * 1, 255 - i * 9, 200 - i * 10, 55 - i * 2.5 ), GlowAng.r)
 			end
-			if JMod.Config.QoL.NiceFire then
+			if JMod.Config and JMod.Config.QoL.NiceFire then
 				render.SetMaterial(HeatWaveMat)
 				for i = 1, 2 do
 					render.DrawSprite(BasePos + Up * (i * math.random(10, 30) + 120) - Right * 8 + Forward * 10, 60, 60, Color(255, 255 - i * 10, 255 - i * 20, 25))

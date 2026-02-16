@@ -33,7 +33,7 @@ local function JackaSpawnHook(ply, transition)
 		end
 	end)
 
-	if JMod.Config.Explosives.BombOwnershipLossOnRespawn then
+	if JMod.Config and JMod.Config.Explosives.BombOwnershipLossOnRespawn then
 		for k, ent in ents.Iterator() do
 			local EZowner = JMod.GetEZowner(ent)
 
@@ -641,7 +641,7 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 
 			VirusHostThink(playa)
 
-			if JMod.Config.QoL.Drowning then
+			if JMod.Config and JMod.Config.QoL.Drowning then
 				playa.EZoxygen = playa.EZoxygen or 100
 				if playa:WaterLevel() >= 3 then
 					if (playa.EZarmor and playa.EZarmor.effects.scuba) then
@@ -688,7 +688,7 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 
 	---
 	if NextNutritionThink < Time then
-		NextNutritionThink = Time + 10 / JMod.Config.FoodSpecs.DigestSpeed
+		NextNutritionThink = Time + 10 / ((JMod.Config and JMod.Config.FoodSpecs.DigestSpeed) or 1)
 
 		for _, playa in PlyIterator, Playas, startingindex do
 			if playa.EZnutrition then
@@ -1048,7 +1048,7 @@ end, nil, "(CHEAT, ADMIN ONLY) Spawns 25 explosive gas particles at aim position
 
 hook.Add("GetFallDamage", "JMod_FallDamage", function(ply, spd)
 	--local ThiccPlayer = (ply.EZarmor and ply.EZarmor.totalWeight or 10) / 10 -- Maybe?
-	if JMod.Config.QoL.RealisticFallDamage then return (spd ^ 2 / 8000) end
+	if JMod.Config and JMod.Config.QoL.RealisticFallDamage then return (spd ^ 2 / 8000) end
 end)
 
 hook.Add("DoPlayerDeath", "JMOD_SERVER_DOPLAYERDEATH", function(ply, attacker, dmg)
@@ -1245,7 +1245,7 @@ hook.Add("GravGunPunt", "JMod_ResetBouyancy", ResetBouyancy)
 hook.Add("OnPlayerPhysicsDrop", "JMod_ResetBouyancy", ResetBouyancy)
 
 hook.Add("OnEntityWaterLevelChanged", "JMod_WaterExtinguish", function(ent, oldLevel, newLevel)
-	if JMod.Config.QoL.ExtinguishUnderwater and (ent.IsOnFire and ent:IsOnFire()) then
+	if JMod.Config and JMod.Config.QoL.ExtinguishUnderwater and (ent.IsOnFire and ent:IsOnFire()) then
 		if (oldLevel == 0) and (newLevel > 0) then
 			sound.Play("snds_jack_gmod/hiss.ogg", ent:GetPos(), 100, math.random(70, 80))--"snds_jack_gmod/hiss.ogg", ent:GetPos(), 100, math.random(90, 110))
 		end

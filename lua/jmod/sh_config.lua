@@ -2967,6 +2967,12 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		end
 	end
 
+	if not istable(JMod.Config) then 
+		error("JMod.Config is missing or is corrupt")
+
+		return
+	end
+
 	-- jmod lua config --
 	if not JMod.LuaConfig then
 		JMod.LuaConfig = {

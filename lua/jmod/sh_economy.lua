@@ -1529,7 +1529,7 @@ if SERVER then
 						SpawnedItems = SpawnedItems + 1
 						LastEnv = EnvironmentType
 						
-						if JMod.Config.ResourceEconomy.ScroungeDespawnTimeMult > 0 then
+						if JMod.Config and JMod.Config.ResourceEconomy.ScroungeDespawnTimeMult > 0 then
 							timer.Simple(3, function()
 								if (IsValid(Loot)) and (Loot:GetPhysicsObject():GetMass() <= 35) then
 									-- record natural resting place

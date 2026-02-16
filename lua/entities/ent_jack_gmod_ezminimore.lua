@@ -132,7 +132,7 @@ if SERVER then
 		self:EmitSound("snd_jack_fragsplodeclose.ogg", 90, 100)
 		JMod.Sploom(self.EZowner, SelfPos, math.random(10, 20))
 
-		if JMod.Config.Explosives.FragExplosions then
+		if JMod.Config and JMod.Config.Explosives.FragExplosions then
 			JMod.FragSplosion(self, SelfPos, 500, 25, 3000, JMod.GetEZowner(self), Up, .3, 5)
 		else
 			util.BlastDamage(self, JMod.GetEZowner(self), SelfPos + Up * 350, 350, 110)

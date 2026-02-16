@@ -428,7 +428,7 @@ if(SERVER)then
 				self:Connect(ply, true)
 
 				SuccessfulTransmit = true
-			elseif JMod.Config.RadioSpecs.AvailablePackages[Message] then
+			elseif JMod.Config and JMod.Config.RadioSpecs.AvailablePackages[Message] then
 				self:Speak(JMod.EZradioRequest(self, self:GetOutpostID(), ply, Message, BFFreq), ParrotPhrase, ply)
 
 				SuccessfulTransmit = true
