@@ -1,4 +1,4 @@
-﻿--[[
+--[[
 1 axe
 1 bat
 1 bow
@@ -494,7 +494,7 @@ end
 -- Dynamically create weapon Ents
 function JMod.GenerateWeaponEntities(tbl)
 	for name, info in pairs(tbl) do
-		if info.noent then continue end
+		if info.noent or not info.ent then continue end
 
 		local WeaponEnt = {}
 		WeaponEnt.Base = info.BaseEnt or "ent_jack_gmod_ezweapon"
@@ -554,10 +554,10 @@ end
 -- Hook system for ADDONS to register their ammo/weapons in predictable order
 hook.Add("Initialize", "JMod_RegisterAddonContent", function()
 	-- Trigger hook for addons to register their ammo types
-	hook.Run("JMod_RegisterAmmoTypes")
+	hook.Run("JMod_RegisterAmmoTypes", JMod.AmmoTable)
 	
 	-- Trigger hook for addons to register their weapons
-	hook.Run("JMod_RegisterWeaponEntities")
+	hook.Run("JMod_RegisterWeaponEntities", JMod.WeaponTable)
 	JMod.WeaponsInitialized = true 
 end)
 

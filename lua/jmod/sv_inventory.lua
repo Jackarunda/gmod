@@ -23,7 +23,7 @@ local function SerializeInventoryForDuplicator(jmodinv)
 	end
 	
 	-- Serialize items (store full duplicator data for each entity)
-	if jmodinv.items then
+	--[[if jmodinv.items then
 		for k, iteminfo in ipairs(jmodinv.items) do
 			if IsValid(iteminfo.ent) then
 				local ent = iteminfo.ent
@@ -42,96 +42,62 @@ local function SerializeInventoryForDuplicator(jmodinv)
 				end
 			end
 		end
-	end
+	end--]]
 	
 	return data
 end
 
 local function UpdateDuplicatorData(invEnt)
 	if not IsValid(invEnt) then return end
-	
-	if invEnt.JModInv and (next(invEnt.JModInv.items) or next(invEnt.JModInv.EZresources)) then
-		local data = SerializeInventoryForDuplicator(invEnt.JModInv)
-		if data then
-			duplicator.StoreEntityModifier(invEnt, "JModInventory", data)
-		end
+	local data = SerializeInventoryForDuplicator(invEnt.JModInv)
+	if data then
+		duplicator.StoreEntityModifier(invEnt, "JModInventory", data)
 	else
-		-- Clear modifier if inventory is empty or nil
 		duplicator.ClearEntityModifier(invEnt, "JModInventory")
 	end
 end
 
--- Prevent JModInv from being auto-saved by the duplicator
--- We handle it manually with our custom modifier
-hook.Add("PreEntityCopy", "JMod_PreventInventoryAutoDupe", function(ent)
-	if ent.JModInv then
-		-- Store inventory temporarily and clear it from entity
-		-- This prevents it from being auto-saved by duplicator
-		ent.JModInv_DupTemp = ent.JModInv
-		ent.JModInv = nil
-	end
-end)
+--- JModInventoryAnchor: constraint type that links an inventory item to its container for duplicator support
+local function CreateJModInventoryAnchor(target, invEnt)
+	--print("Creating JModInventoryAnchor for " .. tostring(target) .. " and " .. tostring(invEnt))
+	if not(constraint.CanConstrain(target, 0)) then return false end
+	if not(constraint.CanConstrain(invEnt, 0)) then return false end
 
-hook.Add("PostEntityCopy", "JMod_RestoreInventoryAfterCopy", function(ent)
-	if ent.JModInv_DupTemp then
-		-- Restore inventory after copy is complete
-		ent.JModInv = ent.JModInv_DupTemp
-		ent.JModInv_DupTemp = nil
+	if not(JMod.IsEntContained(target, invEnt)) then
+		JMod.AddToInventory(invEnt, target)
+		
+		return false
 	end
-end)
+
+	local anchor = constraint.NoCollide(target, invEnt, 0, 0, true)
+	if not IsValid(anchor) then return false end
+
+	constraint.AddConstraintTable(invEnt, anchor, target)
+
+	anchor:SetTable({
+		Type = "JModInventoryAnchor",
+		Ent1 = target,
+		Ent2 = invEnt
+	})
+
+	return anchor
+end
+duplicator.RegisterConstraint("JModInventoryAnchor", CreateJModInventoryAnchor, "Ent1", "Ent2")
 
 -- Register the duplicator modifier for inventory restoration
 duplicator.RegisterEntityModifier("JModInventory", function(ply, ent, data)
 	if not IsValid(ent) or not data then return end
-	
-	-- Delay restoration to ensure entity is fully initialized
-	timer.Simple(0.1, function()
-		if not IsValid(ent) then return end
-		
-		-- Clear any existing inventory that may have been auto-saved by the duplicator
-		-- (This is a safeguard, but PreEntityCopy should prevent this)
-		ent.JModInv = nil
-		
-		-- Restore resources first (simpler, no dependencies)
-		if data.resources then
-			for resType, amount in pairs(data.resources) do
-				if amount > 0 then
-					JMod.AddToInventory(ent, {resType, amount}, true)
-				end
+	-- Restore resources
+	if ent.JModInv and ent.JModInv.EZresources then
+		ent.JModInv.EZresources = {}
+	end
+	if data.resources then
+		for resType, amount in pairs(data.resources) do
+			if amount > 0 then
+				JMod.AddToInventory(ent, {resType, amount}, true)
 			end
 		end
-		
-		-- Restore items (more complex, may have initialization requirements)
-		if data.items then
-			for k, entTable in ipairs(data.items) do
-				-- Use duplicator.Paste with correct parameters
-				-- Parameters: Player, EntityList (table), ConstraintList (table)
-				local pastedEnts, pastedConstraints = duplicator.Paste(ply, {entTable}, {})
-				
-				if pastedEnts and pastedEnts[1] then
-					local item = pastedEnts[1]
-					
-					-- Give the paste system time to fully complete
-					timer.Simple(0.2 + (0.05 * k), function()
-						if IsValid(item) and IsValid(ent) then
-							JMod.AddToInventory(ent, item, true)
-						end
-					end)
-				end
-			end
-		end
-		
-		-- Final update after all items are added
-		timer.Simple(0.5, function()
-			if IsValid(ent) then
-				JMod.UpdateInv(ent)
-				-- For storage crates, recalculate weight
-				if ent.CalcWeight then
-					ent:CalcWeight()
-				end
-			end
-		end)
-	end)
+	end
 end)
 
 function JMod.GetStorageCapacity(ent)
@@ -293,7 +259,7 @@ function JMod.UpdateInv(invEnt, noplace, transfer, emergancyNetwork)
 
 	invEnt.JModInv = jmodinvfinal
 
-	if OldWeight ~= jmodinvfinal.weight then
+	if invEnt:IsPlayer() and OldWeight ~= jmodinvfinal.weight then
 		JMod.CalcSpeed(invEnt)
 	end
 	if not(invEnt:IsPlayer() or invEnt.KeepJModInv) and table.IsEmpty(invEnt.JModInv.EZresources) and table.IsEmpty(invEnt.JModInv.items) then
@@ -391,7 +357,7 @@ function JMod.AddToInventory(invEnt, target, noUpdate)
 		--end
 		local Vol, Mass = JMod.GetItemVolumeWeight(target)
 		table.insert(jmodinv.items, {name = target.PrintName or target:GetModel(), ent = target, vol = Vol})
-
+		CreateJModInventoryAnchor(target, invEnt)
 		local Children = target:GetChildren()
 		if Children then
 			for k, v in pairs(Children) do
@@ -455,7 +421,7 @@ function JMod.RemoveFromInventory(invEnt, target, pos, noUpdate, transfer)
 			end
 			invEnt.JModInv.EZresources[resTyp] = invEnt.JModInv.EZresources[resTyp] - amt
 		end
-	elseif JMod.IsEntContained(target, invEnt) then 
+	elseif JMod.IsEntContained(target, invEnt) then
 		target:SetNW2Entity("EZInvOwner", nil)
 
 		if not(pos) and not(transfer) then
@@ -495,12 +461,14 @@ function JMod.RemoveFromInventory(invEnt, target, pos, noUpdate, transfer)
 					v:SetNotSolid(v.JModWasNoSolid or false)
 				end
 			end
+			constraint.RemoveConstraints(target, "JModInventoryAnchor")
 			target:RemoveCallOnRemove("JMod_RemoveFromInventory")
 		end
 	end
 
 	if noUpdate then
-		--
+		-- Update duplicator data even if we're not doing a full inventory update
+		UpdateDuplicatorData(invEnt)
 	else
 		JMod.UpdateInv(invEnt)
 	end

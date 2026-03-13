@@ -305,7 +305,9 @@ if SERVER then
 	end
 
 	function ENT:PreEntityCopy()
-		self.StuckToID = self.StuckTo:EntIndex()
+		if IsValid(self.StuckTo) then
+			self.StuckToID = self.StuckTo:EntIndex()
+		end
 	end
 
 	function ENT:PostEntityPaste(ply, ent, createdEntities)

@@ -1113,7 +1113,7 @@ JMod.ArmorTable = {
 -- Dynamically generate armor ents
 function JMod.GenerateArmorEntities(tbl)
 	for class, info in pairs(tbl) do
-		if info.noent then continue end
+		if info.noent or not info.ent then continue end
 		local armorent = {}
 		armorent.Base = "ent_jack_gmod_ezarmor"
 		armorent.PrintName = info.PrintName or class
