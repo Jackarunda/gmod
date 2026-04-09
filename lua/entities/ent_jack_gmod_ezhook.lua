@@ -71,7 +71,7 @@ if SERVER then
 								end
 							end
 							if IsValid(PlayerHolding) and PlayerHolding:KeyDown(JMod.Config.General.AltFunctionKey) then
-								local PluginPos = Ent.EZpowerSocket or Ent:OBBCenter()
+								local PluginPos = Ent.EZpowerSocketPos or Ent:OBBCenter()
 								local DistanceBetween = (self.EZconnector:GetPos() - Ent:LocalToWorld(PluginPos)):Length()
 								ConnectionRange = math.min(ConnectionRange, DistanceBetween + 10)
 							end

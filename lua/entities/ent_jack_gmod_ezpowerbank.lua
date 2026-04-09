@@ -10,6 +10,7 @@ ENT.Spawnable = true
 ENT.AdminSpawnable = true
 --
 ENT.JModPreferredCarryAngles = Angle(0, 180, 0)
+ENT.EZpowerSocketPos = Vector(-12, 0, 0)
 ENT.EZpowerBank = true
 ENT.Model = "models/jmod/machines/ez_powerbank.mdl"
 ENT.Mass = 150

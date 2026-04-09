@@ -29,7 +29,7 @@ ENT.EZconsumes = {
 	JMod.EZ_RESOURCE_TYPES.FUEL
 }
 ENT.EZpowerProducer = true
-ENT.EZpowerSocket = Vector(42, -1, 40)
+ENT.EZpowerSocketPos = Vector(42, -1, 40)
 ENT.MaxConnectionRange = 500
 
 function ENT:CustomSetupDataTables()

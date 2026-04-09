@@ -34,7 +34,7 @@ ENT.EZconsumes = {
 }
 ENT.FlexFuels = { JMod.EZ_RESOURCE_TYPES.COAL, JMod.EZ_RESOURCE_TYPES.WOOD }
 ENT.EZpowerProducer = true
-ENT.EZpowerSocket = Vector(65, 18, 18)
+ENT.EZpowerSocketPos = Vector(65, 18, 18)
 ENT.MaxConnectionRange = 500
 
 function ENT:CustomSetupDataTables()

@@ -23,7 +23,7 @@ ENT.DynamicPerfSpecs = {
 	Armor = 1
 }
 ENT.EZpowerProducer = true
-ENT.EZpowerSocket = Vector(0, 0, -30)
+ENT.EZpowerSocketPos = Vector(0, 0, -30)
 ENT.MaxConnectionRange = 200
 
 function ENT:CustomSetupDataTables()

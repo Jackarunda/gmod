@@ -26,7 +26,7 @@ ENT.StaticPerfSpecs = {
 ENT.DynamicPerfSpecs = {
 	Armor = 2
 }
-ENT.EZpowerSocket = Vector(-90, 80, 0)
+ENT.EZpowerSocketPos = Vector(-90, 80, 0)
 ---
 local STATE_BROKEN, STATE_OFF, STATE_RUNNING = -1, 0, 1
 ---

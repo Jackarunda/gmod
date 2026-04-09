@@ -73,7 +73,7 @@ function JMod.StartResourceConnection(machine, ply, resType)
 	machine.EZconnectorPlug = Plugy
 
 	local ropeLength = machine.MaxConnectionRange or 1000
-	local Rope = constraint.Rope(machine, Plugy, 0, 0, machine.EZpowerSocket or Vector(0,0,0), Vector(10,0,0), ropeLength, 0, 1000, 2, "cable/cable2", false)
+	local Rope = constraint.Rope(machine, Plugy, 0, 0, machine.EZpowerSocketPos or Vector(0,0,0), Vector(10,0,0), ropeLength, 0, 1000, 2, "cable/cable2", false)
 	Plugy.Chain = Rope
 
 	ply:DropObject()
@@ -138,7 +138,7 @@ function JModResourceCable(Ent1, Ent2, resType, plugPos, dist, newCable)
 	end
 
 	local CableAppearance = JMod.GetResourceCableAppearance(resType)
-	local LengthConstraint, Rope = constraint.Rope(Ent1, Ent2, 0, 0, Ent1.EZpowerSocket or Vector(0, 0, 0), plugPos, dist + 20, 10, 100, CableAppearance.size, "cable/cable2", false, CableAppearance.color)
+	local LengthConstraint, Rope = constraint.Rope(Ent1, Ent2, 0, 0, Ent1.EZpowerSocketPos or Vector(0, 0, 0), plugPos, dist + 20, 10, 100, CableAppearance.size, "cable/cable2", false, CableAppearance.color)
 	if IsValid(newCable) then
 		LengthConstraint:Remove()
 		LengthConstraint = newCable
@@ -159,42 +159,58 @@ function JModResourceCable(Ent1, Ent2, resType, plugPos, dist, newCable)
 end
 duplicator.RegisterConstraint("JModResourceCable", JModResourceCable, "Ent1", "Ent2", "resType", "plugPos", "dist", "newCable")
 
-function JMod.CreateResourceConnection(machine, ent, resType, plugPos, dist, newCable)
-	dist = dist or 1000
-	if not (IsValid(machine) and IsValid(ent) and resType) then return false end
-	if (ent == machine) then return false end
+function JMod.CreateResourceConnection(producer, consumer, resType, plugPos, dist, newCable)
+	print("[JMOD] ResConnection:", producer, consumer, resType, plugPos, dist, newCable)
+	if not (IsValid(producer) and IsValid(consumer) and resType) then return false end
+	if (consumer == producer) then return false end
 	-- Special case for Entity connections (autoloader to cannon)
 	if resType == "Entity" then
-		if not (ent.GetIsAutoLoading and ent:GetIsAutoLoading()) then return false end
+		if not (consumer.GetIsAutoLoading and consumer:GetIsAutoLoading()) then return false end
 	else
-		if not (ent.EZconsumes and table.HasValue(ent.EZconsumes, resType)) and not (resType == JMod.EZ_RESOURCE_TYPES.POWER and (ent.EZpowerProducer and not machine.EZpowerProducer)) then return false end
+		if not (consumer.EZconsumes and table.HasValue(consumer.EZconsumes, resType)) and not (resType == JMod.EZ_RESOURCE_TYPES.POWER and (consumer.EZpowerProducer and not producer.EZpowerProducer)) then return false end
 	end
-	if ent.IsJackyEZcrate and ent.GetResourceType and not(ent:GetResourceType() == resType or ent:GetResourceType() == "generic") then return false end
-	if not JMod.ShouldAllowControl(ent, JMod.GetEZowner(machine), true) then return false end
-	local PluginPos = ent.EZpowerSocket or plugPos or ent:OBBCenter()
+
+	if consumer.IsJackyEZcrate and consumer.GetResourceType and not(consumer:GetResourceType() == resType or consumer:GetResourceType() == "generic") then 
+		
+		return false 
+	end
+	
+	if not JMod.ShouldAllowControl(consumer, JMod.GetEZowner(producer), true) then 
+		
+		return false 
+	end
+	
+	local ConsumerPluginPos = consumer.EZpowerSocketPos or plugPos or consumer:OBBCenter()
+	local ProducerPluginPos = producer.EZpowerSocketPos or producer:OBBCenter()
+	
+	if not isnumber(dist) then
+		dist = (producer:GetPos() - consumer:LocalToWorld(ConsumerPluginPos)):Length()
+	end
+
 	if not IsValid(newCable) then
-		local DistanceBetween = (machine:GetPos() - ent:LocalToWorld(PluginPos)):Length()
+		local DistanceBetween = (producer:LocalToWorld(ProducerPluginPos) - consumer:LocalToWorld(ConsumerPluginPos)):Length()
 		if (DistanceBetween > (dist + 50)) then return false end
 	end
-	local EntConnections = constraint.FindConstraints(ent, "JModResourceCable")
+
+	local EntConnections = constraint.FindConstraints(consumer, "JModResourceCable")
 
 	if (#EntConnections > 0) then
 		for _, cable in pairs(EntConnections) do
 			if IsValid(cable.Ent1) then
-				if cable.Ent1 == machine then
+				if cable.Ent1 == producer then
 					return false
 				end
 			elseif IsValid(cable.Ent2) then
-				if cable.Ent2 == machine then
+				if cable.Ent2 == producer then
 					return false
 				end
 			end
 		end
 	end
 
-	local Cable = constraint.JModResourceCable(machine, ent, resType, plugPos, dist, newCable)
+	local Cable = constraint.JModResourceCable(producer, consumer, resType, plugPos, dist, newCable)
 
-	return Cable and IsValid(Cable)
+	return IsValid(Cable) and Cable or false
 end
 
 function JMod.RemoveResourceConnection(machine, connected)

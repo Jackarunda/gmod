@@ -35,7 +35,7 @@ ENT.WhitelistedResources = {
 	"geothermal"
 }
 ENT.EZpowerProducer = true
-ENT.EZpowerSocket = Vector(10, 30, 48)
+ENT.EZpowerSocketPos = Vector(10, 30, 48)
 
 function ENT:CustomSetupDataTables()
 	self:NetworkVar("Float", 1, "Progress")

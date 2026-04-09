@@ -3021,45 +3021,40 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		local Ent1 = playa.EZropeData.Ent
 		local Rope, Ent2 = JMod.Rope(playa, nil, nil, 2, 20000, "cable/cable2")
 		local RopeDist = math.ceil(playa.EZropeData.Ent:GetPos():Distance(position))
+		playa.EZropeData = nil
 		
 		-- Determine which entity is the producer
 		-- For POWER connections: producer has EZpowerProducer = true
-		-- A producer will never be a consumer, so we only need to check which is the producer
 		local Ent1IsProducer = Ent1.EZpowerProducer == true
 		local Ent2IsProducer = Ent2.EZpowerProducer == true
-		
+
 		-- Determine producer and consumer entities
-		local Producer, Consumer, PlugPos, UseRope
-		
-		if Ent1IsProducer then
-			-- Ent1 is producer, Ent2 is consumer/crate/power bank
-			Producer = Ent1
-			Consumer = Ent2
-			PlugPos = Ent2:WorldToLocal(position)
-			UseRope = Rope
-		elseif Ent2IsProducer then
+		local Producer, Consumer, PlugPos
+
+		if not(Ent1IsProducer) and Ent2IsProducer then
 			-- Ent2 is producer, Ent1 is consumer/crate/power bank - swap order
 			Producer = Ent2
 			Consumer = Ent1
-			PlugPos = Ent1:WorldToLocal(position)
-			-- Remove the old rope and let CreateResourceConnection create a new one with correct order
-			if IsValid(Rope) then Rope:Remove() end
-			UseRope = nil
+			PlugPos = Ent2:WorldToLocal(position)
 		else
-			-- Fallback: try original order first (neither is clearly a producer)
 			Producer = Ent1
 			Consumer = Ent2
-			PlugPos = Ent2:WorldToLocal(position)
-			UseRope = Rope
+			PlugPos = Ent1:WorldToLocal(position)
 		end
+
+		print(Producer, Consumer, PlugPos, RopeDist)
 		
-		if JMod.CreateResourceConnection(Producer, Consumer, JMod.EZ_RESOURCE_TYPES.POWER, PlugPos, RopeDist, UseRope) then
-			local effectdata = EffectData()
-			effectdata:SetOrigin(position)
-			effectdata:SetScale(1)
-			util.Effect("Sparks", effectdata)
+		local Cable = JMod.CreateResourceConnection(Producer, Consumer, JMod.EZ_RESOURCE_TYPES.POWER, PlugPos, RopeDist)
+		print(Cable)
+		
+		if IsValid(Cable) then
+			if IsValid(Rope) then Rope:Remove() end
 		end
-		playa.EZropeData = nil
+
+		local effectdata = EffectData()
+		effectdata:SetOrigin(position)
+		effectdata:SetScale(1)
+		util.Effect("Sparks", effectdata)
 	end
 	JMod.LuaConfig.BuildFuncs.EZchain = function(playa, position, angles)
 		JMod.Rope(playa, nil, nil, 2, 50000, "cable/mat_jack_gmod_chain")
