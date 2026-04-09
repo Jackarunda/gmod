@@ -527,25 +527,28 @@ function SWEP:SecondaryAttack()
 end
 
 function SWEP:OnDrop()
-	local Kit = ents.Create("ent_jack_gmod_ezmedkit")
-	local Pos, Ang = self:GetPos(), self:GetAngles()
-	if IsValid(self.EZdropper) and self.EZdropper:IsPlayer() then
-		local AimPos, AimVec = self.EZdropper:GetShootPos(), self.EZdropper:GetAimVector()
-		local PlaceTr = util.QuickTrace(AimPos, AimVec * 60, {self, self.EZdropper})
-		Pos = PlaceTr.HitPos + PlaceTr.HitNormal * 5
-	end
-	Kit:SetPos(Pos)
-	Kit:SetAngles(Ang)
-	Kit:Spawn()
-	Kit:Activate()
-	Kit:SetSupplies(self:GetSupplies())
-	local Phys = Kit:GetPhysicsObject()
+	timer.Simple(0, function()
+		if not IsValid(self) then return end
+		local Kit = ents.Create("ent_jack_gmod_ezmedkit")
+		local Pos, Ang = self:GetPos(), self:GetAngles()
+		if IsValid(self.EZdropper) and self.EZdropper:IsPlayer() then
+			local AimPos, AimVec = self.EZdropper:GetShootPos(), self.EZdropper:GetAimVector()
+			local PlaceTr = util.QuickTrace(AimPos, AimVec * 60, {self, self.EZdropper})
+			Pos = PlaceTr.HitPos + PlaceTr.HitNormal * 5
+		end
+		Kit:SetPos(Pos)
+		Kit:SetAngles(Ang)
+		Kit:Spawn()
+		Kit:Activate()
+		Kit:SetSupplies(self:GetSupplies())
+		local Phys = Kit:GetPhysicsObject()
 
-	if Phys then
-		Phys:SetVelocity(self:GetPhysicsObject():GetVelocity() / 2)
-	end
+		if Phys then
+			Phys:SetVelocity(self:GetPhysicsObject():GetVelocity() / 2)
+		end
 
-	self:Remove()
+		self:Remove()
+	end)
 end
 
 function SWEP:HealEffect(Ent)

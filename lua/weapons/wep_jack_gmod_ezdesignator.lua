@@ -256,23 +256,26 @@ function SWEP:Think()
 end
 
 function SWEP:OnDrop()
-	local Owner = self.EZdropper
-	if IsValid(Owner) then
-		local Kit = ents.Create("ent_jack_gmod_ezdesignator")
-		local Pos, Ang = self:GetPos(), self:GetAngles()
-		if IsValid(self.EZdropper) and self.EZdropper:IsPlayer() then
-			local AimPos, AimVec = self.EZdropper:GetShootPos(), self.EZdropper:GetAimVector()
-			local PlaceTr = util.QuickTrace(AimPos, AimVec * 60, {self, self.EZdropper})
-			Pos = PlaceTr.HitPos + PlaceTr.HitNormal * 5
+	timer.Simple(0, function()
+		if not IsValid(self) then return end
+		local Owner = self.EZdropper
+		if IsValid(Owner) then
+			local Kit = ents.Create("ent_jack_gmod_ezdesignator")
+			local Pos, Ang = self:GetPos(), self:GetAngles()
+			if IsValid(self.EZdropper) and self.EZdropper:IsPlayer() then
+				local AimPos, AimVec = self.EZdropper:GetShootPos(), self.EZdropper:GetAimVector()
+				local PlaceTr = util.QuickTrace(AimPos, AimVec * 60, {self, self.EZdropper})
+				Pos = PlaceTr.HitPos + PlaceTr.HitNormal * 5
+			end
+			Kit:SetPos(Pos)
+			Kit:SetAngles(Ang)
+			Kit:Spawn()
+			Kit:Activate()
+			Kit:GetPhysicsObject():SetVelocity(Owner:GetVelocity())
+			Kit.Electricity = self:GetElectricity()
+			self:Remove()
 		end
-		Kit:SetPos(Pos)
-		Kit:SetAngles(Ang)
-		Kit:Spawn()
-		Kit:Activate()
-		Kit:GetPhysicsObject():SetVelocity(Owner:GetVelocity())
-		Kit.Electricity = self:GetElectricity()
-		self:Remove()
-	end
+	end)
 end
 
 local Vignet = Material("mats_jack_gmod_sprites/vignette.png")

@@ -230,27 +230,30 @@ end
 
 --
 function SWEP:OnDrop()
-	local Bucket = ents.Create("ent_jack_gmod_ezbucket")
-	local Pos, Ang = self:GetPos(), self:GetAngles()
-	if IsValid(self.EZdropper) and self.EZdropper:IsPlayer() then
-		local AimPos, AimVec = self.EZdropper:GetShootPos(), self.EZdropper:GetAimVector()
-		local PlaceTr = util.QuickTrace(AimPos, AimVec * 60, {self, self.EZdropper})
-		Pos = PlaceTr.HitPos + PlaceTr.HitNormal * 5
-	end
-	Bucket:SetPos(Pos)
-	Bucket:SetAngles(Ang)
-	Bucket:Spawn()
-	Bucket:Activate()
+	timer.Simple(0, function()
+		if not IsValid(self) then return end
+		local Bucket = ents.Create("ent_jack_gmod_ezbucket")
+		local Pos, Ang = self:GetPos(), self:GetAngles()
+		if IsValid(self.EZdropper) and self.EZdropper:IsPlayer() then
+			local AimPos, AimVec = self.EZdropper:GetShootPos(), self.EZdropper:GetAimVector()
+			local PlaceTr = util.QuickTrace(AimPos, AimVec * 60, {self, self.EZdropper})
+			Pos = PlaceTr.HitPos + PlaceTr.HitNormal * 5
+		end
+		Bucket:SetPos(Pos)
+		Bucket:SetAngles(Ang)
+		Bucket:Spawn()
+		Bucket:Activate()
 
-	Bucket:SetWater(self:GetWater())
+		Bucket:SetWater(self:GetWater())
 
-	local Phys = Bucket:GetPhysicsObject()
+		local Phys = Bucket:GetPhysicsObject()
 
-	if Phys then
-		Bucket:SetVelocity(self:GetPhysicsObject():GetVelocity() / 2)
-	end
+		if Phys then
+			Bucket:SetVelocity(self:GetPhysicsObject():GetVelocity() / 2)
+		end
 
-	self:Remove()
+		self:Remove()
+	end)
 end
 
 function SWEP:OnRemove()
