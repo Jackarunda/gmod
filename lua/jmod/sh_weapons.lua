@@ -953,7 +953,7 @@ elseif SERVER then
 			local MaxAmmo = (game.GetAmmoMax(ent) * JMod.Config.Weapons.AmmoCarryLimitMult * ArmorAmmoCarryMult)
 			local CurrentAmmo = ply:GetAmmoCount(ent)
 			local SpaceLeftInPlayerInv = MaxAmmo - CurrentAmmo
-			local AmtToGive = math.min(SpaceLeftInPlayerInv, noRemove)
+			local AmtToGive = math.floor(math.min(SpaceLeftInPlayerInv, noRemove))
 
 			if AmtToGive > 0 then
 				ply:GiveAmmo(AmtToGive, ent)
@@ -981,7 +981,7 @@ elseif SERVER then
 						local SpaceLeftInPlayerInv = PrimMax - CurrentAmmo
 						local AmmoPerResourceUnit = PrimMax / 30
 						local ResourceUnitPerAmmo = 1 / AmmoPerResourceUnit
-						local AmtToGive = math.min(PrimSize, math.floor(ResourceLeftInBox / ResourceUnitPerAmmo), SpaceLeftInPlayerInv)
+						local AmtToGive = math.floor(math.min(PrimSize, math.floor(ResourceLeftInBox / ResourceUnitPerAmmo), SpaceLeftInPlayerInv))
 						if (AmtToGive > 0) and (ply:GetAmmoCount(PrimType) < PrimMax) then
 							ply:GiveAmmo(AmtToGive, PrimType)
 							ent:SetResource(ResourceLeftInBox - math.ceil(AmtToGive * ResourceUnitPerAmmo))
