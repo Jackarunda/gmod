@@ -609,6 +609,11 @@ function JMod.GetPackagableObject(packager, origin, dir)
 			return nil, "device must be turned off to package"
 		end
 
+		if Ent.JModInv then
+
+			return nil, "inventory must be empty to package"
+		end
+
 		return Ent
 	end
 

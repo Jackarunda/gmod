@@ -9,6 +9,7 @@ ENT.Spawnable = false
 ENT.AdminSpawnable = false
 ---
 ENT.EZunpackagable = true
+ENT.JModEZstorable = true
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.DamageThreshold = 120
 
@@ -318,6 +319,7 @@ if SERVER then
 				local DupeInfo = {}
 				DupeInfo.IsSecondaryBox = true
 				DupeInfo.PackageNum = PackageNum
+				DupeInfo.PrimaryBoxID = Contents:GetParent():EntIndex()
 				duplicator.StoreEntityModifier(self, "EZCompactBoxContents", DupeInfo)
 			end
 		end

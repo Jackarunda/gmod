@@ -1547,11 +1547,28 @@ local function CreateInvButton(parent, itemTable, x, y, w, h, scrollFrame, invEn
 	end
 
 	local Buttalony, Ply = vgui.Create("DButton", scrollFrame), LocalPlayer()
-	local Matty = nil
+	local Matty, HelpName = nil, itemTable.name
 	if string.find(itemTable.ent:GetClass(), "prop_") then
 		Buttalony:Remove()
 		Buttalony = vgui.Create("SpawnIcon", scrollFrame)
 		Buttalony:SetModel(itemTable.name)
+	elseif itemTable.ent:GetClass() == "ent_jack_gmod_ezcompactbox" then 
+		local Contents = itemTable.ent:GetContents()
+		if IsValid(Contents) then
+			if string.find(Contents:GetClass(), "prop_") then
+				local ModelString = Contents:GetModel()
+				Buttalony:Remove()
+				Buttalony = vgui.Create("SpawnIcon", scrollFrame)
+				Buttalony:SetModel(ModelString)
+				HelpName = (string.Replace(ModelString, ".mdl", "")) .. " [Boxed]"
+			else
+				Matty = CacheSelectionMenuIcon(Contents.PrintName or Contents:GetClass(), Contents:GetClass())
+				if Matty then
+					Buttalony:SetMaterial(Matty)
+				end
+				HelpName = (Contents.PrintName or Contents:GetClass()) .. " [Boxed]"
+			end
+		end
 	else
 		Matty = CacheSelectionMenuIcon(itemTable.name, itemTable.ent:GetClass())
 		if Matty then
@@ -1559,7 +1576,7 @@ local function CreateInvButton(parent, itemTable, x, y, w, h, scrollFrame, invEn
 		end
 	end
 
-	Buttalony:SetText("")--itemTable.name)
+	Buttalony:SetText("")--HelpName)
 	Buttalony:SetSize(w, h)
 	Buttalony:SetPos(x, y)
 	Buttalony:SetCursor("hand")
@@ -1573,10 +1590,10 @@ local function CreateInvButton(parent, itemTable, x, y, w, h, scrollFrame, invEn
 			surface.SetDrawColor(255, 255, 255, 100)
 			surface.DrawOutlinedRect(0, 0, w, h, 1)
 		end
-		--draw.SimpleText(itemTable.name, "DermaDefault", Buttalony:GetWide() / 2, 40, TextColors.ButtonText, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+		--draw.SimpleText(HelpName, "DermaDefault", Buttalony:GetWide() / 2, 40, TextColors.ButtonText, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 	end
 
-	local HelpStr = itemTable.name..":\n"..(itemTable.vol or "N/A").." Volume"
+	local HelpStr = HelpName..":\n"..(itemTable.vol or "N/A").." Volume"
 	
 	Buttalony:SetTooltip(HelpStr)
 	

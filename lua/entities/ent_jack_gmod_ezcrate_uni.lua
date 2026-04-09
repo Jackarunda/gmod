@@ -70,7 +70,7 @@ if SERVER then
 
 		local Vol = JMod.GetItemVolumeWeight(ent)
 		if Vol ~= nil then
-			if ent.JModEZstorable and ent:IsPlayerHolding() then
+			if ent.JModEZstorable and ent:IsPlayerHolding() and not (ent.JModInv) then
 				self.NextLoad = CurTime() + 0.5
 				timer.Simple(0, function()
 					if IsValid(self) and IsValid(ent) then
