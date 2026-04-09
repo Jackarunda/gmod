@@ -3020,32 +3020,22 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 	JMod.LuaConfig.BuildFuncs.EZcable = function(playa, position, angles)
 		local Ent1 = playa.EZropeData.Ent
 		local Rope, Ent2 = JMod.Rope(playa, nil, nil, 2, 20000, "cable/cable2")
-		local RopeDist = math.ceil(playa.EZropeData.Ent:GetPos():Distance(position))
+		local Ent1PlugPos = playa.EZropeData.Pos or Ent1.EZpowerSocketPos or Ent1:OBBCenter()
+		--local RopeDist = math.ceil(Ent1:LocalToWorld(Ent1PlugPos):Distance(position))
 		playa.EZropeData = nil
 		
-		-- Determine which entity is the producer
-		-- For POWER connections: producer has EZpowerProducer = true
 		local Ent1IsProducer = Ent1.EZpowerProducer == true
 		local Ent2IsProducer = Ent2.EZpowerProducer == true
-
-		-- Determine producer and consumer entities
-		local Producer, Consumer, PlugPos
+		local Producer, Consumer, Ent2PlugPos = Ent1, Ent2, Ent2.EZpowerSocketPos or Ent2:WorldToLocal(position)
 
 		if not(Ent1IsProducer) and Ent2IsProducer then
-			-- Ent2 is producer, Ent1 is consumer/crate/power bank - swap order
 			Producer = Ent2
 			Consumer = Ent1
-			PlugPos = Ent2:WorldToLocal(position)
-		else
-			Producer = Ent1
-			Consumer = Ent2
-			PlugPos = Ent1:WorldToLocal(position)
+			Ent2PlugPos = Ent2.EZpowerSocketPos or Ent2:WorldToLocal(position)
 		end
 
-		print(Producer, Consumer, PlugPos, RopeDist)
-		
-		local Cable = JMod.CreateResourceConnection(Producer, Consumer, JMod.EZ_RESOURCE_TYPES.POWER, PlugPos, RopeDist)
-		print(Cable)
+		local CableDist = math.ceil(Ent1:LocalToWorld(Ent1PlugPos):Distance(Ent2:LocalToWorld(Ent2PlugPos)))
+		local Cable = JMod.CreateResourceConnection(Producer, Consumer, JMod.EZ_RESOURCE_TYPES.POWER, Ent1PlugPos, Ent2PlugPos, CableDist)
 		
 		if IsValid(Cable) then
 			if IsValid(Rope) then Rope:Remove() end

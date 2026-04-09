@@ -64,19 +64,25 @@ if SERVER then
 							local ConnectionRange = self.EZconnector.MaxConnectionRange or 1000
 							local PlayerHolding = nil
 							local NearbyPlayers = ents.FindInSphere(self:GetPos(), 100)
+							
 							for i = 1, #NearbyPlayers do
 								local ply = NearbyPlayers[i]
 								if ply:IsPlayer() then--and (JMod.GetPlayerHeldEntity(ply) == self) then
 									PlayerHolding = ply
 								end
 							end
+							
+							local ProducerPluginPos = self.EZconnector.EZpowerSocketPos or self.EZconnector:OBBCenter()
+							local ConsumerPluginPos = Ent.EZpowerSocketPos or Ent:OBBCenter()
+							
 							if IsValid(PlayerHolding) and PlayerHolding:KeyDown(JMod.Config.General.AltFunctionKey) then
-								local PluginPos = Ent.EZpowerSocketPos or Ent:OBBCenter()
-								local DistanceBetween = (self.EZconnector:GetPos() - Ent:LocalToWorld(PluginPos)):Length()
-								ConnectionRange = math.min(ConnectionRange, DistanceBetween + 10)
+								local DistanceBetween = self.EZconnector:LocalToWorld(ProducerPluginPos):Distance(Ent:LocalToWorld(ConsumerPluginPos))
+								ConnectionRange = math.min(ConnectionRange, DistanceBetween + 20)
 							end
+							
 							local ResourceType = self.EZconnectionResourceType or JMod.EZ_RESOURCE_TYPES.POWER
-							local Connected = JMod.CreateResourceConnection(self.EZconnector, Ent, ResourceType, Ent:WorldToLocal(data.HitPos), ConnectionRange)
+							local Connected = JMod.CreateResourceConnection(self.EZconnector, Ent, ResourceType, ProducerPluginPos, ConsumerPluginPos, ConnectionRange)
+							
 							if Connected then SafeRemoveEntity(self) end
 						else
 							self.NextStick = Time + 1
