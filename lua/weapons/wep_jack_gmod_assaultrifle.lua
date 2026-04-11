@@ -18,8 +18,13 @@ SWEP.Delay = 60 / 750 -- 60/RPM.
 
 SWEP.Firemodes = {
 	{
-		Mode = 2,
+		Mode = 3,
 		PrintName = "FULL-AUTO"
+	},
+	{
+		Mode = -3,
+		PrintName = "BURST-FIRE",
+
 	},
 	{
 		Mode = 1,

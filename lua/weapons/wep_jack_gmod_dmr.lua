@@ -19,6 +19,11 @@ SWEP.Delay = 60 / 550 -- 60/RPM.
 
 SWEP.Firemodes = {
 	{
+		Mode = 2,
+		PrintName = "FULL-AUTO",
+		Mult_RPM = 0.8,
+	},
+	{
 		Mode = 1,
 		PrintName = "SEMI-AUTO"
 	},
@@ -63,8 +68,8 @@ SWEP.Attachments = {
 		Bone = "tag_weapon",
 		Offset = {
 			vang = Angle(0, 0, 0),
-			vpos = Vector(10, 0, 3.8),
-			wpos = Vector(10, .8, -7),
+			vpos = Vector(11, 0, 3.8),
+			wpos = Vector(12, .8, -7.6),
 			wang = Angle(-10.393, 0, 180)
 		},
 		-- remove Slide because it ruins my life

@@ -412,7 +412,7 @@ JMod.AmmoTable = {
 		carrylimit = 30,
 		ent = "ent_jack_gmod_ezarrow",
 		armorpiercing = .7,
-		basedmg = 75,
+		basedmg = 80,
 		ammoboxEnt = "ent_jack_gmod_ezammobox_a"
 	},
 	["Black Powder Paper Cartridge"] = {

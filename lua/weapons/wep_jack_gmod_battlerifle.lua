@@ -18,6 +18,11 @@ SWEP.Delay = 60 / 550 -- 60/RPM.
 
 SWEP.Firemodes = {
 	{
+		Mode = 2,
+		PrintName = "FULL-AUTO",
+		Mult_RPM = 0.8,
+	},
+	{
 		Mode = 1,
 		PrintName = "SEMI-AUTO"
 	},
@@ -53,6 +58,23 @@ SWEP.ActiveAng = Angle(1.8, 1.5, -2.5)
 SWEP.HolsterPos = Vector(6, -1, 0)
 SWEP.HolsterAng = Angle(-20, 50, 0)
 SWEP.BarrelLength = 42
+
+SWEP.Attachments = {
+	{
+		PrintName = "Underbarrel",
+		Slot = {"ez_bipod"},
+		Bone = "tag_weapon",
+		Offset = {
+			vpos = Vector(20, 0, 2),
+			vang = Angle(0, 0, 0),
+			wpos = Vector(25, .6, -7.5),
+			wang = Angle(-15, 0, 180)
+		},
+		-- remove Slide because it ruins my life
+		--Installed = "underbarrel_jack_tripod"
+	},
+
+}
 
 SWEP.Animations = {
 	["idle"] = {
