@@ -950,7 +950,7 @@ elseif SERVER then
 
 		if isnumber(ent) and game.GetAmmoName(ent) then
 			-- it's an ammo type
-			local MaxAmmo = (game.GetAmmoMax(ent) * JMod.Config.Weapons.AmmoCarryLimitMult * ArmorAmmoCarryMult)
+			local MaxAmmo = math.floor(game.GetAmmoMax(ent) * JMod.Config.Weapons.AmmoCarryLimitMult * ArmorAmmoCarryMult)
 			local CurrentAmmo = ply:GetAmmoCount(ent)
 			local SpaceLeftInPlayerInv = MaxAmmo - CurrentAmmo
 			local AmtToGive = math.floor(math.min(SpaceLeftInPlayerInv, noRemove))
@@ -970,7 +970,7 @@ elseif SERVER then
 
 				--[[ PRIMARY --]]
 				if PrimName then
-					PrimMax = PrimMax * JMod.Config.Weapons.AmmoCarryLimitMult * ArmorAmmoCarryMult
+					PrimMax = math.floor(PrimMax * JMod.Config.Weapons.AmmoCarryLimitMult * ArmorAmmoCarryMult)
 					local IsPrimMunitions = IsAmmoOnTable(PrimName, JMod.Config.Weapons.AmmoTypesThatAreMunitions)
 					if (IsPrimMunitions == IsMunitionBox) and not(IsAmmoOnTable(PrimName, JMod.Config.Weapons.WeaponAmmoBlacklist)) then
 						if PrimSize == -1 then
@@ -1001,7 +1001,7 @@ elseif SERVER then
 				if ent:GetResource() <= 0 then return end
 				--[[ Secondary --]]
 				if SecName then
-					SecMax = SecMax * JMod.Config.Weapons.AmmoCarryLimitMult * ArmorAmmoCarryMult
+					SecMax = math.floor(SecMax * JMod.Config.Weapons.AmmoCarryLimitMult * ArmorAmmoCarryMult)
 					local IsSecMunitions = IsAmmoOnTable(SecName, JMod.Config.Weapons.AmmoTypesThatAreMunitions)
 					if (IsSecMunitions == IsMunitionBox) and not(IsAmmoOnTable(SecName, JMod.Config.Weapons.WeaponAmmoBlacklist)) then
 						if SecSize == -1 then
@@ -1034,7 +1034,7 @@ elseif SERVER then
 			-- it's a specific ammo box or ammo entity
 			local Typ, CountInBox = ent.EZammo, ent:GetCount()
 			local AmmoInfo, CurrentAmmo = JMod.GetAmmoSpecs(Typ), ply:GetAmmoCount(Typ)
-			local SpaceLeftInPlayerInv = (AmmoInfo.carrylimit * ArmorAmmoCarryMult * JMod.Config.Weapons.AmmoCarryLimitMult) - CurrentAmmo
+			local SpaceLeftInPlayerInv = math.floor((AmmoInfo.carrylimit * ArmorAmmoCarryMult * JMod.Config.Weapons.AmmoCarryLimitMult)) - CurrentAmmo
 			local AmtToGive = math.min(SpaceLeftInPlayerInv, CountInBox)
 
 			if AmtToGive > 0 then
