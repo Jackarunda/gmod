@@ -2,8 +2,10 @@
 
 local function FindPlyMemory()
 	local files, folders = file.Find("screenshots/*.jpg", "MOD")
-	if not(files) and not next(files) then return nil end
-	return Material("../screenshots/"..tostring(table.Random(files)))
+	if not(files) or #files == 0 then return nil end
+	local fileName = table.Random(files)
+	if not fileName then return nil end
+	return Material("../screenshots/"..fileName)
 end
 
 local BlackFadeTop, BlackFadeBottom = Material("png_jack_gmod_blackfadetop.png"), Material("png_jack_gmod_blackfadebottom.png")
