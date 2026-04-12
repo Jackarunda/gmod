@@ -42,11 +42,9 @@ if SERVER then
 		self.Parachuted = self:GetDTBool(0)
 
 		if self.Parachuted then
-			--self:GetPhysicsObject():SetAngleDragCoefficient(40)
 			local Chute = ents.Create("ent_jack_gmod_ezparachute")
 			Chute:SetPos(self:LocalToWorld(self:OBBCenter()))
 			Chute:SetNW2Entity("Owner", self)
-			--Chute.ParachuteName = "Parachute"
 			Chute.ParachuteMdl = "models/jessev92/rnl/items/parachute_deployed.mdl"
 			Chute.Drag = JMod.Config.RadioSpecs.ParachuteDragMult
 			Chute.MdlOffset = 50
@@ -151,7 +149,10 @@ if SERVER then
 		
 		if ItemNameParts and ItemNameParts[1] == "FUNC" then
 			if ItemNameParts[2] and JMod.LuaConfig.BuildFuncs[ItemNameParts[2]] then
-				JMod.LuaConfig.BuildFuncs[ItemNameParts[2]](owner, pos + Vector(0, 0, 5), Angle(0, 0, 0))
+				local Result = JMod.LuaConfig.BuildFuncs[ItemNameParts[2]](owner, pos + Vector(0, 0, 5), Angle(0, 0, 0))
+				if IsValid(Result) then
+					return Result
+				end
 			end
 		else
 			local Yay = ents.Create(itemClass)
@@ -192,6 +193,8 @@ if SERVER then
 					end
 				end)
 			end
+
+			return Yay
 		end
 	end
 
@@ -199,18 +202,23 @@ if SERVER then
 		local typ = type(contents)
 
 		if typ == "string" then
-			SpawnItem(contents, pos, owner)
-
-			return
+			local Result = SpawnItem(contents, pos, owner)
+			if IsValid(Result) then
+				return {Result}
+			end
 		end
 
 		if typ == "table" then
+			local ResultTable = {}
 			for k, v in pairs(contents) do
 				timer.Simple(k / 10, function()
 					typ = type(v)
 
 					if typ == "string" then
-						SpawnItem(v, pos, owner)
+						local Result = SpawnItem(v, pos, owner)
+						if IsValid(Result) then
+							table.insert(ResultTable, Result)
+						end
 					elseif typ == "table" then
 						-- special case, this is a randomized table
 						if v[1] == "RAND" then
@@ -222,19 +230,29 @@ if SERVER then
 							end
 
 							for i = 1, Amt do
-								SpawnItem(table.Random(Items), pos, owner)
+								local Result = SpawnItem(table.Random(Items), pos, owner)
+								if IsValid(Result) then
+									table.insert(ResultTable, Result)
+								end
 							end
 						else -- the only other supported table contains a count as [2] and potentially a resourceAmt as [3]
 							for i = 1, v[2] or 1 do
 								timer.Simple(i / 10, function()
-									SpawnItem(v[1], pos, owner, v[3] or nil)
+									local Result = SpawnItem(v[1], pos, owner, v[3] or nil)
+									if IsValid(Result) then
+										table.insert(ResultTable, Result)
+									end
 								end)
 							end
 						end
 					end
 				end)
 			end
+
+			return ResultTable
 		end
+
+		return {}
 	end
 
 	

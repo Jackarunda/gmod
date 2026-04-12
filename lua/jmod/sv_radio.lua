@@ -119,8 +119,8 @@ hook.Add("Think", "JMod_RADIO_THINK", function()
 					else
 						JMod.NotifyAllRadios(stationID, "drop failed")
 					end
-					if ReturnToBaseModifier then
-						station.nextDeliveryTime = Time + math.ceil(math.min(JMod.Config.RadioSpecs.DeliveryTimeMult * math.Rand(30, 60), ReturnToBaseModifier))
+					if isnumber(ReturnToBaseModifier) then
+						station.nextDeliveryTime = Time + math.ceil(ReturnToBaseModifier)
 					end
 
 					return 
