@@ -15,7 +15,7 @@ ENT.BreakMats = {MAT_CONCRETE, MAT_EGGSHELL, MAT_GRATE, MAT_CLIP, MAT_METAL, MAT
 ENT.EZammo = "Arrow"
 ENT.CollisionGroup = COLLISION_GROUP_NONE
 ENT.NoPhys = true
-local ThinkRate = 33 --Hz
+--local ThinkRate = 33 --Hz
 
 ---
 if SERVER then
@@ -152,6 +152,7 @@ if SERVER then
 
 		local Time, Pos, Dir, Speed = CurTime(), self:GetPos(), self.CurVel:GetNormalized(), self.CurVel:Length()
 		local Tr
+		local DeltaTime = FrameTime()
 
 		if self.InitialTrace then
 			Tr = self.InitialTrace
@@ -160,12 +161,12 @@ if SERVER then
 			local Filter = {self}
 
 			table.insert(Filter, self.Owner)
-			--Tr=util.TraceLine({start=Pos,endpos=Pos+self.CurVel/ThinkRate,filter=Filter})
+			--Tr=util.TraceLine({start=Pos,endpos=Pos+self.CurVel*DeltaTime,filter=Filter})
 			local Mask = MASK_SHOT
 
 			Tr = util.TraceLine({
 				start = Pos,
-				endpos = Pos + self.CurVel / ThinkRate,
+				endpos = Pos + self.CurVel * DeltaTime,
 				filter = Filter,
 				mask = Mask
 			})
@@ -179,9 +180,11 @@ if SERVER then
 			end
 
 			self:Impact(Tr)
+			debugoverlay.Line(Pos, Tr.HitPos, 2, Color(255, 0, 0), true)
 		else
-			self:SetPos(Pos + self.CurVel / ThinkRate)
-			self.CurVel = self.CurVel + physenv.GetGravity() / ThinkRate * 2
+			self:SetPos(Pos + self.CurVel * DeltaTime)
+			self.CurVel = self.CurVel + physenv.GetGravity() * 2 * DeltaTime
+			debugoverlay.Line(Pos, self:GetPos(), 2, Color(0, 255, 255), true)
 		end
 
 		if IsValid(self) then
@@ -191,7 +194,7 @@ if SERVER then
 				return
 			end
 
-			self:NextThink(Time + (1 / ThinkRate))
+			self:NextThink(Time)
 		end
 
 		LastTime = Time

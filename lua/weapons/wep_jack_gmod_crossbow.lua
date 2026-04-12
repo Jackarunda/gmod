@@ -4,7 +4,7 @@ JMod.SetWepSelectIcon(SWEP, "entities/ent_jack_gmod_ezweapon_crossbow", true)
 SWEP.Slot = 3
 SWEP.ViewModel = "models/weapons/c_jmod_crossbow.mdl"
 SWEP.WorldModel = "models/weapons/w_jmod_crossbow.mdl"
-SWEP.ViewModelFOV = 75
+SWEP.ViewModelFOV = 80
 SWEP.BodyHolsterSlot = "back"
 SWEP.BodyHolsterAng = Angle(90, -103, 10)
 SWEP.BodyHolsterAngL = Angle(90, -103, -10)
@@ -22,7 +22,7 @@ SWEP.BodyHolsterScale = .9
 --]]
 JMod.ApplyAmmoSpecs(SWEP, "Arrow")
 SWEP.ShootEntity = "ent_jack_gmod_ezarrow"
-SWEP.MuzzleVelocity = 7000
+SWEP.MuzzleVelocity = 8000
 SWEP.ShootEntityOffset = Vector(-1, 0, -2)
 SWEP.ShootEntityAngle = Angle(0, 0, 0)
 SWEP.ShootEntityAngleCorrection = Angle(0, 0, 0)
@@ -89,7 +89,7 @@ SWEP.Attachments = {
 		Offset = {
 			vang = Angle(0, 0, 0),
 			vpos = Vector(5, 0, 4.5),
-			wpos = Vector(12, .8, -7.6),
+			wpos = Vector(12, .8, -9),
 			wang = Angle(-10.393, 0, 180)
 		},
 		--Installed = "optic_jack_scope_medium"

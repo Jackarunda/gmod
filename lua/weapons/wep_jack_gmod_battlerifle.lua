@@ -73,7 +73,17 @@ SWEP.Attachments = {
 		-- remove Slide because it ruins my life
 		--Installed = "underbarrel_jack_tripod"
 	},
-
+	{
+		PrintName = "Muzzle",
+		Slot = {"ez_muzzle"},
+		Bone = "tag_weapon",
+		Offset = {
+			vpos = Vector(-20, 0, 0.8),
+			vang = Angle(0, 0, 0),
+			wpos = Vector(-14, 0.65, 1.5),
+			wang = Angle(-12, 0, 180)
+		},
+	},
 }
 
 SWEP.Animations = {
