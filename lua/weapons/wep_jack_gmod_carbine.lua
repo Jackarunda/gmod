@@ -59,6 +59,33 @@ SWEP.HolsterPos = Vector(4, -4, 0)
 SWEP.HolsterAng = Angle(-20, 50, 0)
 SWEP.BarrelLength = 28
 
+SWEP.Attachments = {
+	{
+		PrintName = "Optic",
+		DefaultAttName = "Iron Sights",
+		Slot = {"ez_optic"},
+		Bone = "tag_weapon",
+		Offset = {
+			vpos = Vector(4, .25, 4.8),
+			wpos = Vector(10, .8, -8.4),
+			wang = Angle(-10.393, 0, 180)
+		},
+		-- remove Slide because it ruins my life
+		--Installed = "optic_jack_scope_low"
+	},
+	{
+		PrintName = "Tactical",
+		Slot = {"ez_tac_rail"},
+		Bone = "tag_weapon",
+		Offset = {
+			vang = Angle(-2, -1, 100),
+			vpos = Vector(13, -1, 2.2),
+			wang = Angle(-10.4, 0, -80),
+			wpos = Vector(20, 2.2, -7.2)
+		}
+	},
+}
+
 SWEP.Animations = {
 	["idle"] = {
 		Source = "idle",
