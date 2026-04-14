@@ -9,7 +9,6 @@ local function FindPlyMemory()
 end
 
 local BlackFadeTop, BlackFadeBottom = Material("png_jack_gmod_blackfadetop.png"), Material("png_jack_gmod_blackfadebottom.png")
---local NightmareGnome = ents.CreateClientProp("models/props_junk/gnome.mdl")
 local NextMemTime, CurrentMemory, TimeToDisplay = 0, nil, 12
 local WasSleepy = false
 local ColorableVignette = Material("mats_jack_gmod_sprites/hard_vignette_colorable.png")
@@ -33,12 +32,15 @@ hook.Add("HUDPaintBackground", "JMOD_HUDBG", function()
 					Mat = Material(maskMat)
 					MaskMats[maskMat] = Mat
 				end
-
+				local MaskFoV = math.min(math.max(ply:GetFOV(), 1), 100)
+				local WidthMult = 100 / MaskFoV
+				local rw = W * WidthMult + 2
+				local rx = (W - rw) / 2
 				surface.SetMaterial(Mat)
 				surface.SetDrawColor(Col.r * 255, Col.g * 255, Col.b * 255, 255)
-				surface.DrawTexturedRect(-1, -1, ScrW() + 2, ScrH() + 2)
-				surface.DrawTexturedRect(-1, -1, ScrW() + 2, ScrH() + 2)
-				surface.DrawTexturedRect(-1, -1, ScrW() + 2, ScrH() + 2)
+				surface.DrawTexturedRect(rx, -1, rw, H + 2)
+				surface.DrawTexturedRect(rx, -1, rw, H + 2)
+				surface.DrawTexturedRect(rx, -1, rw, H + 2)
 			end
 		end
 

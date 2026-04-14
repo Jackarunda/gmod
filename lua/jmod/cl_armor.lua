@@ -64,9 +64,9 @@ function JMod.ArmorPlayerModelDraw(ply, nomerge)
 					local Index = ply:LookupBone(ArmorInfo.bon)
 
 					if Index then
-						local Matric = ply:GetBoneMatrix(Index)
-						if Matric then
-							local Pos, Ang = Matric:GetTranslation(), Matric:GetAngles()
+						local BoneMatrix = ply:GetBoneMatrix(Index)
+						if BoneMatrix then
+							local Pos, Ang = BoneMatrix:GetTranslation(), BoneMatrix:GetAngles()
 
 							if Pos and Ang then
 								if not(ArmorInfo.merge) or nomerge then
@@ -77,9 +77,9 @@ function JMod.ArmorPlayerModelDraw(ply, nomerge)
 									Ang:RotateAroundAxis(Forward, ArmorInfo.ang.r)
 									Mdl:SetRenderOrigin(Pos)
 									Mdl:SetRenderAngles(Ang)
-									local Mat = Matrix()
-									Mat:Scale(ArmorInfo.siz)
-									Mdl:EnableMatrix("RenderMultiply", Mat)
+									local Matty = Matrix()
+									Matty:Scale(ArmorInfo.siz)
+									Mdl:EnableMatrix("RenderMultiply", Matty)
 								else
 									Mdl:SetupBones()
 									for i = 0, Mdl:GetBoneCount() do
