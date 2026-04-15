@@ -34,6 +34,13 @@ if SERVER then
 		self:SetUseType(SIMPLE_USE)
 		self:SetTrigger(true)
 		self.DieTime = CurTime() + 120
+		self.TrailEff = util.SpriteTrail(self, 1, Color(255, 255, 255), false, 2, 0.1, 0.2, 1 / ( 2 + 0.1 ) * 0.5, "trails/plasma")
+		if self.Owner then
+			local filter = RecipientFilter()
+			filter:AddAllPlayers()
+			filter:RemovePlayer(self.Owner)
+			self.TrailEff:SetPreventTransmit(filter, true)
+		end
 	end
 
 	function ENT:Impact(tr)
