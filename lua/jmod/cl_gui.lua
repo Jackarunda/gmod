@@ -44,6 +44,7 @@ list.Set("ContentCategoryIcons", "JMod - LEGACY Weapons", JModLegacyIcon )
 
 local BlurryMenus = CreateClientConVar("jmod_cl_blurry_menus", "1", true, true, "Enables blurry menus, not for potatoes", 0, 1)
 local SortEnabled = CreateClientConVar("jmod_cl_sort_enabled", "1", true, true, "Sorts enabled menu buttons to the top of the list", 0, 1)
+local LastColor = Color(255, 255, 255)
 local blurMat = Material("pp/blurscreen")
 local Dynamic = 0
 function EZBlurBackground(panel)
@@ -347,6 +348,19 @@ net.Receive("JMod_ColorAndArm", function()
 	end
 end)
 
+local function SendArmorColor(ent, autocolor, color, bit)
+	net.Start("JMod_ArmorColor")
+	net.WriteEntity(ent)
+	net.WriteBool(autocolor)
+	net.WriteColor(color)
+	net.WriteBit(bit)
+	net.SendToServer()
+	if not autocolor then
+		input.SetCursorPos(OldMouseX, OldMouseY)
+		LastColor = color
+	end
+end
+
 net.Receive("JMod_ArmorColor", function()
 	local Ent, UpdateColor, NextColorCheck = net.ReadEntity(), net.ReadBool(), 0
 	local Durability, MaxDurability = net.ReadFloat(), net.ReadFloat()
@@ -408,38 +422,34 @@ net.Receive("JMod_ArmorColor", function()
 	Butt:SetText("EQUIP")
 
 	function Butt:DoClick()
-		net.Start("JMod_ArmorColor")
-		net.WriteEntity(Ent)
-		net.WriteBool(false)
-		local Col = Picker:GetColor()
-		net.WriteColor(Color(Col.r, Col.g, Col.b))
-		net.WriteBit(true)
-		net.SendToServer()
+		SendArmorColor(Ent, false, Picker:GetColor(), true)
 		Frame:Close()
 	end
 
-	local ButtWhat = vgui.Create("DButton", Frame)
-	ButtWhat:SetPos(100, 265)
-	ButtWhat:SetSize(95, 50)
-	ButtWhat:SetText("AUTO-COLOR")
+	local ButtPlyColor = vgui.Create("DButton", Frame)
+	ButtPlyColor:SetPos(100, 265)
+	ButtPlyColor:SetSize(95, 25)
+	ButtPlyColor:SetText("PLYER COLOR")
 
-	function ButtWhat:DoClick()
-		net.Start("JMod_ArmorColor")
-		net.WriteEntity(Ent)
-		net.WriteBool(true)
-		net.WriteColor(LocalPlayer():GetPlayerColor():ToColor())
-		net.WriteBit(false)
-		net.SendToServer()
+	function ButtPlyColor:DoClick()
+		SendArmorColor(Ent, true, LocalPlayer():GetPlayerColor():ToColor(), false)
 		OldMouseX, OldMouseY = input.GetCursorPos()
 		Frame:Close()
 	end
+
+	local ButtLastColor = vgui.Create("DButton", Frame)
+	ButtLastColor:SetPos(100, 290)
+	ButtLastColor:SetSize(95, 25)
+	ButtLastColor:SetText("LAST COLOR")
+
+	function ButtLastColor:DoClick()
+		SendArmorColor(Ent, true, LastColor, false)
+		OldMouseX, OldMouseY = input.GetCursorPos()
+		Frame:Close()
+	end
+
 	if LocalPlayer():KeyDown(IN_SPEED) then
-		net.Start("JMod_ArmorColor")
-		net.WriteEntity(Ent)
-		net.WriteBool(false)
-		net.WriteColor(LocalPlayer():GetPlayerColor():ToColor())
-		net.WriteBit(true)
-		net.SendToServer()
+		SendArmorColor(Ent, false, LocalPlayer():GetPlayerColor():ToColor(), true)
 		Frame:Close()
 	end
 end)
@@ -1339,14 +1349,23 @@ local ArmorSlotButtons = {
 				local Col = ColorPicker:GetColor()
 				net.WriteColor(Color(Col.r, Col.g, Col.b))
 				net.SendToServer()
+				LastColor = Color(Col.r, Col.g, Col.b)
 			end
 
-			local AutoButtony = vgui.Create("DButton", Panel)
-			AutoButtony:SetPos(100, 245)
-			AutoButtony:SetSize(95, 50)
-			AutoButtony:SetText("AUTO-COLOR")
-			AutoButtony.DoClick = function()
+			local PlyColorButtony = vgui.Create("DButton", Panel)
+			PlyColorButtony:SetPos(100, 245)
+			PlyColorButtony:SetSize(95, 25)
+			PlyColorButtony:SetText("PLYER COLOR")
+			PlyColorButtony.DoClick = function()
 				ColorPicker:SetColor(LocalPlayer():GetPlayerColor():ToColor())
+			end
+
+			local LastColorButtony = vgui.Create("DButton", Panel)
+			LastColorButtony:SetPos(100, 270)
+			LastColorButtony:SetSize(95, 25)
+			LastColorButtony:SetText("LAST COLOR")
+			LastColorButtony.DoClick = function()
+				ColorPicker:SetColor(LastColor)
 			end
 
 			OpenDropdown = Panel
