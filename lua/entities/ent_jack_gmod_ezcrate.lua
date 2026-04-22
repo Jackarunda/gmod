@@ -141,13 +141,14 @@ if SERVER then
 			sound.Play("Wood_Box.Break", Pos)
 
 			if self.ChildEntity ~= "" and self:GetResource() > 0 then
-				for i = 1, math.floor(self:GetResource() / 100) do
-					local Box = ents.Create(self.ChildEntity)
-					Box:SetPos(Pos + self:GetUp() * 20)
-					Box:SetAngles(self:GetAngles())
-					Box:Spawn()
-					Box:Activate()
-				end
+                local owner = JMod.GetEZowner(self);
+				local Box = ents.Create(self.ChildEntity)
+				Box:SetPos(Pos + self:GetUp() * 20)
+				Box:SetAngles(self:GetAngles())
+				JMod.SetEZowner(Box, owner)
+				Box:Spawn()
+				Box:Activate()
+				Box:SetResource(self:GetResource())
 			end
 
 			self:Remove()
