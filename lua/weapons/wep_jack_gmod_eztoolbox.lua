@@ -927,6 +927,15 @@ function SWEP:Think()
 				local Ent, Pos = Tr.Entity, Tr.HitPos
 
 				if IsValid(Ent) then
+                    local owner = Ent:CPPIGetOwner()
+                    if owner.in_build or Ent:IsWorld() then return end
+                    if not owner.in_build then 
+                        local ownerslef = self:GetOwner()
+                        if IsValid(ownerslef) and ownerslef.in_build then
+                            return 
+                        end
+                    end
+
 					if Ent ~= self.TaskEntity or Task ~= self.CurTask then
 						self:SetTaskProgress(0)
 						self.TaskEntity = Ent
