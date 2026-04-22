@@ -257,12 +257,12 @@ function JMod.ShouldAttack(self, ent, vehiclesOnly, peaceWasNeverAnOption)
 		local OurTeam = nil
 
 		if IsValid(SelfOwner) then
-			OurTeam = SelfOwner:Team()
+			--OurTeam = SelfOwner:Team()
 			if Gaymode == "basewars" and SelfOwner.IsAlly then return not SelfOwner:IsAlly(PlayerToCheck) end
 		end
 
 		if Gaymode == "sandbox" and OurTeam == TEAM_UNASSIGNED then return PlayerToCheck:Alive() end
-		if OurTeam then return PlayerToCheck:Alive() and PlayerToCheck:Team() ~= OurTeam end
+		--if OurTeam then return PlayerToCheck:Alive() and PlayerToCheck:Team() ~= OurTeam end
 
 		return PlayerToCheck:Alive()
 	end
