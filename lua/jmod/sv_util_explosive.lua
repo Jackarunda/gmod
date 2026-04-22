@@ -183,7 +183,16 @@ function JMod.BlastDamageIgnoreWorld(pos, att, infl, dmg, range)
 	end
 end
 
-local WreckBlacklist = {"gmod_lamp", "gmod_cameraprop", "gmod_light", "ent_jack_gmod_nukeflash", "ent_jack_gmod_ezoilfire"}
+local WreckBlacklist = {
+	"gmod_lamp",
+	"gmod_cameraprop",
+	"gmod_light",
+	"ent_jack_gmod_nukeflash",
+	"ent_jack_gmod_ezoilfire",
+	"sent_prop2mesh",
+	"starfall_processor",
+	"gmod_wire_expression2"
+}
 
 function JMod.WreckBuildings(blaster, pos, power, range, ignoreVisChecks)
 	local origPower = power
@@ -223,8 +232,8 @@ function JMod.WreckBuildings(blaster, pos, power, range, ignoreVisChecks)
 						end
 						SafeRemoveEntity(prop)
 					elseif mass <= myLoosenThreshold then
-						physObj:EnableMotion(true)
-						constraint.RemoveAll(prop)
+						--physObj:EnableMotion(true)
+						--constraint.RemoveAll(prop)
 						physObj:ApplyForceOffset((propPos - pos):GetNormalized() * 1000 * DistFrac * power * mass, propPos + VectorRand() * 10)
 					else
 						physObj:ApplyForceOffset((propPos - pos):GetNormalized() * 200 * DistFrac * origPower * mass, propPos + VectorRand() * 10)
@@ -232,9 +241,6 @@ function JMod.WreckBuildings(blaster, pos, power, range, ignoreVisChecks)
 				end
 			end
 		end
-		--if prop:GetClass() == "npc_strider" then
-			--prop:Fire("break")
-		--end
 	end
 end
 
