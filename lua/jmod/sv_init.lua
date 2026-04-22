@@ -178,6 +178,7 @@ end
 
 function JMod.ViralInfect(ply, att)
 	if ply.EZvirus then return end
+	if ply.in_build then return end
 	if ((ply.JModSpawnTime or 0) + 30) > CurTime() then return end
 	local Severity, Latency = math.random(50, 500), math.random(10, 100)
 
