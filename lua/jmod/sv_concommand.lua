@@ -116,6 +116,18 @@ function JMod.EZ_Remote_Trigger(ply)
 	end)
 end
 
+
+hook.Add("ShowSpare2","JMOD_SHOWTEAM_OPENFRIENDS",function(ply)
+	net.Start("JMod_Friends")
+	net.WriteBit(false)
+	net.WriteTable(ply.JModFriends or {})
+	net.Send(ply)
+end)
+
+hook.Add("ShowSpare1","JMOD_SHOWTEAM_OPENINVENTORY",function(ply)
+    JMod.EZ_Open_Inventory(ply)
+end)
+
 concommand.Add("jmod_friends", function(ply)
 	net.Start("JMod_Friends")
 	net.WriteBit(false)
