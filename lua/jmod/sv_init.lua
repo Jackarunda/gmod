@@ -1223,7 +1223,24 @@ hook.Add("PlayerCanSeePlayersChat", "JMOD_PLAYERSEECHAT", function(txt, teamOnly
 end)
 
 hook.Add("PlayerCanHearPlayersVoice", "JMOD_PLAYERHEARVOICE", function(listener, talker)
-	if talker.EZarmor and talker.EZarmor.effects.teamComms then return JMod.PlayersCanComm(listener, talker) end
+    if listener:GetPos():DistToSqr( talker:GetPos() ) > 450000 then
+		if JMod then
+			if (listener.EZarmor and listener.EZarmor.effects.teamComms) and (talker.EZarmor and talker.EZarmor.effects.teamComms) then 
+				local talk = false
+				if talker.JModFriends and table.HasValue(talker.JModFriends, listener) then talk = true end
+
+				local list = false
+				if listener.JModFriends and table.HasValue(listener.JModFriends, talker) then list = true end
+				
+				if talk and list then
+					return true
+				end
+			end
+
+		end
+    	
+		return false
+	end
 end)
 
 local function ResetBouyancy(ply, ent)
