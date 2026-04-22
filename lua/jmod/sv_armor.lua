@@ -483,21 +483,6 @@ function JMod.RemoveArmorByID(ply, ID, broken)
 			local FireAmt = (Info.chrg and Info.chrg.fuel and math.random(2, 4)) or 0
 			JMod.EnergeticsCookoff(ply:GetPos(), nil, 1, 1, 0, FireAmt)
 		end
-	else
-		Ent = ents.Create(Specs.ent)
-		Ent:SetPos(ply:GetShootPos() + ply:GetAimVector() * 30 + VectorRand() * math.random(1, 20))
-		Ent:SetAngles(AngleRand())
-		Ent.Durability = Info.dur
-
-		if Info.chrg then
-			Ent.ArmorCharges = table.FullCopy(Info.chrg)
-		end
-
-		Ent.EZID = ID
-		Ent:SetColor(Info.col)
-		Ent:Spawn()
-		Ent:Activate()
-		Ent:GetPhysicsObject():SetVelocity(ply:GetVelocity())
 	end
 
 	if Specs.plymdl then
@@ -520,7 +505,7 @@ function JMod.RemoveArmorByID(ply, ID, broken)
 	if StowItems and not(table.IsEmpty(RemovedItems)) then
 		for _, v in ipairs(RemovedItems) do
 			timer.Simple(0, function()
-				local Success = JMod.AddToInventory(Ent, v)
+				JMod.AddToInventory(Ent, v)
 			end)
 		end
 	end
