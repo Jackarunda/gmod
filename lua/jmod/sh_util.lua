@@ -518,8 +518,8 @@ function JMod.CalculateProjectileTrajectory(startPos, startVel, time, entity, ma
 	if IsValid(entity) then
 		local phys = entity:GetPhysicsObject()
 		if IsValid(phys) then
-			mass = mass or phys:GetMass()
-			drag = drag or phys:GetSpeedDamping() or 0
+			if not(mass) then mass = phys:GetMass() end
+			if not(drag) then drag = phys:GetSpeedDamping() or 0 end
 		end
 	end
 	
