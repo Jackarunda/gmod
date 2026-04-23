@@ -239,8 +239,8 @@ if SERVER then
 			self.NextEnvThink = Time + 5
 			local Water = self:WaterLevel()
 			local Pos = self:GetPos()
-			local Tr = util.QuickTrace(Pos, Vector(0, 0, 9e9), self)
-			if not (Tr.HitSky) then
+			local Tr = util.QuickTrace(Pos, Vector(0, 0, 1000), self)
+			if Tr.Hit and not Tr.HitSky then
 				if (math.random(1, (self.Burnin and 2) or 50) == 1) then
 					local Gas = ents.Create("ent_jack_gmod_ezcoparticle")
 					Gas:SetPos(Pos + Vector(0, 0, Tr.HitPos))
@@ -258,7 +258,9 @@ if SERVER then
 				self.Intensity = self.Intensity - 1
 				if math.random(1, 5) == 1 then
 					local Tr = util.QuickTrace(Pos, VectorRand() * self.Range, {self})
-	
+					if Tr.Hit and FlammableMaterials[Tr.MatType] then
+						self.Intensity = self.Intensity + 2
+					end
 					if Tr.Hit then
 						util.Decal("Scorch", Tr.HitPos + Tr.HitNormal, Tr.HitPos - Tr.HitNormal)
 					end
