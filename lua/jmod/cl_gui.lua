@@ -131,6 +131,7 @@ local function PopulateFriendList(parent, friendList, myself, W, H)
 	end
 end
 
+local unitsString, perSecondString = " UNITS", " PER SECOND"
 function JMod.StandardResourceDisplay(typ, amt, maximum, x, y, siz, vertical, font, opacity, rateDisplay, brite)
 	font = font or "JMod-Stencil"
 	opacity = opacity or 150
@@ -142,10 +143,10 @@ function JMod.StandardResourceDisplay(typ, amt, maximum, x, y, siz, vertical, fo
 	end
 	surface.DrawTexturedRect(x - siz / 2, y - siz / 2, siz, siz)
 	local Col = Color(brite, brite, brite, opacity)
-	local UnitText = tostring(amt) .. " UNITS"
+	local UnitText = tostring(amt) .. unitsString
 
 	if rateDisplay then
-		UnitText = tostring(amt) .. " PER SECOND"
+		UnitText = tostring(amt) .. perSecondString
 	end
 
 	if vertical then
@@ -173,6 +174,8 @@ end
 
 function JMod.HoloGraphicDisplay(ent, relPos, relAng, scale, renderDist, renderFunc, absolutePositions)
 	if absolutePositions then
+		local DirToPos = (EyePos() - relPos):GetNormalized()
+		if math.abs(EyeAngles():Forward():Dot(DirToPos)) < 0.5 then return end
 		if EyePos():Distance(relPos) < renderDist then
 			cam.Start3D2D(relPos, relAng, scale)
 			renderFunc()
@@ -207,6 +210,8 @@ function JMod.HoloGraphicDisplay(ent, relPos, relAng, scale, renderDist, renderF
 		if not ent then
 			RenderPos = Pos + Vector(0, 0, 50)
 		end
+		local DirToPos = (EyePos() - RenderPos):GetNormalized()
+		if math.abs(EyeAngles():Forward():Dot(DirToPos)) < 0.5 then return end
 
 		cam.Start3D2D(RenderPos, Ang, scale)
 		renderFunc()
