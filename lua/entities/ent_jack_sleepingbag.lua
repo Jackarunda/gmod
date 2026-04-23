@@ -9,6 +9,9 @@ ENT.Mass = 35
 ENT.JModEZstorable = true
 ENT.JModPreferredCarryAngles = Angle(0, -90, 90)
 ENT.EZcolorable = true
+ENT.SleeperPos = Vector(40, 0, 10)
+ENT.SleeperViewPos = Vector(-30, 0, 10)
+ENT.SleeperAngles = Angle(-80, 0, 0)
 
 local STATE_ROLLED, STATE_UNROLLED = 0, 1
 local MODEL_ROLLED, MODEL_UNROLLED = "models/jmod/props/sleeping_bag_rolled.mdl","models/jmod/props/sleeping_bag.mdl"
@@ -51,35 +54,11 @@ if SERVER then
 		self:SetColor(Color(100, 100, 100))
 	end
 
-	function ENT:CreatePod()
-		if(IsValid(self.Pod))then
-			self.Pod:SetParent(nil)
-			self.Pod:Fire("kill")
-			self.Pod = nil
-		end
-		local Ang, Up, Right, Forward = self:GetAngles(), self:GetUp(), self:GetRight(), self:GetForward()
-
-		self.Pod = ents.Create("prop_vehicle_prisoner_pod")
-		self.Pod:SetModel("models/vehicles/prisoner_pod_inner.mdl")
-		self.Pod:SetPos(self:GetPos()+Up*12-Right*1+Forward*45)
-		Ang:RotateAroundAxis(Right, 85)
-		self.Pod:SetAngles(Ang)
-		self.Pod:Spawn()
-		self.Pod:Activate()
-		self.Pod:SetParent(self)
-		self.Pod:SetNoDraw(true)
-		self.Pod:SetCollisionGroup(COLLISION_GROUP_IN_VEHICLE)
-		self.Pod:Fire("lock")
-		
-	end
-	
 	function ENT:RollUp()
 		self.State = STATE_ROLLED
 		self.JModEZstorable = true
-		if(IsValid(self.Pod))then
-			self.Pod:SetParent(nil)
-			self.Pod:Fire("kill")
-			self.Pod = nil
+		if IsValid(self.Sleeper) then
+			self:StopSleepingDrive(self.Sleeper)
 		end
 
 		self:SetModel(MODEL_ROLLED)
@@ -132,13 +111,98 @@ if SERVER then
 			self:SetAngles(Ang)
 		end
 		sound.Play("snd_jack_clothunequip.ogg", self:GetPos(), 65, math.random(90, 110))
-		self:CreatePod()
+	end
+
+	function ENT:StartSleepingDrive(ply)
+		if not IsValid(ply) or not ply:IsPlayer() then return end
+		if self.State ~= STATE_UNROLLED then return end
+		if IsValid(self.Sleeper) then return end
+		if ply:IsDrivingEntity() then return end
+
+		self.EZvehicleEjectPos = self:WorldToLocal(ply:GetPos())
+		self.Sleeper = ply
+		ply.JModSleepingBag = self
+		ply:SetParent(self)
+		ply:SetLocalPos(self.SleeperPos)
+		ply:SetLocalAngles(self.SleeperAngles)
+		ply:SetMoveType(MOVETYPE_NOCLIP)
+		ply:SetActivity(ACT_HL2MP_IDLE_PASSIVE)
+		drive.PlayerStartDriving(ply, self, "drive_jmod_sleepingbag")
+
+		sound.Play("snd_jack_clothequip.ogg", self:GetPos(), 65, math.random(90, 110))
+
+		self:NextThink(CurTime() + 0.1)
+	end
+
+	function ENT:StopSleepingDrive(ply)
+		if not(IsValid(ply)) or (ply ~= self.Sleeper) then print("Incorrect player for stop sleeping") return end
+		
+		if ply:IsDrivingEntity() then
+			drive.PlayerStopDriving(ply)
+		end
+		ply:SetParent(nil)
+		local OurAngles = self:GetAngles()
+		ply:SetEyeAngles(Angle(OurAngles.p, OurAngles.y, 0))
+		ply:SetMoveType(MOVETYPE_WALK)
+
+		local hullMins = Vector(-16, -16, 0)
+		local hullMaxs = Vector(16, 16, 72)
+		local entryWorld = self:LocalToWorld(self.EZvehicleEjectPos or vector_origin)
+
+		local candidates = {
+			entryWorld,
+			self:GetPos() + self:GetUp() * 40,
+			self:GetPos() + self:GetForward() * 40 + self:GetUp() * 8,
+			self:GetPos() - self:GetForward() * 40 + self:GetUp() * 8,
+			self:GetPos() + self:GetRight() * 40 + self:GetUp() * 8,
+			self:GetPos() - self:GetRight() * 40 + self:GetUp() * 8,
+		}
+
+		local safePos
+		for _, cand in ipairs(candidates) do
+			local tr = util.TraceHull({
+				start = cand,
+				endpos = cand,
+				mins = hullMins,
+				maxs = hullMaxs,
+				filter = { self, ply }
+			})
+			if not tr.Hit and not tr.StartSolid then
+				local groundTr = util.TraceLine({
+					start = cand,
+					endpos = cand - Vector(0, 0, 64),
+					filter = { self, ply }
+				})
+				if groundTr.Hit then
+					safePos = cand
+					break
+				end
+			end
+		end
+
+		ply:SetLocalPos(safePos or entryWorld)
+		ply.JModSleepingBag = nil
+
+		self.Sleeper = nil
+		sound.Play("snd_jack_clothunequip.ogg", self:GetPos(), 65, math.random(90, 110))
+	end
+
+	function ENT:Think()
+		if IsValid(self.Sleeper) then
+			if self.Sleeper:GetDrivingEntity() ~= self then
+				self:StopSleepingDrive(self.Sleeper)
+			else
+				self:NextThink(CurTime() + 0.25)
+				return true
+			end
+		elseif self.Sleeper ~= nil then
+			self.Sleeper = nil
+		end
 	end
 
 	function ENT:Use(ply)
 		if not (ply:IsPlayer()) then return end
 		local Alt = JMod.IsAltUsing(ply)
-		if not IsValid(self.Pod) then self:CreatePod() end
 		if (Alt) then
 			if (self.State == STATE_UNROLLED) then
 				if IsValid(self.EZowner) and self.EZowner ~= ply then
@@ -162,10 +226,8 @@ if SERVER then
 				else
 					if (ply ~= self.EZowner) then
 						JMod.Hint(ply,"sleeping bag someone else")
-					elseif not IsValid(self.Pod:GetDriver()) then -- Get inside if already yours
-						self.Pod.EZvehicleEjectPos = self.Pod:WorldToLocal(ply:GetPos())
-						self.Pod:Fire("EnterVehicle", "nil", 0, ply, ply)
-						sound.Play("snd_jack_clothequip.ogg", self:GetPos(), 65, math.random(90, 110))
+					elseif not IsValid(self.Sleeper) and not ply:IsDrivingEntity() then
+						self:StartSleepingDrive(ply)
 					end
 				end
 			elseif (self.State == STATE_ROLLED) then
@@ -189,13 +251,8 @@ if SERVER then
 	end
 
 	function ENT:OnRemove()
-		if(self.Pod)then -- machines with seats
-			if (IsValid(self.Pod)) then
-				if IsValid(self.Pod:GetDriver()) then
-					self.Pod:GetDriver():ExitVehicle()
-				end
-				self.Pod:Remove()
-			end
+		if IsValid(self.Sleeper) then
+			self:StopSleepingDrive(self.Sleeper)
 		end
 	end
 
