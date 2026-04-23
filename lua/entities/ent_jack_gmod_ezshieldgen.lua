@@ -32,7 +32,7 @@ ENT.EZconsumes = {
 }
 
 function ENT:CustomSetupDataTables()
-	self:NetworkVar("Float", 1, "ShieldChargeProgress")
+	self:NetworkVar("Float", 1, "ShieldCharge")
 	self:NetworkVar("Float", 2, "Coolant")
 end
 
@@ -40,7 +40,7 @@ local STATE_BROKEN, STATE_OFF, STATE_CHARGING, STATE_ON = -1, 0, 1, 2
 
 if(SERVER)then
 	function ENT:CustomInit()
-		self:SetShieldChargeProgress(0)
+		self:SetShieldCharge(0)
 		self.NextUseTime = 0
 		self.NextEffThink = 0
 		self.Established = {
@@ -132,7 +132,7 @@ if(SERVER)then
 		if self.BaseSoundLoop then self.BaseSoundLoop:Stop() end
 		self:EmitSound("snds_jack_gmod/electrical_forced_shut_off.ogg", 70, 100)
 		self:SetState(STATE_OFF)
-		self:SetShieldChargeProgress(0)
+		self:SetShieldCharge(0)
 	end
 
 	function ENT:OnRemove()
@@ -170,7 +170,7 @@ if(SERVER)then
 		if self.ShieldSoundLoop then self.ShieldSoundLoop:Stop() end
 		if (IsValid(self.Shield)) then self.Shield:Break() end
 		self:SetState(STATE_CHARGING)
-		self:SetShieldChargeProgress(0)
+		self:SetShieldCharge(0)
 	end
 
 	function ENT:OnBreak()
@@ -224,9 +224,10 @@ if(SERVER)then
 						self:Alarm()
 					end
 				end
+				self:SetShieldCharge(self.Shield:GetStrength())
 			end
 		elseif (State == STATE_CHARGING) then
-			local Progress = self:GetShieldChargeProgress()
+			local Progress = self:GetShieldCharge()
 			if (Progress >= 1000 * self.MaxShieldStrengthMult ^ 2) then
 				self:EstablishShield()
 			else
@@ -236,7 +237,7 @@ if(SERVER)then
 					ChargeAmt = 20
 				end
 				self.Temperature = self.Temperature + 1
-				self:SetShieldChargeProgress(Progress + ChargeAmt)
+				self:SetShieldCharge(Progress + ChargeAmt)
 				self:ConsumeElectricity(ChargeAmt * self.ElectricityToShieldStrengthConversion)
 			end
 		end
@@ -293,7 +294,7 @@ elseif(CLIENT)then
 				local Opacity = math.random(50, 150)
 				local ElecAmt = self:GetElectricity()
 				local CoolAmt = self:GetCoolant()
-				local ChargeAmt = self:GetShieldChargeProgress()
+				local ChargeAmt = self:GetShieldCharge()
 
 				cam.Start3D2D(SelfPos - Forward * 15 + Right * 8 - Up * 42, DisplayAng, .06)
 				surface.SetDrawColor(10, 10, 10, Opacity + 50)
@@ -304,7 +305,11 @@ elseif(CLIENT)then
 				draw.SimpleTextOutlined(tostring(math.Round(ElecAmt)), "JMod-Display", 190, 20, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 				draw.SimpleTextOutlined("COOLANT", "JMod-Display", 190, 60, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 				draw.SimpleTextOutlined(tostring(math.Round(CoolAmt)), "JMod-Display", 190, 90, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-				if (State == STATE_CHARGING) then draw.SimpleTextOutlined("Charging... "..tostring(math.Round(ChargeAmt)), "JMod-Display", 190, 150, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity)) end
+				if (State == STATE_CHARGING) then draw.SimpleTextOutlined("CHARGING... "..tostring(math.Round(ChargeAmt)), "JMod-Display", 190, 150, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity)) end
+				if (State == STATE_ON) then 
+					draw.SimpleTextOutlined("CHARGE", "JMod-Display", 190, 130, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity)) 
+					draw.SimpleTextOutlined(tostring(math.Round(ChargeAmt)), "JMod-Display", 190, 160, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity)) 
+				end
 				cam.End3D2D()
 			end
 		end
