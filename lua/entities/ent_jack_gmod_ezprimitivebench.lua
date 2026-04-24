@@ -241,7 +241,7 @@ if(SERVER)then
 			local Held = false
 			local Pos = data.HitPos
 			if (IsValid(Ent) and Ent:IsPlayerHolding()) then Held = true end
-			if (data.Speed > 150) then
+			if (data.Speed > 50) then
 				if Held then
 					self:SalvageProp(Ent, nil, Pos)
 				end
