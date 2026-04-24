@@ -10,12 +10,12 @@ local function JackaSpawnHook(ply, transition)
 	ply.EZragdoll = nil
 	ply.JModFriends = ply.JModFriends or {}
 	ply.JModInv = ply.JModInv or table.Copy(JMod.DEFAULT_INVENTORY)
-
-	JMod.CalcSpeed(ply)
-	JMod.EZarmorSync(ply)
+	ply.JModSpawnTime = CurTime()
 	ply.EZoxygen = 100
 	ply.EZbleeding = 0
 	JMod.SyncBleeding(ply)
+	JMod.CalcSpeed(ply)
+	JMod.EZarmorSync(ply)
 
 	timer.Simple(0, function()
 		if IsValid(ply) then
@@ -46,34 +46,14 @@ local function JackaSpawnHook(ply, transition)
 			end
 		end
 	end
-	
-	-- Greetings, Reclaimer. I am 343 Guilty Spark, monitor of Installation 04
-	timer.Simple(1, function()
-		if (IsValid(ply)) then
-			if not(ply.JMod_DidPlayerReclaimItems) then
-				local PlayerTeam = ply:Team()
-				-- this will only run once per player per session
-				local ID, num = ply:SteamID64(), 0
-				for k, v in ents.Iterator() do
-					if (v.EZownerID and v.EZownerID == ID) then
-						local EntLastKnownTeam = v.EZownerTeam or TEAM_UNASSIGNED
-						if (EntLastKnownTeam == PlayerTeam) then
-							JMod.SetEZowner(v, ply)
-							num = num + 1
-						else
-							JMod.SetEZowner(v, game.GetWorld(), true)
-						end
-					end
-				end
-				ply.JMod_DidPlayerReclaimItems = true
-				if (num > 0) then ply:PrintMessage(HUD_PRINTTALK, "JMod: you reclaimed control of " .. num .. " JMod items") end
-			end
-		end
-	end)
 
 	net.Start("JMod_PlayerSpawn")
 	net.WriteBit(JMod.Config.General.Hints)
 	net.Send(ply)
+
+	if ply.JModSpawnPointEntity then
+		ply.JModSpawnPointEntity:PlayerRespawnAt(ply)
+	end
 end
 
 hook.Add("PlayerSpawn", "JMod_PlayerSpawn", JackaSpawnHook)
@@ -84,31 +64,31 @@ hook.Add("PlayerInitialSpawn", "JMod_PlayerInitialSpawn", function(ply, transit)
 		JMod.LuaConfigSync(true, ply)
 		JMod.CraftablesSync(ply) 
 	end)
+	-- Greetings, Reclaimer. I am 343 Guilty Spark, monitor of Installation 04
+	timer.Simple(1, function()
+		if (IsValid(ply)) then
+			local PlayerTeam = ply:Team()
+			local ID, num = ply:SteamID64(), 0
+			for k, v in ents.Iterator() do
+				if (v.EZownerID and v.EZownerID == ID) then
+					local EntLastKnownTeam = v.EZownerTeam or TEAM_UNASSIGNED
+					if (EntLastKnownTeam == PlayerTeam) then
+						JMod.SetEZowner(v, ply)
+						num = num + 1
+					else
+						JMod.SetEZowner(v, game.GetWorld(), true)
+					end
+				end
+			end
+			if (num > 0) then ply:PrintMessage(HUD_PRINTTALK, "JMod: you reclaimed control of " .. num .. " JMod items") end
+		end
+	end)
 end)
 
 hook.Add("PlayerSelectSpawn", "JMod_SleepingBagSpawn", function(ply, transition) 
 	if transition then return end
-	ply.JModSpawnTime = CurTime()
-	local STATE_ROLLED, STATE_UNROLLED = 0, 1
-	local Sleepingbag = ply.JModSpawnPointEntity
-	if IsValid(Sleepingbag) and (Sleepingbag.State == STATE_UNROLLED) and (IsValid(Sleepingbag.Pod)) then
-		if (Sleepingbag.nextSpawnTime < ply.JModSpawnTime) then
-			Sleepingbag.nextSpawnTime = ply.JModSpawnTime + 60
-			if not IsValid(Sleepingbag.Pod:GetDriver()) then --Get inside when respawn
-				ply:SetPos(Sleepingbag:GetPos())
-				Sleepingbag.Pod:Fire("EnterVehicle", "nil", 0, ply, ply)
-				net.Start("JMod_VisionBlur")
-					net.WriteFloat(5)
-					net.WriteFloat(2000)
-					net.WriteBit(true)
-				net.Send(ply)
-				Sleepingbag.Pod.EZvehicleEjectPos = nil
-				
-				return Sleepingbag
-			end
-		else
-			JMod.Hint(ply,"sleeping bag wait")
-		end
+	if IsValid(ply.JModSpawnPointEntity) and (ply.JModSpawnPointEntity:CanPlayerRespawnAt(ply)) then
+		return ply.JModSpawnPointEntity
 	end
 end)
 
