@@ -13,6 +13,8 @@ ENT.SleeperPos = Vector(5, 0, 10)
 ENT.SleeperViewPos = Vector(-30, 0, 25)
 ENT.SleeperAngles = Angle(0, 190, 0)
 ENT.SleeperActivity = ACT_HL2MP_ZOMBIE_SLUMP_IDLE
+ENT.SleeperEjectPos = Vector(0, 0, 0)
+ENT.SleeperDriveMode = "drive_jmod_sleepingbag"
 
 local STATE_ROLLED, STATE_UNROLLED = 0, 1
 local MODEL_ROLLED, MODEL_UNROLLED = "models/jmod/props/sleeping_bag_rolled.mdl","models/jmod/props/sleeping_bag.mdl"
@@ -53,6 +55,35 @@ if SERVER then
 		
 		self.nextSpawnTime = 0
 		self:SetColor(Color(100, 100, 100))
+	end
+
+	function ENT:CanPlayerRespawnAt(ply)
+		if not IsValid(ply) then return false end
+		if (self.State == STATE_UNROLLED) and (not IsValid(self.Sleeper)) then
+			if self.nextSpawnTime > CurTime() then
+				JMod.Hint(ply,"sleeping bag wait")
+
+				return false
+			end
+			
+			return true
+		end
+
+		return false
+	end
+
+	function ENT:PlayerRespawnAt(ply)
+		if not IsValid(ply) then return end
+
+		ply:SetPos(self:GetPos())
+		ply:SetAngles(self:GetAngles())
+		self:StartSleepingDrive(ply)
+
+		net.Start("JMod_VisionBlur")
+			net.WriteFloat(5)
+			net.WriteFloat(2000)
+			net.WriteBit(true)
+		net.Send(ply)
 	end
 
 	function ENT:RollUp()
@@ -120,13 +151,9 @@ if SERVER then
 		if IsValid(self.Sleeper) then return end
 		if ply:IsDrivingEntity() then return end
 
-		self.EZvehicleEjectPos = self:WorldToLocal(ply:GetPos())
+		self.SleeperEjectPos = self:WorldToLocal(ply:GetPos())
 		self.Sleeper = ply
-		ply:SetParent(self)
-		ply:SetLocalPos(self.SleeperPos)
-		ply:SetLocalAngles(self.SleeperAngles)
-		ply:SetMoveType(MOVETYPE_NOCLIP)
-		drive.PlayerStartDriving(ply, self, "drive_jmod_sleepingbag")
+		drive.PlayerStartDriving(ply, self, self.SleeperDriveMode)
 		local OurAngles = self:GetAngles()
 		OurAngles:RotateAroundAxis(OurAngles:Up(), 180)
 		OurAngles.r = 0
@@ -137,55 +164,48 @@ if SERVER then
 		self:NextThink(CurTime() + 0.1)
 	end
 
-	function ENT:StopSleepingDrive(ply)
+	function ENT:StopSleepingDrive(ply, driveCalled)
 		if not(IsValid(ply)) then return end
-		
-		if ply:IsDrivingEntity() then
-			drive.PlayerStopDriving(ply)
-		end
-		ply:SetParent(nil)
+		if ply ~= self.Sleeper then return end
+
 		local OurAngles = self:GetAngles()
 		ply:SetEyeAngles(Angle(OurAngles.p, OurAngles.y, 0))
+		ply:SetNoDraw(false)
+		ply:DrawWorldModel(true)
 		ply:SetMoveType(MOVETYPE_WALK)
+		ply:SetParent(nil)
 
 		local hullMins = Vector(-16, -16, 0)
 		local hullMaxs = Vector(16, 16, 72)
-		local entryWorld = (self.EZvehicleEjectPos and self:LocalToWorld(self.EZvehicleEjectPos)) or self:GetPos()
+		local entryWorld = (self.SleeperEjectPos and self:LocalToWorld(self.SleeperEjectPos)) or self:GetPos()
 
-		local candidates = {
-			entryWorld,
-			self:GetPos() + self:GetUp() * 40,
-			self:GetPos() + self:GetForward() * 40 + self:GetUp() * 8,
-			self:GetPos() - self:GetForward() * 40 + self:GetUp() * 8,
-			self:GetPos() + self:GetRight() * 40 + self:GetUp() * 8,
-			self:GetPos() - self:GetRight() * 40 + self:GetUp() * 8,
-		}
-
-		local safePos
-		for _, cand in ipairs(candidates) do
-			local tr = util.TraceHull({
-				start = cand,
-				endpos = cand,
-				mins = hullMins,
-				maxs = hullMaxs,
-				filter = { self, ply }
-			})
-			if not tr.Hit and not tr.StartSolid then
-				local groundTr = util.TraceLine({
-					start = cand,
-					endpos = cand - Vector(0, 0, 64),
-					filter = { self, ply }
-				})
-				if groundTr.Hit then
-					safePos = cand
-					break
-				end
-			end
+		local safePos = self:GetPos()
+		local tr = util.TraceHull({
+			start = entryWorld,
+			endpos = entryWorld + Vector(0, 0, 1),
+			mins = hullMins,
+			maxs = hullMaxs,
+			filter = { self, ply }
+		})
+		if not tr.Hit and not tr.StartSolid then
+			safePos = entryWorld
 		end
-
-		ply:SetPos(safePos or entryWorld)
+	
+		timer.Simple(0, function() -- Unparenting apparently sets the player position somewhere else
+			if not IsValid(ply) then return end
+			ply:SetPos(safePos)
+			if IsValid(self) then
+				ply:SetVelocity(self:GetVelocity())
+			end
+		end)
+		
 		self.Sleeper = nil
+		self.SleeperEjectPos = nil
 		sound.Play("snd_jack_clothunequip.ogg", self:GetPos(), 65, math.random(90, 110))
+
+		if not driveCalled then
+			drive.PlayerStopDriving(ply)
+		end
 	end
 
 	function ENT:Think()
