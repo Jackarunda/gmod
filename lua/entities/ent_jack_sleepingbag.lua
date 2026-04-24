@@ -9,9 +9,10 @@ ENT.Mass = 35
 ENT.JModEZstorable = true
 ENT.JModPreferredCarryAngles = Angle(0, -90, 90)
 ENT.EZcolorable = true
-ENT.SleeperPos = Vector(40, 0, 10)
-ENT.SleeperViewPos = Vector(-30, 0, 10)
-ENT.SleeperAngles = Angle(-80, 0, 0)
+ENT.SleeperPos = Vector(5, 0, 10)
+ENT.SleeperViewPos = Vector(-30, 0, 25)
+ENT.SleeperAngles = Angle(0, 190, 0)
+ENT.SleeperActivity = ACT_HL2MP_ZOMBIE_SLUMP_IDLE
 
 local STATE_ROLLED, STATE_UNROLLED = 0, 1
 local MODEL_ROLLED, MODEL_UNROLLED = "models/jmod/props/sleeping_bag_rolled.mdl","models/jmod/props/sleeping_bag.mdl"
@@ -121,13 +122,15 @@ if SERVER then
 
 		self.EZvehicleEjectPos = self:WorldToLocal(ply:GetPos())
 		self.Sleeper = ply
-		ply.JModSleepingBag = self
 		ply:SetParent(self)
 		ply:SetLocalPos(self.SleeperPos)
 		ply:SetLocalAngles(self.SleeperAngles)
 		ply:SetMoveType(MOVETYPE_NOCLIP)
-		ply:SetActivity(ACT_HL2MP_IDLE_PASSIVE)
 		drive.PlayerStartDriving(ply, self, "drive_jmod_sleepingbag")
+		local OurAngles = self:GetAngles()
+		OurAngles:RotateAroundAxis(OurAngles:Up(), 180)
+		OurAngles.r = 0
+		ply:SetEyeAngles(OurAngles)
 
 		sound.Play("snd_jack_clothequip.ogg", self:GetPos(), 65, math.random(90, 110))
 
@@ -135,7 +138,7 @@ if SERVER then
 	end
 
 	function ENT:StopSleepingDrive(ply)
-		if not(IsValid(ply)) or (ply ~= self.Sleeper) then print("Incorrect player for stop sleeping") return end
+		if not(IsValid(ply)) then return end
 		
 		if ply:IsDrivingEntity() then
 			drive.PlayerStopDriving(ply)
@@ -147,7 +150,7 @@ if SERVER then
 
 		local hullMins = Vector(-16, -16, 0)
 		local hullMaxs = Vector(16, 16, 72)
-		local entryWorld = self:LocalToWorld(self.EZvehicleEjectPos or vector_origin)
+		local entryWorld = (self.EZvehicleEjectPos and self:LocalToWorld(self.EZvehicleEjectPos)) or self:GetPos()
 
 		local candidates = {
 			entryWorld,
@@ -180,9 +183,7 @@ if SERVER then
 			end
 		end
 
-		ply:SetLocalPos(safePos or entryWorld)
-		ply.JModSleepingBag = nil
-
+		ply:SetPos(safePos or entryWorld)
 		self.Sleeper = nil
 		sound.Play("snd_jack_clothunequip.ogg", self:GetPos(), 65, math.random(90, 110))
 	end

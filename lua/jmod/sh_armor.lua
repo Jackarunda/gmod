@@ -1187,14 +1187,31 @@ function JMod.DepleteArmorChemicalCharge(ply, amt)
 	end
 end
 
+local function IsInRespawnPoint(ply)
+	local DriveEnt = ply:GetDrivingEntity()
+	if IsValid(DriveEnt) and DriveEnt.EZrespawnPoint then
+
+		return true
+	end
+
+	local Veh = ply:GetVehicle()
+	if IsValid(Veh) and IsValid(Veh:GetParent()) and Veh:GetParent().EZrespawnPoint then
+
+		return true
+	end
+
+	return false
+end
+
+local SleepTime = 15
+
 hook.Add("SetupMove", "JMOD_SLEEP", function(ply, mvd, cmd)
 	if not(ply:Alive()) then ply.JMod_IsSleeping = false return end
 	local Time = CurTime()
-	local Veh = ply:GetVehicle()
-	if not((cmd:GetMouseX() < 10) and (cmd:GetMouseY() < 10) and (cmd:GetButtons() == 0) and IsValid(Veh) and IsValid(Veh:GetParent()) and Veh:GetParent().EZrespawnPoint) then
+	if not((cmd:GetMouseX() < 10) and (cmd:GetMouseY() < 10) and (cmd:GetButtons() == 0) and IsInRespawnPoint(ply)) then
 		ply.JModLastLookMoveTime = Time
 	end
-	if (Time - ply.JModLastLookMoveTime) > 15 then
+	if (Time - ply.JModLastLookMoveTime) > SleepTime then
 		ply.JMod_IsSleeping = true
 	else
 		ply.JMod_IsSleeping = false
