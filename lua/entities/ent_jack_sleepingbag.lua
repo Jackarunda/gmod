@@ -47,8 +47,20 @@ if SERVER then
 			end
 		end)
 		
-		self.nextSpawnTime = 0
+		self.lastSpawnTime = 0
 		self:SetColor(Color(100, 100, 100))
+	end
+
+	function ENT:CanPlayerRespawnAt(ply)
+		if (self.lastSpawnTime + (JMod.Config.General.RespawnPointCooldown * 60)) > CurTime() then return false end
+		if JMod.GetEZowner(self) ~= ply then return false end
+		if IsValid(self.Pod) and IsValid(self.Pod:GetDriver()) then return false end
+		return true
+	end
+
+	function ENT:PlayerRespawnAt(ply)
+		self.lastSpawnTime = CurTime()
+		self:EnterVehicle(ply)
 	end
 
 	function ENT:CreatePod()
@@ -135,6 +147,15 @@ if SERVER then
 		self:CreatePod()
 	end
 
+	function ENT:EnterVehicle(ply)
+		if IsValid(self.Pod) and IsValid(self.Pod:GetDriver()) then
+			self.Pod:GetDriver():ExitVehicle()
+		end
+		self.Pod.EZvehicleEjectPos = self.Pod:WorldToLocal(ply:GetPos())
+		self.Pod:Fire("EnterVehicle", "nil", 0, ply, ply)
+		sound.Play("snd_jack_clothequip.ogg", self:GetPos(), 65, math.random(90, 110))
+	end
+
 	function ENT:Use(ply)
 		if not (ply:IsPlayer()) then return end
 		local Alt = JMod.IsAltUsing(ply)
@@ -163,9 +184,7 @@ if SERVER then
 					if (ply ~= self.EZowner) then
 						JMod.Hint(ply,"sleeping bag someone else")
 					elseif not IsValid(self.Pod:GetDriver()) then -- Get inside if already yours
-						self.Pod.EZvehicleEjectPos = self.Pod:WorldToLocal(ply:GetPos())
-						self.Pod:Fire("EnterVehicle", "nil", 0, ply, ply)
-						sound.Play("snd_jack_clothequip.ogg", self:GetPos(), 65, math.random(90, 110))
+						self:EnterVehicle(ply)
 					end
 				end
 			elseif (self.State == STATE_ROLLED) then

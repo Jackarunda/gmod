@@ -51,7 +51,7 @@ local function JackaSpawnHook(ply, transition)
 	net.WriteBit(JMod.Config.General.Hints)
 	net.Send(ply)
 
-	if ply.JModSpawnPointEntity then
+	if ply.JModSpawnPointEntity and ply.JModSpawnPointEntity:CanPlayerRespawnAt(ply) then
 		ply.JModSpawnPointEntity:PlayerRespawnAt(ply)
 	end
 end
@@ -1047,14 +1047,15 @@ hook.Add("PlayerDeath", "JMOD_SERVER_PLAYERDEATH", function(ply, inflictor, atta
 	local EZcorpse
 	if ShouldJModCorpse then
 		local PlyRagdoll = ply:GetRagdollEntity()
-		if IsValid(PlyRagdoll) then
+		if not IsValid(PlyRagdoll) then
+			ShouldJModCorpse = false
+		else
 			if ply.EZoriginalPlayerModel then
 				JMod.SetPlayerModel(ply, ply.EZoriginalPlayerModel)
 				PlyRagdoll:SetModel(ply.EZoriginalPlayerModel)
 			end
 
 			local BodyGroupValues = ""
-						
 			-- Get player's desired bodygroups from client convar
 			local PlayerBodygroups = ply:GetInfo("cl_playerbodygroups")
 			if PlayerBodygroups and PlayerBodygroups ~= "" then
@@ -1081,6 +1082,7 @@ hook.Add("PlayerDeath", "JMOD_SERVER_PLAYERDEATH", function(ply, inflictor, atta
 			if ply.EZoverDamage then
 				EZcorpse.EZoverDamage = ply.EZoverDamage
 			end
+			EZcorpse.EZoriginalPlayerModel = ply.EZoriginalPlayerModel
 			EZcorpse.BodyGroupValues = BodyGroupValues
 			EZcorpse:Spawn()
 			EZcorpse:Activate()

@@ -20,7 +20,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 			AltFunctionKey = IN_WALK,
 			HandGrabStrength = 1,
 			AllowScrounging = true,
-			RespawnPointCooldown = 60.0 -- Seconds
+			RespawnPointCooldown = 1 -- Minutes
 		},
 		Armor = {
 			ProtectionMult = 1,
