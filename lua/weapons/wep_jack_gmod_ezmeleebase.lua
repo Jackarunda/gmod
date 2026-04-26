@@ -68,6 +68,7 @@ function SWEP:Initialize()
 	self:SCKInitialize()
 	self.NextIdle = 0
 	self.DistanceCompensation = 0
+	self.SwingProgress = 0
 	self:Deploy()
 	if self.CustomInit then
 		self:CustomInit()
