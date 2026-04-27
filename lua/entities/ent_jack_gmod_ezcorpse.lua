@@ -9,6 +9,23 @@ ENT.Information = "Momento Mori"
 ENT.Spawnable = false -- This is not meant to be spawned seperate from a player
 
 if SERVER then
+	----------------------Kycea contribution Begin----------------------
+	local function MatchBonePositions(ragdoll, ent)
+		if IsValid(ragdoll) and IsValid(ent) then
+			for i = 1, ragdoll:GetPhysicsObjectCount() do
+				local Phys = ragdoll:GetPhysicsObjectNum(i - 1)
+				if (Phys) and IsValid(Phys)then
+					local pos, ang = ent:GetBonePosition(ent:TranslatePhysBoneToBone(i - 1))
+					if pos and ang then
+						Phys:SetPos(pos)
+						Phys:SetVelocity(ent:GetVelocity())
+						Phys:SetAngles(ang)
+					end
+				end
+			end
+		end
+	end
+	----------------------Kycea contribution End----------------------
 	function ENT:Initialize()
 		if not self.DeadPlayer then self:Remove() return end
 		self.EZoverDamage = self.EZoverDamage or 0
@@ -23,9 +40,27 @@ if SERVER then
 
 		local Ply = self.DeadPlayer
 		local Ragdoll = ents.Create("prop_ragdoll")
-		Ragdoll:SetModel(Ply:GetModel())
-		Ragdoll:SetSkin(Ply:GetSkin())
-		Ragdoll:SetBodyGroups(self.BodyGroupValues)
+		if Ply.EZarmor and Ply.EZarmor.suited then
+			for id, item in pairs(Ply.EZarmor.items) do
+				local ArmorInfo = JMod.ArmorTable[item.name]
+				if ArmorInfo then
+					if ArmorInfo.plymdl then
+						Ragdoll:SetModel(ArmorInfo.plymdl)
+						if ArmorInfo.bdg then
+							for k, v in pairs(ArmorInfo.bdg) do
+								Ragdoll:SetBodygroup(k, v)
+							end
+						end
+						Ragdoll:SetColor(item.col)
+						break
+					end
+				end
+			end
+		else
+			Ragdoll:SetModel(Ply:GetModel())
+			Ragdoll:SetSkin(Ply:GetSkin())
+			Ragdoll:SetBodyGroups(self.BodyGroupValues)
+		end
 		Ragdoll:SetPos(Ply:GetPos())
 		Ragdoll:SetAngles(Ply:GetAngles())
 		Ragdoll:Spawn()
@@ -38,29 +73,53 @@ if SERVER then
 			local Matty = Ply:GetSubMaterial(k - 1)
 			Ragdoll:SetSubMaterial(k - 1, Matty)
 		end
-		--Ragdoll:SetColor(Ply:GetColor())
-		----------------------Kycea contribution Begin----------------------
 		timer.Simple(0, function()
-			if IsValid(Ragdoll) then
-				for i = 1, Ragdoll:GetPhysicsObjectCount() do
-					local Phys = Ragdoll:GetPhysicsObjectNum(i - 1)
-					if (Phys) and IsValid(Phys)then
-						local pos, ang = Ply:GetBonePosition(Ply:TranslatePhysBoneToBone(i - 1))
-						Phys:SetPos(pos)
-						Phys:SetVelocity(Ply:GetVelocity())
-						Phys:SetAngles(ang)
-					end
-				end
+			if IsValid(self) and IsValid(Ragdoll) then
+				MatchBonePositions(Ragdoll, Ply)
 			end
 		end)
-		----------------------Kycea contribution end------------------------
 		if (Ply.EZarmor and Ply.EZarmor.items) and IsValid(Ragdoll) then
 			Ragdoll.EZarmorP = {}
 			local Parachute = false
 			for k, armorData in pairs(Ply.EZarmor.items) do
 				local ArmorInfo = JMod.ArmorTable[armorData.name]
 				if not ArmorInfo then continue end
-				if not ArmorInfo.plymdl then
+				if ArmorInfo.plymdl then
+					local ArmorPiece = JMod.RemoveArmorByID(Ply, k)
+					local spineBone = Ragdoll:LookupBone("ValveBiped.Bip01_Spine") or 1
+					ArmorPiece:SetPos(Ragdoll:GetBonePosition(spineBone))
+					ArmorPiece:SetParent(Ragdoll, spineBone)
+					ArmorPiece:SetNoDraw(true)
+					ArmorPiece:SetColor(armorData.col)
+					ArmorPiece:CallOnRemove("Ragdoll_Remodel", function(armorSelf) 
+						if IsValid(self) and IsValid(Ragdoll) then
+							local NewRagdoll = ents.Create("prop_ragdoll")
+							NewRagdoll:SetPos(Ragdoll:GetPos())
+							NewRagdoll:SetAngles(Ragdoll:GetAngles())
+							NewRagdoll:SetModel(self.EZoriginalPlayerModel)
+							NewRagdoll:SetBodyGroups(self.BodyGroupValues)
+							NewRagdoll:SetColor(color_white)
+							NewRagdoll:Spawn()
+							NewRagdoll:Activate()
+							NewRagdoll.IsEZcorpse = true
+							NewRagdoll.DeadPlayer = Ply
+							NewRagdoll.EZcorpseEntity = self
+							NewRagdoll:SetNoDraw(true)
+							NewRagdoll:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
+							self.EZragdoll = NewRagdoll
+							self:SetParent(NewRagdoll)
+							self:SetPos(NewRagdoll:GetPos())
+							timer.Simple(0, function()
+								if IsValid(self) and IsValid(Ragdoll) then
+									MatchBonePositions(NewRagdoll, Ragdoll)
+									SafeRemoveEntity(Ragdoll)
+									NewRagdoll:SetNoDraw(false)
+									NewRagdoll:SetCollisionGroup(COLLISION_GROUP_NONE)
+								end
+							end)
+						end
+					end)
+				else
 					local Index = Ragdoll:LookupBone(ArmorInfo.bon)
 					local Pos, Ang = Ragdoll:GetBonePosition(Index)
 					
@@ -80,6 +139,7 @@ if SERVER then
 						ArmorPiece:SetCollisionGroup(COLLISION_GROUP_INTERACTIVE_DEBRIS)
 						ArmorPiece:Spawn()
 						ArmorPiece:Activate()
+						ArmorPiece:SetColor(armorData.col)
 						ArmorPiece.Durability = armorData.dur
 						if ArmorInfo.chrg then
 							ArmorPiece.ArmorCharges = table.FullCopy(armorData.chrg)
@@ -95,15 +155,6 @@ if SERVER then
 						local Weld = constraint.Weld(ArmorPiece, Ragdoll, 0, Ragdoll:TranslateBoneToPhysBone(Index), 0, true)
 						if Weld then
 							Weld:Activate()
-						end
-					end
-				else
-					local ArmorPiece = JMod.RemoveArmorByID(Ply, k)
-					if IsValid(ArmorPiece) then
-						ArmorPiece:SetPos(Ragdoll:GetPos())
-						ArmorPiece.Durability = armorData.dur
-						if ArmorInfo.chrg then
-							ArmorPiece.ArmorCharges = table.FullCopy(armorData.chrg)
 						end
 					end
 				end
@@ -147,7 +198,7 @@ if SERVER then
 		if self.VeryDead then
 			self.TimeTillRemoval = math.Clamp(self.TimeTillRemoval - 1, 0, JMod.Config.QoL.JModCorpseStayTime * 60)
 			if self.TimeTillRemoval <= 0 then
-				self:Remove()
+				self:Decay()
 			end
 		end
 
@@ -206,7 +257,7 @@ if SERVER then
 		util.Effect("eff_jack_sminebury", Fff, true, true)
 	end
 
-	function ENT:OnRemove() 
+	function ENT:Decay()
 		if IsValid(self.EZragdoll) then
 			if istable(self.EZragdoll.EZarmorP) then
 				for _, v in pairs(self.EZragdoll.EZarmorP) do
@@ -233,6 +284,13 @@ if SERVER then
 					SafeRemoveEntityDelayed(Skull, 10)
 				end
 			end
+		end
+
+		self:Remove()
+	end
+
+	function ENT:OnRemove()
+		if IsValid(self.EZragdoll) then
 			SafeRemoveEntity(self.EZragdoll)
 		end
 	end
