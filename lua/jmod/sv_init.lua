@@ -51,7 +51,7 @@ local function JackaSpawnHook(ply, transition)
 	net.WriteBit(JMod.Config.General.Hints)
 	net.Send(ply)
 
-	if ply.JModSpawnPointEntity and ply.JModSpawnPointEntity:CanPlayerRespawnAt(ply) then
+	if IsValid(ply.JModSpawnPointEntity) and ply.JModSpawnPointEntity:CanPlayerRespawnAt(ply) then
 		ply.JModSpawnPointEntity:PlayerRespawnAt(ply)
 	end
 end
@@ -87,7 +87,7 @@ end)
 
 hook.Add("PlayerSelectSpawn", "JMod_SleepingBagSpawn", function(ply, transition) 
 	if transition then return end
-	if IsValid(ply.JModSpawnPointEntity) and (ply.JModSpawnPointEntity:CanPlayerRespawnAt(ply)) then
+	if IsValid(ply.JModSpawnPointEntity) and ply.JModSpawnPointEntity:CanPlayerRespawnAt(ply) then
 		return ply.JModSpawnPointEntity
 	end
 end)
