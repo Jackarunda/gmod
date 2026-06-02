@@ -14,7 +14,35 @@ ENT.EZrackAngles = Angle(0, 0, 0)
 ENT.EZrocket = true
 ---
 local STATE_BROKEN, STATE_OFF, STATE_ARMED, STATE_LAUNCHED = -1, 0, 1, 2
-local DETONATION_SPEED = 600
+local VECTOR_DOWN = Vector(0, 0, -1)
+---
+-- Physics / motion config (overridable by inheriting rockets)
+ENT.Model = "models/hunter/plates/plate150.mdl"
+ENT.Mass = 40
+ENT.PhysMaterial = nil
+ENT.ThrustForce = 200000
+ENT.ThrustJitter = 500
+ENT.UpLiftMult = .5
+ENT.FuelMax = 100
+ENT.FuelBurn = 15
+ENT.DetonationSpeed = 600
+ENT.CollideDetState = STATE_ARMED
+ENT.BreakOdds = 3
+ENT.AeroDragMult = .1
+ENT.TurnStrength = 3000
+-- Effects
+ENT.ThrustEffect = "eff_jack_gmod_rocketthrust"
+ENT.TrailEffect = "eff_jack_gmod_rockettrail"
+ENT.TrailEffectScale = 1
+ENT.LaunchEffectScale = 4
+ENT.LaunchSoundVol = 80
+ENT.LaunchSoundPitchMin = 95
+ENT.LaunchSoundPitchMax = 105
+-- Client visual model
+ENT.ClientModel = "models/jmod/explosives/missile/missile_patriot.mdl"
+ENT.ClientModelSkin = 1
+ENT.ClientModelScale = .45
+ENT.UseClientModel = true
 
 function ENT:SetupDataTables()
 	self:NetworkVar("Int", 0, "State")
@@ -30,15 +58,12 @@ if SERVER then
 		JMod.SetEZowner(ent, ply)
 		ent:Spawn()
 		ent:Activate()
-		--local effectdata=EffectData()
-		--effectdata:SetEntity(ent)
-		--util.Effect("propspawn",effectdata)
 
 		return ent
 	end
 
 	function ENT:Initialize()
-		self:SetModel("models/hunter/plates/plate150.mdl")
+		self:SetModel(self.Model)
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)
 		self:SetSolid(SOLID_VPHYSICS)
@@ -47,21 +72,103 @@ if SERVER then
 
 		---
 		timer.Simple(.01, function()
-			self:GetPhysicsObject():SetMass(40)
-			self:GetPhysicsObject():Wake()
-			self:GetPhysicsObject():EnableDrag(false)
+			if not IsValid(self) then return end
+			local Phys = self:GetPhysicsObject()
+			if IsValid(Phys) then
+				if self.PhysMaterial then
+					Phys:SetMaterial(self.PhysMaterial)
+				end
+				Phys:SetMass(self.Mass)
+				Phys:Wake()
+				Phys:EnableDrag(false)
+			end
 		end)
 
 		---
 		self:SetState(STATE_OFF)
 		self.NextDet = 0
-		self.FuelLeft = 100
+		self.FuelLeft = self.FuelMax
 
+		-- The motion controller is always running so aerodrag works even when
+		-- the rocket is unlaunched (dropped/thrown). PhysicsSimulate handles thrust.
+		if IsValid(self:GetPhysicsObject()) then
+			self:StartMotionController()
+		end
+
+		self:SetupWire()
+	end
+
+	function ENT:SetupWire()
 		if istable(WireLib) then
 			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm", "Launch"}, {"Directly detonates rocket", "Arms rocket", "Launches rocket"})
 
 			self.Outputs = WireLib.CreateOutputs(self, {"State", "Fuel"}, {"-1 broken \n 0 off \n 1 armed \n 2 launched", "Fuel left in the tank"})
 		end
+	end
+
+	-- World-space direction the rocket points/thrusts along. Override per model.
+	function ENT:GetNoseDir()
+		return -self:GetRight()
+	end
+
+	-- Entity-method aerodrag. Ported from JMod.AeroDrag, but is meant to be
+	-- called from PhysicsSimulate so the velocity-proportional forces integrate
+	-- over deltatime (tickrate independent). The direct angular-velocity damping
+	-- is scaled by deltatime to match.
+	function ENT:AeroDrag(forward, mult, spdReq, deltatime)
+		if constraint.FindConstraint(self, "Weld") then return end
+		if self:IsPlayerHolding() then return end
+
+		local Phys = self:GetPhysicsObject()
+		if not IsValid(Phys) then return end
+		local Vel = Phys:GetVelocity()
+		local Spd = Vel:Length()
+
+		spdReq = spdReq or 300
+		if Spd < spdReq then return end
+		mult = mult or 1
+		deltatime = deltatime or FrameTime()
+
+		self.JMod_PhysMassCenter = self.JMod_PhysMassCenter or Phys:GetMassCenter()
+		local Pos, Mass = Phys:LocalToWorld(self.JMod_PhysMassCenter), Phys:GetMass()
+		Phys:ApplyForceOffset(Vel * Mass / 6 * mult, Pos + forward)
+		Phys:ApplyForceOffset(-Vel * Mass / 6 * mult, Pos - forward)
+		local AngVel = Phys:GetAngleVelocity()
+		Phys:AddAngleVelocity(-AngVel * (Mass / 1000) * (deltatime / 0.05))
+		self.LastAreoDragAmount = mult
+	end
+
+	function ENT:PhysicsSimulate(phys, deltatime)
+		local Nose = self:GetNoseDir()
+		self:AeroDrag(Nose, self.AeroDragMult, nil, deltatime)
+
+		if (self:GetState() ~= STATE_LAUNCHED) or (self.FuelLeft <= 0) then
+			return SIM_NOTHING
+		end
+
+		-- Lift only when the rocket isn't pointing down (flying sideways/up).
+		if self.UpLift and (Nose:Dot(VECTOR_DOWN) < 0.1) then
+			phys:ApplyForceCenter(self.UpLift)
+		end
+
+		-- Optional guidance: steer the nose toward a world point.
+		if self.TargetPosition then
+			local Mass = phys:GetMass()
+			local Center = phys:LocalToWorld(phys:GetMassCenter())
+			local DesiredDir = (self.TargetPosition - self:GetPos()):GetNormalized()
+			local Turn = Mass * self.TurnStrength
+			phys:ApplyForceOffset(DesiredDir * Turn, Center + Nose)
+			phys:ApplyForceOffset(-DesiredDir * Turn, Center - Nose)
+			phys:AddAngleVelocity(-phys:GetAngleVelocity() * (deltatime / 0.05) * 0.5)
+		end
+
+		-- Thrust as a local acceleration so it's mass/tickrate independent.
+		local Linear = phys:WorldToLocalVector(Nose) * (self.ThrustForce / phys:GetMass())
+		if self.ThrustJitter and (self.ThrustJitter > 0) then
+			Linear = Linear + VectorRand() * self.ThrustJitter
+		end
+
+		return vector_origin, Linear, SIM_LOCAL_ACCELERATION
 	end
 
 	function ENT:TriggerInput(iname, value)
@@ -85,7 +192,7 @@ if SERVER then
 				self:EmitSound("Canister.ImpactHard")
 			end
 
-			if (data.Speed > DETONATION_SPEED) and (self:GetState() >= STATE_ARMED) then
+			if (data.Speed > self.DetonationSpeed) and (self:GetState() >= self.CollideDetState) then
 				self:Detonate()
 
 				return
@@ -118,7 +225,7 @@ if SERVER then
 		self:TakePhysicsDamage(dmginfo)
 
 		if JMod.LinCh(dmginfo:GetDamage(), 60, 120) then
-			if math.random(1, 3) == 1 then
+			if math.random(1, self.BreakOdds) == 1 then
 				self:Break()
 			else
 				JMod.SetEZowner(self, dmginfo:GetAttacker())
@@ -208,24 +315,23 @@ if SERVER then
 	function ENT:Launch()
 		if self:GetState() ~= STATE_ARMED then return end
 		self:SetState(STATE_LAUNCHED)
-		self.UpLift = Vector(0, 0, GetConVar("sv_gravity"):GetFloat() * 1)
+		self.UpLift = physenv.GetGravity() * -self.UpLiftMult
 		local Phys = self:GetPhysicsObject()
 		constraint.RemoveAll(self)
 		Phys:EnableMotion(true)
 		Phys:Wake()
-		Phys:ApplyForceCenter(-self:GetRight() * 20000 + self.UpLift)
+		local Nose = self:GetNoseDir()
+		--Phys:ApplyForceCenter(Nose * (self.ThrustForce * 1) + self.UpLift)
 		---
-		self:EmitSound("snds_jack_gmod/rocket_launch.ogg", 80, math.random(95, 105))
+		self:EmitSound("snds_jack_gmod/rocket_launch.ogg", self.LaunchSoundVol, math.random(self.LaunchSoundPitchMin, self.LaunchSoundPitchMax))
 		local Eff = EffectData()
 		Eff:SetOrigin(self:GetPos())
-		Eff:SetNormal(self:GetRight())
-		Eff:SetScale(4)
-		util.Effect("eff_jack_gmod_rocketthrust", Eff, true, true)
+		Eff:SetNormal(-Nose)
+		Eff:SetScale(self.LaunchEffectScale)
+		util.Effect(self.ThrustEffect, Eff, true, true)
 
 		---
-		for i = 1, 4 do
-			util.BlastDamage(self, JMod.GetEZowner(self), self:GetPos() + self:GetRight() * i * 40, 50, 50)
-		end
+		self:Backblast()
 
 		util.ScreenShake(self:GetPos(), 20, 255, .5, 300)
 		---
@@ -239,6 +345,21 @@ if SERVER then
 		end)
 
 		JMod.Hint(JMod.GetEZowner(self), "backblast", self:GetPos())
+
+		---
+		self:OnLaunch()
+	end
+
+	-- Backblast damage cone behind the rocket. Override for custom behavior.
+	function ENT:Backblast()
+		local Owner, Behind = JMod.GetEZowner(self), -self:GetNoseDir()
+		for i = 1, 4 do
+			util.BlastDamage(self, Owner, self:GetPos() + Behind * i * 40, 50, 50)
+		end
+	end
+
+	-- Hook for child-specific launch behavior (spin, fins, guidance, etc.)
+	function ENT:OnLaunch()
 	end
 
 	function ENT:EZdetonateOverride(detonator)
@@ -246,36 +367,36 @@ if SERVER then
 	end
 
 	function ENT:Think()
+		self:NextThink(CurTime() + 0.1)
 		if istable(WireLib) then
 			WireLib.TriggerOutput(self, "State", self:GetState())
 			WireLib.TriggerOutput(self, "Fuel", self.FuelLeft)
 		end
 
-		local Phys = self:GetPhysicsObject()
-		JMod.AeroDrag(self, -self:GetRight(), .75)
-
 		if self:GetState() == STATE_LAUNCHED then
+			if self.GuidanceThink then
+				self:GuidanceThink()
+			end
+
 			if self.FuelLeft > 0 then
-				Phys:ApplyForceCenter(-self:GetRight() * 20000 + self.UpLift + VectorRand() * 500)
-				self.FuelLeft = self.FuelLeft - 5
+				self.FuelLeft = self.FuelLeft - self.FuelBurn
 				---
 				local Eff = EffectData()
 				Eff:SetOrigin(self:GetPos())
-				Eff:SetNormal(self:GetRight())
-				Eff:SetScale(1)
-				util.Effect("eff_jack_gmod_rockettrail", Eff, true, true)
+				Eff:SetNormal(-self:GetNoseDir())
+				Eff:SetScale(self.TrailEffectScale)
+				util.Effect(self.TrailEffect, Eff, true, true)
+				print(self:GetVelocity():Length())
 			end
 		end
-
-		self:NextThink(CurTime() + .05)
 
 		return true
 	end
 elseif CLIENT then
 	local function MakeModel(self)
-		self.Mdl = ClientsideModel("models/jmod/explosives/missile/missile_patriot.mdl")
-		self.Mdl:SetSkin(1)
-		self.Mdl:SetModelScale(.45, 0)
+		self.Mdl = ClientsideModel(self.ClientModel)
+		self.Mdl:SetSkin(self.ClientModelSkin)
+		self.Mdl:SetModelScale(self.ClientModelScale, 0)
 		self.Mdl:SetPos(self:GetPos())
 		self.Mdl:SetParent(self)
 		self.Mdl:SetNoDraw(true)

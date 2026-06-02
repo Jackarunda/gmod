@@ -1,5 +1,6 @@
 ﻿-- Jackarunda 2021
 AddCSLuaFile()
+ENT.Base = "ent_jack_gmod_ezherocket"
 ENT.Type = "anim"
 ENT.Author = "Jackarunda"
 ENT.Category = "JMod - EZ Explosives"
@@ -13,227 +14,62 @@ ENT.EZrackOffset = Vector(0, 0, 0)
 ENT.EZrackAngles = Angle(0, 0, 0)
 ENT.EZrocket = true
 ---
+-- Inherits the HE rocket motion controller. Only the differences below.
+ENT.Model = "models/jmod/explosives/ez_hrocket.mdl"
+ENT.Mass = 50
+ENT.UpLiftMult = .5
+ENT.FuelBurn = 10
+ENT.DetonationSpeed = 300
+ENT.CollideDetState = 1 -- STATE_ARMED
+ENT.BreakOdds = 5
+ENT.ThrustJitter = 0
+-- This rocket points/thrusts along its forward axis instead of -right.
+ENT.UseClientModel = false
+ENT.TurnStrength = 2500
+-- Effects
+ENT.ThrustEffect = "eff_jack_gmod_rocketthrust"
+ENT.TrailEffect = "eff_jack_gmod_ezexhaust"
+ENT.TrailEffectScale = 4
+ENT.LaunchEffectScale = 1
+ENT.LaunchSoundVol = 90
+ENT.LaunchSoundPitchMin = 85
+ENT.LaunchSoundPitchMax = 95
+---
 local STATE_BROKEN, STATE_OFF, STATE_ARMED, STATE_LAUNCHED = -1, 0, 1, 2
 
-function ENT:SetupDataTables()
-	self:NetworkVar("Int", 0, "State")
-end
-
----
 if SERVER then
-	function ENT:SpawnFunction(ply, tr)
-		local SpawnPos = tr.HitPos + tr.HitNormal * 40
-		local ent = ents.Create(self.ClassName)
-		ent:SetAngles(Angle(180, 0, 0))
-		ent:SetPos(SpawnPos)
-		JMod.SetEZowner(ent, ply)
-		ent:Spawn()
-		ent:Activate()
-		--local effectdata=EffectData()
-		--effectdata:SetEntity(ent)
-		--util.Effect("propspawn",effectdata)
-
-		return ent
+	function ENT:GetNoseDir()
+		return self:GetForward()
 	end
 
-	function ENT:Initialize()
-		self:SetModel("models/jmod/explosives/ez_hrocket.mdl")
-		self:PhysicsInit(SOLID_VPHYSICS)
-		self:SetMoveType(MOVETYPE_VPHYSICS)
-		self:SetSolid(SOLID_VPHYSICS)
-		self:DrawShadow(true)
-		self:SetUseType(SIMPLE_USE)
+	-- Guidance: update the steering target from the locked entity each think.
+	-- The base motion controller steers the nose toward self.TargetPosition.
+	function ENT:GuidanceThink()
+		if not IsValid(self.Target) then
+			self.TargetPosition = nil
 
-		---
-		timer.Simple(.01, function()
-			self:GetPhysicsObject():SetMass(50)
-			self:GetPhysicsObject():Wake()
-			self:GetPhysicsObject():EnableDrag(false)
-		end)
-
-		---
-		self:SetState(STATE_OFF)
-		self.NextDet = 0
-		self.FuelLeft = 100
-
-		if istable(WireLib) then
-			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm", "Launch"}, {"Directly detonates rocket", "Arms rocket", "Launches rocket"})
-
-			self.Outputs = WireLib.CreateOutputs(self, {"State", "Fuel"}, {"-1 broken \n 0 off \n 1 armed \n 2 launched", "Fuel left in the tank"})
+			return
 		end
-	end
 
-	function ENT:TriggerInput(iname, value)
-		if iname == "Detonate" and value > 0 then
+		local SelfPos = self:WorldSpaceCenter()
+		local TargetCenter = self.Target:WorldSpaceCenter()
+		local DiffToTarget = TargetCenter - SelfPos
+		local Dist = DiffToTarget:Length()
+		local OurSpeed = self:GetVelocity():Length()
+		local TheirVel = self.Target:GetVelocity()
+		local LeadDir = TheirVel:GetNormalized()
+
+		if OurSpeed < 1 then OurSpeed = 1 end
+		-- Lead the target based on our travel time to it.
+		self.TargetPosition = TargetCenter + LeadDir * ((Dist / OurSpeed) * TheirVel:Length())
+
+		if Dist < 400 then
 			self:Detonate()
-		elseif iname == "Arm" and value > 0 then
-			self:SetState(STATE_ARMED)
-		elseif iname == "Arm" and value == 0 then
-			self:SetState(STATE_OFF)
-		elseif iname == "Launch" and value > 0 then
-			self:SetState(STATE_ARMED)
-			self:Launch()
 		end
 	end
 
-	function ENT:PhysicsCollide(data, physobj)
-		if not IsValid(self) then return end
-
-		if data.DeltaTime > 0.2 then
-			if data.Speed > 50 then
-				self:EmitSound("Canister.ImpactHard")
-			end
-
-			local DetSpd = 300
-
-			if (data.Speed > DetSpd) and (self:GetState() == STATE_LAUNCHED) then
-				self:Detonate()
-
-				return
-			end
-
-			if (data.Speed > 2000) and not(self:IsPlayerHolding()) then
-				self:Break()
-			end
-		end
-	end
-
-	function ENT:Break()
-		if self:GetState() == STATE_BROKEN then return end
-		self:SetState(STATE_BROKEN)
-		self:EmitSound("snd_jack_turretbreak.ogg", 70, math.random(80, 120))
-
-		for i = 1, 20 do
-			JMod.DamageSpark(self)
-		end
-
-		SafeRemoveEntityDelayed(self, 10)
-	end
-
-	function ENT:OnTakeDamage(dmginfo)
-		if IsValid(self.DropOwner) then
-			local Att = dmginfo:GetAttacker()
-			if IsValid(Att) and (self.DropOwner == Att) then return end
-		end
-
-		self:TakePhysicsDamage(dmginfo)
-
-		if JMod.LinCh(dmginfo:GetDamage(), 60, 120) then
-			if math.random(1, 5) == 1 then
-				self:Break()
-			else
-				JMod.SetEZowner(self, dmginfo:GetAttacker())
-				self:Detonate()
-			end
-		end
-	end
-
-	function ENT:Use(activator)
-		local State = self:GetState()
-		if State < 0 then return end
-		local Alt = JMod.IsAltUsing(activator)
-
-		if State == STATE_OFF then
-			if Alt then
-				JMod.SetEZowner(self, activator)
-				self:EmitSound("snds_jack_gmod/bomb_arm.ogg", 60, 120)
-				self:SetState(STATE_ARMED)
-				self.EZlaunchableWeaponArmedTime = CurTime()
-				--JMod.Hint(activator, "remote guidance")
-			else
-				activator:PickupObject(self)
-				JMod.Hint(activator, "arm")
-			end
-		elseif State == STATE_ARMED then
-			self:EmitSound("snds_jack_gmod/bomb_disarm.ogg", 60, 120)
-			self:SetState(STATE_OFF)
-			JMod.SetEZowner(self, activator)
-			self.EZlaunchableWeaponArmedTime = nil
-		end
-	end
-
-	function ENT:Think()
-		if istable(WireLib) then
-			WireLib.TriggerOutput(self, "State", self:GetState())
-			WireLib.TriggerOutput(self, "Fuel", self.FuelLeft)
-		end
-
-		local Phys = self:GetPhysicsObject()
-		JMod.AeroDrag(self, self:GetForward(), 1)
-
-		if self:GetState() == STATE_LAUNCHED then
-			local SelfPos = self:WorldSpaceCenter()
-			local FlightDir = self:GetForward()
-			if IsValid(self.Target) then
-				local DiffToTarget = (self.Target:WorldSpaceCenter()) - SelfPos
-				local Dist = DiffToTarget:Length()
-				local OurVel = self:GetVelocity()
-				local TheirVel = self.Target:GetVelocity()
-				local LeadDir = TheirVel:GetNormalized()
-				local AimVector = self.Target:WorldSpaceCenter() + LeadDir * (((Dist * 12) / (OurVel:Length() * 12)) * TheirVel:Length()) --* .5
-				local AimDir = (AimVector - SelfPos):GetNormalized()
-				local CurForward = self:GetForward()
-				FlightDir = LerpVector(.5, CurForward, AimDir)
-				if Dist < 400 then
-					self:Detonate()
-				end
-			end
-
-			if self.FuelLeft > 0 then
-				Phys:ApplyForceCenter(FlightDir * 20000 + self.UpLift)
-				Phys:ApplyTorqueCenter(self:GetForward() * 20)
-				self.FuelLeft = self.FuelLeft - 1
-				---
-				local Eff = EffectData()
-				Eff:SetOrigin(self:GetPos())
-				Eff:SetNormal(-self:GetForward())
-				Eff:SetScale(4)
-				util.Effect("eff_jack_gmod_ezexhaust", Eff, true, true)
-				--util.Effect("eff_jack_gmod_rockettrail", Eff, true, true)
-			end
-		end
-
-		self:NextThink(CurTime() + .05)
-
-		return true
-	end
-
-	--
-	function ENT:Launch()
-		if self:GetState() ~= STATE_ARMED then return end
-		self:SetState(STATE_LAUNCHED)
-		self.UpLift = Vector(0, 0, GetConVar("sv_gravity"):GetFloat() * 2)
-		local Phys = self:GetPhysicsObject()
-		constraint.RemoveAll(self)
-		Phys:EnableMotion(true)
-		Phys:Wake()
-		Phys:ApplyForceCenter(-self:GetForward() * 20000 + self.UpLift * .5)
-		---
-		self:EmitSound("snds_jack_gmod/rocket_launch.ogg", 90, math.random(85, 95))
-		local Eff = EffectData()
-		Eff:SetOrigin(self:GetPos())
-		Eff:SetNormal(-self:GetForward())
-		Eff:SetScale(1)
-		util.Effect("eff_jack_gmod_rocketthrust", Eff, true, true)
-
-		---
-		for i = 1, 4 do
-			util.BlastDamage(self, JMod.GetEZowner(self), self:GetPos() + -self:GetForward() * i * 40, 50, 50)
-		end
-
-		util.ScreenShake(self:GetPos(), 20, 255, .5, 300)
-		---
-		self.NextDet = CurTime() + .25
-
-		---
-		timer.Simple(30, function()
-			if IsValid(self) then
-				self:Detonate()
-			end
-		end)
-
-		JMod.Hint(JMod.GetEZowner(self), "backblast", self:GetPos())
-		---
+	function ENT:OnLaunch()
+		-- Spin-up + deploy fins shortly after launch.
 		timer.Simple(.5, function()
 			if IsValid(self) then
 				self:GetPhysicsObject():ApplyTorqueCenter(self:GetForward() * 2500)
@@ -241,6 +77,7 @@ if SERVER then
 			end
 		end)
 
+		-- Lock onto the first valid target in front of the rocket.
 		for k, v in pairs(ents.FindInCone(self:GetPos(), self:GetForward(), 50000, 0.707)) do
 			if JMod.ShouldAttack(self, v, true, false) then
 				self.Target = v
@@ -248,10 +85,6 @@ if SERVER then
 				break
 			end
 		end
-	end
-
-	function ENT:EZdetonateOverride(detonator)
-		self:Detonate()
 	end
 
 	function ENT:Detonate()
@@ -297,13 +130,9 @@ if SERVER then
 			ParticleEffect("100lb_air", SelfPos - Dir * 80, Ang)
 		end)
 	end
-
-	function ENT:OnRemove()
-	end
-
 elseif CLIENT then
 	function ENT:Initialize()
-		self:SetModel("models/jmod/explosives/ez_hrocket.mdl")
+		self:SetModel(self.Model)
 	end
 
 	function ENT:Think()
@@ -339,6 +168,8 @@ elseif CLIENT then
 		self:DrawModel()
 
 		if self:GetState() == STATE_LAUNCHED then
+			self.BurnoutTime = self.BurnoutTime or Time + 2
+
 			if self.BurnoutTime > Time then
 				render.SetMaterial(GlowSprite)
 
@@ -350,6 +181,8 @@ elseif CLIENT then
 		end
 	end
 
-	language.Add("ent_jack_gmod_ezherocket", "EZ Heavy Rocket")
-end
+	function ENT:OnRemove()
+	end
 
+	language.Add("ent_jack_gmod_ezheavyrocket", "EZ Heavy Rocket")
+end

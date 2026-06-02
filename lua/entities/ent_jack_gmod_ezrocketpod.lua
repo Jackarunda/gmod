@@ -22,7 +22,7 @@ ENT.RocketDisplaySpecs = {
 	["ent_jack_gmod_ezfirework"] = {
 		mdl = "models/jmod/explosives/ez_fireworks.mdl",
 		siz = 1.1,
-		pos = Vector(0, 25, 0),
+		pos = Vector(0, -25, 0),
 		ang = Angle(-90, 0, 0),
 		mat = 1,
 		bg = { [1] = 1 } -- todo
@@ -191,7 +191,7 @@ if SERVER then
 		PodAngle:RotateAroundAxis(Ford, -60 * (slotNum - 1))
 		PodAngle:RotateAroundAxis(PodAngle:Right(), -LaunchedRocket.JModPreferredCarryAngles.p)
 		PodAngle:RotateAroundAxis(PodAngle:Up(), LaunchedRocket.JModPreferredCarryAngles.y)
-		LaunchedRocket:SetPos(Pos + PodAngle:Up() * 10 + Ford * 60)
+		LaunchedRocket:SetPos(Pos + PodAngle:Up() * 10 + Ford * 100)
 		LaunchedRocket:SetAngles(PodAngle)
 		JMod.SetEZowner(LaunchedRocket, ply)
 		LaunchedRocket:Spawn()
@@ -211,6 +211,11 @@ if SERVER then
 				if arm then
 					LaunchedRocket.DropOwner = self
 					LaunchedRocket:SetState(1)
+					timer.Simple(0, function()
+						if IsValid(LaunchedRocket) and isfunction(LaunchedRocket.Launch) then
+							LaunchedRocket:Launch(ply)
+						end
+					end)
 					if LaunchedRocket.Launch then
 						LaunchedRocket:Launch(ply)
 					end
