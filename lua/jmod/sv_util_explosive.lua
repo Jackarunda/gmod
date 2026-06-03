@@ -194,7 +194,8 @@ function JMod.WreckBuildings(blaster, pos, power, range, ignoreVisChecks)
 	local allProps = ents.FindInSphere(pos, maxRange)
 
 	for k, prop in pairs(allProps) do
-		if not (table.HasValue(WreckBlacklist, prop:GetClass()) or (prop:IsNPC() or prop:IsPlayer()) or (prop.ExplProof == true) or hook.Run("JMod_CanDestroyProp", prop, blaster, pos, power, range, ignoreVisChecks) == false) then
+		local canDestroy = hook.Run("JMod_CanDestroyProp", prop, blaster, pos, power, range, ignoreVisChecks) ~= false
+		if not (table.HasValue(WreckBlacklist, prop:GetClass()) or (prop:IsNPC() or prop:IsPlayer()) or (prop.ExplProof == true) or canDestroy) then
 			local physObj = prop:GetPhysicsObject()
 			local propPos = prop:LocalToWorld(prop:OBBCenter())
 			local DistFrac = 1 - propPos:Distance(pos) / maxRange
@@ -237,6 +238,10 @@ function JMod.WreckBuildings(blaster, pos, power, range, ignoreVisChecks)
 		--end
 	end
 end
+
+hook.Add("JMod_CanDestroyProp", "LVS_IMMUNITY", function(prop, blaster, pos, power, range, ignoreVisChecks)
+	if prop.LVS then return false end
+end)
 
 function JMod.BlastDoors(blaster, pos, power, range, ignoreVisChecks)
 	for k, door in pairs(ents.FindInSphere(pos, 40 * power * (range or 1))) do
