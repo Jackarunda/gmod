@@ -28,6 +28,7 @@ function JMod.AeroDrag(ent, forward, mult, spdReq)
 	Phys:ApplyForceOffset(-Vel * Mass / 6 * mult, Pos - forward)
 	local AngVel = Phys:GetAngleVelocity()
 	Phys:AddAngleVelocity(-AngVel * Mass / 1000)
+	ent.LastAreoDragAmount = mult
 end
 
 -- this causes an object to rotate to point and fly to a point you give it
@@ -194,50 +195,60 @@ end
 function JMod.ShouldAttack(self, ent, vehiclesOnly, peaceWasNeverAnOption)
 	if not IsValid(ent) then return false end
 	if ent:IsWorld() then return false end
-	if not JMod.TargetableClasses[ent:GetClass()] and not IsValid(ent:GetPhysicsObject()) then return false end
+
+	local IsPlaya = ent:IsPlayer()
+	local Botty = ent:IsNPC()
+	local NextBotty = ent:IsNextBot()
+	local HasPhys = IsValid(ent:GetPhysicsObject())
+	-- Ignore things without a physics object, but always consider living things
+	-- (players/npcs/nextbots lack a normal phys object) and whitelisted classes.
+	if not (JMod.TargetableClasses[ent:GetClass()] or IsPlaya or Botty or NextBotty or HasPhys) then return false end
+	
 	local SelfOwner = JMod.GetEZowner(self)
 
 	local Override = hook.Run("JMod_ShouldAttack", self, ent, vehiclesOnly, peaceWasNeverAnOption)
 	if (Override ~= nil) then return Override end
 
-	local Gaymode, PlayerToCheck, InVehicle = engine.ActiveGamemode(), nil, false
+	local Gaymode, PlayerToCheck, Driving = engine.ActiveGamemode(), nil, false
 
-	if ent:IsPlayer() then
+	if IsPlaya then
 		PlayerToCheck = ent
-	elseif ent:IsNextBot() then
+	elseif NextBotty then
 		-- our hands are really tied with nextbots, they lack all the NPC methods
 		-- so just attack all of them
 		if ent.Health and (type(ent.Health) == "function") then
 			local Helf = ent:Health()
+
 			if (type(Helf) == "number") and (Helf > 0) then return true end
 		elseif ent.Health and (type(ent.Health) == "number") then
+
 			if ent.Health > 0 then return true end
 		end
-	elseif ent:IsNPC() then
+	elseif Botty then
 		return DealWithNPCs(self, ent, vehiclesOnly, peaceWasNeverAnOption)
-	elseif ent:IsVehicle() then
+	elseif ent:IsVehicle() or type(ent.GetDriver) == "function" then
 		local Driver = ent:GetDriver()
 		if IsValid(Driver) then
 			if Driver:IsNPC() then
+
 				return DealWithNPCs(self, Driver, vehiclesOnly, peaceWasNeverAnOption)
 			else
 				PlayerToCheck = Driver
-				InVehicle = true
+				Driving = true
 			end
 		end
 	elseif (ent.LVS and not(ent.ExplodedAlready)) then
-		if ent.GetDriver and IsValid(ent:GetDriver()) then
-			PlayerToCheck = ent:GetDriver()
-			InVehicle = true
-		elseif SelfOwner.lvsGetAITeam then --and ((ent.GetEngineActive and ent:GetEngineActive()))
+		if SelfOwner.lvsGetAITeam then --and ((ent.GetEngineActive and ent:GetEngineActive()))
 			local OurTeam = SelfOwner:lvsGetAITeam()
 			if ent.GetAITEAM and ent.GetAI and ent:GetAI() then
 				local TheirTeam = ent:GetAITEAM()
 				if ((OurTeam ~= 0) and (TheirTeam ~= 0) and TheirTeam ~= OurTeam) or (TheirTeam == 3) then
+
 					return true
 				end
 			end
 		else
+
 			return peaceWasNeverAnOption or false
 		end
 	elseif ent.IS_DRONE and IsValid(JMod.GetEZowner(ent)) then
@@ -248,7 +259,7 @@ function JMod.ShouldAttack(self, ent, vehiclesOnly, peaceWasNeverAnOption)
 	end
 
 	if IsValid(PlayerToCheck) and PlayerToCheck.Alive then
-		if vehiclesOnly and not InVehicle then return false end
+		if vehiclesOnly and not Driving then return false end
 		if PlayerToCheck.EZkillme then return true end -- for testing
 		if PlayerToCheck:GetObserverMode() ~= 0 then return false end
 		if (SelfOwner) and (PlayerToCheck == SelfOwner) then return false end

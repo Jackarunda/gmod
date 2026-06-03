@@ -64,7 +64,7 @@ if SERVER then
 	end
 
 	function ENT:Use(activator)
-		if activator:IsPlayer() then
+		if IsValid(activator) then
 			local Time = CurTime()
 			if self.NextBiteTime < Time then
 				self.NextBiteTime = Time + math.Rand(1, 2)
@@ -82,6 +82,8 @@ if SERVER then
 					activator:TakeDamageInfo(Dmg)
 					self.Restlessness = self.Restlessness + 1
 				end)
+			elseif activator:IsPlayer() then
+				activator:PickupObject(self)
 			end
 		end
 	end

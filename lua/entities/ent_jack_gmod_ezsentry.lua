@@ -587,13 +587,13 @@ if(SERVER)then
 				end
 			end
 		elseif (self:GetState() > JMod.EZ_STATE_OFF) and not(IsValid(self.Target)) and (self.NextTargetReSearch < Time) and not(self.EngageOverride or self.AimOverride) then
-			self.NextTargetSearch = Time + 3
-			self.SearchData.NextSearchChange = Time + 3
+			self.NextTargetSearch = Time + self.SearchSpeed * 0.5
+			self.SearchData.NextSearchChange = Time + self.SearchStageTime * 0.5
 			local LikelyOrigin = dmginfo:GetDamagePosition() - IncomingVec * 1000
 			self.SearchData.LastKnownPos = LikelyOrigin
 			self.SearchData.LastKnownVel = IncomingVec
 			self.SearchData.State = 1
-			self.NextTargetReSearch = Time + 3 --self.TargetLockTime
+			self.NextTargetReSearch = Time + self.TargetLockTime * 0.5
 			self.SearchData.State = 0
 			self:SetState(STATE_ENGAGING)
 			self:EmitSound("snds_jack_gmod/ezsentry_engage.ogg", 65, 100)--]]
@@ -741,7 +741,7 @@ if(SERVER)then
 		end
 
 		self:ConsumeElectricity(.01)
-		self.NextTargetSearch = Time + (.5 / self.SearchSpeed) -- limit searching cause it's expensive
+		self.NextTargetSearch = Time + self.SearchSpeed -- limit searching cause it's expensive
 		local SelfPos = self:GetPos()
 		-- Use targeting radius as max distance so entities beyond range are excluded
 		local ClosestTarget, ClosestDist = nil, self.TargetingRadius
