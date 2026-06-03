@@ -1,11 +1,14 @@
 ﻿function JMod.Hint(ply, key)
-	if not (JMod.Config.General.Hints and ply and key) then return nil end
+	if not (JMod.Config.General.Hints and ply and key) then return end
+
 	if not (IsValid(ply) and ply:IsPlayer()) then return end
 	local tbl = JMod.Hints[key]
-	if not tbl then return nil end
+
+	if not tbl then return end
 	ply.JModHintsGiven = ply.JModHintsGiven or {}
 	local Limit = tbl.RepeatCount or 0
 	if (ply.JModHintsGiven[key] or 0) > Limit then return false end
+	
 	ply.JModHintsGiven[key] = (ply.JModHintsGiven[key] or 0) + 1
 	net.Start("JMod_Hint")
 

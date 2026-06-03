@@ -58,7 +58,7 @@ local function UpdateDuplicatorData(invEnt)
 end
 
 --- JModInventoryAnchor: constraint type that links an inventory item to its container for duplicator support
-local function CreateJModInventoryAnchor(target, invEnt)
+function JMod.CreateInventoryAnchor(target, invEnt)
 	--print("Creating JModInventoryAnchor for " .. tostring(target) .. " and " .. tostring(invEnt))
 	if not(constraint.CanConstrain(target, 0)) then return false end
 	if not(constraint.CanConstrain(invEnt, 0)) then return false end
@@ -82,7 +82,7 @@ local function CreateJModInventoryAnchor(target, invEnt)
 
 	return anchor
 end
-duplicator.RegisterConstraint("JModInventoryAnchor", CreateJModInventoryAnchor, "Ent1", "Ent2")
+duplicator.RegisterConstraint("JModInventoryAnchor", JMod.CreateInventoryAnchor, "Ent1", "Ent2")
 
 -- Register the duplicator modifier for inventory restoration
 duplicator.RegisterEntityModifier("JModInventory", function(ply, ent, data)
@@ -357,7 +357,7 @@ function JMod.AddToInventory(invEnt, target, noUpdate)
 		--end
 		local Vol, Mass = JMod.GetItemVolumeWeight(target)
 		table.insert(jmodinv.items, {name = target.PrintName or target:GetModel(), ent = target, vol = Vol})
-		CreateJModInventoryAnchor(target, invEnt)
+		JMod.CreateInventoryAnchor(target, invEnt)
 		local Children = target:GetChildren()
 		if Children then
 			for k, v in pairs(Children) do
