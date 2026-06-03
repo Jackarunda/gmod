@@ -43,10 +43,11 @@ ENT.RocketDisplaySpecs = {
 	}
 }
 ENT.LaserPointStartPos = Vector(35, 0, 0)
+ENT.TargetPositionOverride = nil
 ---
 local ColorRed = Color(255, 0, 0, 100)
 local ColorWhite = Color(255, 255, 255, 100)
-local BeamMat, GlowMat, CreateTemporaryLaser = nil, nil, function() end
+local BeamMat, GlowMat = nil, nil
 if CLIENT then
 	BeamMat = CreateMaterial("xeno/beamgauss", "UnlitGeneric", {
 		["$basetexture"] = "sprites/spotlight",
@@ -55,6 +56,7 @@ if CLIENT then
 		["$vertexalpha"] = "1",
 	})
 	GlowMat = Material("sprites/mat_jack_basicglow")
+
 	CreateTemporaryLaser = function(self, old, new)
 		local RenderHookName = "JMOD_ROCKETPOD_RENDER_LaserPointPos_" .. self:EntIndex()
 		self.NextLaserRenderTime = CurTime() + 1
@@ -82,6 +84,8 @@ if CLIENT then
 			end
 		end)
 	end
+else
+	CreateTemporaryLaser = function() end
 end
 
 function ENT:SetupDataTables()
@@ -125,8 +129,8 @@ if SERVER then
 		self.Rockets = self.Rockets or {}
 		---
 		if istable(WireLib) then
-			self.Inputs = WireLib.CreateInputs(self, {"Launch [NORMAL]", "Unload [NORMAL]"}, {"Fires the specified rocket, input -1 to fire them all", "Unloads rocket"})
-			self.Outputs = WireLib.CreateOutputs(self, {"LastRocket [STRING]", "Amount [NORMAL]"}, {"The last loaded rocket", "How many rockets are contained in the launcher"})
+			self.Inputs = WireLib.CreateInputs(self, {"Launch [NORMAL]", "Unload [NORMAL]", "TargetPos [VECTOR]", "TargetEntity [ENTITY]"}, {"Fires the specified rocket, input -1 to fire them all", "Unloads rocket", "Target position for unguided rockets", "Target entity for missiles"})
+			self.Outputs = WireLib.CreateOutputs(self, {"NextRocket [STRING]", "Amount [NORMAL]"}, {"The next rocket that will fire", "How many rockets are contained in the launcher"})
 		end
 	end
 
@@ -143,29 +147,39 @@ if SERVER then
 
 	function ENT:TriggerInput(iname, value)
 		local NumRockets = #self.Rockets
-		if iname == "Launch" and value > 0 then
-			self:LaunchRocket(value, true)
-		elseif iname == "Launch" and value == -1 then
-			if NumRockets > 0 then
-				for i = 0, NumRockets do
-					timer.Simple(.6 * i, function()
-						if IsValid(self) then
-							self:LaunchRocket(NumRockets - i, true)
-						end
-					end)
+		if iname == "Launch" then
+			if value > 0 then
+				self:LaunchRocket(value, true)
+			elseif value == -1 then
+				if NumRockets > 0 then
+					for i = 0, NumRockets do
+						timer.Simple(.6 * i, function()
+							if IsValid(self) then
+								self:LaunchRocket(NumRockets - i, true)
+							end
+						end)
+					end
 				end
 			end
-		elseif iname == "Unload" and value > 0 then
-			self:LaunchRocket(value, false)
-		elseif iname == "Unload" and value == -1 then
-			if NumRockets > 0 then
-				for i = 1, NumRockets do
-					timer.Simple(.2 * i, function()
-						if IsValid(self) then
-							self:LaunchRocket(i, false)
-						end
-					end)
+		elseif iname == "Unload" then
+			if value > 0 then
+				self:LaunchRocket(value, false)
+			elseif value == - 1 then
+				if NumRockets > 0 then
+					for i = 1, NumRockets do
+						timer.Simple(.2 * i, function()
+							if IsValid(self) then
+								self:LaunchRocket(i, false)
+							end
+						end)
+					end
 				end
+			end
+		elseif iname == "TargetPos" then
+			if value == Vector(0, 0, 0) then
+				self.TargetPositionOverride = nil
+			else
+				self.TargetPositionOverride = value
 			end
 		end
 	end
@@ -219,9 +233,10 @@ if SERVER then
 	end
 
 	function ENT:LaunchRocket(slotNum, arm, ply)
+		if arm == nil then arm = true end
 		local Time = CurTime()
 		if self.NextLaunchTime and (self.NextLaunchTime > Time) then return end
-		self.NextLaunchTime = Time + .1
+		self.NextLaunchTime = Time + .25
 		local NumORockets = #self.Rockets
 		slotNum = slotNum or NumORockets
 		if NumORockets <= 0 then return end
@@ -243,17 +258,17 @@ if SERVER then
 		LaunchedRocket:Spawn()
 		LaunchedRocket:Activate()
 
-		local TargetPos = nil
+		local TargetPos = self.TargetPositionOverride
 		if IsValid(ply) then
 			local filter = {ply}
 			local Veh = ply:GetVehicle()
 			if IsValid(Veh) then table.insert(filter, Veh) table.insert(filter, Veh:GetParent()) end
-			local plyTrace = util.QuickTrace(ply:EyePos(), ply:EyeAngles():Forward() * 50000, filter)
+			local plyTrace = util.QuickTrace(ply:GetShootPos(), ply:GetAimVector() * 50000, filter)
 			if plyTrace.Hit then
-				-- Check if player trace hitpos is within a 30 degree cone of our forward vector
+				-- Check if player trace hitpos is within a cone of our forward vector
 				local diff = plyTrace.HitPos - self:GetPos()
 				local dot = Ford:Dot(diff:GetNormalized())
-				if dot > 0.8 then
+				if dot > 0.9 then
 					TargetPos = plyTrace.HitPos
 				end
 			end
@@ -323,7 +338,7 @@ if SERVER then
 		local NumRockets = #self.Rockets
 		if NumRockets > 0 then
 			for i = 0, NumRockets do
-				timer.Simple(0.11 * i, function()
+				timer.Simple(0.6 * i, function()
 					if IsValid(self) then
 						self:LaunchRocket(NumRockets - i, false, self.EZowner)
 					end
@@ -331,7 +346,7 @@ if SERVER then
 			end
 		end
 
-		timer.Simple(2, function()
+		timer.Simple(5, function()
 			SafeRemoveEntity(self)
 		end)
 	end

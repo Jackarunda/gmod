@@ -4,10 +4,10 @@
 
 	if emitter then
 		for i = 1, 10 do
-			local ParticlePos = Pos + Dir * math.random(-50, 200)
+			local ParticlePos = Pos + Dir * math.random(-50, 100)
 			local particle = emitter:Add("particle/smokestack", ParticlePos)
 			particle:SetVelocity(Dir * math.random(500, 5000))
-			particle:SetAirResistance(100)
+			particle:SetAirResistance(200)
 			particle:SetGravity(Vector(0, 0, math.random(10, 100)))
 			particle:SetDieTime(math.Rand(1, 4))
 			particle:SetStartAlpha(100)

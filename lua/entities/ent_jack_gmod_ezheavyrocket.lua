@@ -28,7 +28,7 @@ ENT.UseClientModel = false
 ENT.TurnStrength = 300
 -- Effects
 ENT.ThrustEffect = "eff_jack_gmod_rocketthrust"
-ENT.TrailEffect = "eff_jack_gmod_ezexhaust"
+ENT.TrailEffect = "eff_jack_gmod_rockettrail"--"eff_jack_gmod_ezexhaust"
 ENT.TrailEffectScale = 4
 ENT.LaunchEffectScale = 1
 ENT.LaunchSoundVol = 90

@@ -150,7 +150,7 @@ if SERVER then
 		local horiz = Vector(diff.x, diff.y, 0)
 		local x = horiz:Length()
 		-- Target within our reach of thrust, aim straight at it
-		if x < speed / 2 then return diff:GetNormalized() end
+		if x < speed then return diff:GetNormalized() end
 		horiz:Div(x)
 		local y, v2 = diff.z, speed * speed
 		local disc = v2 * v2 - grav * (grav * x * x + 2 * y * v2)
