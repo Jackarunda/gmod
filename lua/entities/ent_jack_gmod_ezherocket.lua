@@ -20,6 +20,7 @@ local VECTOR_DOWN = Vector(0, 0, -1)
 ENT.Model = "models/hunter/plates/plate150.mdl"
 ENT.Mass = 40
 ENT.PhysMaterial = nil
+ENT.ImpactSound = "Canister.ImpactHard"
 ENT.ThrustForce = 200000
 ENT.ThrustJitter = 500
 ENT.UpLiftMult = .5
@@ -28,8 +29,9 @@ ENT.FuelBurn = 15
 ENT.DetonationSpeed = 600
 ENT.CollideDetState = STATE_ARMED
 ENT.BreakOdds = 3
+ENT.FuseTime = 30 -- seconds after launch before self-detonation
 ENT.AeroDragMult = .1
-ENT.TurnStrength = 3000
+ENT.TurnStrength = 300
 -- Effects
 ENT.ThrustEffect = "eff_jack_gmod_rocketthrust"
 ENT.TrailEffect = "eff_jack_gmod_rockettrail"
@@ -53,7 +55,7 @@ if SERVER then
 	function ENT:SpawnFunction(ply, tr)
 		local SpawnPos = tr.HitPos + tr.HitNormal * 40
 		local ent = ents.Create(self.ClassName)
-		ent:SetAngles(Angle(180, 0, 0))
+		ent:SetAngles(ent.JModPreferredCarryAngles)
 		ent:SetPos(SpawnPos)
 		JMod.SetEZowner(ent, ply)
 		ent:Spawn()
@@ -138,6 +140,29 @@ if SERVER then
 		self.LastAreoDragAmount = mult
 	end
 
+	-- Closed-form ballistic launch-angle solver. Given a launch speed, gravity,
+	-- and the offset to the target, returns the world-space nose direction whose
+	-- ballistic arc lands on the target. Picks the low (direct-fire) arc; if the
+	-- target is out of range it falls back to a 45deg max-range lob.
+	local PI_QUARTER = math.pi / 4
+	local function SolveBallisticDir(startPos, targetPos, speed, grav)
+		local diff = targetPos - startPos
+		local horiz = Vector(diff.x, diff.y, 0)
+		local x = horiz:Length()
+		-- Target within our reach of thrust, aim straight at it
+		if x < speed / 2 then return diff:GetNormalized() end
+		horiz:Div(x)
+		local y, v2 = diff.z, speed * speed
+		local disc = v2 * v2 - grav * (grav * x * x + 2 * y * v2)
+		local theta
+		if disc < 0 then
+			theta = PI_QUARTER
+		else
+			theta = math.atan((v2 - math.sqrt(disc)) / (grav * x))
+		end
+		return (horiz * math.cos(theta) + Vector(0, 0, math.sin(theta))):GetNormalized()
+	end
+
 	function ENT:PhysicsSimulate(phys, deltatime)
 		local Nose = self:GetNoseDir()
 		self:AeroDrag(Nose, self.AeroDragMult, nil, deltatime)
@@ -151,11 +176,16 @@ if SERVER then
 			phys:ApplyForceCenter(self.UpLift)
 		end
 
-		-- Optional guidance: steer the nose toward a world point.
+		-- Optional guidance: steer the nose along a ballistic arc to a world point.
 		if self.TargetPosition then
 			local Mass = phys:GetMass()
 			local Center = phys:LocalToWorld(phys:GetMassCenter())
-			local DesiredDir = (self.TargetPosition - self:GetPos()):GetNormalized()
+			-- Project the burn-out speed (current + remaining thrust) so the aim
+			-- angle is stable from launch instead of chasing a growing speed.
+			local RemainingTime = (self.FuelLeft / self.FuelBurn) * 0.1
+			local ProjSpeed = phys:GetVelocity():Length() + (self.ThrustForce / Mass) * RemainingTime
+			if ProjSpeed < 1 then ProjSpeed = 1 end
+			local DesiredDir = SolveBallisticDir(self:GetPos(), self.TargetPosition, ProjSpeed, self.BallisticGravity or 600)
 			local Turn = Mass * self.TurnStrength
 			phys:ApplyForceOffset(DesiredDir * Turn, Center + Nose)
 			phys:ApplyForceOffset(-DesiredDir * Turn, Center - Nose)
@@ -189,7 +219,7 @@ if SERVER then
 
 		if data.DeltaTime > 0.2 then
 			if data.Speed > 50 then
-				self:EmitSound("Canister.ImpactHard")
+				self:EmitSound(self.ImpactSound)
 			end
 
 			if (data.Speed > self.DetonationSpeed) and (self:GetState() >= self.CollideDetState) then
@@ -316,6 +346,8 @@ if SERVER then
 		if self:GetState() ~= STATE_ARMED then return end
 		self:SetState(STATE_LAUNCHED)
 		self.UpLift = physenv.GetGravity() * -self.UpLiftMult
+		-- Cache gravity magnitude for the per-tick ballistic solver.
+		self.BallisticGravity = math.abs(physenv.GetGravity().z)
 		local Phys = self:GetPhysicsObject()
 		constraint.RemoveAll(self)
 		Phys:EnableMotion(true)
@@ -338,7 +370,7 @@ if SERVER then
 		self.NextDet = CurTime() + .25
 
 		---
-		timer.Simple(30, function()
+		timer.Simple(self:GetFuseTime(), function()
 			if IsValid(self) then
 				self:Detonate()
 			end
@@ -348,6 +380,15 @@ if SERVER then
 
 		---
 		self:OnLaunch()
+	end
+
+	-- Seconds after launch before the rocket self-detonates. Override for custom fuses.
+	function ENT:GetFuseTime()
+		if istable(self.FuseTime) then
+			return math.Rand(self.FuseTime[1], self.FuseTime[2])
+		else
+			return self.FuseTime
+		end
 	end
 
 	-- Backblast damage cone behind the rocket. Override for custom behavior.
@@ -386,7 +427,6 @@ if SERVER then
 				Eff:SetNormal(-self:GetNoseDir())
 				Eff:SetScale(self.TrailEffectScale)
 				util.Effect(self.TrailEffect, Eff, true, true)
-				print(self:GetVelocity():Length())
 			end
 		end
 

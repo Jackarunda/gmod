@@ -25,7 +25,7 @@ ENT.BreakOdds = 5
 ENT.ThrustJitter = 0
 -- This rocket points/thrusts along its forward axis instead of -right.
 ENT.UseClientModel = false
-ENT.TurnStrength = 2500
+ENT.TurnStrength = 300
 -- Effects
 ENT.ThrustEffect = "eff_jack_gmod_rocketthrust"
 ENT.TrailEffect = "eff_jack_gmod_ezexhaust"

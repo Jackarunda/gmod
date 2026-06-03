@@ -320,25 +320,31 @@ hook.Add("PostDrawTranslucentRenderables", "JMOD_POSTDRAWTRANSLUCENTRENDERABLES"
 			if pos then
 				local trace = util.QuickTrace(pos, ent:GetUp() * 1000, ent)
 				local State, Vary = ent:GetState(), math.sin(CurTime() * 50) / 2 + .5
+				local ColorRed = Color(255, 0, 0, 100 * Vary)
+				local ColorWhite = Color(255, 255, 255, 100 * Vary)
+				local ColorRed2 = Color(255, 0, 0, 30)
+				local ColorWhite2 = Color(255, 255, 255, 30)
 				local Forward = -ent:GetUp()
 				pos = pos - Forward * .5
 
 				if State == JMod.EZ_STATE_ARMING then
 					render.SetMaterial(GlowSprite)
-					render.DrawSprite(pos, 15, 15, Color(255, 0, 0, 100 * Vary))
-					render.DrawSprite(pos, 7, 7, Color(255, 255, 255, 100 * Vary))
-					render.DrawQuadEasy(pos, Forward, 15, 15, Color(255, 0, 0, 100 * Vary), 0)
-					render.DrawQuadEasy(pos, Forward, 7, 7, Color(255, 255, 255, 100 * Vary), 0)
+					render.DrawSprite(pos, 15, 15, ColorRed)
+					render.DrawSprite(pos, 7, 7, ColorWhite)
+					render.DrawQuadEasy(pos, Forward, 15, 15, ColorRed, 0)
+					render.DrawQuadEasy(pos, Forward, 7, 7, ColorWhite, 0)
 				elseif State == JMod.EZ_STATE_ARMED then
 					render.SetMaterial(BeamMat)
-					render.DrawBeam(pos, trace.HitPos, 0.2, 0, 255, Color(255, 0, 0, 30))
+					render.DrawBeam(pos, trace.HitPos, 0.2, 0, 255, ColorRed2)
 
 					if trace.Hit then
+						local ColorRed3 = Color(255, 0, 0, 100)
+						local ColorWhite3 = Color(255, 255, 255, 100)
 						render.SetMaterial(GlowSprite)
-						render.DrawSprite(trace.HitPos, 8, 8, Color(255, 0, 0, 100))
-						render.DrawSprite(trace.HitPos, 4, 4, Color(255, 255, 255, 100))
-						render.DrawQuadEasy(trace.HitPos, trace.HitNormal, 15, 15, Color(255, 0, 0, 100), 0)
-						render.DrawQuadEasy(trace.HitPos, trace.HitNormal, 7, 7, Color(255, 255, 255, 100), 0)
+						render.DrawSprite(trace.HitPos, 8, 8, ColorRed3)
+						render.DrawSprite(trace.HitPos, 4, 4, ColorWhite3)
+						render.DrawQuadEasy(trace.HitPos, trace.HitNormal, 15, 15, ColorRed3, 0)
+						render.DrawQuadEasy(trace.HitPos, trace.HitNormal, 7, 7, ColorWhite3, 0)
 					end
 				end
 			end

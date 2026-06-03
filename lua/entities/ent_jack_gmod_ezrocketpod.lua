@@ -42,7 +42,53 @@ ENT.RocketDisplaySpecs = {
 		mat = 1
 	}
 }
+ENT.LaserPointStartPos = Vector(35, 0, 0)
 ---
+local ColorRed = Color(255, 0, 0, 100)
+local ColorWhite = Color(255, 255, 255, 100)
+local BeamMat, GlowMat, CreateTemporaryLaser = nil, nil, function() end
+if CLIENT then
+	BeamMat = CreateMaterial("xeno/beamgauss", "UnlitGeneric", {
+		["$basetexture"] = "sprites/spotlight",
+		["$additive"] = "1",
+		["$vertexcolor"] = "1",
+		["$vertexalpha"] = "1",
+	})
+	GlowMat = Material("sprites/mat_jack_basicglow")
+	CreateTemporaryLaser = function(self, old, new)
+		local RenderHookName = "JMOD_ROCKETPOD_RENDER_LaserPointPos_" .. self:EntIndex()
+		self.NextLaserRenderTime = CurTime() + 1
+		hook.Add("PostDrawTranslucentRenderables", RenderHookName, function()
+			if not IsValid(self) then 
+				hook.Remove("PostDrawTranslucentRenderables", RenderHookName)
+
+				return 
+			end
+			local StartPos = self:LocalToWorld(self.LaserPointStartPos)
+			local EndPos = self:GetLaserPointPos()
+			local trace = util.QuickTrace(StartPos, EndPos - StartPos, self)
+			local EyeDir = (EyePos() - trace.HitPos):GetNormalized()
+			local SurfaceDot = EyeDir:Dot(trace.HitNormal)
+			render.SetMaterial(BeamMat)
+			render.DrawBeam(StartPos, trace.HitPos, 0.5, 0, 255, ColorRed)
+			render.DrawBeam(StartPos, trace.HitPos, 0.25, 0, 255, ColorWhite)
+			render.SetMaterial(GlowMat)
+			render.DrawQuadEasy(trace.HitPos + EyeDir * 8 * SurfaceDot, EyeDir, 15, 15, ColorRed, 0)
+			render.DrawQuadEasy(trace.HitPos + EyeDir * 4 * SurfaceDot, EyeDir, 7, 7, ColorWhite, 0)
+			render.DrawSprite(trace.HitPos + EyeDir * 8 * SurfaceDot, 8, 8, ColorRed)
+			render.DrawSprite(trace.HitPos + EyeDir * 4 * SurfaceDot, 4, 4, ColorWhite)
+			if CurTime() > self.NextLaserRenderTime then
+				hook.Remove("PostDrawTranslucentRenderables", RenderHookName)
+			end
+		end)
+	end
+end
+
+function ENT:SetupDataTables()
+	self:NetworkVar("Vector", 0, "LaserPointPos")
+	self:NetworkVarNotify("LaserPointPos", CreateTemporaryLaser)
+end
+
 if SERVER then
 	function ENT:SpawnFunction(ply, tr)
 		local SpawnPos = tr.HitPos + tr.HitNormal * 40
@@ -196,6 +242,26 @@ if SERVER then
 		JMod.SetEZowner(LaunchedRocket, ply)
 		LaunchedRocket:Spawn()
 		LaunchedRocket:Activate()
+
+		local TargetPos = nil
+		if IsValid(ply) then
+			local filter = {ply}
+			local Veh = ply:GetVehicle()
+			if IsValid(Veh) then table.insert(filter, Veh) table.insert(filter, Veh:GetParent()) end
+			local plyTrace = util.QuickTrace(ply:EyePos(), ply:EyeAngles():Forward() * 50000, filter)
+			if plyTrace.Hit then
+				-- Check if player trace hitpos is within a 30 degree cone of our forward vector
+				local diff = plyTrace.HitPos - self:GetPos()
+				local dot = Ford:Dot(diff:GetNormalized())
+				if dot > 0.8 then
+					TargetPos = plyTrace.HitPos
+				end
+			end
+		end
+		if TargetPos then
+			LaunchedRocket.TargetPosition = TargetPos
+			self:SetLaserPointPos(TargetPos)
+		end
 
 		local Nocollider = constraint.NoCollide(self, LaunchedRocket, 0, 0, true)
 		timer.Simple(1, function()
