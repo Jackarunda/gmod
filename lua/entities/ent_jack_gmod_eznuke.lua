@@ -9,8 +9,8 @@ ENT.Spawnable = true
 ENT.AdminOnly = true
 ---
 ENT.JModPreferredCarryAngles = Angle(90, 0, 0)
-ENT.EZrackOffset = Vector(0, 0, 10)
-ENT.EZrackAngles = Angle(0, 0, 90)
+ENT.EZrackOffset = Vector(0, 0, -8)
+ENT.EZrackAngles = Angle(90, 0, 0)
 ENT.EZbombBaySize = 50
 ---
 ENT.EZguidable = false

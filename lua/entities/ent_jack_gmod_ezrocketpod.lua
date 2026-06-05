@@ -257,6 +257,7 @@ if SERVER then
 		JMod.SetEZowner(LaunchedRocket, ply)
 		LaunchedRocket:Spawn()
 		LaunchedRocket:Activate()
+		LaunchedRocket.EZlauncher = self
 
 		local TargetPos = self.TargetPositionOverride
 		if IsValid(ply) then

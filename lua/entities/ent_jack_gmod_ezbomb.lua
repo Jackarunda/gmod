@@ -9,7 +9,7 @@ ENT.Spawnable = true
 ENT.AdminSpawnable = true
 ---
 ENT.JModPreferredCarryAngles = Angle(0, -90, 0)
-ENT.EZrackOffset = Vector(0, 0, 20)
+ENT.EZrackOffset = Vector(0, -6, -10)
 ENT.EZrackAngles = Angle(0, -90, 0)
 ENT.EZbombBaySize = 12
 ---
@@ -274,8 +274,6 @@ if SERVER then
 
 			if Time - self.LastUse < .2 then
 				self:Arm(activator)
-				self:EmitSound("snds_jack_gmod/bomb_arm.ogg", 70, 120)
-				JMod.Hint(activator, self.DetType)
 			else
 				JMod.Hint(activator, "double tap to arm")
 			end
@@ -285,9 +283,7 @@ if SERVER then
 			JMod.SetEZowner(self, activator)
 
 			if Time - self.LastUse < .2 then
-				self:SetState(STATE_OFF)
-				self:EmitSound("snds_jack_gmod/bomb_disarm.ogg", 70, 120)
-				self.EZdroppableBombArmedTime = nil
+				self:Disarm(activator)
 			else
 				JMod.Hint(activator, "double tap to disarm")
 			end
@@ -302,6 +298,16 @@ if SERVER then
 		end
 		self:SetState(STATE_ARMED)
 		self.EZdroppableBombArmedTime = CurTime()
+		JMod.Hint(activator, self.DetType)
+		self:EmitSound("snds_jack_gmod/bomb_arm.ogg", 70, 120)
+	end
+
+	function ENT:Disarm(activator)
+		if self:GetState() == STATE_OFF then return end
+		JMod.SetEZowner(self, activator)
+		self:SetState(STATE_OFF)
+		self.EZdroppableBombArmedTime = nil
+		self:EmitSound("snds_jack_gmod/bomb_disarm.ogg", 70, 120)
 	end
 
 	function ENT:Detonate()

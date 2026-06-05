@@ -5,32 +5,35 @@ ENT.Type = "anim"
 ENT.Author = "Jackarunda"
 ENT.Category = "JMod - EZ Explosives"
 ENT.Information = "glhfggwpezpznore"
-ENT.PrintName = "EZ Heavy Rocket"
+ENT.PrintName = "EZ Missile"
 ENT.Spawnable = true
 ENT.AdminOnly = false
 ---
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
-ENT.EZrackOffset = Vector(0, 0, -2)
+ENT.EZrackOffset = Vector(0, 0, -10)
 ENT.EZrackAngles = Angle(0, 0, 0)
 ENT.EZrocket = true
 ---
 -- Inherits the HE rocket motion controller. Only the differences below.
-ENT.Model = "models/jmod/explosives/ez_hrocket.mdl"
-ENT.Mass = 50
-ENT.UpLiftMult = .5
+ENT.Model = "models/props_phx/amraam.mdl"
+ENT.Mass = 100
+ENT.UpLiftMult = .54
+ENT.FuelMax = 1000
+--ENT.FuelBooster = 100
 ENT.FuelBurn = 10
+ENT.ThrustForce = 800000
 ENT.DetonationSpeed = 300
 ENT.CollideDetState = 1 -- STATE_ARMED
 ENT.BreakOdds = 5
 ENT.ThrustJitter = 0
 -- This rocket points/thrusts along its forward axis instead of -right.
 ENT.UseClientModel = false
-ENT.TurnStrength = 300
+ENT.TurnStrength = 500
 -- Effects
 ENT.ThrustEffect = "eff_jack_gmod_rocketthrust"
 ENT.TrailEffect = "eff_jack_gmod_rockettrail"--"eff_jack_gmod_ezexhaust"
 ENT.TrailEffectScale = 4
-ENT.LaunchEffectScale = 1
+ENT.LaunchEffectScale = 2
 ENT.LaunchSoundVol = 90
 ENT.LaunchSoundPitchMin = 85
 ENT.LaunchSoundPitchMax = 95
@@ -42,14 +45,48 @@ if SERVER then
 		return self:GetForward()
 	end
 
+	-- Guidance: update the steering target from the locked entity each think.
+	-- The base motion controller steers the nose toward self.TargetPosition.
+	function ENT:GuidanceThink()
+		if not IsValid(self.Target) then
+			self.TargetPosition = self:WorldSpaceCenter() + self:GetForward() * 50000
+
+			return
+		end
+
+		local SelfPos = self:WorldSpaceCenter()
+		local TargetCenter = self.Target:WorldSpaceCenter()
+		local DiffToTarget = TargetCenter - SelfPos
+		local Dist = DiffToTarget:Length()
+		local OurSpeed = self:GetVelocity():Length()
+		local TheirVel = self.Target:GetVelocity()
+		local LeadDir = TheirVel:GetNormalized()
+
+		if OurSpeed < 1 then OurSpeed = 1 end
+		-- Lead the target based on our travel time to it.
+		self.TargetPosition = TargetCenter + LeadDir * ((Dist / OurSpeed) * TheirVel:Length())
+
+		if Dist < 400 then
+			self:Detonate()
+		end
+	end
+
 	function ENT:OnLaunch()
-		-- Spin-up + deploy fins shortly after launch.
-		timer.Simple(.5, function()
+		timer.Simple(.1, function()
 			if IsValid(self) then
-				self:GetPhysicsObject():ApplyTorqueCenter(self:GetForward() * 2500)
-				self:SetBodygroup(1, 1)
+				self:GetPhysicsObject():ApplyForceCenter(self:GetForward() * 800000)
 			end
 		end)
+
+		-- Lock onto the first valid target in front of the rocket.
+		for k, v in pairs(ents.FindInCone(self:GetPos(), self:GetForward(), 50000, 0.7)) do
+			print("Missile: OnLaunch", v:GetClass(), JMod.ShouldAttack(self, v, true, false))
+			if JMod.ShouldAttack(self, v, true, false) then
+				self.Target = v
+
+				break
+			end
+		end
 	end
 
 	function ENT:Detonate()
@@ -57,7 +94,7 @@ if SERVER then
 		if self.Exploded then return end
 		self.Exploded = true
 		local SelfPos, Att, Dir = self:GetPos() + self:GetForward() * 50, JMod.GetEZowner(self), self:GetForward()
-		JMod.Sploom(Att, SelfPos, 600, 400)
+		JMod.Sploom(Att, SelfPos, 600, 500)
 		JMod.FragSplosion(self, SelfPos, 50, 35, 1000, Att, Dir, .45, nil, false)
 		---
 		util.ScreenShake(SelfPos, 1000, 3, 2, 1500)
@@ -105,7 +142,7 @@ elseif CLIENT then
 		local Time = CurTime()
 
 		if self:GetState() == STATE_LAUNCHED then
-			self.BurnoutTime = self.BurnoutTime or Time + 2
+			self.BurnoutTime = self.BurnoutTime or Time + 5
 			if self.BurnoutTime > Time then
 				local dlight = DynamicLight(self:EntIndex())
 
@@ -133,7 +170,7 @@ elseif CLIENT then
 		self:DrawModel()
 
 		if self:GetState() == STATE_LAUNCHED then
-			self.BurnoutTime = self.BurnoutTime or Time + 2
+			self.BurnoutTime = self.BurnoutTime or Time + 5
 
 			if self.BurnoutTime > Time then
 				render.SetMaterial(GlowSprite)
@@ -149,5 +186,5 @@ elseif CLIENT then
 	function ENT:OnRemove()
 	end
 
-	language.Add("ent_jack_gmod_ezheavyrocket", "EZ Heavy Rocket")
+	language.Add("ent_jack_gmod_ezmissile", "EZ Missile")
 end

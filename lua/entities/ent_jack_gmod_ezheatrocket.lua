@@ -10,8 +10,6 @@ ENT.Spawnable = true
 ENT.AdminSpawnable = true
 ---
 ENT.JModPreferredCarryAngles = Angle(0, -90, 0)
-ENT.EZrackOffset = Vector(0, -1.5, 0)
-ENT.EZrackAngles = Angle(0, 0, 0)
 ENT.EZrocket = true
 ---
 -- Inherits the HE rocket motion controller. Only the differences below.

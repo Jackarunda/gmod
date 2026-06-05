@@ -9,8 +9,8 @@ ENT.Spawnable = true
 ENT.AdminSpawnable = true
 ---
 ENT.JModPreferredCarryAngles = Angle(0, -90, 0)
-ENT.EZrackOffset = Vector(0, -1.5, -2.5)
-ENT.EZrackAngles = Angle(0, 0, 0)
+ENT.EZrackOffset = Vector(0, 1, -1)
+ENT.EZrackAngles = Angle(45, -90, 0)
 ENT.EZrocket = true
 ---
 local STATE_BROKEN, STATE_OFF, STATE_ARMED, STATE_LAUNCHED = -1, 0, 1, 2
@@ -53,7 +53,7 @@ end
 ---
 if SERVER then
 	function ENT:SpawnFunction(ply, tr)
-		local SpawnPos = tr.HitPos + tr.HitNormal * 40
+		local SpawnPos = tr.HitPos + tr.HitNormal * 20
 		local ent = ents.Create(self.ClassName)
 		ent:SetAngles(ent.JModPreferredCarryAngles)
 		ent:SetPos(SpawnPos)
@@ -271,21 +271,31 @@ if SERVER then
 
 		if State == STATE_OFF then
 			if Alt then
-				JMod.SetEZowner(self, activator)
-				self:EmitSound("snds_jack_gmod/bomb_arm.ogg", 60, 120)
-				self:SetState(STATE_ARMED)
-				self.EZlaunchableWeaponArmedTime = CurTime()
-				JMod.Hint(activator, "launch")
+				self:Arm(activator)
 			else
 				activator:PickupObject(self)
 				JMod.Hint(activator, "arm")
 			end
 		elseif State == STATE_ARMED then
-			self:EmitSound("snds_jack_gmod/bomb_disarm.ogg", 60, 120)
-			self:SetState(STATE_OFF)
-			JMod.SetEZowner(self, activator)
-			self.EZlaunchableWeaponArmedTime = nil
+			self:Disarm(activator)
 		end
+	end
+
+	function ENT:Arm(ply)
+		if self:GetState() == STATE_ARMED then return end
+		JMod.SetEZowner(self, ply)
+		self:SetState(STATE_ARMED)
+		self.EZlaunchableWeaponArmedTime = CurTime()
+		self:EmitSound("snds_jack_gmod/bomb_arm.ogg", 60, 120)
+		JMod.Hint(ply, "launch")
+	end
+
+	function ENT:Disarm(ply)
+		if self:GetState() == STATE_OFF then return end
+		JMod.SetEZowner(self, ply)
+		self:SetState(STATE_OFF)
+		self.EZlaunchableWeaponArmedTime = nil
+		self:EmitSound("snds_jack_gmod/bomb_disarm.ogg", 60, 120)
 	end
 
 	function ENT:Detonate()
@@ -363,7 +373,9 @@ if SERVER then
 		util.Effect(self.ThrustEffect, Eff, true, true)
 
 		---
-		self:Backblast()
+		if not IsValid(self.EZlauncher) then
+			self:Backblast()
+		end
 
 		util.ScreenShake(self:GetPos(), 20, 255, .5, 300)
 		---
