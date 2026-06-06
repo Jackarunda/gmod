@@ -66,7 +66,7 @@ SWEP.SwingVisualLowerAmount = -1
 function SWEP:Initialize()
 	self:SetHoldType(self.IdleHoldType)
 	self:SCKInitialize()
-	self.NextIdle = 0
+	self:SetNextIdle(0)
 	self.DistanceCompensation = 0
 	self.SwingProgress = 0
 	self:Deploy()
@@ -77,9 +77,19 @@ end
 
 function SWEP:SetupDataTables()
 	self:NetworkVar("Bool", 0, "Swinging")
+	self:NetworkVar("Float", 0, "NextIdle")
 	if self.CustomSetupDataTables then
 		self:CustomSetupDataTables()
 	end
+end
+
+function SWEP:SendVMSequence(seqName)
+	local Owner = self:GetOwner()
+	if not IsValid(Owner) then return end
+	local vm = Owner:GetViewModel()
+	if not IsValid(vm) then return end
+
+	vm:SendViewModelMatchingSequence(vm:LookupSequence(seqName))
 end
 
 function SWEP:Swing(secondary)
@@ -136,8 +146,7 @@ function SWEP:SecondaryAttack()
 		self:SetNextPrimaryFire(CurTime() + self.SecondaryAttackSpeed * .5)
 		self:SetNextSecondaryFire(CurTime() + self.SecondaryAttackSpeed)
 
-		local vm = Owner:GetViewModel()
-		vm:SendViewModelMatchingSequence(vm:LookupSequence( "pushback" ))
+		self:SendVMSequence("pushback")
 
 		local tr = util.TraceLine( {
 			start = Owner:GetShootPos(),
@@ -173,8 +182,7 @@ function SWEP:Pawnch()
 	if not IsFirstTimePredicted() then return end
 	local Owner = self:GetOwner()
 	Owner:SetAnimation(PLAYER_ATTACK1)
-	local vm = Owner:GetViewModel()
-	vm:SendViewModelMatchingSequence(vm:LookupSequence(self.SwingSeq))
+	self:SendVMSequence(self.SwingSeq)
 	--Owner:ViewPunch(Angle(math.random(-10, -5), math.random(-5, 0), 0))
 	self:UpdateNextIdle()
 end
@@ -182,12 +190,12 @@ end
 function SWEP:Think()
 	local Time = CurTime()
 	local vm = self.Owner:GetViewModel()
-	local idletime = self.NextIdle
+	local idletime = self:GetNextIdle()
 	local Swing = self:GetSwinging()
 	local Owner = self:GetOwner()
 
 	if idletime > 0 and Time > idletime then
-		vm:SendViewModelMatchingSequence(vm:LookupSequence("idle0"))
+		self:SendVMSequence("idle0")
 		self:UpdateNextIdle()
 	end
 
@@ -327,7 +335,7 @@ end
 
 function SWEP:UpdateNextIdle()
 	local vm = self:GetOwner():GetViewModel()
-	self.NextIdle = CurTime() + vm:SequenceDuration()
+	self:SetNextIdle(CurTime() + vm:SequenceDuration())
 end
 
 function SWEP:Reload()
@@ -377,7 +385,7 @@ function SWEP:Deploy()
 	local vm = self.Owner:GetViewModel()
 
 	if IsValid(vm) and vm.LookupSequence then
-		vm:SendViewModelMatchingSequence(vm:LookupSequence("draw"))
+		self:SendVMSequence("draw")
 		self:UpdateNextIdle()
 		--self:EmitSound("snds_jack_gmod/toolbox" .. math.random(1, 7) .. ".ogg", 65, math.random(90, 110))
 		local Delay = vm:SequenceDuration(vm:LookupSequence("draw"))
