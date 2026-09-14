@@ -8,6 +8,7 @@ ENT.PrintName = "EZ Bucket"
 ENT.NoSitAllowed = true
 ENT.Spawnable = true
 ENT.AdminSpawnable = true
+ENT.DropClass = "wep_jack_gmod_ezbucket"
 ---
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.DamageThreshold = 120
@@ -111,11 +112,11 @@ if SERVER then
 	function ENT:Use(activator)
 		if JMod.IsAltUsing(activator) then
 			activator:PickupObject(self)
-		elseif not activator:HasWeapon("wep_jack_gmod_ezbucket") then
-			activator:Give("wep_jack_gmod_ezbucket")
-			activator:SelectWeapon("wep_jack_gmod_ezbucket")
+		elseif not activator:HasWeapon(self.DropClass) then
+			activator:Give(self.DropClass)
+			activator:SelectWeapon(self.DropClass)
 
-			local ToolBox = activator:GetWeapon("wep_jack_gmod_ezbucket")
+			local ToolBox = activator:GetWeapon(self.DropClass)
 			ToolBox:SetWater(self:GetWater())
 
 			self:Remove()
