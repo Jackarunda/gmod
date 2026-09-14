@@ -8,6 +8,7 @@ ENT.PrintName = "EZ Medkit"
 ENT.NoSitAllowed = true
 ENT.Spawnable = true
 ENT.AdminSpawnable = true
+ENT.DropClass = "wep_jack_gmod_ezmedkit"
 ---
 ENT.JModPreferredCarryAngles = Angle(0, -180, 0)
 ENT.DamageThreshold = 120
@@ -107,12 +108,12 @@ if SERVER then
 	function ENT:Use(activator)
 		if JMod.IsAltUsing(activator) then
 			activator:PickupObject(self)
-		elseif not activator:HasWeapon("wep_jack_gmod_ezmedkit") then
-			activator:Give("wep_jack_gmod_ezmedkit")
-			activator:SelectWeapon("wep_jack_gmod_ezmedkit")
+		elseif not activator:HasWeapon(self.DropClass) then
+			activator:Give(self.DropClass)
+			activator:SelectWeapon(self.DropClass)
 
 			timer.Simple(0, function()
-				local Wep = activator:GetWeapon("wep_jack_gmod_ezmedkit")
+				local Wep = activator:GetWeapon(self.DropClass)
 
 				if IsValid(Wep) then
 					Wep:SetSupplies(self:GetSupplies())
