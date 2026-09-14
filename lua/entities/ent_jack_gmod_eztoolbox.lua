@@ -8,6 +8,7 @@ ENT.PrintName = "EZ Toolbox"
 ENT.NoSitAllowed = true
 ENT.Spawnable = true
 ENT.AdminSpawnable = true
+ENT.DropClass = "wep_jack_gmod_eztoolbox"
 ---
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.DamageThreshold = 120
@@ -114,11 +115,11 @@ if SERVER then
 	function ENT:Use(activator)
 		if JMod.IsAltUsing(activator) then
 			activator:PickupObject(self)
-		elseif not activator:HasWeapon("wep_jack_gmod_eztoolbox") then
-			activator:Give("wep_jack_gmod_eztoolbox")
-			activator:SelectWeapon("wep_jack_gmod_eztoolbox")
+		elseif not activator:HasWeapon(self.DropClass) then
+			activator:Give(self.DropClass)
+			activator:SelectWeapon(self.DropClass)
 
-			local ToolBox = activator:GetWeapon("wep_jack_gmod_eztoolbox")
+			local ToolBox = activator:GetWeapon(self.DropClass)
 			ToolBox:SetElectricity(self:GetElectricity())
 			ToolBox:SetGas(self:GetGas())
 
