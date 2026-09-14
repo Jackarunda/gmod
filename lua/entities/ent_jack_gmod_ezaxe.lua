@@ -8,6 +8,7 @@ ENT.PrintName = "EZ Axe"
 ENT.NoSitAllowed = true
 ENT.Spawnable = true
 ENT.AdminSpawnable = true
+ENT.DropClass = "wep_jack_gmod_ezaxe"
 ---
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.DamageThreshold = 120
@@ -67,9 +68,9 @@ if SERVER then
 	function ENT:Use(activator)
 		if JMod.IsAltUsing(activator) then
 			activator:PickupObject(self)
-		elseif not activator:HasWeapon("wep_jack_gmod_ezaxe") then
-			activator:Give("wep_jack_gmod_ezaxe")
-			activator:SelectWeapon("wep_jack_gmod_ezaxe")
+		elseif not activator:HasWeapon(self.DropClass) then
+			activator:Give(self.DropClass)
+			activator:SelectWeapon(self.DropClass)
 
 			self:Remove()
 		else
